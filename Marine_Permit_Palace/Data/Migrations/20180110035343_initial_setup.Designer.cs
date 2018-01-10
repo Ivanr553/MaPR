@@ -12,9 +12,10 @@ using System;
 namespace Marine_Permit_Palace.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180110035343_initial_setup")]
+    partial class initial_setup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,7 +257,7 @@ namespace Marine_Permit_Palace.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("User_External_Login");
+                    b.ToTable("AspNetUserLogins");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>

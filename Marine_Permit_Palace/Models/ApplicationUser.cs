@@ -10,12 +10,40 @@ namespace Marine_Permit_Palace.Models
     // Add profile data for application users by adding properties to the ApplicationUser class
     public class ApplicationUser : IdentityUser
     {
+        public ApplicationUser()
+        {
+            UserSupervisors = new HashSet<UserSupervisorIntermediate>();
+            IssuedPermits = new HashSet<IssuedPermit>();
+            PermitsIssued = new HashSet<IssuedPermit>();
+            UserSubordinates = new HashSet<UserSupervisorIntermediate>();
+            SubmittedDocumentsLockedBy = new HashSet<SubmittedDocument>();
+            SubmittedDocumentsApproveCompletion = new HashSet<SubmittedDocument>();
+            UserDocumentCategoriesApproved = new HashSet<UserDocumentCategory>();
+
+            //User Editable
+            SubmittedDocumentsCreatedBy = new HashSet<SubmittedDocument>();
+            SubmittedDocumentsLastModBy = new HashSet<SubmittedDocument>();
+            DocumentCreatedBy = new HashSet<Document>();
+            DocumentLastModBy = new HashSet<Document>();
+            UserSupervisorIntermediateCreatedBy = new HashSet<UserSupervisorIntermediate>();
+            UserSupervisorIntermediateLastModBy = new HashSet<UserSupervisorIntermediate>();
+            UserDocumentCategorytCreatedBy = new HashSet<UserDocumentCategory>();
+            UserDocumentCategoryLastModBy = new HashSet<UserDocumentCategory>();
+            PermitCreatedBy = new HashSet<Permit>();
+            PermitLastModBy = new HashSet<Permit>();
+            PermitDocumentRequirementCreatedBy = new HashSet<PermitDocumentRequirement>();
+            PermitDocumentRequirementLastModBy = new HashSet<PermitDocumentRequirement>();
+            CategoryCreatedBy = new HashSet<Category>();
+            InUserDocumentCategories = new HashSet<UserDocumentCategory>();
+            CategoryLastModBy = new HashSet<Category>();
+        }
+        //PK Defined by Identity Framework
         public string Rank { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
         public int DodIdNumber { get; set; }
-        public string DOB10964 { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public int Age { get; set; }
         public string Sex { get; set; }
         public decimal Height { get; set; }
@@ -32,7 +60,35 @@ namespace Marine_Permit_Palace.Models
         public string MedicalCertRequired { get; set; }
         public bool WearsGlasses { get; set; }
         public string Organization { get; set; }
+        
 
-        public ICollection<UserDocumentIntermediate> UserDocIntermediates { get; set; }
+        public ICollection<UserSupervisorIntermediate> UserSupervisors { get; set; }
+        public ICollection<UserSupervisorIntermediate> UserSubordinates { get; set; }
+
+        public ICollection<IssuedPermit> IssuedPermits { get; set; } // Mine
+        public ICollection<IssuedPermit> PermitsIssued { get; set; } // Someone elses
+        public ICollection<SubmittedDocument> SubmittedDocumentsLockedBy { get; set; }
+        public ICollection<SubmittedDocument> SubmittedDocumentsApproveCompletion { get; set; }
+        public ICollection<UserDocumentCategory> UserDocumentCategoriesApproved { get; set; }
+        public ICollection<UserDocumentCategory> InUserDocumentCategories { get; set; }
+
+        //User Editable Links
+        public ICollection<SubmittedDocument> SubmittedDocumentsCreatedBy { get; set; }
+        public ICollection<SubmittedDocument> SubmittedDocumentsLastModBy { get; set; }
+        public IReadOnlyCollection<Document> DocumentCreatedBy { get; set; }
+        public IReadOnlyCollection<Document> DocumentLastModBy { get; set; }
+        public IReadOnlyCollection<UserSupervisorIntermediate> UserSupervisorIntermediateCreatedBy { get; set; }
+        public IReadOnlyCollection<UserSupervisorIntermediate> UserSupervisorIntermediateLastModBy { get; set; }
+        public IReadOnlyCollection<UserDocumentCategory> UserDocumentCategorytCreatedBy { get; set; }
+        public IReadOnlyCollection<UserDocumentCategory> UserDocumentCategoryLastModBy { get; set; }
+        public IReadOnlyCollection<Permit> PermitCreatedBy { get; set; }
+        public IReadOnlyCollection<Permit> PermitLastModBy { get; set; }
+        public IReadOnlyCollection<PermitDocumentRequirement> PermitDocumentRequirementCreatedBy { get; set; }
+        public IReadOnlyCollection<PermitDocumentRequirement> PermitDocumentRequirementLastModBy { get; set; }
+        public IReadOnlyCollection<Category> CategoryCreatedBy { get; set; }
+        public IReadOnlyCollection<Category> CategoryLastModBy { get; set; }
+
+
+
     }
 }

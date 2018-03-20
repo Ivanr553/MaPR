@@ -12,9 +12,10 @@ using System;
 namespace Marine_Permit_Palace.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180320103953_NewDataStructure")]
+    partial class NewDataStructure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,6 +45,8 @@ namespace Marine_Permit_Palace.Data.Migrations
                         .IsConcurrencyToken();
 
                     b.Property<DateTime>("DateOfBirth");
+
+                    b.Property<Guid>("DepartmentId");
 
                     b.Property<int>("DodIdNumber");
 
@@ -105,6 +108,8 @@ namespace Marine_Permit_Palace.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DepartmentId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -116,9 +121,9 @@ namespace Marine_Permit_Palace.Data.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("Marine_Permit_Palace.Models.Category", b =>
+            modelBuilder.Entity("Marine_Permit_Palace.Models.Department", b =>
                 {
-                    b.Property<Guid>("IdCategory")
+                    b.Property<Guid>("IdDepartment")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("CreatedById");
@@ -141,21 +146,19 @@ namespace Marine_Permit_Palace.Data.Migrations
 
                     b.Property<string>("Name");
 
-                    b.HasKey("IdCategory");
+                    b.HasKey("IdDepartment");
 
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("LastModifiedById");
 
-                    b.ToTable("Category");
+                    b.ToTable("Department");
                 });
 
             modelBuilder.Entity("Marine_Permit_Palace.Models.Document", b =>
                 {
                     b.Property<Guid>("IdDocument")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<Guid>("CategoryId");
 
                     b.Property<string>("CreatedById");
 
@@ -166,6 +169,8 @@ namespace Marine_Permit_Palace.Data.Migrations
                     b.Property<DateTime>("DateLastModifiedUtc");
 
                     b.Property<DateTime?>("DeleteCommissionDateUtc");
+
+                    b.Property<Guid>("DepartmentId");
 
                     b.Property<bool>("IsActive");
 
@@ -179,9 +184,9 @@ namespace Marine_Permit_Palace.Data.Migrations
 
                     b.HasKey("IdDocument");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("LastModifiedById");
 
@@ -448,43 +453,6 @@ namespace Marine_Permit_Palace.Data.Migrations
                     b.ToTable("Submitted_Document");
                 });
 
-            modelBuilder.Entity("Marine_Permit_Palace.Models.UserDocumentCategory", b =>
-                {
-                    b.Property<string>("IdUserInCategoryId");
-
-                    b.Property<Guid>("IdCategoryId");
-
-                    b.Property<string>("CreatedById");
-
-                    b.Property<DateTime>("DateCreatedUtc");
-
-                    b.Property<DateTime?>("DateInactivatedUtc");
-
-                    b.Property<DateTime>("DateLastModifiedUtc");
-
-                    b.Property<DateTime?>("DeleteCommissionDateUtc");
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<bool>("IsDelete");
-
-                    b.Property<string>("LastModifiedById");
-
-                    b.Property<string>("UserApprovingLinkId");
-
-                    b.HasKey("IdUserInCategoryId", "IdCategoryId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("IdCategoryId");
-
-                    b.HasIndex("LastModifiedById");
-
-                    b.HasIndex("UserApprovingLinkId");
-
-                    b.ToTable("User_Document_Category");
-                });
-
             modelBuilder.Entity("Marine_Permit_Palace.Models.UserSupervisorIntermediate", b =>
                 {
                     b.Property<string>("IdUserId");
@@ -641,27 +609,35 @@ namespace Marine_Permit_Palace.Data.Migrations
                     b.HasDiscriminator().HasValue("IdentityRole");
                 });
 
-            modelBuilder.Entity("Marine_Permit_Palace.Models.Category", b =>
+            modelBuilder.Entity("Marine_Permit_Palace.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("Marine_Permit_Palace.Models.Department", "Department")
+                        .WithMany("DepartmentUsers")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Marine_Permit_Palace.Models.Department", b =>
                 {
                     b.HasOne("Marine_Permit_Palace.Models.ApplicationUser", "CreatedBy")
-                        .WithMany("CategoryCreatedBy")
+                        .WithMany("DepartmentCreatedBy")
                         .HasForeignKey("CreatedById");
 
                     b.HasOne("Marine_Permit_Palace.Models.ApplicationUser", "LastModifiedBy")
-                        .WithMany("CategoryLastModBy")
+                        .WithMany("DepartmentLastModBy")
                         .HasForeignKey("LastModifiedById");
                 });
 
             modelBuilder.Entity("Marine_Permit_Palace.Models.Document", b =>
                 {
-                    b.HasOne("Marine_Permit_Palace.Models.Category", "Category")
-                        .WithMany("Documents")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Marine_Permit_Palace.Models.ApplicationUser", "CreatedBy")
                         .WithMany("DocumentCreatedBy")
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("Marine_Permit_Palace.Models.Department", "Department")
+                        .WithMany("Documents")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Marine_Permit_Palace.Models.ApplicationUser", "LastModifiedBy")
                         .WithMany("DocumentLastModBy")
@@ -779,31 +755,6 @@ namespace Marine_Permit_Palace.Data.Migrations
                     b.HasOne("Marine_Permit_Palace.Models.ApplicationUser", "UserLockingEdit")
                         .WithMany("SubmittedDocumentsLockedBy")
                         .HasForeignKey("UserLockingEditId");
-                });
-
-            modelBuilder.Entity("Marine_Permit_Palace.Models.UserDocumentCategory", b =>
-                {
-                    b.HasOne("Marine_Permit_Palace.Models.ApplicationUser", "CreatedBy")
-                        .WithMany("UserDocumentCategorytCreatedBy")
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("Marine_Permit_Palace.Models.Category", "Category")
-                        .WithMany("UserDocumentCategories")
-                        .HasForeignKey("IdCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Marine_Permit_Palace.Models.ApplicationUser", "UserInCategory")
-                        .WithMany("InUserDocumentCategories")
-                        .HasForeignKey("IdUserInCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Marine_Permit_Palace.Models.ApplicationUser", "LastModifiedBy")
-                        .WithMany("UserDocumentCategoryLastModBy")
-                        .HasForeignKey("LastModifiedById");
-
-                    b.HasOne("Marine_Permit_Palace.Models.ApplicationUser", "UserApprovingLink")
-                        .WithMany("UserDocumentCategoriesApproved")
-                        .HasForeignKey("UserApprovingLinkId");
                 });
 
             modelBuilder.Entity("Marine_Permit_Palace.Models.UserSupervisorIntermediate", b =>

@@ -5,6 +5,11 @@
     <UserSecretsId>aspnet-Marine_Permit_Palace-5024EAB9-71BC-4D46-A9CD-7A91D994E7AE</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20180320103631_NewDataStructure.cs" />
+    <Compile Remove="Data\Migrations\20180320103631_NewDataStructure.Designer.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="iTextSharp" Version="5.5.13" />

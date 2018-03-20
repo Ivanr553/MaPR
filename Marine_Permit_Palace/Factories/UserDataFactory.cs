@@ -12,15 +12,15 @@ namespace Marine_Permit_Palace.Factories
     /// </summary>
     public static class UserDataFactory
     {
-        public static bool ConvertFromForm(ApplicationUser user)
-        {
+        //public static bool ConvertFromForm(ApplicationUser user)
+        //{
 
-        }
+        //}
 
-        public static dynamic ConvertToForm(DynamicObject document_data)
-        {
-            document_data.Try
-        }
+        //public static dynamic ConvertToForm(DynamicObject document_data)
+        //{
+        //    //document_data.Try
+        //}
     }
 
 

@@ -37,9 +37,9 @@ namespace Marine_Permit_Palace
             services.AddTransient<IEmailSender, EmailSender>();
 
             //Scoped
-            services.AddScoped<IDocumentService, DocumentService>();
-            services.AddScoped<ISubmittedDocumentService, SubmittedDocumentService>();
-            services.AddScoped<IUserDocumentIntermediateService, UserDocumentIntermediateService>();
+            //services.AddScoped<IDocumentService, DocumentService>();
+            //services.AddScoped<ISubmittedDocumentService, SubmittedDocumentService>();
+            //services.AddScoped<IUserDocumentIntermediateService, UserDocumentIntermediateService>();
 
 
 

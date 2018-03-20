@@ -8,13 +8,21 @@ namespace Marine_Permit_Palace.Models
 {
     public class Document : UserEditableDataRowProperties
     {
-        [Column("id_document")]
+        public Document()
+        {
+            SubmittedDocuments = new HashSet<SubmittedDocument>();
+            PermitDocumentRequirements = new HashSet<PermitDocumentRequirement>();
+        }
+        //PK
         public Guid IdDocument { get; set; }
-        [Column("name")]
+        //
         public string Name { get; set; }
-        [Column("template_name")]
         public string TemplateName { get; set; }
 
-        public ICollection<SubmittedDocument> RefrencedSubmittedDocuments { get; set; }
+        public Category Category { get; set; }
+        public Guid CategoryId { get; set; }
+
+        public ICollection<SubmittedDocument> SubmittedDocuments { get; set; }
+        public ICollection<PermitDocumentRequirement> PermitDocumentRequirements { get; set; }
     }
 }

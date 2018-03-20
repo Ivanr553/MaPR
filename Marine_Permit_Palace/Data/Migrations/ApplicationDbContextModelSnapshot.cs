@@ -18,7 +18,7 @@ namespace Marine_Permit_Palace.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
+                .HasAnnotation("ProductVersion", "2.0.0-rtm-26452")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Marine_Permit_Palace.Models.ApplicationUser", b =>
@@ -28,49 +28,17 @@ namespace Marine_Permit_Palace.Data.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
-                    b.Property<int>("Age");
-
-                    b.Property<DateTime>("CivLicExpDate");
-
-                    b.Property<DateTime>("CivLicIssueDate");
-
-                    b.Property<string>("CivLicNumber");
-
-                    b.Property<string>("CivLicState");
-
-                    b.Property<string>("ClassOfVehicle");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
-
-                    b.Property<DateTime>("DateOfBirth");
-
-                    b.Property<string>("DoDId");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
 
-                    b.Property<string>("EyeColor");
-
-                    b.Property<string>("FirstName");
-
-                    b.Property<string>("HairColor");
-
-                    b.Property<string>("Height");
-
-                    b.Property<string>("HomeOfRecord");
-
-                    b.Property<string>("LastName");
-
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
-
-                    b.Property<string>("MedicalCertReq");
-
-                    b.Property<string>("MiddleName");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256);
@@ -78,30 +46,18 @@ namespace Marine_Permit_Palace.Data.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256);
 
-                    b.Property<string>("Orginization");
-
                     b.Property<string>("PasswordHash");
 
                     b.Property<string>("PhoneNumber");
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
-                    b.Property<string>("PlaceOfBirth");
-
-                    b.Property<string>("Rank");
-
                     b.Property<string>("SecurityStamp");
-
-                    b.Property<string>("Sex");
 
                     b.Property<bool>("TwoFactorEnabled");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
-
-                    b.Property<bool>("WearsGlasses");
-
-                    b.Property<string>("Weight");
 
                     b.HasKey("Id");
 
@@ -128,14 +84,8 @@ namespace Marine_Permit_Palace.Data.Migrations
                     b.Property<DateTime>("DateCreatedUtc")
                         .HasColumnName("date_created_utc");
 
-                    b.Property<DateTime?>("DateInactivatedUtc")
-                        .HasColumnName("date_inactivated_utc");
-
                     b.Property<DateTime>("DateLastModifiedUtc")
                         .HasColumnName("date_last_modified_utc");
-
-                    b.Property<DateTime?>("DeleteCommissionDateUtc")
-                        .HasColumnName("delete_comission_date_utc");
 
                     b.Property<bool>("IsActive")
                         .HasColumnName("is_active");
@@ -173,14 +123,8 @@ namespace Marine_Permit_Palace.Data.Migrations
                     b.Property<DateTime>("DateCreatedUtc")
                         .HasColumnName("date_created_utc");
 
-                    b.Property<DateTime?>("DateInactivatedUtc")
-                        .HasColumnName("date_inactivated_utc");
-
                     b.Property<DateTime>("DateLastModifiedUtc")
                         .HasColumnName("date_last_modified_utc");
-
-                    b.Property<DateTime?>("DeleteCommissionDateUtc")
-                        .HasColumnName("delete_comission_date_utc");
 
                     b.Property<Guid>("DocumentId")
                         .HasColumnName("document_id");
@@ -219,14 +163,8 @@ namespace Marine_Permit_Palace.Data.Migrations
                     b.Property<DateTime>("DateCreatedUtc")
                         .HasColumnName("date_created_utc");
 
-                    b.Property<DateTime?>("DateInactivatedUtc")
-                        .HasColumnName("date_inactivated_utc");
-
                     b.Property<DateTime>("DateLastModifiedUtc")
                         .HasColumnName("date_last_modified_utc");
-
-                    b.Property<DateTime?>("DeleteCommissionDateUtc")
-                        .HasColumnName("delete_comission_date_utc");
 
                     b.Property<bool>("IsActive")
                         .HasColumnName("is_active");

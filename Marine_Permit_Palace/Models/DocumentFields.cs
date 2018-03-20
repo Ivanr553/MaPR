@@ -13,6 +13,7 @@ namespace Marine_Permit_Palace.Models
         public string IdFormName { get; set; }
         //
         public string FormValue { get; set; }
+        public bool IsSupervisor { get; set; }
     }
 
     public class DocumentCheckBoxField : DataRowProperties
@@ -23,6 +24,8 @@ namespace Marine_Permit_Palace.Models
         public string IdFormName { get; set; }
         //
         public bool FormValue { get; set; }
+
+        public bool IsSupervisor { get; set; }
     }
 
     public class DocumentSignatureField : DataRowProperties
@@ -34,5 +37,7 @@ namespace Marine_Permit_Palace.Models
         //
         public string SignatureValue { get; set; }
         public DateTime DateSignedUtc { get; set; } //Signed stored here becasue they are linked
+
+        public bool IsSupervisor { get; set; } // If true, only the owner supervisor can sign this
     }
 }

@@ -18,7 +18,7 @@ namespace Marine_Permit_Palace.Data
 
         public virtual DbSet<Document> Document { get; set; }
         public virtual DbSet<SubmittedDocument> SubmittedDocument { get; set; }
-        public virtual DbSet<UserDocumentIntermediate> UserDocumentIntermediate { get; set; }
+        
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -33,35 +33,7 @@ namespace Marine_Permit_Palace.Data
             builder.Entity<IdentityUserClaim<string>>().ToTable("User_Claim");
             builder.Entity<IdentityUserLogin<string>>().ToTable("User_External_Login");
 
-            builder.Entity<Document>(entity =>
-            {
-                entity.ToTable("Document");
-                entity.HasKey(e => e.IdDocument);
-            });
-
-            builder.Entity<SubmittedDocument>(entity =>
-            {
-                entity.ToTable("Submitted_Document");
-                entity.HasKey(e => e.IdSubmittedDocument);
-
-                entity.HasOne(e => e.Document)
-                    .WithMany(e => e.RefrencedSubmittedDocuments)
-                    .HasForeignKey(e => e.DocumentId);
-            });
-
-            builder.Entity<UserDocumentIntermediate>(entity =>
-            {
-                entity.ToTable("User_Document_Intermediate");
-                entity.HasKey(e => new {e.SubmittedDocumentId, e.UserId});
-
-                entity.HasOne(e => e.SubmittedDocument)
-                    .WithMany(e => e.UserDocIntermediates)
-                    .HasForeignKey(e => e.SubmittedDocumentId);
-
-                entity.HasOne(e => e.User)
-                    .WithMany(e => e.UserDocIntermediates)
-                    .HasForeignKey(e => e.UserId);
-            });
+            
         }
     }
 }

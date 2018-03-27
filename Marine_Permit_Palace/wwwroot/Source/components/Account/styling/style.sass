@@ -1,0 +1,92 @@
+#Account
+  width: 83vw
+  margin-left: 15%
+  height: 90vh
+  padding-left: 2%
+  cursor: default
+  background-color: rgb(230, 230, 230)
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+
+.account-settings-header
+  font-size: 2em
+  padding: 2% 0 4% 0
+
+.user-information-header
+  font-size: 1.5em
+
+.account-settings-content
+  min-height: 10vh
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  justify-content: center
+
+#account-content-container
+  width: 90%
+  min-height: 80vh
+  background-color: white
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  justify-content: flex-start
+  border: solid 1px rgb(200, 200, 200)
+  border-top: none
+
+#account-tabs-container
+  width: calc(100%)
+  margin-left: -1px
+  height: 10vh
+  background-color: rgb(230, 230, 230)
+  display: flex
+  flex-direction: row
+  align-items: flex-end
+  justify-content: center
+  border-bottom: solid 1px rgb(200, 200, 200)
+  border-left: solid 1px rgb(230, 230, 230)
+  border-right: solid 1px rgb(230, 230, 230)
+  z-index: 1
+
+.account-tab
+  width: 30%
+  height: 90%
+  background-color: white
+  border-color: grey
+  margin: 0px 2px 0px 2px
+  z-index: 2
+  cursor: pointer
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  font-size: 2em
+  color: rgb(180, 180, 180)
+
+.account-tab-selected
+  border-bottom: solid 1px white
+  margin-bottom: -1px
+  cursor: default
+  border-top: 4px solid rgb(71, 88, 132)
+  height: calc(90% - 3px)
+  color: rgb(50, 50, 50)
+
+.account-page-view
+  width: 90%
+  display: grid
+  grid-template-columns: 1fr 1fr
+  grid-gap: 0vh 5%
+  margin-left: 5%
+  padding-top: 2.5%
+
+.account-content-column
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  justify-content: flex-start
+  font-size: 1.5em
+  // border: solid 1px black
+
+.account-info-line-item
+  margin-bottom: 2vh

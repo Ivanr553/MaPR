@@ -11,6 +11,6 @@
       "jsx": "react"
     },
     "include": [
-      "./wwwroot/Source"
+      "./Source"
     ]
   }

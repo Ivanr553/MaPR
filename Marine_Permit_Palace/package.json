@@ -443,6 +443,7 @@
     "@types/react-router": "^4.0.23",
     "@types/react-router-dom": "4.0.5",
     "@types/react-router-redux": "^5.0.3",
+    "@types/webpack": "2.2.15",
     "@types/webpack-env": "1.13.0",
     "aspnet-prerendering": "^3.0.1",
     "aspnet-webpack": "^2.0.1",
@@ -459,15 +460,16 @@
     "react-router-dom": "^4.2.2",
     "sass-loader": "^6.0.7",
     "style-loader": "^0.20.3",
+    "ts-loader": "^3.5.0",
     "typescript": "^2.7.2",
-    "webpack": "^2.5.1",
+    "webpack": "*",
     "webpack-hot-middleware": "2.18.2",
     "webpack-merge": "4.1.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "webpack": "webpack",
-    "watch": "webpack -w" 
+    "watch": "webpack -w"
   },
   "keywords": [],
   "author": "",

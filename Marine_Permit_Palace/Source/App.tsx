@@ -21,7 +21,7 @@ export default class App extends React.Component<any, any> {
                         <Route path='/A/App' exact component={Login} />
                         <Route path='/A/App/Account' exact component={Account} />
                         {/* <Route path='/A/Studio' exact component={Studio} /> */}
-                        {/* <Route path='/A/App/Register' exact component={Register} /> */}
+                        <Route path='/A/App/Register' exact component={Register} />
                         <Route path='/A/App/Home' exact component={Home} />
                         <Route path='/A/App/DocumentView' exact component={DocumentView} />
                     </Switch>

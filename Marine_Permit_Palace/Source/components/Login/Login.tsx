@@ -71,17 +71,26 @@ export default class Login extends React.Component<Props, any> {
                 <Header />
 
                 <div className='login-content-container'>
-                    <div className='login-title'>Login</div>
-                    <div className='login-input-container'>
-                        Username
-                        <input type="text" className='login-input' onChange={(e) => {this.handleUsername(e)}}/>
-                    </div>
-                    <div className='login-input-container' id='login-password-container'>
-                        Password
-                        <input type="password" className='login-input' onChange={(e) => {this.handlePassword(e)}}/>
-                    </div>
-                    <div>
-                        <button className='login-button' onClick={this.handleLogin}>Login</button>
+                    <div className='login-container-section'>
+                        <div className='login-title'>Log In</div>
+                            <div className='login-input-container'>
+                                Username
+                                <input type="text" className='login-input' onChange={(e) => {this.handleUsername(e)}}/>
+                            </div>
+                            <div className='login-input-container' id='login-password-container'>
+                                Password
+                                <input type="password" className='login-input' onChange={(e) => {this.handlePassword(e)}}/>
+                            </div>
+                            <div>
+                                <button className='login-button' onClick={this.handleLogin}>Log In</button>
+                            </div>
+                        </div>
+                    <div className='login-container-section'>
+                        <div className='login-title'>First Time Users</div>
+                        <div className='login-paragraph'>
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil enim provident minima, esse nostrum dolorum molestiae expedita sequi architecto fugiat dolorem, adipisci dicta voluptate. Quaerat repudiandae veritatis ea pariatur provident.
+                        </div>
+                        {/* <div className='login-title'>Already hav</div> */}
                     </div>
                 </div>
             </div>

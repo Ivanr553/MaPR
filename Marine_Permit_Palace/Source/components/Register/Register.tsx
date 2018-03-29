@@ -83,18 +83,31 @@ export default class Register extends React.Component<Props, any> {
 
                 <Header />
 
-                <div className='register-title'>Register</div>
-                <div className='main-register-content-container'>
-                    <div className='username-register-container'>
-                        DOD Number
-                        <input className='register-input' type="string" onChange={(e)=>{this.handleUsername(e)}} name='username'/>
+                <div className='register-content-container'>
+                    <div className='register-container-section'>
+                        <div className='register-title'>Register</div>
+                            <div className='register-input-container'>
+                                Username
+                                <input type="text" className='register-input' onChange={(e) => {this.handleUsername(e)}}/>
+                            </div>
+                            <div className='register-input-container' id='register-password-container'>
+                                Password
+                                <input type="password" className='register-input' onChange={(e) => {this.handlePassword(e)}}/>
+                            </div>
+                            <div className='register-input-container'>
+                                Confirm Password
+                                <input type="password" className='register-input' onChange={(e) => {this.handleConfirmPassword(e)}}/>
+                            </div>
+                            <div>
+                                <button className='register-button'>Register</button>
+                            </div>
+                        </div>
+                    <div className='register-container-section' id='register-container-section-right'>
+                        <div className='register-title'>For Demo Only</div>
+                        <div className='register-paragraph'>
+                            Registration will only occur for the purposes of the demo. In the live site, there will be no need to register as the user will have their account linked to their DOD Number.
+                        </div>
                     </div>
-                    <div className='password-register-container'>
-                        Password
-                        <input className='register-input' type="password" onChange={(e)=>{this.handlePassword(e)}} name='password'/>
-                        <input className='register-input' type="password" onChange={(e)=>{this.handleConfirmPassword(e)}} name='password-confirm' placeholder='confirm password'/>
-                    </div>
-                    <button className='register-submit-button' name='register-submit' onClick={this.handleRegister} >Register</button>
                 </div>
             </div>
         )

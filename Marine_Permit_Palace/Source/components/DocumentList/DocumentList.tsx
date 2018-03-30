@@ -29,7 +29,7 @@ export default class DocumentList extends React.Component<any, any> {
                         <PDF className='pdf-preview' file={file}/>
                         <div className='pdf-preview-shader'></div>
                     </div>
-                    <div className='viewable-document-title hover-animation-element'>
+                    <div className='viewable-document-title'>
                         {documents[i].title}
                     </div>
                     {/* <div className='viewable-document-action-title'>

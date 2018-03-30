@@ -5,6 +5,7 @@ import $ from 'jquery'
 const s = require('./styling/style.sass')
 
 import Header from '../Header/Header'
+import Footer from '../Footer/Footer'
 
 interface Props extends RouteComponentProps<any> {}
 export default class Register extends React.Component<Props, any> {
@@ -109,6 +110,9 @@ export default class Register extends React.Component<Props, any> {
                         </div>
                     </div>
                 </div>
+
+                <Footer />
+
             </div>
         )
     }

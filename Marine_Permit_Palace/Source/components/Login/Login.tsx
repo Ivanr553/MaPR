@@ -7,6 +7,7 @@ const s = require('./styling/style.sass')
 
 
 import Header from '../Header/Header'
+import Footer from '../Footer/Footer'
 
 interface Props extends RouteComponentProps<any> {}
 export default class Login extends React.Component<Props, any> {
@@ -82,17 +83,19 @@ export default class Login extends React.Component<Props, any> {
                                 <input type="password" className='login-input' onChange={(e) => {this.handlePassword(e)}}/>
                             </div>
                             <div>
-                                <button className='login-button' onClick={this.handleLogin}>Log In</button>
+                                <button id='login-button' onClick={this.handleLogin}>Log In</button>
                             </div>
                         </div>
                     <div className='login-container-section'>
                         <div className='login-title'>First Time Users</div>
                         <div className='login-paragraph'>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil enim provident minima, esse nostrum dolorum molestiae expedita sequi architecto fugiat dolorem, adipisci dicta voluptate. Quaerat repudiandae veritatis ea pariatur provident.
+                            During the course of the demo, register an account with a username and password and then login. Each user will be generic and have their content auto generated.
                         </div>
-                        {/* <div className='login-title'>Already hav</div> */}
                     </div>
                 </div>
+
+                <Footer />
+
             </div>
         )
     }

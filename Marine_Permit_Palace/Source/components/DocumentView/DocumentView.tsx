@@ -48,11 +48,9 @@ export default class DocumentView extends React.Component<any, any> {
     render() {
         let file = '/dist/documents/' + this.props.file
 
-        console.log(this.state.file)
-
         return(
             <div className='DocumentView'>
-                <embed width="100%" height="100%" data-name="plugin" id="plugin" src={this.state.file} type="application/pdf"  title="" />
+                <embed width="100%" height="100%" data-name="plugin" id="plugin" src={file} type="application/pdf"  title="" data-internalinstanceid='8'/>
             </div>
         )
     }

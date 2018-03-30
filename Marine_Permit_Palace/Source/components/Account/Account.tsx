@@ -156,9 +156,9 @@ export default class Account extends React.Component<any, any> {
       <div id='Account'>
         <div id='account-content-container'>
           <div id='account-tabs-container'>
-            <div className='account-tab account-tab-selected' onClick={(e) => {this.handleTabPress(e, 'Account')}}>Account Information</div>
-            <div className='account-tab' onClick={(e) => {this.handleTabPress(e, 'Personal')}}>Personal Information</div>
-            <div className='account-tab' onClick={(e) => {this.handleTabPress(e, 'Civilian')}}>Civilian Information</div>
+            <div id='account-info-tab' className='account-tab account-tab-selected' onClick={(e) => {this.handleTabPress(e, 'Account')}}>Account Information</div>
+            <div id='personal-info-tab' className='account-tab' onClick={(e) => {this.handleTabPress(e, 'Personal')}}>Personal Information</div>
+            <div id='civilian-info-tab' className='account-tab' onClick={(e) => {this.handleTabPress(e, 'Civilian')}}>Civilian Information</div>
           </div>
           {this.state.currentView}
         </div>

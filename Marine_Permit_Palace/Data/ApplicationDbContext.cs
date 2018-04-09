@@ -28,6 +28,7 @@ namespace Marine_Permit_Palace.Data
         public virtual DbSet<DocumentSignatureField> DocumentSignatureField { get; set; }
         public virtual DbSet<PermitSubmittedDocIntermediate> PermitSubmittedDocIntermediate { get; set; }
         public virtual DbSet<Category> Category { get; set; }
+        public virtual DbSet<StoredToken> StoredToken { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -44,7 +45,7 @@ namespace Marine_Permit_Palace.Data
 
             builder.Entity<Document>(entity =>
             {
-                entity.ToTable("Docuemnt");
+                entity.ToTable("Document");
                 entity.HasKey(e => e.IdDocument);
 
                 //Model Linking
@@ -249,6 +250,13 @@ namespace Marine_Permit_Palace.Data
                 entity.HasOne(e => e.LastModifiedBy)
                     .WithMany(e => e.CategoryLastModBy)
                     .HasForeignKey(e => e.LastModifiedById);
+            });
+
+            builder.Entity<StoredToken>(entity =>
+            {
+                entity.ToTable("Stored_Token");
+                entity.HasKey(e => e.IdToken); 
+
             });
         }
     }

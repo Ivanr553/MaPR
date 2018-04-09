@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using Marine_Permit_Palace.Models;
 using Marine_Permit_Palace.Models.AccountViewModels;
 using Marine_Permit_Palace.Services;
+using Marine_Permit_Palace.Global;
 
 namespace Marine_Permit_Palace.Controllers
 {
@@ -24,15 +25,18 @@ namespace Marine_Permit_Palace.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
+        private readonly IStoredTokenService _StoredToken;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
+            IStoredTokenService ists,
             ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _StoredToken = ists;
             _emailSender = emailSender;
             _logger = logger;
         }
@@ -44,6 +48,7 @@ namespace Marine_Permit_Palace.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(string returnUrl = null)
         {
+            string yp = GenerateRegistrationToken(ApplicationPermissions.ROLE_DOD_ADMIN);
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
@@ -53,38 +58,31 @@ namespace Marine_Permit_Palace.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Login([FromBody]LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.dod_id, model.password, model.remember_me, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return RedirectToLocal(returnUrl);
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToAction(nameof(LoginWith2fa), new { returnUrl, model.RememberMe });
+                    return Json(new Result());
                 }
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
-                    return RedirectToAction(nameof(Lockout));
+                    return Json(new Result("Locked Out", "User is locked out.", 401));
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(model);
+                    return Json(new Result("Failure", "Invalid Login Attempt", 401));
                 }
             }
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            // If we got this far, something failed
+            return Json(new Result("Failure", "Invalid Login Attempt", 401));
         }
 
         [HttpGet]
@@ -206,40 +204,85 @@ namespace Marine_Permit_Palace.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Register(string returnUrl = null)
+        public IActionResult Register(string token = null, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
+            ViewData["Token"] = token;
             return View();
         }
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Register([FromBody]RegisterViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
+                StoredToken Token = null;
+                if(!string.IsNullOrEmpty(model.token))
+                {
+                    //Grab the token and verify that this token is valid (Then grab the Role)
+                    Token = _StoredToken.UseToken(model.token);
+                }
+                var user = new ApplicationUser { UserName = model.dod_id.ToString(), Email = model.email };
+                var result = await _userManager.CreateAsync(user, model.password);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
-                    await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+                    await _emailSender.SendEmailConfirmationAsync(model.email, callbackUrl);
+                    //Each user is a marine
+                    await _userManager.AddToRoleAsync(user, ApplicationPermissions.ROLE_MARINE);
 
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    _logger.LogInformation("User created a new account with password.");
-                    return RedirectToLocal(returnUrl);
+                    if(Token != null) // Verify which other roles the user is in
+                    {
+                        if(Token.TokenData == ApplicationPermissions.ROLE_SUPERVISOR)
+                        {
+                            await _userManager.AddToRoleAsync(user, ApplicationPermissions.ROLE_SUPERVISOR);
+                        }
+                        if(Token.TokenData == ApplicationPermissions.ROLE_DOD_ADMIN)
+                        {
+                            await _userManager.AddToRoleAsync(user, ApplicationPermissions.ROLE_SUPERVISOR);
+                            await _userManager.AddToRoleAsync(user, ApplicationPermissions.ROLE_DOD_ADMIN);
+                        }
+                    }
+                    
+                    await _signInManager.SignInAsync(user, isPersistent: true);
+                    return Json(new Result(reason: returnUrl));
                 }
-                AddErrors(result);
+                else
+                {
+                    string result_error = "";
+                    result.Errors.Select(e => e.Description).ToList().ForEach(e => result_error += e + "; " );
+                    return Json(new Result("Failure", $"User Could Not Be Created: {result_error}", 406));
+                }
             }
-
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return Json(new Result("Failure", "Received Json Object did not meet required format.", 406));
         }
+
+       
+
+        /// <summary>
+        /// Checks to verify the user is either in the same role or a higher role.
+        /// </summary>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        private string GenerateRegistrationToken(string role)
+        {
+            ///Verify the user is in the role they are trying to assign
+            if (true)//User.IsInRole(role))
+            {
+                StoredToken RegisterToken = _StoredToken.GenerateNewToken("Manual Registration", TOKEN_TYPE.REGISTER, role);
+
+                return Url.Action("Register", new { token = RegisterToken.TokenValue });
+            }
+            else return null;
+        }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -460,5 +503,18 @@ namespace Marine_Permit_Palace.Controllers
         }
 
         #endregion
+    }
+
+    public class Result
+    {
+        public Result(string result = "Success", string reason = "", int statusCode = 200)
+        {
+            this.result = result;
+            this.reason = reason;
+            this.status_code = statusCode;
+        }
+        public string result { get; set; }
+        public string reason { get; set; }
+        public int status_code { get; set; } 
     }
 }

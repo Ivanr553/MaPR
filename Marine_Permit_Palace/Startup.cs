@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Marine_Permit_Palace.Data;
 using Marine_Permit_Palace.Models;
 using Marine_Permit_Palace.Services;
+using Marine_Permit_Palace.Global;
 
 namespace Marine_Permit_Palace
 {
@@ -37,6 +38,7 @@ namespace Marine_Permit_Palace
             services.AddTransient<IEmailSender, EmailSender>();
 
             //Scoped
+            services.AddScoped<IStoredTokenService, StoredTokenService>();
             //services.AddScoped<IDocumentService, DocumentService>();
             //services.AddScoped<ISubmittedDocumentService, SubmittedDocumentService>();
             //services.AddScoped<IUserDocumentIntermediateService, UserDocumentIntermediateService>();
@@ -48,7 +50,7 @@ namespace Marine_Permit_Palace
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider prov)
         {
             if (env.IsDevelopment())
             {
@@ -63,6 +65,8 @@ namespace Marine_Permit_Palace
 
             app.UseStaticFiles();
 
+            CreateRoles(prov);
+
             app.UseAuthentication();
 
             app.UseMvc(routes =>
@@ -71,6 +75,36 @@ namespace Marine_Permit_Palace
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        public void CreateRoles(IServiceProvider serviceProvider)
+        {
+            var RoleList = ApplicationPermissions.GetAllRoles();
+            try
+            {
+                using (var rolemand = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>())
+                {
+
+                    foreach (var role in RoleList)
+                    {
+                        var roleExist = rolemand.RoleExistsAsync(role.Name).Result;
+                        if (!roleExist)
+                        {
+                            var result = rolemand.CreateAsync(new IdentityRole(role.Name)).Result;
+                            if (!result.Succeeded)
+                            {
+                                //Do Something?
+                                throw new NotImplementedException();
+                            }
+                        }
+                    }
+                }
+            }
+            catch(Exception Ex)
+            {
+                return;
+            }
+           
         }
     }
 }

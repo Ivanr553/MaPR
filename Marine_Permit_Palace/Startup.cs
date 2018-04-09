@@ -39,8 +39,8 @@ namespace Marine_Permit_Palace
 
             //Scoped
             services.AddScoped<IStoredTokenService, StoredTokenService>();
-            //services.AddScoped<IDocumentService, DocumentService>();
-            //services.AddScoped<ISubmittedDocumentService, SubmittedDocumentService>();
+            services.AddScoped<IDocumentService, DocumentService>();
+            services.AddScoped<ISubmittedDocumentService, SubmittedDocumentService>();
             //services.AddScoped<IUserDocumentIntermediateService, UserDocumentIntermediateService>();
 
 

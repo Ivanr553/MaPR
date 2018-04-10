@@ -37,13 +37,12 @@ namespace Marine_Permit_Palace.Controllers
                 MemoryStream file = new MemoryStream(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.TemplateName)));
                 file.CopyTo(PDF_Mem);
                 using (PdfReader reader = new PdfReader(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.TemplateName))))
-                using (PdfStamper stamper = new PdfStamper(reader, PDF_Mem))
+                using (PdfStamper stamper = new PdfStamper(reader, PDF_Mem, '\0', false))
                 {
-                    stamper.FormFlattening = true;
+                    stamper.FormFlattening = false;
                     AcroFields pdfFormFields = stamper.AcroFields;
-                    pdfFormFields.GenerateAppearances = true;
 
-                    pdfFormFields.SetField("last_first_middle", "Bobby G");
+                    pdfFormFields.SetField("last_first_middle", "Bobby G", true);
 
                     pdfFormFields.SetField("rank", "G");
 
@@ -89,7 +88,11 @@ namespace Marine_Permit_Palace.Controllers
 
         public JsonResult SaveFile(string custom_name, IFormFile pdf_doc)
         {
-            throw new NotImplementedException();
+            if (pdf_doc != null && !string.IsNullOrEmpty(custom_name))
+            {
+                return Json(new { result = "Success" });
+            }
+            else return Json(new { result = "FAILURE" });
         }
 
     }

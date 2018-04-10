@@ -1,4 +1,5 @@
-﻿using Marine_Permit_Palace.Models;
+﻿using iTextSharp.text.pdf;
+using Marine_Permit_Palace.Models;
 using Marine_Permit_Palace.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -32,10 +33,26 @@ namespace Marine_Permit_Palace.Controllers
             {
                 //Grab the desired file
                 Document document = _DocumentSerivce.Get(id);
-                MemoryStream PDF_Mem = new MemoryStream(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.TemplateName)));
-                return new FileStreamResult(PDF_Mem, "application/pdf");
-                //populate all the known fields
-                //return to the populated file
+                MemoryStream PDF_Mem = new MemoryStream();
+                MemoryStream file = new MemoryStream(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.TemplateName)));
+                file.CopyTo(PDF_Mem);
+                using (PdfReader reader = new PdfReader(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.TemplateName))))
+                using (PdfStamper stamper = new PdfStamper(reader, PDF_Mem))
+                {
+                    stamper.FormFlattening = true;
+                    AcroFields pdfFormFields = stamper.AcroFields;
+                    pdfFormFields.GenerateAppearances = true;
+
+                    pdfFormFields.SetField("last_first_middle", "Bobby G");
+
+                    pdfFormFields.SetField("rank", "G");
+
+                    
+
+                    //populate all the known fields
+                    //return to the populated file
+                }
+                return new FileStreamResult(new MemoryStream(PDF_Mem.ToArray()), "application/pdf");
             }
             else
             {

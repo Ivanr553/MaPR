@@ -17,10 +17,16 @@ namespace Marine_Permit_Palace.Controllers
         private readonly ISubmittedDocumentService _SubmittedDocumentService;
         private readonly IDocumentCheckBoxFieldService _DocumentCheckBoxService;
         private readonly IDocumentFormFieldService _DocumentFormFieldService;
-        public DocumentSaveController(IDocumentService ids, ISubmittedDocumentService isds)
+        public DocumentSaveController(IDocumentService ids,
+            IDocumentCheckBoxFieldService idcbs,
+            IDocumentFormFieldService idffs,
+            ISubmittedDocumentService isds)
         {
             _DocumentSerivce = ids;
+            _DocumentFormFieldService = idffs;
             _SubmittedDocumentService = isds;
+            _DocumentCheckBoxService = idcbs;
+
         }
 
         public IActionResult GetAllDocuments()

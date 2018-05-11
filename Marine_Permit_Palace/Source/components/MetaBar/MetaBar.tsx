@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
+import * as $ from 'jquery'
 
 const s = require('./styling/style.sass')
 
@@ -39,7 +40,7 @@ export default class MetaBar extends React.Component<any, any> {
     }
 
     //Will get the documents from the back end, for now is just using a hardcoded object
-    getDocuments() {
+    async getDocuments() {
         
         let result = {
             documents: [
@@ -76,6 +77,20 @@ export default class MetaBar extends React.Component<any, any> {
                 file: 'caf.pdf'
             }
             ]
+        }
+
+        try {
+
+            let documentList = await $.get('/DocumentSave/GetAllDocuments')
+            console.log(documentList)
+
+            let pdfID = documentList[0].idDocument
+
+            let returnPDF = await $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`)
+            // console.log(returnPDF)
+
+        } catch(e) {
+            console.log(e)
         }
 
         this.setState({

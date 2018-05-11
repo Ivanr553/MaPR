@@ -1,6 +1,8 @@
 import * as React from 'react'
-import PDF from 'react-pdf-js'
-import $ from 'jquery'
+import * as PDF from 'react-pdf-js'
+import * as $ from 'jquery'
+import * as pdfjs from 'pdfjs'
+
 
 const s = require('./styling/style.sass')
 
@@ -12,7 +14,7 @@ export default class DocumentView extends React.Component<any, any> {
             numPages: 1,
             pageNumber: 1,
             document: [],
-            file: ''
+            url: ''
         }
 
         // this.onDocumentLoad = this.onDocumentLoad.bind(this)
@@ -22,35 +24,80 @@ export default class DocumentView extends React.Component<any, any> {
 
         try {
 
-            let session = await $.post('/checkSession')
-            let username = session.username
+            let documentList = await $.get('/DocumentSave/GetAllDocuments')
 
-            let user = await $.post('/findUser', {username: username})
-            let pdfId = user.pdfs[0]
-            console.log(pdfId)
+            let pdfID = documentList[0].idDocument
 
-            const pdf = await $.post('/viewPDF', {id: pdfId})
-            let blob = new Blob(pdf, {type: 'application/pdf'})
-            let url = URL.createObjectURL(blob);
-            this.setState({
-                file: url
-            })
+            let pdfURL = `/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`
+
+            let pdf = await $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`)
+
+            let blob = new Blob([pdf])
+            let blobURl = window.URL.createObjectURL(blob)
+
+            let that = this
+
+            // var request = new XMLHttpRequest();
+            // request.open("GET", pdfURL, true); 
+            // request.responseType = "blob";
+            // request.onload = function (e) {
+            //     if (this.status === 200) {
+            //         let file = window.URL.createObjectURL(this.response)
+            //         that.setState({
+            //             url: file
+            //         }, () => {
+            //         })
+            //     };
+            // };
+            // request.send();
+
         } catch (err) {
             console.log('Error:', err)
         }
     }
 
+    async populatePage() {
+
+        let documentList = await $.get('/DocumentSave/GetAllDocuments')
+
+        let documentID = documentList[0]
+        
+        let object = await $.get(`/GetDocumentMeta?document_id=${documentID}`)
+
+        let documentFields = []
+
+        for(let form in object) {
+            let currentForm = object[form]
+
+                let newForm = 
+                    <div className='document-form' style={{left: `${currentForm.left}px`, top: `${currentForm.top}px`, position: 'absolute'}}>
+                        <div className='input-form-name'>{currentForm.field_name}</div>
+                        <input className='document-input' defaultValue={currentForm.value} type="text"/>
+                    </div>
+                documentFields.push(newForm)
+        }
+
+        this.setState({
+            documentFields: documentFields
+        })
+
+    }
+
     componentDidMount() {
-        // this.getDocument()
+        this.getDocument()
+        this.populatePage()
         // this.run()
     }
 
     render() {
-        let file = '/dist/documents/' + this.props.file
+        let file = this.state.url
 
         return(
             <div className='DocumentView'>
-                <embed width="100%" height="100%" data-name="plugin" id="plugin" src={file} type="application/pdf"  title="" data-internalinstanceid='8'/>
+                {/* <embed width="100%" height="100%" data-name="plugin" id="plugin" src={file} type="application/pdf"  title="" data-internalinstanceid='8'/> */}
+                <div id='document-form-div'>
+                    {this.state.documentFields}
+                </div>
             </div>
         )
     }

@@ -301,6 +301,8 @@
     "path-to-regexp": "^1.7.0",
     "path-type": "^1.1.0",
     "pbkdf2": "^3.0.14",
+    "pdffiller": "0.0.10",
+    "pdfjs": "^2.0.0-alpha.7",
     "pify": "^2.3.0",
     "pinkie": "^2.0.4",
     "pinkie-promise": "^2.0.1",

@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ModelManagers\" />
     <Folder Include="wwwroot\permit_templates\" />
   </ItemGroup>
 

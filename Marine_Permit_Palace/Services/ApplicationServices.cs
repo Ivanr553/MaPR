@@ -1,6 +1,7 @@
 ﻿using Marine_Permit_Palace.Data;
 using Marine_Permit_Palace.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Marine_Permit_Palace.Services
     }
     public interface ISubmittedDocumentService : IDataRowPropertiesInterface<SubmittedDocument>
     {
-        
+        SubmittedDocument GetPopulated(Guid IdSubmittedDocument);
     }
 
     public interface IDocumentFormFieldService : IDataRowPropertiesInterface<DocumentFormField>
@@ -71,6 +72,16 @@ namespace Marine_Permit_Palace.Services
         public SubmittedDocumentService(ApplicationDbContext ctx, UserManager<ApplicationUser> uman) : base(ctx, uman)
         {
 
+        }
+
+        public SubmittedDocument GetPopulated(Guid IdSubmittedDocument)
+        {
+            return _context.SubmittedDocument
+                .Include(e => e.Document)
+                .Include(e => e.DocumentFormFields)
+                .Include(e => e.DocumentCheckBoxFields)
+                .Include(e => e.DocumentSignatureFields)
+                .FirstOrDefault(e => e.IdSubmittedDocument == IdSubmittedDocument);
         }
     }
 }

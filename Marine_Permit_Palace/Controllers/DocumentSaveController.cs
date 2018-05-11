@@ -72,6 +72,48 @@ namespace Marine_Permit_Palace.Controllers
             }
         }
 
+        public async Task<JsonResult> GetDocumentMeta(string document_id)
+        {
+            Guid id;
+            if (Guid.TryParse(document_id, out id))
+            {
+                //Grab the desired file
+                Document document = _DocumentSerivce.Get(id);
+                MemoryStream PDF_Mem = new MemoryStream();
+                MemoryStream file = new MemoryStream(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.TemplateName)));
+                file.CopyTo(PDF_Mem);
+                using (PdfReader reader = new PdfReader(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.TemplateName))))
+                using (PdfStamper stamper = new PdfStamper(reader, PDF_Mem, '\0', false))
+                {
+                    stamper.FormFlattening = false;
+                    AcroFields pdfFormFields = stamper.AcroFields;
+                    //AcroFields.FieldPosition
+                    
+                    ApplicationUser user = await _UserManager.GetUserAsync(User);
+                    if (user != null)
+                    {
+                        //populate all the known fields based on user information
+                        AutoFillManager.AutoFillBasedOnUser(user, pdfFormFields);
+                    }
+
+                    List<string> FieldNames = pdfFormFields.Fields.Select(e => e.Key).ToList();
+                    List<object> JsonDocument = new List<object>();
+                    foreach(string field in FieldNames)
+                    {
+                        var Position = pdfFormFields.GetFieldPositions(field).FirstOrDefault();
+                        if (Position == null) continue;
+                        string value = pdfFormFields.GetField(field);
+                        JsonDocument.Add(new { field_name = field, field_position = Position, value });
+                    }
+                    return Json(JsonDocument);
+                }
+            }
+            else
+            {
+                return Json(new Result("Failure", "Incorrect Guid Format", 406));
+            }
+        }
+
         public IActionResult GetSavedFile(string submitted_document_id)
         {
             Guid id;
@@ -87,7 +129,7 @@ namespace Marine_Permit_Palace.Controllers
                 {
                     stamper.FormFlattening = false;
                     AcroFields pdfFormFields = stamper.AcroFields;
-
+                    AcroFields.FieldPosition fieldPosition = new AcroFields.FieldPosition();
                     if (!AutoFillManager.AutoFillFromFields(pdfFormFields, document.DocumentFormFields.ToList(), document.DocumentCheckBoxFields.ToList(), document.DocumentSignatureFields.ToList()))
                     {
                         //not all fields were populated ... what do

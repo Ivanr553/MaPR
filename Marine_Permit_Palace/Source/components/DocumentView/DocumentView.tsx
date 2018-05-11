@@ -60,17 +60,18 @@ export default class DocumentView extends React.Component<any, any> {
 
         let documentList = await $.get('/DocumentSave/GetAllDocuments')
 
-        let documentID = documentList[0]
+        let documentID = documentList[0].idDocument
         
-        let object = await $.get(`/GetDocumentMeta?document_id=${documentID}`)
+        let object = await $.get(`/DocumentSave/GetDocumentMeta?document_id=${documentID}`)
 
         let documentFields = []
 
         for(let form in object) {
             let currentForm = object[form]
+            console.log(currentForm.left)
 
                 let newForm = 
-                    <div className='document-form' style={{left: `${currentForm.left}px`, top: `${currentForm.top}px`, position: 'absolute'}}>
+                    <div className='document-form' style={{}}>
                         <div className='input-form-name'>{currentForm.field_name}</div>
                         <input className='document-input' defaultValue={currentForm.value} type="text"/>
                     </div>

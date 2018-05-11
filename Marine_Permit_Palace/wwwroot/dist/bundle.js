@@ -22438,12 +22438,13 @@ class DocumentView extends React.Component {
     populatePage() {
         return __awaiter(this, void 0, void 0, function* () {
             let documentList = yield $.get('/DocumentSave/GetAllDocuments');
-            let documentID = documentList[0];
-            let object = yield $.get(`/GetDocumentMeta?document_id=${documentID}`);
+            let documentID = documentList[0].idDocument;
+            let object = yield $.get(`/DocumentSave/GetDocumentMeta?document_id=${documentID}`);
             let documentFields = [];
             for (let form in object) {
                 let currentForm = object[form];
-                let newForm = React.createElement("div", { className: 'document-form', style: { left: `${currentForm.left}px`, top: `${currentForm.top}px`, position: 'absolute' } },
+                console.log(currentForm.left);
+                let newForm = React.createElement("div", { className: 'document-form', style: {} },
                     React.createElement("div", { className: 'input-form-name' }, currentForm.field_name),
                     React.createElement("input", { className: 'document-input', defaultValue: currentForm.value, type: "text" }));
                 documentFields.push(newForm);
@@ -33898,7 +33899,7 @@ exports = module.exports = __webpack_require__(16)(false);
 
 
 // module
-exports.push([module.i, ".DocumentView {\n  width: 85%;\n  margin-left: 15%;\n  height: 90vh;\n  overflow: auto; }\n\n#document-form-div {\n  padding: 2.5%; }\n\n.document-form {\n  float: left;\n  margin-left: 1.5%; }\n\n.input-form-name {\n  font-size: 1.3em;\n  text-indent: -5px; }\n\n.document-input {\n  padding: 3%;\n  font-size: 1em; }\n\n.document-input:focus {\n  outline: none; }\n\n.pdf-viewer {\n  margin-bottom: 5vh;\n  margin-top: 5vh;\n  margin-left: 22.5%; }\n\n.document {\n  background-color: white;\n  width: 595px;\n  max-width: 70%;\n  height: 842px;\n  margin-top: 50px;\n  margin-bottom: 50px;\n  margin-left: calc((100vw - 15vw - 595px)/2);\n  float: left; }\n", ""]);
+exports.push([module.i, ".DocumentView {\n  width: 85%;\n  margin-left: 15%;\n  height: 90vh;\n  overflow: auto; }\n\n#document-form-div {\n  padding: 2.5%; }\n\n.document-form {\n  float: left;\n  margin: 1%;\n  margin-left: 1.5%;\n  padding: 20px; }\n\n.input-form-name {\n  font-size: 1.3em;\n  text-indent: -5px; }\n\n.document-input {\n  padding: 3%;\n  font-size: 1em; }\n\n.document-input:focus {\n  outline: none; }\n\n.pdf-viewer {\n  margin-bottom: 5vh;\n  margin-top: 5vh;\n  margin-left: 22.5%; }\n\n.document {\n  background-color: white;\n  width: 595px;\n  max-width: 70%;\n  height: 842px;\n  margin-top: 50px;\n  margin-bottom: 50px;\n  margin-left: calc((100vw - 15vw - 595px)/2);\n  float: left; }\n", ""]);
 
 // exports
 

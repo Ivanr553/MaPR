@@ -207,14 +207,13 @@ namespace Marine_Permit_Palace.Controllers
 
                     _DocumentCheckBoxService.SaveAllCheckBoxFields(CBFields);
                     _DocumentFormFieldService.SaveAllFormFields(FMFields);
+                    ///TODO SIGNATURE FIELDS
                     //Save the Sig Fields
-                    throw new NotImplementedException();
                 }
-
-
                 return Json(new { result = "Success" });
             }
-            else return Json(new { result = "FAILURE" });
+
+            else return Json(new { result = "Failure" });
         }
 
     }

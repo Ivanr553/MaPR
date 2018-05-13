@@ -96,16 +96,30 @@ namespace Marine_Permit_Palace.Controllers
                         AutoFillManager.AutoFillBasedOnUser(user, pdfFormFields);
                     }
 
+
+                    foreach(var test in pdfFormFields.FieldCache.Values)
+                    {
+                        var label = test.DefaultText;
+                        var label2 = test.Text;
+                    }
+
+
                     List<string> FieldNames = pdfFormFields.Fields.Select(e => e.Key).ToList();
                     List<object> JsonDocument = new List<object>();
                     foreach(string field in FieldNames)
                     {
+                        
                         var Position = pdfFormFields.GetFieldPositions(field).FirstOrDefault();
                         if (Position == null) continue;
                         string value = pdfFormFields.GetField(field);
                         JsonDocument.Add(new { field_name = field, field_position = Position, value });
                     }
-                    return Json(JsonDocument);
+                    var page1 = reader.GetPageSize(0);
+                    return Json(new
+                    {
+                        document_size = page1,
+                        document_meta = JsonDocument
+                    });
                 }
             }
             else

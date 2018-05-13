@@ -39,5 +39,8 @@ module.exports = {
   },
   resolve: {
       extensions: [".tsx", ".ts", ".js"]
-  }
+  },
+  externals:[{
+    xmlhttprequest: '{XMLHttpRequest:XMLHttpRequest}'
+}]
 };

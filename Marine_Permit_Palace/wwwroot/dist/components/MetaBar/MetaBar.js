@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
+const $ = require("jquery");
 const s = require('./styling/style.sass');
 const DocumentList_1 = require("../DocumentList/DocumentList");
 const DocumentView_1 = require("../DocumentView/DocumentView");
@@ -41,50 +42,62 @@ class MetaBar extends React.Component {
     }
     //Will get the documents from the back end, for now is just using a hardcoded object
     getDocuments() {
-        let result = {
-            documents: [
-                {
-                    id: '12345',
-                    title: 'Road Test',
-                    created_by: 'Officer',
-                    action_required: 'Scoring',
-                    status: 'pending',
-                    file: 'RoadTest.pdf'
-                },
-                {
-                    id: '23456',
-                    title: 'Pre Trip and Skills Test',
-                    created_by: 'Officer',
-                    action_required: 'Scoring',
-                    status: 'pending',
-                    file: 'PreTripandSkillsTest.pdf'
-                },
-                {
-                    id: '23456',
-                    title: 'NAVMC',
-                    created_by: 'Officer',
-                    action_required: 'Fill Out',
-                    status: 'pending',
-                    file: 'NAVMC10694.pdf'
-                },
-                {
-                    id: '34567',
-                    title: 'Test',
-                    created_by: 'Officer',
-                    action_required: 'Fill Out',
-                    status: 'pending',
-                    file: 'caf.pdf'
-                }
-            ]
-        };
-        this.setState({
-            documentResults: result.documents
-        }, () => {
-            this.populateDocumentLinks();
+        return __awaiter(this, void 0, void 0, function* () {
+            let result = {
+                documents: [
+                    {
+                        id: '12345',
+                        title: 'Road Test',
+                        created_by: 'Officer',
+                        action_required: 'Scoring',
+                        status: 'pending',
+                        file: 'RoadTest.pdf'
+                    },
+                    {
+                        id: '23456',
+                        title: 'Pre Trip and Skills Test',
+                        created_by: 'Officer',
+                        action_required: 'Scoring',
+                        status: 'pending',
+                        file: 'PreTripandSkillsTest.pdf'
+                    },
+                    {
+                        id: '23456',
+                        title: 'NAVMC',
+                        created_by: 'Officer',
+                        action_required: 'Fill Out',
+                        status: 'pending',
+                        file: 'NAVMC10694.pdf'
+                    },
+                    {
+                        id: '34567',
+                        title: 'Test',
+                        created_by: 'Officer',
+                        action_required: 'Fill Out',
+                        status: 'pending',
+                        file: 'caf.pdf'
+                    }
+                ]
+            };
+            try {
+                let documentList = yield $.get('/DocumentSave/GetAllDocuments');
+                console.log(documentList);
+                let pdfID = documentList[0].idDocument;
+                let returnPDF = yield $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`);
+                // console.log(returnPDF)
+            }
+            catch (e) {
+                console.log(e);
+            }
             this.setState({
-                currentView: React.createElement(DocumentList_1.default, { documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
+                documentResults: result.documents
             }, () => {
-                this.props.getCurrentView(this.state.currentView);
+                this.populateDocumentLinks();
+                this.setState({
+                    currentView: React.createElement(DocumentList_1.default, { documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
+                }, () => {
+                    this.props.getCurrentView(this.state.currentView);
+                });
             });
         });
     }

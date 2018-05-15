@@ -97,13 +97,6 @@ namespace Marine_Permit_Palace.Controllers
                     }
 
 
-                    foreach(var test in pdfFormFields.FieldCache.Values)
-                    {
-                        var label = test.DefaultText;
-                        var label2 = test.Text;
-                    }
-
-
                     List<string> FieldNames = pdfFormFields.Fields.Select(e => e.Key).ToList();
                     List<object> JsonDocument = new List<object>();
                     foreach(string field in FieldNames)
@@ -114,7 +107,7 @@ namespace Marine_Permit_Palace.Controllers
                         string value = pdfFormFields.GetField(field);
                         JsonDocument.Add(new { field_name = field, field_position = Position, value });
                     }
-                    var page1 = reader.GetPageSize(0);
+                    var page1 = reader.GetPageSize(1);
                     return Json(new
                     {
                         document_size = page1,

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@types/pdfjs-dist": "^0.1.2",
     "abbrev": "^1.1.1",
     "acorn": "^5.5.3",
     "acorn-dynamic-import": "^2.0.2",
@@ -302,7 +303,7 @@
     "path-type": "^1.1.0",
     "pbkdf2": "^3.0.14",
     "pdffiller": "0.0.10",
-    "pdfjs": "^2.0.0-alpha.7",
+    "pdfjs": "^2.0.0-alpha.3",
     "pify": "^2.3.0",
     "pinkie": "^2.0.4",
     "pinkie-promise": "^2.0.1",

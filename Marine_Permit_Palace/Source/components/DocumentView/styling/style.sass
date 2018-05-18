@@ -1,30 +1,44 @@
 .DocumentView
-  width: 85%
-  margin-left: 15%
+  width: 85vw
+  margin-left: 15vw
   height: 90vh
   overflow: auto
+  padding-top: 5vh
+  position: relative
+
+.pdf-image
+  position: absolute
+  width: 90% !important
+  height: auto !important
+  margin-left: calc(85vw * 0.05)
+  margin-bottom: 5vh
 
 #document-form-div
-  padding: 2.5%
-  // display: flex
-  // flex-direction: row
-  // align-items: flex-start
-  // justify-content: flex-start
-  // max-width: 100vw
+  margin-left: calc(85vw * 0.05)
+  position: relative
+  top: 0
+  left: 0
+  border: solid 1px red
+
+.form-wrapper
+
+.document-checkbox
+  width: 100% !important
+  height: 100% !important
+  background-color: lightgrey !important
+  border: none
+  margin: 0
 
 .document-form
-  float: left
-  margin: 1%
-  margin-left: 1.5%
-  padding: 20px
+  overflow: auto
 
 .input-form-name
   font-size: 1.3em
   text-indent: -5px
 
 .document-input
-  padding: 3%
-  font-size: 1em
+  background-color: lightgrey
+  border: none
 
 .document-input:focus
   outline: none

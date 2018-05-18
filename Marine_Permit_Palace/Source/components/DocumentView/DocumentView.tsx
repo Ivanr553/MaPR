@@ -1,7 +1,7 @@
 import * as React from 'react'
-import * as PDF from 'react-pdf-js'
+import PDF from 'react-pdf-js'
 import * as $ from 'jquery'
-import * as pdfjs from 'pdfjs'
+// import { PDFJS, PDFDocumentProxy, PDFPromise } from 'pdfjs-dist';
 
 
 const s = require('./styling/style.sass')
@@ -14,10 +14,10 @@ export default class DocumentView extends React.Component<any, any> {
             numPages: 1,
             pageNumber: 1,
             document: [],
-            url: ''
+            url: '',
+            documentObject: {}
         }
 
-        // this.onDocumentLoad = this.onDocumentLoad.bind(this)
     }
 
     async getDocument() {
@@ -30,26 +30,9 @@ export default class DocumentView extends React.Component<any, any> {
 
             let pdfURL = `/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`
 
-            let pdf = await $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`)
-
-            let blob = new Blob([pdf])
-            let blobURl = window.URL.createObjectURL(blob)
-
-            let that = this
-
-            // var request = new XMLHttpRequest();
-            // request.open("GET", pdfURL, true); 
-            // request.responseType = "blob";
-            // request.onload = function (e) {
-            //     if (this.status === 200) {
-            //         let file = window.URL.createObjectURL(this.response)
-            //         that.setState({
-            //             url: file
-            //         }, () => {
-            //         })
-            //     };
-            // };
-            // request.send();
+            this.setState({
+                url: pdfURL
+            })
 
         } catch (err) {
             console.log('Error:', err)
@@ -61,41 +44,102 @@ export default class DocumentView extends React.Component<any, any> {
         let documentList = await $.get('/DocumentSave/GetAllDocuments')
 
         let documentID = documentList[0].idDocument
+
+        let pdf = await $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${documentID}`)
         
-        let object = await $.get(`/DocumentSave/GetDocumentMeta?document_id=${documentID}`)
+        let documentObject = await $.get(`/DocumentSave/GetDocumentMeta?document_id=${documentID}`)
+
+
 
         let documentFields = []
 
-        for(let form in object) {
-            let currentForm = object[form]
-            console.log(currentForm.left)
+        //Document Variables
+        //Width: 0.9*85vw
+        //Height: auto
+
+        let pdfWidth = documentObject.document_size.right
+        let pdfHeight = documentObject.document_size.height
+        let pdfRatio = pdfHeight/pdfWidth
+        let webWidth = 0.9*85 //in vw
+        let webHeigth = webWidth * pdfRatio // in vw
+
+        for(let form in documentObject.document_meta) {
+            let currentForm = documentObject.document_meta[form]
+            let name = currentForm.field_name
+            while(name.indexOf('_') > -1) {
+                name = name.replace('_', ' ')
+            }
+
+            let left = ((currentForm.field_position.position.left) * webWidth) / pdfWidth
+            let top = ((pdfHeight - currentForm.field_position.position.top) * webHeigth) / pdfHeight
+            let height = (currentForm.field_position.position.height * webHeigth) / pdfHeight
+            let width = (currentForm.field_position.position.width * webWidth) / pdfWidth
+
+            if(name.indexOf('check') === 0) {
+
+                currentForm.value = false
 
                 let newForm = 
-                    <div className='document-form' style={{}}>
-                        <div className='input-form-name'>{currentForm.field_name}</div>
-                        <input className='document-input' defaultValue={currentForm.value} type="text"/>
+                    <div className='form-wrapper' style={{ position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw`}}>
+                        <input id={form} className='document-checkbox' style={{}} type="checkbox" onChange={(e) => {this.handleFormEdit(e, form)}}/>
+                    </div>
+
+                documentFields.push(newForm)
+            } else {
+                let newForm = 
+                    <div className='form-wrapper'>
+                        <input id={form} style={{ position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw`}} className='document-input' defaultValue={currentForm.value} type="text" onChange={(e) => {this.handleFormEdit(e, form)}}/>
                     </div>
                 documentFields.push(newForm)
+            }
         }
 
         this.setState({
-            documentFields: documentFields
+            documentFields: documentFields,
+            documentObject: documentObject
+        }, () => {
+            console.log(this.state.documentFields)
+            console.log(this.state.documentObject)
         })
 
+    }
+
+    handleFormEdit(e, id) {
+
+        let documentObject = Object.assign({}, this.state.documentObject)
+        let currentForm = documentObject.document_meta[id]
+
+        if(e.target.className === 'document-checkbox'){
+            if(currentForm.value != true) {
+                currentForm.value = true
+            } else {
+                currentForm.value = false
+            }
+        } else {
+            currentForm.value = e.target.value
+        }
+
+
+        this.setState({
+            documentObject: documentObject
+        }, () => {
+            console.log('new value:', documentObject.document_meta[id].value)
+        })
     }
 
     componentDidMount() {
         this.getDocument()
         this.populatePage()
-        // this.run()
     }
 
     render() {
-        let file = this.state.url
+        let file = '../../dist/documents/NAVMC10694.pdf'
 
         return(
             <div className='DocumentView'>
-                {/* <embed width="100%" height="100%" data-name="plugin" id="plugin" src={file} type="application/pdf"  title="" data-internalinstanceid='8'/> */}
+                {/* <embed width="100%" height="100%" data-name="plugin" id="plugin" src={file}/> */}
+                <PDF className='pdf-image' file={file} >
+                </PDF>
                 <div id='document-form-div'>
                     {this.state.documentFields}
                 </div>

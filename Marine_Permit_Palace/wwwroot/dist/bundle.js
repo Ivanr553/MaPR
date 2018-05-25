@@ -22395,7 +22395,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = __webpack_require__(4);
 const react_pdf_js_1 = __webpack_require__(168);
 const $ = __webpack_require__(88);
-// import { PDFJS, PDFDocumentProxy, PDFPromise } from 'pdfjs-dist';
 const s = __webpack_require__(414);
 class DocumentView extends React.Component {
     constructor(props) {
@@ -22405,7 +22404,8 @@ class DocumentView extends React.Component {
             pageNumber: 1,
             document: [],
             url: '',
-            documentObject: {}
+            documentObject: {},
+            documentName: ''
         };
     }
     getDocument() {
@@ -22426,9 +22426,9 @@ class DocumentView extends React.Component {
     populatePage() {
         return __awaiter(this, void 0, void 0, function* () {
             let documentList = yield $.get('/DocumentSave/GetAllDocuments');
-            let documentID = documentList[0].idDocument;
-            let pdf = yield $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${documentID}`);
-            let documentObject = yield $.get(`/DocumentSave/GetDocumentMeta?document_id=${documentID}`);
+            let document_id = documentList[0].idDocument;
+            let pdf = yield $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${document_id}`);
+            let documentObject = yield $.get(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`);
             let documentFields = [];
             //Document Variables
             //Width: 0.9*85vw
@@ -22462,7 +22462,8 @@ class DocumentView extends React.Component {
             }
             this.setState({
                 documentFields: documentFields,
-                documentObject: documentObject
+                documentObject: documentObject,
+                document_id: document_id
             }, () => {
                 console.log(this.state.documentFields);
                 console.log(this.state.documentObject);
@@ -22470,23 +22471,42 @@ class DocumentView extends React.Component {
         });
     }
     handleFormEdit(e, id) {
-        let documentObject = Object.assign({}, this.state.documentObject);
-        let currentForm = documentObject.document_meta[id];
-        if (e.target.className === 'document-checkbox') {
-            if (currentForm.value != true) {
-                currentForm.value = true;
+        return __awaiter(this, void 0, void 0, function* () {
+            let documentObject = Object.assign({}, this.state.documentObject);
+            let currentForm = documentObject.document_meta[id];
+            if (e.target.className === 'document-checkbox') {
+                if (currentForm.value != true) {
+                    currentForm.value = true;
+                }
+                else {
+                    currentForm.value = false;
+                }
             }
             else {
-                currentForm.value = false;
+                currentForm.value = e.target.value;
             }
-        }
-        else {
-            currentForm.value = e.target.value;
-        }
-        this.setState({
-            documentObject: documentObject
-        }, () => {
-            console.log('new value:', documentObject.document_meta[id].value);
+            this.setState({
+                documentObject: documentObject
+            }, function () {
+                return __awaiter(this, void 0, void 0, function* () {
+                    // let saveFile = {
+                    //     document_meta: this.state.documentObject,
+                    //     name: this.state.documentName,
+                    //     document_id: this.state.document_id,
+                    //     submitted_file_id: ''
+                    // }
+                    // let saveResult = await $.ajax({
+                    //     method: 'POST',
+                    //     headers: {
+                    //       'Content-Type': 'application/json'
+                    //     },
+                    //     url: `/DocumentSave/SaveFile`,
+                    //     dataType: 'json',
+                    //     data: saveFile
+                    // })
+                    // console.log(saveResult)
+                });
+            });
         });
     }
     componentDidMount() {
@@ -110660,36 +110680,12 @@ class MetaBar extends React.Component {
             let result = {
                 documents: [
                     {
-                        id: '12345',
-                        title: 'Road Test',
-                        created_by: 'Officer',
-                        action_required: 'Scoring',
-                        status: 'pending',
-                        file: 'RoadTest.pdf'
-                    },
-                    {
-                        id: '23456',
-                        title: 'Pre Trip and Skills Test',
-                        created_by: 'Officer',
-                        action_required: 'Scoring',
-                        status: 'pending',
-                        file: 'PreTripandSkillsTest.pdf'
-                    },
-                    {
                         id: '23456',
                         title: 'NAVMC',
                         created_by: 'Officer',
                         action_required: 'Fill Out',
                         status: 'pending',
                         file: 'NAVMC10694.pdf'
-                    },
-                    {
-                        id: '34567',
-                        title: 'Test',
-                        created_by: 'Officer',
-                        action_required: 'Fill Out',
-                        status: 'pending',
-                        file: 'caf.pdf'
                     }
                 ]
             };

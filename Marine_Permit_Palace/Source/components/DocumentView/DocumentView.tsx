@@ -1,7 +1,6 @@
 import * as React from 'react'
 import PDF from 'react-pdf-js'
 import * as $ from 'jquery'
-// import { PDFJS, PDFDocumentProxy, PDFPromise } from 'pdfjs-dist';
 
 
 const s = require('./styling/style.sass')
@@ -15,7 +14,8 @@ export default class DocumentView extends React.Component<any, any> {
             pageNumber: 1,
             document: [],
             url: '',
-            documentObject: {}
+            documentObject: {},
+            documentName: ''
         }
 
     }
@@ -43,12 +43,11 @@ export default class DocumentView extends React.Component<any, any> {
 
         let documentList = await $.get('/DocumentSave/GetAllDocuments')
 
-        let documentID = documentList[0].idDocument
+        let document_id = documentList[0].idDocument
 
-        let pdf = await $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${documentID}`)
+        let pdf = await $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${document_id}`)
         
-        let documentObject = await $.get(`/DocumentSave/GetDocumentMeta?document_id=${documentID}`)
-
+        let documentObject = await $.get(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`)
 
 
         let documentFields = []
@@ -96,7 +95,8 @@ export default class DocumentView extends React.Component<any, any> {
 
         this.setState({
             documentFields: documentFields,
-            documentObject: documentObject
+            documentObject: documentObject,
+            document_id: document_id
         }, () => {
             console.log(this.state.documentFields)
             console.log(this.state.documentObject)
@@ -104,7 +104,7 @@ export default class DocumentView extends React.Component<any, any> {
 
     }
 
-    handleFormEdit(e, id) {
+    async handleFormEdit(e, id) {
 
         let documentObject = Object.assign({}, this.state.documentObject)
         let currentForm = documentObject.document_meta[id]
@@ -122,8 +122,26 @@ export default class DocumentView extends React.Component<any, any> {
 
         this.setState({
             documentObject: documentObject
-        }, () => {
-            console.log('new value:', documentObject.document_meta[id].value)
+        }, async function() {
+
+            // let saveFile = {
+            //     document_meta: this.state.documentObject,
+            //     name: this.state.documentName,
+            //     document_id: this.state.document_id,
+            //     submitted_file_id: ''
+            // }
+
+            // let saveResult = await $.ajax({
+            //     method: 'POST',
+            //     headers: {
+            //       'Content-Type': 'application/json'
+            //     },
+            //     url: `/DocumentSave/SaveFile`,
+            //     dataType: 'json',
+            //     data: saveFile
+            // })
+
+            // console.log(saveResult)
         })
     }
 

@@ -72,6 +72,13 @@ namespace Marine_Permit_Palace.Controllers
             }
         }
 
+        public struct DocumentMeta
+        {
+            public string field_name { get; set; }
+            public AcroFields.FieldPosition field_position { get; set; }
+            public string value { get; set; }
+        }
+
         public async Task<JsonResult> GetDocumentMeta(string document_id)
         {
             Guid id;
@@ -88,7 +95,7 @@ namespace Marine_Permit_Palace.Controllers
                     stamper.FormFlattening = false;
                     AcroFields pdfFormFields = stamper.AcroFields;
                     //AcroFields.FieldPosition
-                    
+
                     ApplicationUser user = await _UserManager.GetUserAsync(User);
                     if (user != null)
                     {
@@ -98,14 +105,14 @@ namespace Marine_Permit_Palace.Controllers
 
 
                     List<string> FieldNames = pdfFormFields.Fields.Select(e => e.Key).ToList();
-                    List<object> JsonDocument = new List<object>();
-                    foreach(string field in FieldNames)
+                    List<DocumentMeta> JsonDocument = new List<DocumentMeta>();
+                    foreach (string field in FieldNames)
                     {
-                        
+
                         var Position = pdfFormFields.GetFieldPositions(field).FirstOrDefault();
                         if (Position == null) continue;
                         string value = pdfFormFields.GetField(field);
-                        JsonDocument.Add(new { field_name = field, field_position = Position, value });
+                        JsonDocument.Add(new DocumentMeta() { field_name = field, field_position = Position, value = value });
                     }
                     var page1 = reader.GetPageSize(1);
                     return Json(new
@@ -167,12 +174,20 @@ namespace Marine_Permit_Palace.Controllers
             }
         }
 
-        public JsonResult SaveFile(string custom_name, IFormFile pdf_doc, string document_id, string sub_file_id = null)
+        public class SaveDocumentObject
         {
-            if (pdf_doc != null && !string.IsNullOrEmpty(custom_name) && !string.IsNullOrEmpty(document_id))
+            public List<DocumentMeta> document_meta { get; set; }
+            public string name { get; set; }
+            public string document_id { get; set; }
+            public string submitted_file_id { get; set; }
+        }
+
+        public JsonResult SaveFile([FromBody] SaveDocumentObject document)
+        {
+            if (document != null && !string.IsNullOrEmpty(document.name) && !string.IsNullOrEmpty(document.document_id))
             {
                 Guid DocumentId;
-                if (!Guid.TryParse(document_id, out DocumentId))
+                if (!Guid.TryParse(document.document_id, out DocumentId))
                 {
                     return Json(new { result = "Failure", reason = "Incorrect GUID format" });
                 }
@@ -181,84 +196,64 @@ namespace Marine_Permit_Palace.Controllers
                 {
                     return Json(new { result = "Failure", reason = "No Docuemnt with that ID exists" });
                 }
-                MemoryStream saved_doc = new MemoryStream();
-                pdf_doc.OpenReadStream().CopyTo(saved_doc);
-                using (PdfReader reader = new PdfReader(saved_doc.ToArray()))
-                using (PdfStamper stamper = new PdfStamper(reader, saved_doc))
+
+                Guid sub_file_guid = Guid.Empty;
+                SubmittedDocument SubmittedDoc = null;
+                if (Guid.TryParse(document.submitted_file_id, out sub_file_guid))
                 {
-                    AcroFields form_fields = stamper.AcroFields;
-                    //Field Name, Field Value
-                    Dictionary<string, string> TextFields = new Dictionary<string, string>();
-                    Dictionary<string, string> CheckBoxFields = new Dictionary<string, string>();
-                    Dictionary<string, string> SignatureFields = new Dictionary<string, string>();
-
-                    form_fields.Fields.Keys.ToList().ForEach(e =>
-                    {
-                        switch (form_fields.GetFieldType(e))
-                        {
-                            case AcroFields.FIELD_TYPE_TEXT:
-                                {
-                                    TextFields.Add(e, form_fields.GetField(e));
-                                    break;
-                                }
-                            case AcroFields.FIELD_TYPE_CHECKBOX:
-                                {
-                                    CheckBoxFields.Add(e, form_fields.GetField(e));
-                                    break;
-                                }
-                            case AcroFields.FIELD_TYPE_SIGNATURE:
-                                {
-                                    SignatureFields.Add(e, form_fields.GetField(e));
-                                    break;
-                                }
-                            default:
-                                {
-                                    //Field not supported
-                                    break;
-                                }
-                        }
-                    });
-                    Guid sub_file_guid;
-                    SubmittedDocument SubmittedDoc = null;
-                    if (Guid.TryParse(sub_file_id, out sub_file_guid))
-                    {
-                        SubmittedDoc = _SubmittedDocumentService.Get(sub_file_guid);
-                    }
-                    if (SubmittedDoc == null)
-                    {
-                        SubmittedDoc = new SubmittedDocument()
-                        {
-                            Document = RefDocument,
-                            DocumentId = DocumentId,
-                            Name = custom_name
-                        };
-                    }
-
-                    SubmittedDoc.Name = custom_name;
-                    if (SignatureFields.All(e => !string.IsNullOrEmpty(e.Value)))
-                    {
-                        //Check if all Fields are occupied based on javascript results ??? 
-                        //Use NODEJs to execute the stored Javascript code (Will call from a list of fields)
-                        //Like IsCompleted? Will return false if the field is empty and required
-                        //Think of other cool ideas to check if these fields are required or not
-                        SubmittedDoc.IsCompleted = true;
-                    }
-                    if (string.IsNullOrEmpty(sub_file_id))
-                    {
-                        SubmittedDoc = _SubmittedDocumentService.Add(SubmittedDoc);
-                    }
-                    else
-                    {
-                        SubmittedDoc = _SubmittedDocumentService.Update(SubmittedDoc);
-                    }
-                    List<DocumentCheckBoxField> CBFields = CheckBoxFields.Select(e => new DocumentCheckBoxField() { FormValue = (e.Value == "On"), IdFormName = e.Key, IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument }).ToList();
-                    List<DocumentFormField> FMFields = TextFields.Select(e => new DocumentFormField() { FormValue = e.Value, IdFormName = e.Key, IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument }).ToList();
-
-                    _DocumentCheckBoxService.SaveAllCheckBoxFields(CBFields);
-                    _DocumentFormFieldService.SaveAllFormFields(FMFields);
-                    ///TODO SIGNATURE FIELDS
-                    //Save the Sig Fields
+                    SubmittedDoc = _SubmittedDocumentService.Get(sub_file_guid);
+                    SubmittedDoc.Name = document.name;
                 }
+                else
+                {
+                    SubmittedDoc = new SubmittedDocument()
+                    {
+                        Document = RefDocument,
+                        DocumentId = DocumentId,
+                        Name = document.name
+                    };
+                }
+                //if (SignatureFields.All(e => !string.IsNullOrEmpty(e.Value)))
+                //{
+                //    //Check if all Fields are occupied based on javascript results ??? 
+                //    //Use NODEJs to execute the stored Javascript code (Will call from a list of fields)
+                //    //Like IsCompleted? Will return false if the field is empty and required
+                //    //Think of other cool ideas to check if these fields are required or not
+                //    SubmittedDoc.IsCompleted = true;
+                //}
+                if (sub_file_guid != Guid.Empty)
+                {
+                    SubmittedDoc = _SubmittedDocumentService.Add(SubmittedDoc);
+                }
+                else
+                {
+                    SubmittedDoc = _SubmittedDocumentService.Update(SubmittedDoc);
+                }
+                List<DocumentCheckBoxField> CBFields = document.document_meta
+                    .Where(e => e.value == "True" || e.value == "False")
+                    .Select(e => new DocumentCheckBoxField()
+                    {
+                        FormValue = (e.value == "On"),
+                        IdFormName = e.field_name,
+                        IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument
+                    }).ToList();
+
+                List<DocumentFormField> FMFields = document.document_meta
+                    .Where(e => e.value != "True" && e.value != "False")
+                    .Select(e => new DocumentFormField()
+                    {
+                        FormValue = e.value,
+                        IdFormName = e.field_name,
+                        IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument
+                    }).ToList();
+
+                ///TODO SIGNATURE FIELDS
+                //Save the Sig Fields
+
+                _DocumentCheckBoxService.SaveAllCheckBoxFields(CBFields);
+                _DocumentFormFieldService.SaveAllFormFields(FMFields);
+
+
                 return Json(new { result = "Success" });
             }
 

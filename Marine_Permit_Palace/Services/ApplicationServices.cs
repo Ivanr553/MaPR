@@ -40,7 +40,37 @@ namespace Marine_Permit_Palace.Services
         /// <returns></returns>
         public bool SaveAllFormFields(List<DocumentFormField> Fields)
         {
-            throw new NotImplementedException();
+            if (Fields.Count > 0)
+            {
+                List<DocumentFormField> Existing = _context.DocumentFormField
+                    .Where(e => e.IdSubmittedDocumentId == Fields.First().IdSubmittedDocumentId)
+                    .ToList();
+                List<DocumentFormField> ToUpdate = new List<DocumentFormField>();
+                List<DocumentFormField> ToAdd = new List<DocumentFormField>();
+                if (Existing.Count() > 0)
+                {
+                    Fields.ForEach(e =>
+                    {
+                        if (Existing.FirstOrDefault(f => f.IdFormName == e.IdFormName) != null)
+                        {
+                            ToUpdate.Add(e);
+                        }
+                        else ToAdd.Add(e);
+                    });
+
+                    _context.DocumentFormField.AddRange(ToAdd);
+                    _context.DocumentFormField.UpdateRange(ToUpdate);
+                    _context.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    _context.DocumentFormField.AddRange(Fields);
+                    _context.SaveChanges();
+                    return true;
+                }
+            }
+            else return false;
         }
     }
     public class DocumentCheckBoxFieldService : DataRowPropertiesInterfaceImplementation<DocumentCheckBoxField>, IDocumentCheckBoxFieldService
@@ -56,7 +86,38 @@ namespace Marine_Permit_Palace.Services
         /// <returns></returns>
         public bool SaveAllCheckBoxFields(List<DocumentCheckBoxField> Fields)
         {
-            throw new NotImplementedException();
+            if (Fields.Count > 0)
+            {
+                List<DocumentCheckBoxField> Existing = _context.DocumentCheckBoxField
+                    .Where(e => e.IdSubmittedDocumentId == Fields.First().IdSubmittedDocumentId)
+                    .ToList();
+                List<DocumentCheckBoxField> ToUpdate = new List<DocumentCheckBoxField>();
+                List<DocumentCheckBoxField> ToAdd = new List<DocumentCheckBoxField>();
+                if (Existing.Count() > 0)
+                {
+                    Fields.ForEach(e =>
+                    {
+                        if (Existing.FirstOrDefault(f => f.IdFormName == e.IdFormName) != null)
+                        {
+                            ToUpdate.Add(e);
+                        }
+                        else ToAdd.Add(e);
+                    });
+
+                    _context.DocumentCheckBoxField.AddRange(ToAdd);
+                    _context.DocumentCheckBoxField.UpdateRange(ToUpdate);
+                    _context.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    _context.DocumentCheckBoxField.AddRange(Fields);
+                    _context.SaveChanges();
+                    return true;
+                }
+            }
+            else return false;
+
         }
     }
 

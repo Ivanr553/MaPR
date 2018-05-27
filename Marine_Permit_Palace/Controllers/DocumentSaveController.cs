@@ -300,5 +300,18 @@ namespace Marine_Permit_Palace.Controllers
             else return Json(new { result = "Failure" });
         }
 
+        /// <summary>
+        /// Will return all documents that were edited / saved by the user.
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult GetSavedDocuments()
+        {
+            throw new NotImplementedException();
+        }
+
+        public JsonResult SearchSavedDocument(string name)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

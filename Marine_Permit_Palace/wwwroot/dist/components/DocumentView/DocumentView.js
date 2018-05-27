@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
+const react_pdf_js_1 = require("react-pdf-js");
 const $ = require("jquery");
 const s = require('./styling/style.sass');
 class DocumentView extends React.Component {
@@ -18,9 +19,10 @@ class DocumentView extends React.Component {
             numPages: 1,
             pageNumber: 1,
             document: [],
-            url: ''
+            url: '',
+            documentObject: {},
+            documentName: ''
         };
-        // this.onDocumentLoad = this.onDocumentLoad.bind(this)
     }
     getDocument() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -28,23 +30,9 @@ class DocumentView extends React.Component {
                 let documentList = yield $.get('/DocumentSave/GetAllDocuments');
                 let pdfID = documentList[0].idDocument;
                 let pdfURL = `/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`;
-                let pdf = yield $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`);
-                let blob = new Blob([pdf]);
-                let blobURl = window.URL.createObjectURL(blob);
-                let that = this;
-                // var request = new XMLHttpRequest();
-                // request.open("GET", pdfURL, true); 
-                // request.responseType = "blob";
-                // request.onload = function (e) {
-                //     if (this.status === 200) {
-                //         let file = window.URL.createObjectURL(this.response)
-                //         that.setState({
-                //             url: file
-                //         }, () => {
-                //         })
-                //     };
-                // };
-                // request.send();
+                this.setState({
+                    url: pdfURL
+                });
             }
             catch (err) {
                 console.log('Error:', err);
@@ -54,30 +42,97 @@ class DocumentView extends React.Component {
     populatePage() {
         return __awaiter(this, void 0, void 0, function* () {
             let documentList = yield $.get('/DocumentSave/GetAllDocuments');
-            let documentID = documentList[0].idDocument;
-            let object = yield $.get(`/DocumentSave/GetDocumentMeta?document_id=${documentID}`);
+            let document_id = documentList[0].idDocument;
+            let pdf = yield $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${document_id}`);
+            let documentObject = yield $.get(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`);
             let documentFields = [];
-            for (let form in object) {
-                let currentForm = object[form];
-                console.log(currentForm.left);
-                let newForm = React.createElement("div", { className: 'document-form', style: {} },
-                    React.createElement("div", { className: 'input-form-name' }, currentForm.field_name),
-                    React.createElement("input", { className: 'document-input', defaultValue: currentForm.value, type: "text" }));
-                documentFields.push(newForm);
+            //Document Variables
+            //Width: 0.9*85vw
+            //Height: auto
+            let pdfWidth = documentObject.document_size.right;
+            let pdfHeight = documentObject.document_size.height;
+            let pdfRatio = pdfHeight / pdfWidth;
+            let webWidth = 0.9 * 85; //in vw
+            let webHeigth = webWidth * pdfRatio; // in vw
+            for (let form in documentObject.document_meta) {
+                let currentForm = documentObject.document_meta[form];
+                let name = currentForm.field_name;
+                while (name.indexOf('_') > -1) {
+                    name = name.replace('_', ' ');
+                }
+                let left = ((currentForm.field_position.position.left) * webWidth) / pdfWidth;
+                let top = ((pdfHeight - currentForm.field_position.position.top) * webHeigth) / pdfHeight;
+                let height = (currentForm.field_position.position.height * webHeigth) / pdfHeight;
+                let width = (currentForm.field_position.position.width * webWidth) / pdfWidth;
+                if (name.indexOf('check') === 0) {
+                    currentForm.value = false;
+                    let newForm = React.createElement("div", { className: 'form-wrapper', style: { position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw` } },
+                        React.createElement("input", { id: form, className: 'document-checkbox', style: {}, type: "checkbox", onChange: (e) => { this.handleFormEdit(e, form); } }));
+                    documentFields.push(newForm);
+                }
+                else {
+                    let newForm = React.createElement("div", { className: 'form-wrapper' },
+                        React.createElement("input", { id: form, style: { position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw` }, className: 'document-input', defaultValue: currentForm.value, type: "text", onChange: (e) => { this.handleFormEdit(e, form); } }));
+                    documentFields.push(newForm);
+                }
             }
             this.setState({
-                documentFields: documentFields
+                documentFields: documentFields,
+                documentObject: documentObject,
+                document_id: document_id
+            }, () => {
+                console.log(this.state.documentFields);
+                console.log(this.state.documentObject);
+            });
+        });
+    }
+    handleFormEdit(e, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let documentObject = Object.assign({}, this.state.documentObject);
+            let currentForm = documentObject.document_meta[id];
+            if (e.target.className === 'document-checkbox') {
+                if (currentForm.value != true) {
+                    currentForm.value = true;
+                }
+                else {
+                    currentForm.value = false;
+                }
+            }
+            else {
+                currentForm.value = e.target.value;
+            }
+            this.setState({
+                documentObject: documentObject
+            }, function () {
+                return __awaiter(this, void 0, void 0, function* () {
+                    // let saveFile = {
+                    //     document_meta: this.state.documentObject,
+                    //     name: this.state.documentName,
+                    //     document_id: this.state.document_id,
+                    //     submitted_file_id: ''
+                    // }
+                    // let saveResult = await $.ajax({
+                    //     method: 'POST',
+                    //     headers: {
+                    //       'Content-Type': 'application/json'
+                    //     },
+                    //     url: `/DocumentSave/SaveFile`,
+                    //     dataType: 'json',
+                    //     data: saveFile
+                    // })
+                    // console.log(saveResult)
+                });
             });
         });
     }
     componentDidMount() {
         this.getDocument();
         this.populatePage();
-        // this.run()
     }
     render() {
-        let file = this.state.url;
+        let file = '../../dist/documents/NAVMC10694.pdf';
         return (React.createElement("div", { className: 'DocumentView' },
+            React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: file }),
             React.createElement("div", { id: 'document-form-div' }, this.state.documentFields)));
     }
 }

@@ -46,36 +46,12 @@ class MetaBar extends React.Component {
             let result = {
                 documents: [
                     {
-                        id: '12345',
-                        title: 'Road Test',
-                        created_by: 'Officer',
-                        action_required: 'Scoring',
-                        status: 'pending',
-                        file: 'RoadTest.pdf'
-                    },
-                    {
-                        id: '23456',
-                        title: 'Pre Trip and Skills Test',
-                        created_by: 'Officer',
-                        action_required: 'Scoring',
-                        status: 'pending',
-                        file: 'PreTripandSkillsTest.pdf'
-                    },
-                    {
                         id: '23456',
                         title: 'NAVMC',
                         created_by: 'Officer',
                         action_required: 'Fill Out',
                         status: 'pending',
                         file: 'NAVMC10694.pdf'
-                    },
-                    {
-                        id: '34567',
-                        title: 'Test',
-                        created_by: 'Officer',
-                        action_required: 'Fill Out',
-                        status: 'pending',
-                        file: 'caf.pdf'
                     }
                 ]
             };

@@ -127,6 +127,46 @@ namespace Marine_Permit_Palace.Controllers
                 return Json(new Result("Failure", "Incorrect Guid Format", 406));
             }
         }
+        public IActionResult EditSavedFile(string submitted_document_id)
+        {
+            Guid id;
+            if (Guid.TryParse(submitted_document_id, out id))
+            {
+                //Grab the desired file
+                SubmittedDocument document = _SubmittedDocumentService.GetPopulated(id);
+                MemoryStream PDF_Mem = new MemoryStream();
+                MemoryStream file = new MemoryStream(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.Document.TemplateName)));
+                file.CopyTo(PDF_Mem);
+                using (PdfReader reader = new PdfReader(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.Document.TemplateName))))
+                using (PdfStamper stamper = new PdfStamper(reader, PDF_Mem, '\0', false))
+                {
+                    stamper.FormFlattening = false;
+                    AcroFields pdfFormFields = stamper.AcroFields;
+                    AcroFields.FieldPosition fieldPosition = new AcroFields.FieldPosition();
+
+                    List<string> FieldNames = pdfFormFields.Fields.Select(e => e.Key).ToList();
+                    List<DocumentMeta> JsonDocument = new List<DocumentMeta>();
+                    foreach (string field in FieldNames)
+                    {
+
+                        var Position = pdfFormFields.GetFieldPositions(field).FirstOrDefault();
+                        if (Position == null) continue;
+                        string value = pdfFormFields.GetField(field);
+                        JsonDocument.Add(new DocumentMeta() { field_name = field, field_position = Position, value = value });
+                    }
+                    var page1 = reader.GetPageSize(1);
+                    return Json(new
+                    {
+                        document_size = page1,
+                        document_meta = JsonDocument
+                    });
+                }
+            }
+            else
+            {
+                return Json(new Result("Failure", "Incorrect Guid Format", 406));
+            }
+        }
 
         public IActionResult GetSavedFile(string submitted_document_id)
         {
@@ -260,5 +300,18 @@ namespace Marine_Permit_Palace.Controllers
             else return Json(new { result = "Failure" });
         }
 
+        /// <summary>
+        /// Will return all documents that were edited / saved by the user.
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult GetSavedDocuments()
+        {
+            throw new NotImplementedException();
+        }
+
+        public JsonResult SearchSavedDocument(string name)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

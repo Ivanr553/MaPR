@@ -22085,7 +22085,10 @@ class Header extends React.Component {
             React.createElement(react_router_dom_1.Link, { className: 'Link header-link', to: { pathname: '/A/App/Register' } }, " Register ")));
         let logInTab = (React.createElement("div", { className: 'header-tab log-in-tab' },
             React.createElement(react_router_dom_1.Link, { className: 'Link header-link', to: { pathname: '/A/App/' } }, " Log In ")));
-        let homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/' } }, " Permit Palace ");
+        let homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/' } },
+            " ",
+            React.createElement("img", { src: '/images/mapr-logo.png', id: 'header-logo' }),
+            " ");
         let logOff;
         if (this.state.username != '') {
             accountInnerHtml = 'Welcome, ' + this.state.username;
@@ -22093,13 +22096,16 @@ class Header extends React.Component {
             registerTab = React.createElement("div", null);
             logInTab =
                 React.createElement("div", { className: 'header-tab log-in-tab' }, accountInnerHtml);
-            homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/Home' } }, " Permit Palace ");
+            homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/Home' } },
+                " ",
+                React.createElement("img", { src: '/images/mapr-logo.png', id: 'header-logo' }),
+                " ");
             logOff =
                 React.createElement("div", { className: 'header-tab log-in-tab', onClick: this.logOff },
                     React.createElement("div", { className: 'Link header-link' }, " Log Off "));
         }
         return (React.createElement("div", { className: 'HomeHeader' },
-            React.createElement("div", { className: 'header-tab home-tab' }, homeTab),
+            React.createElement("div", { className: 'home-tab' }, homeTab),
             logOff,
             logInTab,
             registerTab));
@@ -22405,7 +22411,7 @@ class DocumentView extends React.Component {
             document: [],
             url: '',
             documentObject: {},
-            documentName: ''
+            documentName: 'document'
         };
     }
     getDocument() {
@@ -22489,22 +22495,23 @@ class DocumentView extends React.Component {
                 documentObject: documentObject
             }, function () {
                 return __awaiter(this, void 0, void 0, function* () {
-                    // let saveFile = {
-                    //     document_meta: this.state.documentObject,
-                    //     name: this.state.documentName,
-                    //     document_id: this.state.document_id,
-                    //     submitted_file_id: ''
-                    // }
-                    // let saveResult = await $.ajax({
-                    //     method: 'POST',
-                    //     headers: {
-                    //       'Content-Type': 'application/json'
-                    //     },
-                    //     url: `/DocumentSave/SaveFile`,
-                    //     dataType: 'json',
-                    //     data: saveFile
-                    // })
-                    // console.log(saveResult)
+                    let saveFile = {
+                        document_meta: this.state.documentObject.document_meta,
+                        name: this.state.documentName,
+                        document_id: this.state.document_id
+                        // submitted_file_id: ''
+                    };
+                    console.log(saveFile);
+                    let saveResult = yield $.ajax({
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        url: `/DocumentSave/SaveFile`,
+                        dataType: 'json',
+                        data: saveFile
+                    });
+                    console.log(saveResult);
                 });
             });
         });
@@ -34001,7 +34008,7 @@ exports = module.exports = __webpack_require__(16)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  color: white;\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n.HomeHeader {\n  width: 100%;\n  height: 10vh;\n  background-color: #353e54;\n  background-color: #2376af;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: flex-end;\n  position: fixed;\n  top: 0;\n  z-index: 20; }\n\n.header-tab {\n  cursor: default;\n  height: auto;\n  width: auto;\n  padding: 1vh 2vw 1vh 1vw;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  color: gainsboro; }\n\n.header-link {\n  color: gainsboro;\n  width: 100%;\n  height: 90%;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: center;\n  cursor: pointer; }\n\n.header-link:hover {\n  text-decoration: underline; }\n\n.home-tab {\n  color: #c8c8c8;\n  position: absolute;\n  left: 1vw;\n  border-left: none;\n  font-size: 2em;\n  width: auto; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  color: white;\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n.HomeHeader {\n  width: 100%;\n  height: 10vh;\n  background-color: #353e54;\n  background-color: #2376af;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: flex-end;\n  position: fixed;\n  top: 0;\n  z-index: 20; }\n\n.header-tab {\n  cursor: default;\n  height: auto;\n  width: auto;\n  padding: 1vh 2vw 1vh 1vw;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  color: gainsboro; }\n\n.header-link {\n  color: gainsboro;\n  width: 100%;\n  height: 90%;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: center;\n  cursor: pointer; }\n\n.header-link:hover {\n  text-decoration: underline; }\n\n.home-tab {\n  color: #c8c8c8;\n  position: absolute;\n  left: 1vw;\n  border-left: none;\n  font-size: 2em;\n  padding: none;\n  width: auto; }\n\n#header-logo {\n  width: 80%;\n  height: auto; }\n", ""]);
 
 // exports
 

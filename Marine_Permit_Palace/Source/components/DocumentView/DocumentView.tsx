@@ -15,7 +15,7 @@ export default class DocumentView extends React.Component<any, any> {
             document: [],
             url: '',
             documentObject: {},
-            documentName: ''
+            documentName: 'document'
         }
 
     }
@@ -124,24 +124,26 @@ export default class DocumentView extends React.Component<any, any> {
             documentObject: documentObject
         }, async function() {
 
-            // let saveFile = {
-            //     document_meta: this.state.documentObject,
-            //     name: this.state.documentName,
-            //     document_id: this.state.document_id,
-            //     submitted_file_id: ''
-            // }
+            let saveFile = {
+                document_meta: this.state.documentObject.document_meta,
+                name: this.state.documentName,
+                document_id: this.state.document_id
+                // submitted_file_id: ''
+            }
 
-            // let saveResult = await $.ajax({
-            //     method: 'POST',
-            //     headers: {
-            //       'Content-Type': 'application/json'
-            //     },
-            //     url: `/DocumentSave/SaveFile`,
-            //     dataType: 'json',
-            //     data: saveFile
-            // })
+            console.log(saveFile)
 
-            // console.log(saveResult)
+            let saveResult = await $.ajax({
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                url: `/DocumentSave/SaveFile`,
+                dataType: 'json',
+                data: saveFile
+            })
+
+            console.log(saveResult)
         })
     }
 

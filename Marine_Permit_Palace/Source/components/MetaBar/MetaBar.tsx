@@ -8,6 +8,7 @@ import DocumentList from '../DocumentList/DocumentList'
 import DocumentView from '../DocumentView/DocumentView'
 import Account from '../Account/Account'
 import About from '../About/About'
+import HomeView from '../HomeView/HomeView'
 
 export default class MetaBar extends React.Component<any, any> {
 
@@ -26,6 +27,7 @@ export default class MetaBar extends React.Component<any, any> {
         this.handleSettingsPress = this.handleSettingsPress.bind(this)
         this.handleAboutPress = this.handleAboutPress.bind(this)
         this.getDocuments = this.getDocuments.bind(this)
+        this.populateDocumentLinks = this.populateDocumentLinks.bind(this)
         this.populateDocumentLinks = this.populateDocumentLinks.bind(this)
     }
 
@@ -145,6 +147,12 @@ export default class MetaBar extends React.Component<any, any> {
         window.open('/A/App/Studio', '_self')
     }
 
+    handleHomeViewPress() {
+        this.setState({
+            currentView: <HomeView />
+        })
+    }
+
     handleDocumentListPress() {
         this.setState({
             currentView: <DocumentList documentResults={this.state.documentResults} viewDocument={this.handleDocumentLinkPress} />
@@ -186,6 +194,9 @@ export default class MetaBar extends React.Component<any, any> {
 
         return(
             <div className='MetaBar'>
+                <div className='metabar-link' onClick={this.handleHomeViewPress}>
+                    Home
+                </div>
                 <div className='metabar-link' onClick={this.handleDocumentListPress}>
                     Document List
                 </div>

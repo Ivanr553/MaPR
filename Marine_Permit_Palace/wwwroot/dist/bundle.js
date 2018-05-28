@@ -22465,6 +22465,7 @@ class DocumentView extends React.Component {
                         React.createElement("input", { id: form, style: { position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw` }, className: 'document-input', defaultValue: currentForm.value, type: "text", onChange: (e) => { this.handleFormEdit(e, form); } }));
                     documentFields.push(newForm);
                 }
+                delete currentForm.field_position;
             }
             this.setState({
                 documentFields: documentFields,
@@ -22498,18 +22499,18 @@ class DocumentView extends React.Component {
                     let saveFile = {
                         document_meta: this.state.documentObject.document_meta,
                         name: this.state.documentName,
-                        document_id: this.state.document_id
-                        // submitted_file_id: ''
+                        document_id: this.state.document_id,
+                        submitted_file_id: null
                     };
                     console.log(saveFile);
                     let saveResult = yield $.ajax({
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json; charset=UTF-8'
                         },
                         url: `/DocumentSave/SaveFile`,
                         dataType: 'json',
-                        data: saveFile
+                        data: JSON.stringify(saveFile)
                     });
                     console.log(saveResult);
                 });
@@ -110656,6 +110657,7 @@ const DocumentList_1 = __webpack_require__(425);
 const DocumentView_1 = __webpack_require__(114);
 const Account_1 = __webpack_require__(113);
 const About_1 = __webpack_require__(424);
+const HomeView_1 = __webpack_require__(438);
 class MetaBar extends React.Component {
     constructor(props) {
         super(props);
@@ -110671,6 +110673,7 @@ class MetaBar extends React.Component {
         this.handleSettingsPress = this.handleSettingsPress.bind(this);
         this.handleAboutPress = this.handleAboutPress.bind(this);
         this.getDocuments = this.getDocuments.bind(this);
+        this.populateDocumentLinks = this.populateDocumentLinks.bind(this);
         this.populateDocumentLinks = this.populateDocumentLinks.bind(this);
     }
     getCurrentUser() {
@@ -110760,6 +110763,11 @@ class MetaBar extends React.Component {
     handleStudioPress() {
         window.open('/A/App/Studio', '_self');
     }
+    handleHomeViewPress() {
+        this.setState({
+            currentView: React.createElement(HomeView_1.default, null)
+        });
+    }
     handleDocumentListPress() {
         this.setState({
             currentView: React.createElement(DocumentList_1.default, { documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
@@ -110791,6 +110799,7 @@ class MetaBar extends React.Component {
             studio = React.createElement("div", { className: 'metabar-link', onClick: this.handleStudioPress }, "Studio (Unfinished)");
         }
         return (React.createElement("div", { className: 'MetaBar' },
+            React.createElement("div", { className: 'metabar-link', onClick: this.handleHomeViewPress }, "Home"),
             React.createElement("div", { className: 'metabar-link', onClick: this.handleDocumentListPress }, "Document List"),
             React.createElement("div", { className: 'document-list-links-container' }, this.state.documentLinks),
             studio,
@@ -111733,6 +111742,26 @@ module.exports = function(module) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 438 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = __webpack_require__(4);
+class MetaBar extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
+    render() {
+        return (React.createElement("div", { id: 'HomeView' }, "This is HomeView"));
+    }
+}
+exports.default = MetaBar;
+
 
 /***/ })
 /******/ ]);

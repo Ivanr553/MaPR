@@ -91,6 +91,9 @@ export default class DocumentView extends React.Component<any, any> {
                     </div>
                 documentFields.push(newForm)
             }
+
+            delete currentForm.field_position
+
         }
 
         this.setState({
@@ -127,8 +130,8 @@ export default class DocumentView extends React.Component<any, any> {
             let saveFile = {
                 document_meta: this.state.documentObject.document_meta,
                 name: this.state.documentName,
-                document_id: this.state.document_id
-                // submitted_file_id: ''
+                document_id: this.state.document_id,
+                submitted_file_id: null
             }
 
             console.log(saveFile)
@@ -136,11 +139,11 @@ export default class DocumentView extends React.Component<any, any> {
             let saveResult = await $.ajax({
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/json'
+                  'Content-Type': 'application/json; charset=UTF-8'
                 },
                 url: `/DocumentSave/SaveFile`,
                 dataType: 'json',
-                data: saveFile
+                data: JSON.stringify(saveFile)
             })
 
             console.log(saveResult)

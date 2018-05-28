@@ -1,10 +1,12 @@
-﻿using iTextSharp.text.pdf;
+﻿using iTextSharp.text;
+using iTextSharp.text.pdf;
 using Marine_Permit_Palace.ModelManagers;
 using Marine_Permit_Palace.Models;
 using Marine_Permit_Palace.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace Marine_Permit_Palace.Controllers
 {
+    
     public class DocumentSaveController : Controller
     {
         private readonly IDocumentService _DocumentSerivce;
@@ -31,12 +34,12 @@ namespace Marine_Permit_Palace.Controllers
             _DocumentFormFieldService = idffs;
             _SubmittedDocumentService = isds;
             _DocumentCheckBoxService = idcbs;
-
+            
         }
 
         public IActionResult GetAllDocuments()
         {
-            return Json(_DocumentSerivce.GetAll<Document>()
+            return Json(_DocumentSerivce.GetAll<Marine_Permit_Palace.Models.Document>()
                 .Select(e => new { e.IdDocument, e.Name }));
         }
 
@@ -46,7 +49,7 @@ namespace Marine_Permit_Palace.Controllers
             if (Guid.TryParse(document_id, out id))
             {
                 //Grab the desired file
-                Document document = _DocumentSerivce.Get(id);
+                Marine_Permit_Palace.Models.Document document = _DocumentSerivce.Get(id);
                 MemoryStream PDF_Mem = new MemoryStream();
                 MemoryStream file = new MemoryStream(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.TemplateName)));
                 file.CopyTo(PDF_Mem);
@@ -85,7 +88,7 @@ namespace Marine_Permit_Palace.Controllers
             if (Guid.TryParse(document_id, out id))
             {
                 //Grab the desired file
-                Document document = _DocumentSerivce.Get(id);
+                Marine_Permit_Palace.Models.Document document = _DocumentSerivce.Get(id);
                 MemoryStream PDF_Mem = new MemoryStream();
                 MemoryStream file = new MemoryStream(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.TemplateName)));
                 file.CopyTo(PDF_Mem);
@@ -204,7 +207,7 @@ namespace Marine_Permit_Palace.Controllers
             if (Guid.TryParse(document_id, out id))
             {
                 //Grab the desired file
-                Document document = _DocumentSerivce.Get(id);
+                Marine_Permit_Palace.Models.Document document = _DocumentSerivce.Get(id);
                 MemoryStream PDF_Mem = new MemoryStream(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.TemplateName)));
                 return new FileStreamResult(PDF_Mem, "application/pdf");
             }
@@ -222,8 +225,21 @@ namespace Marine_Permit_Palace.Controllers
             public string submitted_file_id { get; set; }
         }
 
+
+        [HttpPost]
         public JsonResult SaveFile([FromBody] SaveDocumentObject document)
         {
+            
+            string body;
+            HttpContext.Request.Body.Position = 0;
+            using (StreamReader sr = new StreamReader(HttpContext.Request.Body))
+            {
+
+                body = sr.ReadToEnd();
+            }
+            
+            document = JsonConvert.DeserializeObject<SaveDocumentObject>(body);
+
             if (document != null && !string.IsNullOrEmpty(document.name) && !string.IsNullOrEmpty(document.document_id))
             {
                 Guid DocumentId;
@@ -231,7 +247,7 @@ namespace Marine_Permit_Palace.Controllers
                 {
                     return Json(new { result = "Failure", reason = "Incorrect GUID format" });
                 }
-                Document RefDocument = _DocumentSerivce.Get(DocumentId);
+                Marine_Permit_Palace.Models.Document RefDocument = _DocumentSerivce.Get(DocumentId);
                 if (RefDocument == null)
                 {
                     return Json(new { result = "Failure", reason = "No Docuemnt with that ID exists" });

@@ -55,7 +55,10 @@ class Header extends React.Component {
             React.createElement(react_router_dom_1.Link, { className: 'Link header-link', to: { pathname: '/A/App/Register' } }, " Register ")));
         let logInTab = (React.createElement("div", { className: 'header-tab log-in-tab' },
             React.createElement(react_router_dom_1.Link, { className: 'Link header-link', to: { pathname: '/A/App/' } }, " Log In ")));
-        let homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/' } }, " Permit Palace ");
+        let homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/' } },
+            " ",
+            React.createElement("img", { src: '/images/mapr-logo.png', id: 'header-logo' }),
+            " ");
         let logOff;
         if (this.state.username != '') {
             accountInnerHtml = 'Welcome, ' + this.state.username;
@@ -63,13 +66,16 @@ class Header extends React.Component {
             registerTab = React.createElement("div", null);
             logInTab =
                 React.createElement("div", { className: 'header-tab log-in-tab' }, accountInnerHtml);
-            homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/Home' } }, " Permit Palace ");
+            homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/Home' } },
+                " ",
+                React.createElement("img", { src: '/images/mapr-logo.png', id: 'header-logo' }),
+                " ");
             logOff =
                 React.createElement("div", { className: 'header-tab log-in-tab', onClick: this.logOff },
                     React.createElement("div", { className: 'Link header-link' }, " Log Off "));
         }
         return (React.createElement("div", { className: 'HomeHeader' },
-            React.createElement("div", { className: 'header-tab home-tab' }, homeTab),
+            React.createElement("div", { className: 'home-tab' }, homeTab),
             logOff,
             logInTab,
             registerTab));

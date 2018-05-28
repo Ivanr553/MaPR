@@ -21,7 +21,7 @@ class DocumentView extends React.Component {
             document: [],
             url: '',
             documentObject: {},
-            documentName: ''
+            documentName: 'document'
         };
     }
     getDocument() {
@@ -105,22 +105,20 @@ class DocumentView extends React.Component {
                 documentObject: documentObject
             }, function () {
                 return __awaiter(this, void 0, void 0, function* () {
-                    // let saveFile = {
-                    //     document_meta: this.state.documentObject,
-                    //     name: this.state.documentName,
-                    //     document_id: this.state.document_id,
-                    //     submitted_file_id: ''
-                    // }
-                    // let saveResult = await $.ajax({
-                    //     method: 'POST',
-                    //     headers: {
-                    //       'Content-Type': 'application/json'
-                    //     },
-                    //     url: `/DocumentSave/SaveFile`,
-                    //     dataType: 'json',
-                    //     data: saveFile
-                    // })
-                    // console.log(saveResult)
+                    let saveFile = {
+                        document_meta: this.state.documentObject.document_meta,
+                        name: this.state.documentName,
+                        document_id: this.state.document_id
+                        // submitted_file_id: ''
+                    };
+                    console.log(saveFile);
+                    let saveResult = yield $.ajax({
+                        method: 'POST',
+                        contentType: 'application/json',
+                        url: `/DocumentSave/SaveFile`,
+                        data: JSON.stringify(saveFile)
+                    });
+                    console.log(saveResult);
                 });
             });
         });

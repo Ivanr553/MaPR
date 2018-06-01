@@ -97,7 +97,6 @@ namespace Marine_Permit_Palace.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> RegisterAndLogin([FromBody]RegisterAndLoginViewModel model)
         {
-            ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout

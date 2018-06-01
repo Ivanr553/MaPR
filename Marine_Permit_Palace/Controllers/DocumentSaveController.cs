@@ -229,17 +229,6 @@ namespace Marine_Permit_Palace.Controllers
         [HttpPost]
         public JsonResult SaveFile([FromBody] SaveDocumentObject document)
         {
-            
-            string body;
-            HttpContext.Request.Body.Position = 0;
-            using (StreamReader sr = new StreamReader(HttpContext.Request.Body))
-            {
-
-                body = sr.ReadToEnd();
-            }
-            
-            document = JsonConvert.DeserializeObject<SaveDocumentObject>(body);
-
             if (document != null && !string.IsNullOrEmpty(document.name) && !string.IsNullOrEmpty(document.document_id))
             {
                 Guid DocumentId;
@@ -250,7 +239,7 @@ namespace Marine_Permit_Palace.Controllers
                 Marine_Permit_Palace.Models.Document RefDocument = _DocumentSerivce.Get(DocumentId);
                 if (RefDocument == null)
                 {
-                    return Json(new { result = "Failure", reason = "No Docuemnt with that ID exists" });
+                    return Json(new { result = "Failure", reason = "No Document with that ID exists" });
                 }
 
                 Guid sub_file_guid = Guid.Empty;
@@ -310,10 +299,10 @@ namespace Marine_Permit_Palace.Controllers
                 _DocumentFormFieldService.SaveAllFormFields(FMFields);
 
 
-                return Json(new { result = "Success" });
+                return Json(new Result(){ result = "Success", reason = SubmittedDoc.IdSubmittedDocument.ToString()});
             }
 
-            else return Json(new { result = "Failure" });
+            else return Json(new Result(){ result = "Failure", status_code = 400 });
         }
 
         /// <summary>
@@ -323,6 +312,8 @@ namespace Marine_Permit_Palace.Controllers
         public JsonResult GetSavedDocuments()
         {
             throw new NotImplementedException();
+            var user = _UserManager.GetUserAsync(User).Result;
+            //_SubmittedDocumentService get all from user.
         }
 
         public JsonResult SearchSavedDocument(string name)

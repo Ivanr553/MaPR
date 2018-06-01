@@ -15,6 +15,7 @@ const DocumentList_1 = require("../DocumentList/DocumentList");
 const DocumentView_1 = require("../DocumentView/DocumentView");
 const Account_1 = require("../Account/Account");
 const About_1 = require("../About/About");
+const HomeView_1 = require("../HomeView/HomeView");
 class MetaBar extends React.Component {
     constructor(props) {
         super(props);
@@ -30,6 +31,7 @@ class MetaBar extends React.Component {
         this.handleSettingsPress = this.handleSettingsPress.bind(this);
         this.handleAboutPress = this.handleAboutPress.bind(this);
         this.getDocuments = this.getDocuments.bind(this);
+        this.populateDocumentLinks = this.populateDocumentLinks.bind(this);
         this.populateDocumentLinks = this.populateDocumentLinks.bind(this);
     }
     getCurrentUser() {
@@ -119,6 +121,11 @@ class MetaBar extends React.Component {
     handleStudioPress() {
         window.open('/A/App/Studio', '_self');
     }
+    handleHomeViewPress() {
+        this.setState({
+            currentView: React.createElement(HomeView_1.default, null)
+        });
+    }
     handleDocumentListPress() {
         this.setState({
             currentView: React.createElement(DocumentList_1.default, { documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
@@ -150,6 +157,7 @@ class MetaBar extends React.Component {
             studio = React.createElement("div", { className: 'metabar-link', onClick: this.handleStudioPress }, "Studio (Unfinished)");
         }
         return (React.createElement("div", { className: 'MetaBar' },
+            React.createElement("div", { className: 'metabar-link', onClick: this.handleHomeViewPress }, "Home"),
             React.createElement("div", { className: 'metabar-link', onClick: this.handleDocumentListPress }, "Document List"),
             React.createElement("div", { className: 'document-list-links-container' }, this.state.documentLinks),
             studio,

@@ -44,17 +44,17 @@ namespace Marine_Permit_Palace.Controllers
         [TempData]
         public string ErrorMessage { get; set; }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login(string returnUrl = null)
-        {
-            string yp = GenerateRegistrationToken(ApplicationPermissions.ROLE_DOD_ADMIN);
-            // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public async Task<IActionResult> Login(string returnUrl = null)
+        //{
+        //    string yp = GenerateRegistrationToken(ApplicationPermissions.ROLE_DOD_ADMIN);
+        //    // Clear the existing external cookie to ensure a clean login process
+        //    await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
-        }
+        //    ViewData["ReturnUrl"] = returnUrl;
+        //    return View();
+        //}
 
         [HttpPost]
         [AllowAnonymous]
@@ -64,82 +64,159 @@ namespace Marine_Permit_Palace.Controllers
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.dod_id, model.password, model.remember_me, lockoutOnFailure: false);
-                if (result.Succeeded)
+                var user = await _userManager.FindByNameAsync(model.dod_id);
+                if(user != null)
                 {
-                    _logger.LogInformation("User logged in.");
-                    return Json(new Result());
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("User account locked out.");
-                    return Json(new Result("Locked Out", "User is locked out.", 401));
+                    var result = await _signInManager.PasswordSignInAsync(model.dod_id, model.password, model.remember_me, lockoutOnFailure: false);
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation("User logged in.");
+                        return Json(new Result());
+                    }
+                    if (result.IsLockedOut)
+                    {
+                        _logger.LogWarning("User account locked out.");
+                        return Json(new Result("Locked Out", "User is locked out.", 401));
+                    }
+                    else
+                    {
+                        return Json(new Result("Failure", "Invalid Login Attempt", 401));
+                    }
                 }
                 else
                 {
-                    return Json(new Result("Failure", "Invalid Login Attempt", 401));
+                    //This is a new DoD Id Number -- Will Need to Register
+                    return Json(new Result("NotRegistered", "DoD currently does not exist in the system. Use RegisterAndLogin API call", 401));
                 }
             }
             // If we got this far, something failed
             return Json(new Result("Failure", "Invalid Login Attempt", 401));
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> LoginWith2fa(bool rememberMe, string returnUrl = null)
-        {
-            // Ensure the user has gone through the username & password screen first
-            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
-
-            if (user == null)
-            {
-                throw new ApplicationException($"Unable to load two-factor authentication user.");
-            }
-
-            var model = new LoginWith2faViewModel { RememberMe = rememberMe };
-            ViewData["ReturnUrl"] = returnUrl;
-
-            return View(model);
-        }
-
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LoginWith2fa(LoginWith2faViewModel model, bool rememberMe, string returnUrl = null)
+        public async Task<IActionResult> RegisterAndLogin([FromBody]RegisterAndLoginViewModel model)
         {
-            if (!ModelState.IsValid)
+            ViewData["ReturnUrl"] = returnUrl;
+            if (ModelState.IsValid)
             {
-                return View(model);
-            }
+                // This doesn't count login failures towards account lockout
+                var user = await _userManager.FindByNameAsync(model.dod_id);
+                if (user != null)
+                {
+                    var result = await _signInManager.PasswordSignInAsync(model.dod_id, model.password, model.remember_me, lockoutOnFailure: false);
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation("User logged in.");
+                        return Json(new Result());
+                    }
+                    if (result.IsLockedOut)
+                    {
+                        _logger.LogWarning("User account locked out.");
+                        return Json(new Result("Locked Out", "User is locked out.", 401));
+                    }
+                    else
+                    {
+                        return Json(new Result("Failure", "Invalid Login Attempt", 401));
+                    }
+                }
+                else
+                {
+                    //Register user
+                    user = new ApplicationUser { UserName = model.dod_id.ToString(), Email = model.email };
+                    var result = await _userManager.CreateAsync(user, model.password);
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation("User created a new account with password.");
 
-            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
-            if (user == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+                        await _emailSender.SendEmailConfirmationAsync(model.email, callbackUrl);
+                        //Each user is a marine
+                        await _userManager.AddToRoleAsync(user, ApplicationPermissions.ROLE_MARINE);
 
-            var authenticatorCode = model.TwoFactorCode.Replace(" ", string.Empty).Replace("-", string.Empty);
+                        //if (Token != null) // Verify which other roles the user is in
+                        //{
+                        //    if (Token.TokenData == ApplicationPermissions.ROLE_SUPERVISOR)
+                        //    {
+                        //        await _userManager.AddToRoleAsync(user, ApplicationPermissions.ROLE_SUPERVISOR);
+                        //    }
+                        //    if (Token.TokenData == ApplicationPermissions.ROLE_DOD_ADMIN)
+                        //    {
+                        //        await _userManager.AddToRoleAsync(user, ApplicationPermissions.ROLE_SUPERVISOR);
+                        //        await _userManager.AddToRoleAsync(user, ApplicationPermissions.ROLE_DOD_ADMIN);
+                        //    }
+                        //}
 
-            var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(authenticatorCode, rememberMe, model.RememberMachine);
-
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("User with ID {UserId} logged in with 2fa.", user.Id);
-                return RedirectToLocal(returnUrl);
+                        await _signInManager.SignInAsync(user, isPersistent: true);
+                        return Json(new Result());
+                    }
+                    else
+                    {
+                        string result_error = "";
+                        result.Errors.Select(e => e.Description).ToList().ForEach(e => result_error += e + "; ");
+                        return Json(new Result("Failure", $"User Could Not Be Created: {result_error}", 406));
+                    }
+                }
             }
-            else if (result.IsLockedOut)
-            {
-                _logger.LogWarning("User with ID {UserId} account locked out.", user.Id);
-                return RedirectToAction(nameof(Lockout));
-            }
-            else
-            {
-                _logger.LogWarning("Invalid authenticator code entered for user with ID {UserId}.", user.Id);
-                ModelState.AddModelError(string.Empty, "Invalid authenticator code.");
-                return View();
-            }
+            // If we got this far, something failed
+            return Json(new Result("Failure", "Invalid Login Attempt", 401));
         }
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public async Task<IActionResult> LoginWith2fa(bool rememberMe, string returnUrl = null)
+        //{
+        //    // Ensure the user has gone through the username & password screen first
+        //    var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+
+        //    if (user == null)
+        //    {
+        //        throw new ApplicationException($"Unable to load two-factor authentication user.");
+        //    }
+
+        //    var model = new LoginWith2faViewModel { RememberMe = rememberMe };
+        //    ViewData["ReturnUrl"] = returnUrl;
+
+        //    return View(model);
+        //}
+
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> LoginWith2fa(LoginWith2faViewModel model, bool rememberMe, string returnUrl = null)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(model);
+        //    }
+
+        //    var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+        //    if (user == null)
+        //    {
+        //        throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+        //    }
+
+        //    var authenticatorCode = model.TwoFactorCode.Replace(" ", string.Empty).Replace("-", string.Empty);
+
+        //    var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(authenticatorCode, rememberMe, model.RememberMachine);
+
+        //    if (result.Succeeded)
+        //    {
+        //        _logger.LogInformation("User with ID {UserId} logged in with 2fa.", user.Id);
+        //        return RedirectToLocal(returnUrl);
+        //    }
+        //    else if (result.IsLockedOut)
+        //    {
+        //        _logger.LogWarning("User with ID {UserId} account locked out.", user.Id);
+        //        return RedirectToAction(nameof(Lockout));
+        //    }
+        //    else
+        //    {
+        //        _logger.LogWarning("Invalid authenticator code entered for user with ID {UserId}.", user.Id);
+        //        ModelState.AddModelError(string.Empty, "Invalid authenticator code.");
+        //        return View();
+        //    }
+        //}
 
         [HttpGet]
         [AllowAnonymous]

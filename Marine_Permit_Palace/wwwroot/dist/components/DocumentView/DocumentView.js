@@ -75,6 +75,7 @@ class DocumentView extends React.Component {
                         React.createElement("input", { id: form, style: { position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw` }, className: 'document-input', defaultValue: currentForm.value, type: "text", onChange: (e) => { this.handleFormEdit(e, form); } }));
                     documentFields.push(newForm);
                 }
+                delete currentForm.field_position;
             }
             this.setState({
                 documentFields: documentFields,
@@ -108,14 +109,17 @@ class DocumentView extends React.Component {
                     let saveFile = {
                         document_meta: this.state.documentObject.document_meta,
                         name: this.state.documentName,
-                        document_id: this.state.document_id
-                        // submitted_file_id: ''
+                        document_id: this.state.document_id,
+                        submitted_file_id: null
                     };
                     console.log(saveFile);
                     let saveResult = yield $.ajax({
                         method: 'POST',
-                        contentType: 'application/json',
+                        headers: {
+                            'Content-Type': 'application/json; charset=UTF-8'
+                        },
                         url: `/DocumentSave/SaveFile`,
+                        dataType: 'json',
                         data: JSON.stringify(saveFile)
                     });
                     console.log(saveResult);

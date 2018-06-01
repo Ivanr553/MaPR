@@ -12,7 +12,7 @@ namespace Marine_Permit_Palace.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("App", "A");
         }
 
         public IActionResult About()

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import PDF from 'react-pdf-js'
 import * as $ from 'jquery'
+import { setTimeout } from 'timers';
 
 
 const s = require('./styling/style.sass')
@@ -48,7 +49,7 @@ export default class DocumentView extends React.Component<any, any> {
         let pdf = await $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${document_id}`)
         
         let documentObject = await $.get(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`)
-
+        console.log(documentObject)
 
         let documentFields = []
 
@@ -101,8 +102,7 @@ export default class DocumentView extends React.Component<any, any> {
             documentObject: documentObject,
             document_id: document_id
         }, () => {
-            console.log(this.state.documentFields)
-            console.log(this.state.documentObject)
+            this.saveFile(null)
         })
 
     }
@@ -125,18 +125,27 @@ export default class DocumentView extends React.Component<any, any> {
 
         this.setState({
             documentObject: documentObject
-        }, async function() {
+        }, () => {
+            this.saveFile(this.state.submitted_file_id)
+        })
+    }
 
-            let saveFile = {
-                document_meta: this.state.documentObject.document_meta,
-                name: this.state.documentName,
-                document_id: this.state.document_id,
-                submitted_file_id: null
-            }
+    async saveFile(submitted_file_id) {
 
-            console.log(saveFile)
+        let saveFile = {
+            document_meta: this.state.documentObject.document_meta,
+            name: this.state.documentName,
+            document_id: this.state.document_id,
+            submitted_file_id: submitted_file_id
+        }
 
-            let saveResult = await $.ajax({
+        console.log(saveFile)
+
+        let saveResult
+
+        try {
+
+            saveResult = await $.ajax({
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json; charset=UTF-8'
@@ -146,8 +155,26 @@ export default class DocumentView extends React.Component<any, any> {
                 data: JSON.stringify(saveFile)
             })
 
-            console.log(saveResult)
-        })
+            if(saveResult && saveResult.status_code < 201) {
+                document.getElementById('save-button').style.backgroundColor = 'green'
+                setTimeout(() => {
+                    document.getElementById('save-button').style.backgroundColor = 'lightblue'
+                }, 1500)
+            }
+
+        } catch(e) {
+            console.log(e)
+            document.getElementById('save-button').style.backgroundColor = 'red'
+        }
+
+        if(!submitted_file_id || submitted_file_id === null) {
+            this.setState({
+                submitted_file_id: saveResult.reason
+            }, () => {
+                console.log(this.state.submitted_file_id)
+            })
+        }
+
     }
 
     componentDidMount() {
@@ -160,7 +187,7 @@ export default class DocumentView extends React.Component<any, any> {
 
         return(
             <div className='DocumentView'>
-                {/* <embed width="100%" height="100%" data-name="plugin" id="plugin" src={file}/> */}
+                <div id='save-button' onClick={() => {this.saveFile(this.state.submitted_file_id)}}>Save File</div>
                 <PDF className='pdf-image' file={file} >
                 </PDF>
                 <div id='document-form-div'>

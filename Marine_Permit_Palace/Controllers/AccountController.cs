@@ -159,7 +159,7 @@ namespace Marine_Permit_Palace.Controllers
                 }
             }
             // If we got this far, something failed
-            return Json(new Result("Failure", "Invalid Login Attempt", 401));
+            return Json(new Result("Failure", "Invalid Login Attempt Or Invliad JSON model.", 401));
         }
         //[HttpGet]
         //[AllowAnonymous]

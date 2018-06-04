@@ -28,7 +28,7 @@ export default class MetaBar extends React.Component<any, any> {
         this.handleAboutPress = this.handleAboutPress.bind(this)
         this.getDocuments = this.getDocuments.bind(this)
         this.populateDocumentLinks = this.populateDocumentLinks.bind(this)
-        this.populateDocumentLinks = this.populateDocumentLinks.bind(this)
+        this.handleHomeViewPress = this.handleHomeViewPress.bind(this)
     }
 
     async getCurrentUser() {
@@ -75,11 +75,6 @@ export default class MetaBar extends React.Component<any, any> {
             documentResults: result.documents
         }, () => {
             this.populateDocumentLinks()
-            this.setState({
-                currentView: <DocumentList documentResults={this.state.documentResults} viewDocument={this.handleDocumentLinkPress}/>
-            }, () => {
-                this.props.getCurrentView(this.state.currentView)
-            })
         })
 
     }
@@ -101,6 +96,8 @@ export default class MetaBar extends React.Component<any, any> {
 
         this.setState({
             documentLinks: documentLinks
+        }, () => {
+            this.handleDocumentListPress()
         })
 
     }
@@ -150,6 +147,8 @@ export default class MetaBar extends React.Component<any, any> {
     handleHomeViewPress() {
         this.setState({
             currentView: <HomeView />
+        }, () => {
+            this.props.getCurrentView(this.state.currentView)
         })
     }
 
@@ -180,6 +179,7 @@ export default class MetaBar extends React.Component<any, any> {
     componentDidMount() {
         this.getDocuments()
         this.getCurrentUser()
+        // this.handleDocumentListPress()
     }
 
     render() {
@@ -194,9 +194,9 @@ export default class MetaBar extends React.Component<any, any> {
 
         return(
             <div className='MetaBar'>
-                <div className='metabar-link' onClick={this.handleHomeViewPress}>
+                {/* <div className='metabar-link' onClick={this.handleHomeViewPress}>
                     Home
-                </div>
+                </div> */}
                 <div className='metabar-link' onClick={this.handleDocumentListPress}>
                     Document List
                 </div>

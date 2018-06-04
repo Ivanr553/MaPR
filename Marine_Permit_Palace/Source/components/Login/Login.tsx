@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
 import {Link} from 'react-router-dom'
-import $ from 'jquery'
+import * as $ from 'jquery'
 
 const s = require('./styling/style.sass')
 
@@ -16,8 +16,9 @@ export default class Login extends React.Component<Props, any> {
         super(props)
         this.state = {
             user: {
-                username: '',
-                password: ''
+                dod_id: '',
+                password: '',
+                remember_me: true
             }
         }
 
@@ -28,7 +29,7 @@ export default class Login extends React.Component<Props, any> {
 
         let user = this.state.user
 
-        user.username = e.target.value
+        user.dod_id = e.target.value
 
         this.setState({
             user: user
@@ -47,17 +48,38 @@ export default class Login extends React.Component<Props, any> {
     }
 
     async handleLogin() {
-    
-        // let user = this.state.user
 
-        // let response = await $.post('/loginUser', user)
-        
-        // if(response) {
-            window.open('/A/App/Home', '_self')
-        // } else {
-        //     alert('Incorrect username or password')
-        // }
-        
+        try {
+
+            let user = this.state.user
+
+            let loginAttempt = await $.ajax({
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                },
+                url: `/Account/Login`,
+                dataType: 'json',
+                data: JSON.stringify(user)
+            })
+
+            if(loginAttempt.result === 'NotRegistered') {
+                let sendToRegister = confirm('User not registered')
+                if(sendToRegister) {
+                    window.open('/A/App/Register', '_self')
+                }
+            }
+            if(loginAttempt.result === 'Failure') {
+                alert('Invalid login attempt')
+            }
+            if(loginAttempt.result === 'Success') {
+                window.open('/A/App', '_self')
+            }
+
+        } catch(e) {
+            console.log(e)
+        }
+
     }
 
     componentDidMount() {
@@ -75,7 +97,7 @@ export default class Login extends React.Component<Props, any> {
                     <div className='login-container-section'>
                         <div className='login-title'>Log In</div>
                             <div className='login-input-container'>
-                                Username
+                                Dod Id
                                 <input type="text" className='login-input' onChange={(e) => {this.handleUsername(e)}}/>
                             </div>
                             <div className='login-input-container' id='login-password-container'>

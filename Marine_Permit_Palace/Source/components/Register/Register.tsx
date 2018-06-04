@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
-import $ from 'jquery'
+import * as $ from 'jquery'
 
 const s = require('./styling/style.sass')
 
@@ -61,21 +61,30 @@ export default class Register extends React.Component<Props, any> {
 
         try {
 
-            let response = await $.post('/registerUser', newUser)
-            if(response == 'Success') {
-                let userRes = alert('Registration Complete!')
-                if(userRes) {
-                    window.open('/A/App/', '_self')
-                }
+            let newUser = this.state.user
+
+            let registerResponse = await $.ajax({
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                },
+                url: `/Account/RegisterAndLogin`,
+                dataType: 'json',
+                data: JSON.stringify(newUser)
+            })
+
+            if(registerResponse.result === 'Failure') {
+                alert('User already created')
+                console.log(registerResponse)
             }
-            if(response == 'User Exists') {
-                alert('Username Already Exists')
+            if(registerResponse.result === 'Success') {
+                window.open('/A/App/Login', '_self')
             }
 
         } catch(e) {
             console.log(e)
-            alert('There was an error with your registration.')
         }
+
     }
 
     render() {
@@ -100,7 +109,7 @@ export default class Register extends React.Component<Props, any> {
                                 <input type="password" className='register-input' onChange={(e) => {this.handleConfirmPassword(e)}}/>
                             </div>
                             <div>
-                                <button className='register-button'>Register</button>
+                                <button className='register-button' onClick={this.handleRegister}>Register</button>
                             </div>
                         </div>
                     <div className='register-container-section' id='register-container-section-right'>

@@ -73,7 +73,10 @@ export default class Login extends React.Component<Props, any> {
                 alert('Invalid login attempt')
             }
             if(loginAttempt.result === 'Success') {
-                window.open('/A/App', '_self')
+                let date = new Date()
+                date.setDate(date.getDate() + 365)
+                document.cookie = `dod_id=${this.state.user.dod_id};expires=${date.getUTCMilliseconds}`
+                window.open('/A/App/Home', '_self')
             }
 
         } catch(e) {
@@ -83,8 +86,6 @@ export default class Login extends React.Component<Props, any> {
     }
 
     componentDidMount() {
-        // this.giveUserID()
-        // this.test()
     }
 
     render() {

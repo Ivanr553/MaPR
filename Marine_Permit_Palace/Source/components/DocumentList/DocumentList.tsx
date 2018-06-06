@@ -62,15 +62,17 @@ export default class DocumentList extends React.Component<any, any> {
     render() {
         return(
             <div className='DocumentList'>
-                <div className='documents-header'>
+                {/* <div id='search-bar-header' className='documents-header'>
                     Search
+                </div> */}
+                <div className='documents-header'>Pending Documents</div>
+                <div className='document-list-container'>
+                    <div id='document-search-bar-container'>
+                        <input placeholder=' ** Not Implemented **' id='document-search-bar' type="text"/>
+                        <button id='document-search-submit-button'>Search</button>
+                    </div>
+                    {this.state.documentList}
                 </div>
-                <div id='document-search-bar-container'>
-                    <input id='document-search-bar' type="text"/>
-                    <button id='document-search-submit-button'>Search</button>
-                </div>
-                <div className='documents-header'>Documents</div>
-                {this.state.documentList}
             </div>
         )
     }

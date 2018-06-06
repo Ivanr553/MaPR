@@ -15,17 +15,29 @@ export default class Register extends React.Component<Props, any> {
         this.state = {
             dodNumber: '',
             password: '',
-            confirmPassword: ''
+            confirmPassword: '',
+            email: ''
         }
 
-        this.handleUsername = this.handleUsername.bind(this)
+        this.handleConfirmPassword = this.handleConfirmPassword.bind(this)
+        this.handleEmail = this.handleEmail.bind(this)
+        this.handlePassword = this.handlePassword.bind(this)
         this.handleRegister = this.handleRegister.bind(this)
+        this.handleUsername = this.handleUsername.bind(this)
+        // this.handleConfirmPassword = this.handleConfirmPassword.bind(this)
+
     }
 
     handleUsername(e) {
         this.setState({
             dodNumber: e.target.value
         })
+    }
+
+    handleEmail(e) {
+        this.setState({
+            email: e.target.value
+        }) 
     }
 
     handlePassword(e) {
@@ -55,13 +67,14 @@ export default class Register extends React.Component<Props, any> {
         }
 
         let newUser = {
-            username: this.state.dodNumber,
-            password: this.state.password
+            dod_id: this.state.dodNumber,
+            email: this.state.email,
+            password: this.state.password,
+            confirm_password: this.state.confirmPassword,
+            remember_me: true
         }
 
         try {
-
-            let newUser = this.state.user
 
             let registerResponse = await $.ajax({
                 method: 'POST',
@@ -78,13 +91,17 @@ export default class Register extends React.Component<Props, any> {
                 console.log(registerResponse)
             }
             if(registerResponse.result === 'Success') {
-                window.open('/A/App/Login', '_self')
+                window.open('/A/App/Home', '_self')
             }
 
         } catch(e) {
             console.log(e)
         }
 
+    }
+
+    componentDidMount() {
+        console.log(document.cookie)
     }
 
     render() {
@@ -97,8 +114,12 @@ export default class Register extends React.Component<Props, any> {
                     <div className='register-container-section'>
                         <div className='register-title'>Register</div>
                             <div className='register-input-container'>
-                                Username
+                                Dod Id
                                 <input type="text" className='register-input' onChange={(e) => {this.handleUsername(e)}}/>
+                            </div>
+                            <div className='register-input-container'>
+                                Email
+                                <input type="text" className='register-input' onChange={(e) => {this.handleEmail(e)}}/>
                             </div>
                             <div className='register-input-container' id='register-password-container'>
                                 Password

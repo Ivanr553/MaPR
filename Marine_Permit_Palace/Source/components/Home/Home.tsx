@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
-import $ from 'jquery'
+import * as $ from 'jquery'
 
 const s = require('./styling/style.sass')
 
@@ -16,6 +16,7 @@ export default class Home extends React.Component<Props, any> {
     super(props)
     this.state = {
       user: {},
+      username: '',
       currentView: '',
       documentResults: [],
       documentList: []
@@ -28,10 +29,14 @@ export default class Home extends React.Component<Props, any> {
 
   async getUser() {
 
-    // let response = await $.post('/checkSession')
+    let response = await $.get('/Account/WhoAmI')
+    
+    if(!response) {
+      window.open('/A/App', '_self')
+    }
 
     let user = {
-        username: 'test',
+        username: response.username,
         first_name: 'John',
         last_name: 'Smith',
         middle_name: 'Doe',
@@ -52,11 +57,8 @@ export default class Home extends React.Component<Props, any> {
   }
 
   async getCurrentUser() {
-
     let user = await this.getUser()
-
     return user
-
   }
 
   getCurrentView(currentView) {

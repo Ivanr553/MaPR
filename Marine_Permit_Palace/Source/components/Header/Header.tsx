@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import $ from 'jquery'
+import * as $ from 'jquery'
 
 const s =  require('./styling/style.sass')
 
@@ -17,35 +17,39 @@ export default class Header extends React.Component<any, any> {
 
     async logOff() {
 
-        // let response = $.post('/logout')
+        let response = await $.get('/Account/Logout')
+        console.log(response)
 
-        // if(!response) {
-        //     alert('There was an error with your request')
-        // } else {
-        //     this.setState({
-        //         username: ''
-        //     }, () => {
-        //         window.open('/A/App', '_self')
-        //     })
-        // }
+        if(!response) {
+            alert('There was an error with your request')
+        } else {
+            this.setState({
+                username: ''
+            }, () => {
+                window.open('/A/App', '_self')
+            })
+        }
 
     }
 
     async getCurrentUser() {
+        
+        if(!this.props.getCurrentUser) {
+            return
+        }
 
-        // let response = await $.post('/checkSession')
+        let user = await this.props.getCurrentUser()
+        console.log('header user:', user)
 
-        // let user = this.props.getCurrentUser()
-
-        // if(user.username) {
-        //     this.setState({
-        //         username: user.username
-        //     })
-        // }
+        if(user.username) {
+            this.setState({
+                username: user.username
+            })
+        }
     }
 
     componentDidMount() {
-        // this.getCurrentUser()
+        this.getCurrentUser()
     }
 
     render() {
@@ -67,7 +71,7 @@ export default class Header extends React.Component<any, any> {
 
         if(this.state.username != '') {
             
-            accountInnerHtml = 'Welcome, ' + this.state.username
+            accountInnerHtml = 'User: ' + this.state.username
             accountLink = '/Account'
             registerTab = <div></div>
             logInTab = 

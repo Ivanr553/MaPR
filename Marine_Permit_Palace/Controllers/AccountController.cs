@@ -358,15 +358,18 @@ namespace Marine_Permit_Palace.Controllers
             else return null;
         }
 
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
+        public async Task<JsonResult> Logout()
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return Json(new Result()
+            {
+                reason = "User logged out.",
+                result = "Success",
+                status_code = 200
+            });
         }
 
         [HttpPost]

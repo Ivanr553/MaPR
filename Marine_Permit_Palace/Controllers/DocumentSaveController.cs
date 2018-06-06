@@ -34,7 +34,6 @@ namespace Marine_Permit_Palace.Controllers
             _DocumentFormFieldService = idffs;
             _SubmittedDocumentService = isds;
             _DocumentCheckBoxService = idcbs;
-            
         }
 
         public IActionResult GetAllDocuments()
@@ -82,7 +81,7 @@ namespace Marine_Permit_Palace.Controllers
             public string value { get; set; }
         }
 
-        public async Task<JsonResult> GetDocumentMeta(string document_id)
+        public async Task<JsonResult> GetDocumentMeta(string document_id) // Save the 
         {
             Guid id;
             if (Guid.TryParse(document_id, out id))
@@ -111,7 +110,6 @@ namespace Marine_Permit_Palace.Controllers
                     List<DocumentMeta> JsonDocument = new List<DocumentMeta>();
                     foreach (string field in FieldNames)
                     {
-
                         var Position = pdfFormFields.GetFieldPositions(field).FirstOrDefault();
                         if (Position == null) continue;
                         string value = pdfFormFields.GetField(field);
@@ -304,6 +302,9 @@ namespace Marine_Permit_Palace.Controllers
 
             else return Json(new Result(){ result = "Failure", status_code = 400 });
         }
+
+        ///TODO Save signature by document ID ? -- Save signatures separately.
+
 
         /// <summary>
         /// Will return all documents that were edited / saved by the user.

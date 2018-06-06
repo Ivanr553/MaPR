@@ -24,5 +24,8 @@ namespace Marine_Permit_Palace.Models
 
         public ICollection<SubmittedDocument> SubmittedDocuments { get; set; }
         public ICollection<PermitDocumentRequirement> PermitDocumentRequirements { get; set; }
+
+        ///TODO 
+        ///Add document tags
     }
 }

@@ -358,19 +358,42 @@ namespace Marine_Permit_Palace.Controllers
             else return null;
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<JsonResult> Logout()
+        //{
+        //    await _signInManager.SignOutAsync();
+        //    _logger.LogInformation("User logged out.");
+        //    return Json(new Result()
+        //    {
+        //        reason = "User logged out.",
+        //        result = "Success",
+        //        status_code = 200
+        //    });
+        //}
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult WhoAmI()
+        {
+            if(User.Identity.IsAuthenticated)
+            {
+                return Json(new {User.Identity.Name});
+            }
+            else
+            {
+                return Json(false);
+            }
+        }
+
+        [HttpGet]
         public async Task<JsonResult> Logout()
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
-            return Json(new Result()
-            {
-                reason = "User logged out.",
-                result = "Success",
-                status_code = 200
-            });
+            return Json(true);
         }
+
 
         [HttpPost]
         [AllowAnonymous]

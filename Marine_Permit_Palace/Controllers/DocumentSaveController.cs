@@ -79,6 +79,7 @@ namespace Marine_Permit_Palace.Controllers
             public string field_name { get; set; }
             public AcroFields.FieldPosition field_position { get; set; }
             public string value { get; set; }
+            public string field_type { get; set; }
         }
 
         public async Task<JsonResult> GetDocumentMeta(string document_id) // Save the 
@@ -113,7 +114,39 @@ namespace Marine_Permit_Palace.Controllers
                         var Position = pdfFormFields.GetFieldPositions(field).FirstOrDefault();
                         if (Position == null) continue;
                         string value = pdfFormFields.GetField(field);
-                        JsonDocument.Add(new DocumentMeta() { field_name = field, field_position = Position, value = value });
+
+                        string field_type;
+                        switch(reader.AcroFields.GetFieldType(field))
+                        {
+                            case AcroFields.FIELD_TYPE_CHECKBOX:
+                                field_type = ("Checkbox");
+                                break;
+                            case AcroFields.FIELD_TYPE_COMBO:
+                                field_type = ("Combobox");
+                                break;
+                            case AcroFields.FIELD_TYPE_LIST:
+                                field_type = ("List");
+                                break;
+                            case AcroFields.FIELD_TYPE_NONE:
+                                field_type = ("None");
+                                break;
+                            case AcroFields.FIELD_TYPE_PUSHBUTTON:
+                                field_type = ("Pushbutton");
+                                break;
+                            case AcroFields.FIELD_TYPE_RADIOBUTTON:
+                                field_type = ("Radiobutton");
+                                break;
+                            case AcroFields.FIELD_TYPE_SIGNATURE:
+                                field_type = ("Signature");
+                                break;
+                            case AcroFields.FIELD_TYPE_TEXT:
+                                field_type = ("Text");
+                                break;
+                            default:
+                                field_type = ("?");
+                                break;
+                        }
+                        JsonDocument.Add(new DocumentMeta() { field_name = field, field_position = Position, value = value, field_type = field_type });
                     }
                     var page1 = reader.GetPageSize(1);
                     return Json(new

@@ -378,7 +378,7 @@ namespace Marine_Permit_Palace.Controllers
         {
             if(User.Identity.IsAuthenticated)
             {
-                return Json(new {User.Identity.Name});
+                return Json(new {username = User.Identity.Name});
             }
             else
             {
@@ -389,8 +389,11 @@ namespace Marine_Permit_Palace.Controllers
         [HttpGet]
         public async Task<JsonResult> Logout()
         {
-            await _signInManager.SignOutAsync();
-            _logger.LogInformation("User logged out.");
+            if(User.Identity.IsAuthenticated)
+            {
+                await _signInManager.SignOutAsync();
+                _logger.LogInformation("User logged out.");
+            }
             return Json(true);
         }
 

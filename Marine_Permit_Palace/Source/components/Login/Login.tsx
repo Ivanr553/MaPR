@@ -47,6 +47,12 @@ export default class Login extends React.Component<Props, any> {
         })
     }
 
+    handleSubmit(e) {
+        if(e.key === 'Enter') {
+            this.handleLogin()
+        }
+    }
+
     async handleLogin() {
 
         try {
@@ -99,11 +105,11 @@ export default class Login extends React.Component<Props, any> {
                         <div className='login-title'>Log In</div>
                             <div className='login-input-container'>
                                 Dod Id
-                                <input type="text" className='login-input' onChange={(e) => {this.handleUsername(e)}}/>
+                                <input type="text" className='login-input' onKeyPress={(e) => {this.handleSubmit(e)}} onChange={(e) => {this.handleUsername(e)}}/>
                             </div>
                             <div className='login-input-container' id='login-password-container'>
                                 Password
-                                <input type="password" className='login-input' onChange={(e) => {this.handlePassword(e)}}/>
+                                <input type="password" className='login-input' onKeyPress={(e) => {this.handleSubmit(e)}} onChange={(e) => {this.handlePassword(e)}}/>
                             </div>
                             <div>
                                 <button id='login-button' onClick={this.handleLogin}>Log In</button>

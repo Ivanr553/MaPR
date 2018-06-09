@@ -35,7 +35,7 @@ export default class DocumentView extends React.Component<any, any> {
                 url: pdfURL
             })
 
-        } catch (err) {
+        } catch(err) {
             console.log('Error:', err)
         }
     }
@@ -75,19 +75,20 @@ export default class DocumentView extends React.Component<any, any> {
             let height = (currentForm.field_position.position.height * webHeigth) / pdfHeight
             let width = (currentForm.field_position.position.width * webWidth) / pdfWidth
 
-            if(name.indexOf('check') === 0) {
+            if(currentForm.field_type === 'Checkbox') {
 
                 currentForm.value = false
 
                 let newForm = 
-                    <div className='form-wrapper' style={{ position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw`}}>
+                    <div key={form} className='form-wrapper' style={{ position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw`}}>
                         <input id={form} className='document-checkbox' style={{}} type="checkbox" onChange={(e) => {this.handleFormEdit(e, form)}}/>
                     </div>
 
                 documentFields.push(newForm)
-            } else {
+            }
+            else if(currentForm.field_type === 'Text') {
                 let newForm = 
-                    <div className='form-wrapper'>
+                    <div key={form} className='form-wrapper'>
                         <input id={form} style={{ position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw`}} className='document-input' defaultValue={currentForm.value} type="text" onChange={(e) => {this.handleFormEdit(e, form)}}/>
                     </div>
                 documentFields.push(newForm)
@@ -163,7 +164,7 @@ export default class DocumentView extends React.Component<any, any> {
             }
 
         } catch(e) {
-            console.log(e)
+            console.log('Error saving:', e)
             document.getElementById('save-button').style.backgroundColor = 'red'
         }
 

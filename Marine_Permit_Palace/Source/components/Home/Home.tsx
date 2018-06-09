@@ -36,11 +36,10 @@ export default class Home extends React.Component<Props, any> {
     }
 
     let user = {
-        username: response.username,
         first_name: 'John',
         last_name: 'Smith',
         middle_name: 'Doe',
-        DOD_ID_number: 123456,
+        username: response.username,
         street_address: '1234 United Way',
         state: 'CA',
         country: 'US',

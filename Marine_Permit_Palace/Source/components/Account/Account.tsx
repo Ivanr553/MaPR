@@ -12,12 +12,11 @@ export default class Account extends React.Component<any, any> {
     super(props)
     this.state = {
       user: {
-        // username: newUser.username,
+        username: '',
         rank: 'PVT',
         first_name: 'TRISTAN',
         last_name: 'ABER',
         middle_name: 'JOLYON',
-        DOD_ID_number: 1534727026,
         DOB: '1998 Nov 08',
         home_of_record: '19211 JEFFERSON DAVIS HWY, TRIANGLE, VA 22172',
         place_of_birth: 'TUN TAVERN, PA',
@@ -47,7 +46,7 @@ export default class Account extends React.Component<any, any> {
     let currentView = (
       <div className='account-page-view' id='account-information-view'>
         <div className='account-content-column'>
-          <div className='account-info-line-item'><strong>DOD Number:</strong> {this.state.user.DOD_ID_number}</div>
+          <div className='account-info-line-item'><strong>DOD Number:</strong> {this.state.user.username}</div>
           <div className='account-info-line-item'><strong>Rank:</strong> {this.state.user.rank}</div>
           <div className='account-info-line-item'><strong>Organization:</strong> {this.state.user.organization}</div>
           <div className='account-info-line-item'><strong>Class of Vehicle:</strong> {this.state.user.class_of_vehicle}</div>
@@ -118,6 +117,8 @@ export default class Account extends React.Component<any, any> {
 
     this.setState({
       user: user
+    }, () => {
+      
     })
 
   }
@@ -146,7 +147,8 @@ export default class Account extends React.Component<any, any> {
 
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    let awaitUser= await this.getCurrentUser()
     this.getAccountInformationView()
   }
 

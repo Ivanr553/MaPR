@@ -15,12 +15,11 @@ class Account extends React.Component {
         super(props);
         this.state = {
             user: {
-                // username: newUser.username,
+                username: '',
                 rank: 'PVT',
                 first_name: 'TRISTAN',
                 last_name: 'ABER',
                 middle_name: 'JOLYON',
-                DOD_ID_number: 1534727026,
                 DOB: '1998 Nov 08',
                 home_of_record: '19211 JEFFERSON DAVIS HWY, TRIANGLE, VA 22172',
                 place_of_birth: 'TUN TAVERN, PA',
@@ -50,7 +49,7 @@ class Account extends React.Component {
                 React.createElement("div", { className: 'account-info-line-item' },
                     React.createElement("strong", null, "DOD Number:"),
                     " ",
-                    this.state.user.DOD_ID_number),
+                    this.state.user.username),
                 React.createElement("div", { className: 'account-info-line-item' },
                     React.createElement("strong", null, "Rank:"),
                     " ",
@@ -166,6 +165,7 @@ class Account extends React.Component {
             let user = yield this.props.getCurrentUser();
             this.setState({
                 user: user
+            }, () => {
             });
         });
     }
@@ -188,7 +188,10 @@ class Account extends React.Component {
         }
     }
     componentDidMount() {
-        this.getAccountInformationView();
+        return __awaiter(this, void 0, void 0, function* () {
+            let awaitUser = yield this.getCurrentUser();
+            this.getAccountInformationView();
+        });
     }
     render() {
         return (React.createElement("div", { id: 'Account' },

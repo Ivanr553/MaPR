@@ -297,7 +297,7 @@ namespace Marine_Permit_Palace.Controllers
                 //    //Think of other cool ideas to check if these fields are required or not
                 //    SubmittedDoc.IsCompleted = true;
                 //}
-                if (sub_file_guid != Guid.Empty)
+                if (sub_file_guid == Guid.Empty)
                 {
                     SubmittedDoc = _SubmittedDocumentService.Add(SubmittedDoc);
                 }

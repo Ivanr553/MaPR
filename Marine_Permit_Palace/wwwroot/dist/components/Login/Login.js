@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
+const $ = require("jquery");
 const s = require('./styling/style.sass');
 const Header_1 = require("../Header/Header");
 const Footer_1 = require("../Footer/Footer");
@@ -17,15 +18,16 @@ class Login extends React.Component {
         super(props);
         this.state = {
             user: {
-                username: '',
-                password: ''
+                dod_id: '',
+                password: '',
+                remember_me: true
             }
         };
         this.handleLogin = this.handleLogin.bind(this);
     }
     handleUsername(e) {
         let user = this.state.user;
-        user.username = e.target.value;
+        user.dod_id = e.target.value;
         this.setState({
             user: user
         });
@@ -37,20 +39,46 @@ class Login extends React.Component {
             user: user
         });
     }
+    handleSubmit(e) {
+        if (e.key === 'Enter') {
+            this.handleLogin();
+        }
+    }
     handleLogin() {
         return __awaiter(this, void 0, void 0, function* () {
-            // let user = this.state.user
-            // let response = await $.post('/loginUser', user)
-            // if(response) {
-            window.open('/A/App/Home', '_self');
-            // } else {
-            //     alert('Incorrect username or password')
-            // }
+            try {
+                let user = this.state.user;
+                let loginAttempt = yield $.ajax({
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8'
+                    },
+                    url: `/Account/Login`,
+                    dataType: 'json',
+                    data: JSON.stringify(user)
+                });
+                if (loginAttempt.result === 'NotRegistered') {
+                    let sendToRegister = confirm('User not registered');
+                    if (sendToRegister) {
+                        window.open('/A/App/Register', '_self');
+                    }
+                }
+                if (loginAttempt.result === 'Failure') {
+                    alert('Invalid login attempt');
+                }
+                if (loginAttempt.result === 'Success') {
+                    let date = new Date();
+                    date.setDate(date.getDate() + 365);
+                    document.cookie = `dod_id=${this.state.user.dod_id};expires=${date.getUTCMilliseconds}`;
+                    window.open('/A/App/Home', '_self');
+                }
+            }
+            catch (e) {
+                console.log(e);
+            }
         });
     }
     componentDidMount() {
-        // this.giveUserID()
-        // this.test()
     }
     render() {
         return (React.createElement("div", { className: 'Login' },
@@ -59,11 +87,11 @@ class Login extends React.Component {
                 React.createElement("div", { className: 'login-container-section' },
                     React.createElement("div", { className: 'login-title' }, "Log In"),
                     React.createElement("div", { className: 'login-input-container' },
-                        "Username",
-                        React.createElement("input", { type: "text", className: 'login-input', onChange: (e) => { this.handleUsername(e); } })),
+                        "Dod Id",
+                        React.createElement("input", { type: "text", className: 'login-input', onKeyPress: (e) => { this.handleSubmit(e); }, onChange: (e) => { this.handleUsername(e); } })),
                     React.createElement("div", { className: 'login-input-container', id: 'login-password-container' },
                         "Password",
-                        React.createElement("input", { type: "password", className: 'login-input', onChange: (e) => { this.handlePassword(e); } })),
+                        React.createElement("input", { type: "password", className: 'login-input', onKeyPress: (e) => { this.handleSubmit(e); }, onChange: (e) => { this.handlePassword(e); } })),
                     React.createElement("div", null,
                         React.createElement("button", { id: 'login-button', onClick: this.handleLogin }, "Log In"))),
                 React.createElement("div", { className: 'login-container-section' },

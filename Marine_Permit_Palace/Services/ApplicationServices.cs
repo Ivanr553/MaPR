@@ -42,7 +42,7 @@ namespace Marine_Permit_Palace.Services
         {
             if (Fields.Count > 0)
             {
-                List<DocumentFormField> Existing = _context.DocumentFormField
+                List<DocumentFormField> Existing = _context.DocumentFormField.AsNoTracking()
                     .Where(e => e.IdSubmittedDocumentId == Fields.First().IdSubmittedDocumentId)
                     .ToList();
                 List<DocumentFormField> ToUpdate = new List<DocumentFormField>();

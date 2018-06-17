@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
+const $ = require("jquery");
 const s = require('./styling/style.sass');
 const Header_1 = require("../Header/Header");
 const MetaBar_1 = require("../MetaBar/MetaBar");
@@ -17,6 +18,7 @@ class Home extends React.Component {
         super(props);
         this.state = {
             user: {},
+            username: '',
             currentView: '',
             documentResults: [],
             documentList: []
@@ -27,13 +29,15 @@ class Home extends React.Component {
     }
     getUser() {
         return __awaiter(this, void 0, void 0, function* () {
-            // let response = await $.post('/checkSession')
+            let response = yield $.get('/Account/WhoAmI');
+            if (!response) {
+                window.open('/A/App', '_self');
+            }
             let user = {
-                username: 'test',
                 first_name: 'John',
                 last_name: 'Smith',
                 middle_name: 'Doe',
-                DOD_ID_number: 123456,
+                username: response.username,
                 street_address: '1234 United Way',
                 state: 'CA',
                 country: 'US',

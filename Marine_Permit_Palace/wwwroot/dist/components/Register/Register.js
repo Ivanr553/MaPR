@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const jquery_1 = require("jquery");
+const $ = require("jquery");
 const s = require('./styling/style.sass');
 const Header_1 = require("../Header/Header");
 const Footer_1 = require("../Footer/Footer");
@@ -19,14 +19,24 @@ class Register extends React.Component {
         this.state = {
             dodNumber: '',
             password: '',
-            confirmPassword: ''
+            confirmPassword: '',
+            email: ''
         };
-        this.handleUsername = this.handleUsername.bind(this);
+        this.handleConfirmPassword = this.handleConfirmPassword.bind(this);
+        this.handleEmail = this.handleEmail.bind(this);
+        this.handlePassword = this.handlePassword.bind(this);
         this.handleRegister = this.handleRegister.bind(this);
+        this.handleUsername = this.handleUsername.bind(this);
+        // this.handleConfirmPassword = this.handleConfirmPassword.bind(this)
     }
     handleUsername(e) {
         this.setState({
             dodNumber: e.target.value
+        });
+    }
+    handleEmail(e) {
+        this.setState({
+            email: e.target.value
         });
     }
     handlePassword(e) {
@@ -52,26 +62,37 @@ class Register extends React.Component {
                 return;
             }
             let newUser = {
-                username: this.state.dodNumber,
-                password: this.state.password
+                dod_id: this.state.dodNumber,
+                email: this.state.email,
+                password: this.state.password,
+                confirm_password: this.state.confirmPassword,
+                remember_me: true
             };
             try {
-                let response = yield jquery_1.default.post('/registerUser', newUser);
-                if (response == 'Success') {
-                    let userRes = alert('Registration Complete!');
-                    if (userRes) {
-                        window.open('/A/App/', '_self');
-                    }
+                let registerResponse = yield $.ajax({
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8'
+                    },
+                    url: `/Account/RegisterAndLogin`,
+                    dataType: 'json',
+                    data: JSON.stringify(newUser)
+                });
+                if (registerResponse.result === 'Failure') {
+                    alert('User already created');
+                    console.log(registerResponse);
                 }
-                if (response == 'User Exists') {
-                    alert('Username Already Exists');
+                if (registerResponse.result === 'Success') {
+                    window.open('/A/App/Home', '_self');
                 }
             }
             catch (e) {
                 console.log(e);
-                alert('There was an error with your registration.');
             }
         });
+    }
+    componentDidMount() {
+        console.log(document.cookie);
     }
     render() {
         return (React.createElement("div", { className: 'Register' },
@@ -80,8 +101,11 @@ class Register extends React.Component {
                 React.createElement("div", { className: 'register-container-section' },
                     React.createElement("div", { className: 'register-title' }, "Register"),
                     React.createElement("div", { className: 'register-input-container' },
-                        "Username",
+                        "Dod Id",
                         React.createElement("input", { type: "text", className: 'register-input', onChange: (e) => { this.handleUsername(e); } })),
+                    React.createElement("div", { className: 'register-input-container' },
+                        "Email",
+                        React.createElement("input", { type: "text", className: 'register-input', onChange: (e) => { this.handleEmail(e); } })),
                     React.createElement("div", { className: 'register-input-container', id: 'register-password-container' },
                         "Password",
                         React.createElement("input", { type: "password", className: 'register-input', onChange: (e) => { this.handlePassword(e); } })),
@@ -89,7 +113,7 @@ class Register extends React.Component {
                         "Confirm Password",
                         React.createElement("input", { type: "password", className: 'register-input', onChange: (e) => { this.handleConfirmPassword(e); } })),
                     React.createElement("div", null,
-                        React.createElement("button", { className: 'register-button' }, "Register"))),
+                        React.createElement("button", { className: 'register-button', onClick: this.handleRegister }, "Register"))),
                 React.createElement("div", { className: 'register-container-section', id: 'register-container-section-right' },
                     React.createElement("div", { className: 'register-title' }, "For Demo Only"),
                     React.createElement("div", { className: 'register-paragraph' }, "Registration will only occur for the purposes of the demo. In the live site, there will be no need to register as the user will have their account linked to their DOD Number."))),

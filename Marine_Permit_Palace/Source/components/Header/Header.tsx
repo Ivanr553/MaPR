@@ -66,8 +66,9 @@ export default class Header extends React.Component<any, any> {
                 <Link className='Link header-link' to={{pathname: '/A/App/'}}> Log In </Link>
             </div>
         )
-        let homeTab = <Link className='Link home-header-link' to={{pathname: '/A/App/'}}> <img src='/images/mapr-logo.png' id='header-logo' /> </Link>
+        let homeTab = <Link className='Link home-header-link' to={{pathname: '/A/App/'}}> <img src='/images/MAPR_logo_edit.png' id='header-logo' /> </Link>
         let logOff
+        let fullHeader = 'show-full-header'
 
         if(this.state.username != '') {
             
@@ -78,15 +79,17 @@ export default class Header extends React.Component<any, any> {
                 <div className='header-tab log-in-tab'>
                     {accountInnerHtml}
                 </div>
-            homeTab = <Link className='Link home-header-link' to={{pathname: '/A/App/Home'}}> <img src='/images/mapr-logo.png' id='header-logo' /> </Link>
+            homeTab = <Link className='Link home-header-link' to={{pathname: '/A/App/Home'}}> <img src='/images/MAPR_logo_edit.png' id='header-logo' /> </Link>
+            homeTab = <div></div>
             logOff = 
             <div className='header-tab log-in-tab' onClick={this.logOff}>
                 <div className='Link header-link'> Log Off </div>
             </div>
+            fullHeader = ''
         }
 
         return(
-            <div className='HomeHeader' >
+            <div id='HomeHeader' className={fullHeader}>
                 <div className='home-tab'>
                     {homeTab}
                 </div>

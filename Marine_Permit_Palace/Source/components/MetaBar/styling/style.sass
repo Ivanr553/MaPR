@@ -1,27 +1,59 @@
 @import ../../../style
 
-.MetaBar
+#MetaBar
   position: absolute
+  width: 10vw
   left: 0
-  top: 10vh
-  width: 15vw
-  height: 90vh
+  top: 0
+  height: 100vh
   background-color: $metabar-color
-  // border-right: solid 2px rgba(0, 0, 0, 0.1)
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: flex-start
 
 .metabar-link
   height: auto
   padding: 5% 0 5% 0
-  margin-bottom: 0.5vh
   width: 100%
-  // color: white
   text-indent: 10%
   align-items: center
   font-size: 1.15em
   cursor: pointer
 
+#logo-container
+  opacity: 1
+  height: 10vh
+  width: 100%
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  padding: 0
+
+#logo
+  width: auto
+  height: 90%
+  @media screen and (max-width: 1000px)
+    width: 60%
+    height: auto
+  @media screen and (max-width: 600px)
+    width: 80%
+    height: auto
+
+.metabar-link
+  width: 40%
+  padding-left: 30%
+  padding-right: 30%
+  padding-top: 15%
+  padding-bottom: 15%
+  opacity: 0.6
+
 .metabar-link:hover
-  background-color: grey
+  background-color: rgba(250, 250, 250, 0.1)
+
+.metabar-link-selected
+  background-color: rgba(250, 250, 250, 0.1)
 
 .document-list-links-container
   width: 100%
@@ -41,4 +73,4 @@
   cursor: pointer
 
 .document-link:hover
-  background-color: grey
+  background-color: rgba(0, 0, 0, 0.1)

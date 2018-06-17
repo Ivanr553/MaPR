@@ -16,7 +16,8 @@ export default class DocumentView extends React.Component<any, any> {
             document: [],
             url: '',
             documentObject: {},
-            documentName: 'document'
+            documentName: 'document',
+            submitted_file_id: ''
         }
 
     }
@@ -54,13 +55,13 @@ export default class DocumentView extends React.Component<any, any> {
         let documentFields = []
 
         //Document Variables
-        //Width: 0.9*85vw
+        //Width: 0.9*90vw
         //Height: auto
 
         let pdfWidth = documentObject.document_size.right
         let pdfHeight = documentObject.document_size.height
         let pdfRatio = pdfHeight/pdfWidth
-        let webWidth = 0.9*85 //in vw
+        let webWidth = 0.9*90 //in vw
         let webHeigth = webWidth * pdfRatio // in vw
 
         for(let form in documentObject.document_meta) {

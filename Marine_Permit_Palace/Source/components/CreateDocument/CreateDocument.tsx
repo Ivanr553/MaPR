@@ -14,69 +14,146 @@ export default class CreateDocument extends React.Component<any, any> {
         this.state = {
             documentResults: this.props.documentResults,
             currentView: '',
+            view: '',
             documentList: [],
-            document_id: ''
+            document_id: '',
+            nextButton: '',
+            readyForNext: false
         }
 
         // this.handleDocumentLinkPress = this.handleDocumentLinkPress.bind(this)
         this.handleSelectDocumentView = this.handleSelectDocumentView.bind(this)
-        this.handleCreateDocumentView = this.handleCreateDocumentView.bind(this)
+        this.handleSelectPermissionsView = this.handleSelectPermissionsView.bind(this)
+        this.handleNext = this.handleNext.bind(this)
+        this.handleBack = this.handleBack.bind(this)
     }
 
     //Views
+
+    handleNext() {
+
+        if(this.state.view === 'SelectDocument') {
+
+            if(this.state.document_id === '') {
+                return
+            }
+
+            this.handleSelectPermissionsView()
+            return
+        }
+
+        if(this.state.view === 'SelectPermissions') {
+
+            return
+
+        }
+
+    }
+
+    handleBack() {
+
+        if(this.state.view === 'SelectPermissions') {
+
+            this.handleSelectDocumentView()
+            return
+        }
+
+    }
+
     handleSelectDocumentView() {
+
         let currentView = (
             <div>
-                <div className='documents-header'>Select Document</div>
+                <div className='documents-header'>Select Template Document</div>
                 <div className='document-list-container'>
                     {this.state.documentList}
-                    <button className='create-document-button' onClick={this.handleCreateDocumentView} id='create-document-next-button'>Next</button>
                 </div>
             </div>
         )
         this.setState({
-            currentView: currentView
+            currentView: currentView,
+            view: 'SelectDocument'
+        }, () => {
+            this.handleButtons()
         })
     }
 
-    handleCreateDocumentView() {
+    handleSelectPermissionsView() {
         let currentView = (
             <div>
-                <div className='documents-header'>Create Document</div>
+                <div className='documents-header'>Select Document Permissions</div>
                 <div className='document-list-container'>
                     <div>Selected Document: {this.state.document_id}</div>
                     <div>Send to:</div>
                     <div>Allow viewing priviledge:</div>
-                    <button className='create-document-button' id='create-document-back-button' onClick={this.handleSelectDocumentView}>Back</button>
-                    <button className='create-document-button' id='create-document-next-button'>Next</button>
                 </div>
             </div>
         )
         this.setState({
-            currentView: currentView
+            currentView: currentView,
+            view: 'SelectPermissions'
+        }, () => {
+            this.handleButtons()
+            this.clearBorder()
         })
     }
 
-    // async handleDocumentLinkPress(e) {
+    handleButtons() {
 
-    //     let target = e.target
+        let backButton
 
-    //     while (!target.classList.contains('viewable-document')) {
-    //         target = target.parentNode
-    //     }
+        if(this.state.view === 'SelectDocument') {
+            
+            backButton = ''
 
-    //     let document_id = target.id
+            this.setState({
+                backButton: backButton
+            })
+        }
 
-    //     let setFile = await this.setState({
-    //         document_id: document_id
-    //     })
+        if(this.state.view === 'SelectPermissions') {
+         
+            backButton = 
+            <button className='create-document-button selectable-button' id='create-document-back-button' onClick={this.handleBack}>
+                Back
+            </button>
 
-    //     this.setState({
-    //         currentView: <DocumentView file={this.state.document_id} />
-    //     })
+            this.setState({
+                backButton: backButton
+            })
+        }
 
-    //     let getCurrentView = await this.props.getCurrentView(this.state.currentView)
-    // }
+        let nextButton
+
+        if(!this.state.readyForNext) {
+
+            nextButton =
+                <button className='create-document-button' id='create-document-next-button'>
+                    Next
+                </button>
+
+            this.setState({
+                nextButton: nextButton
+            }, () => {
+                this.forceUpdate()
+                return nextButton
+            })
+        }
+        else {
+
+            nextButton =
+            <button className='create-document-button selectable-button' id='create-document-next-button' onClick={this.handleNext}>
+                Next
+            </button>
+
+            this.setState({
+                nextButton: nextButton
+            }, () => {
+                return nextButton
+            }) 
+        }
+
+    }
 
     //Creates list in state of objects to be rendered
     renderDocuments() {
@@ -89,26 +166,9 @@ export default class CreateDocument extends React.Component<any, any> {
             let file = '/dist/documents/' + documents[i].file
 
             let newDocument = 
-                <div className='viewable-document' key={i} id={documents[i].file} onClick={(e) => {this.selectDocument(e)}}> 
-                    <div className='pdf-preview-container'>
-                        <PDF className='pdf-preview' file={file}/>
-                        <div className='pdf-preview-shader'></div>
-                    </div>
-                    <div className='viewable-document-title'>
-                        {documents[i].title}
-                    </div>
-                    {/* <div className='viewable-document-action-title'>
-                        Action Required:
-                        <div className='viewable-document-action'>
-                            {documents[i].action_required}
-                        </div>
-                        </div>
-                        <div className='viewable-document-status-title'>
-                        Status: 
-                        <div className='viewable-document-status'>
-                            {documents[i].status}
-                        </div>
-                        </div> */}
+                <div key={i} className='viewable-document' id={documents[i].file} onClick={(e) => {this.selectDocument(e)}}>
+                    <div className='viewable-document-field' id='first-field'>{(i+1) + '.'}</div>
+                    <div className='viewable-document-field'>{documents[i].title}</div>
                 </div>
 
             documentList.push(newDocument)
@@ -128,23 +188,41 @@ export default class CreateDocument extends React.Component<any, any> {
         while (!target.classList.contains('viewable-document')) {
             target = target.parentNode
         }
+
         let parent = target.parentNode
 
         for(let i = 0; i < parent.children.length; i++) {
             if(parent.children[i].className === 'viewable-document') {
-                parent.children[i].children[0].children[1].style.opacity = 0
+                parent.children[i].style.border = 'solid 2px rgba(0, 0, 0, 0)'
             }
         }
 
-        target.children[0].children[1].style.opacity = 0.5
+        if(target.classList.contains('viewable-document')) {
+            target.style.border = 'solid 2px rgba(38, 107, 168, 0.7)'
+        }
+
 
         this.setState({
-            document_id: target.id
+            document_id: target.id,
+            readyForNext: true
+        }, () => {
+            this.handleButtons()
         })
 
     }
 
+    clearBorder() {
+
+        let children = document.getElementsByClassName('document-list-container')[0].childNodes
+
+        for(let i = 0; i < children.length; i++) {
+            children[i].style.border = 'none'
+        }
+
+    }
+
     componentWillMount() {
+        this.handleButtons()
         this.renderDocuments()
     }
 
@@ -152,8 +230,11 @@ export default class CreateDocument extends React.Component<any, any> {
 
         return(
             <div id='NewDocument'>
-                {/* <div id='notice' className='documents-header'>** Work In Progress **</div> */}
                 {this.state.currentView}
+                <div id='button-container'>
+                    {this.state.backButton}
+                    {this.state.nextButton}
+                </div>
             </div>
         )
 

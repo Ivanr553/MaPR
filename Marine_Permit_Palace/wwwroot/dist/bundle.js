@@ -22112,9 +22112,10 @@ class Header extends React.Component {
             React.createElement(react_router_dom_1.Link, { className: 'Link header-link', to: { pathname: '/A/App/' } }, " Log In ")));
         let homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/' } },
             " ",
-            React.createElement("img", { src: '/images/mapr-logo.png', id: 'header-logo' }),
+            React.createElement("img", { src: '/images/MAPR_logo_edit.png', id: 'header-logo' }),
             " ");
         let logOff;
+        let fullHeader = 'show-full-header';
         if (this.state.username != '') {
             accountInnerHtml = 'User: ' + this.state.username;
             accountLink = '/Account';
@@ -22123,13 +22124,15 @@ class Header extends React.Component {
                 React.createElement("div", { className: 'header-tab log-in-tab' }, accountInnerHtml);
             homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/Home' } },
                 " ",
-                React.createElement("img", { src: '/images/mapr-logo.png', id: 'header-logo' }),
+                React.createElement("img", { src: '/images/MAPR_logo_edit.png', id: 'header-logo' }),
                 " ");
+            homeTab = React.createElement("div", null);
             logOff =
                 React.createElement("div", { className: 'header-tab log-in-tab', onClick: this.logOff },
                     React.createElement("div", { className: 'Link header-link' }, " Log Off "));
+            fullHeader = '';
         }
-        return (React.createElement("div", { className: 'HomeHeader' },
+        return (React.createElement("div", { id: 'HomeHeader', className: fullHeader },
             React.createElement("div", { className: 'home-tab' }, homeTab),
             logOff,
             logInTab,
@@ -22440,7 +22443,8 @@ class DocumentView extends React.Component {
             document: [],
             url: '',
             documentObject: {},
-            documentName: 'document'
+            documentName: 'document',
+            submitted_file_id: ''
         };
     }
     getDocument() {
@@ -22467,12 +22471,12 @@ class DocumentView extends React.Component {
             console.log(documentObject);
             let documentFields = [];
             //Document Variables
-            //Width: 0.9*85vw
+            //Width: 0.9*90vw
             //Height: auto
             let pdfWidth = documentObject.document_size.right;
             let pdfHeight = documentObject.document_size.height;
             let pdfRatio = pdfHeight / pdfWidth;
-            let webWidth = 0.9 * 85; //in vw
+            let webWidth = 0.9 * 90; //in vw
             let webHeigth = webWidth * pdfRatio; // in vw
             for (let form in documentObject.document_meta) {
                 let currentForm = documentObject.document_meta[form];
@@ -34109,7 +34113,7 @@ exports = module.exports = __webpack_require__(14)(false);
 
 
 // module
-exports.push([module.i, "#Account {\n  width: 83vw;\n  margin-left: 15%;\n  height: 90vh;\n  padding-left: 2%;\n  cursor: default;\n  background-color: #e6e6e6;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center; }\n\n.account-settings-header {\n  font-size: 2em;\n  padding: 2% 0 4% 0; }\n\n.user-information-header {\n  font-size: 1.5em; }\n\n.account-settings-content {\n  min-height: 10vh;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center; }\n\n#account-content-container {\n  width: 90%;\n  min-height: 80vh;\n  background-color: white;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  border: solid 1px #c8c8c8;\n  border-top: none; }\n\n#account-tabs-container {\n  width: calc(100%);\n  margin-left: -1px;\n  height: 10vh;\n  background-color: #e6e6e6;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: center;\n  border-bottom: solid 1px #c8c8c8;\n  border-left: solid 1px #e6e6e6;\n  border-right: solid 1px #e6e6e6;\n  z-index: 1; }\n\n.account-tab {\n  width: 33.3%;\n  height: 90%;\n  background-color: white;\n  border-color: grey;\n  margin: 0px 2px 0px 2px;\n  z-index: 2;\n  cursor: pointer;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 2em;\n  color: #b4b4b4; }\n\n#account-info-tab {\n  margin-left: -1px;\n  border-right: none !important; }\n\n#personal-info-tab {\n  border-right: none !important;\n  border-left: none !important; }\n\n#civilian-info-tab {\n  margin-right: -1px;\n  border-left: none !important; }\n\n.account-tab-selected {\n  border-bottom: solid 1px white;\n  margin-bottom: -1px;\n  cursor: default;\n  border-top: 4px solid #475884;\n  border-left: solid 1px #c8c8c8;\n  border-right: solid 1px #c8c8c8;\n  height: calc(90% - 3px);\n  color: #323232; }\n\n.account-page-view {\n  width: 90%;\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  grid-gap: 0vh 5%;\n  margin-left: 5%;\n  padding-top: 2.5%; }\n\n.account-content-column {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  font-size: 1.5em; }\n\n.account-info-line-item {\n  margin-bottom: 2vh; }\n", ""]);
+exports.push([module.i, "#Account {\n  width: 96%;\n  height: 90vh;\n  padding-left: 2%;\n  padding-right: 2%;\n  cursor: default;\n  background-color: #e6e6e6;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center; }\n\n.account-settings-header {\n  font-size: 2em;\n  padding: 2vw 0 4vw 0; }\n\n.user-information-header {\n  font-size: 1.5em; }\n\n.account-settings-content {\n  min-height: 10vh;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center; }\n\n#account-content-container {\n  width: 90%;\n  min-height: 80vh;\n  background-color: white;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  border: solid 1px #c8c8c8;\n  border-top: none; }\n\n#account-tabs-container {\n  width: 100%;\n  margin-left: -1px;\n  height: 10vh;\n  background-color: #e6e6e6;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: center;\n  border-bottom: solid 1px #c8c8c8;\n  border-left: solid 1px #e6e6e6;\n  border-right: solid 1px #e6e6e6;\n  z-index: 1; }\n\n.account-tab {\n  width: 33.3%;\n  height: 90%;\n  background-color: white;\n  border-color: grey;\n  margin: 0px 2px 0px 2px;\n  z-index: 2;\n  cursor: pointer;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 2em;\n  color: #b4b4b4; }\n\n#account-info-tab {\n  margin-left: -1px;\n  border-right: none !important; }\n\n#personal-info-tab {\n  border-right: none !important;\n  border-left: none !important; }\n\n#civilian-info-tab {\n  margin-right: -1px;\n  border-left: none !important; }\n\n.account-tab-selected {\n  border-bottom: solid 1px white;\n  margin-bottom: -1px;\n  cursor: default;\n  border-top: 4px solid #475884;\n  border-left: solid 1px #c8c8c8;\n  border-right: solid 1px #c8c8c8;\n  height: calc(90% - 3px);\n  color: #323232; }\n\n.account-page-view {\n  width: 90%;\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  grid-gap: 0vh 5%;\n  margin-left: 5%;\n  padding-top: 2.5%; }\n\n.account-content-column {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  font-size: 1.5em; }\n\n.account-info-line-item {\n  margin-bottom: 2vh; }\n", ""]);
 
 // exports
 
@@ -34123,7 +34127,7 @@ exports = module.exports = __webpack_require__(14)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n#NewDocument {\n  width: 85%;\n  height: 90vh;\n  overflow: auto;\n  margin-left: 15%;\n  background-color: #ebebeb; }\n\n#notice {\n  border: none;\n  text-align: center; }\n\n.create-document-button {\n  position: absolute;\n  font-size: 1.5em;\n  padding: 0.25em 0.75em 0.25em 0.75em;\n  background-color: #2990d6;\n  cursor: pointer; }\n\n#create-document-next-button {\n  bottom: 2vh;\n  right: 2vw; }\n\n#create-document-back-button {\n  bottom: 2vh;\n  left: 2vw; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n#NewDocument {\n  width: 100%;\n  height: 90vh;\n  overflow: auto; }\n\n#notice {\n  border: none;\n  text-align: center; }\n\n.create-document-button {\n  position: absolute;\n  font-size: 1.5em;\n  padding: 0.25em 0.75em 0.25em 0.75em;\n  background-color: lightgrey; }\n\n.selectable-button {\n  background-color: #2990d6;\n  cursor: pointer; }\n\n#button-container {\n  position: relative;\n  width: 100%;\n  height: auto; }\n\n#create-document-next-button {\n  bottom: 2vh;\n  right: 2vw; }\n\n#create-document-back-button {\n  bottom: 2vh;\n  left: 2vw; }\n", ""]);
 
 // exports
 
@@ -34137,7 +34141,7 @@ exports = module.exports = __webpack_require__(14)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n.DocumentList {\n  width: 85%;\n  height: 90vh;\n  overflow: auto;\n  margin-left: 15%;\n  background-color: #ebebeb; }\n\n#search-bar-header {\n  margin-top: 2.5vh; }\n\n#document-search-bar-container {\n  height: 5vh;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-start;\n  margin-top: 0vh !important;\n  padding-bottom: 5vh; }\n\n#document-search-bar {\n  font-size: 30px;\n  margin-left: 2.8vw;\n  height: 100% !important; }\n\n#document-search-submit-button {\n  height: 100% !important;\n  width: auto;\n  margin: 0;\n  cursor: pointer; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 2vw;\n  margin: 5vh 2vw 0vh 2vw;\n  cursor: default;\n  background-color: #a0caef;\n  color: black; }\n\n.document-list-container {\n  position: relative;\n  padding-bottom: 10vh;\n  background-color: white;\n  width: calc(100%-8vw-4px);\n  margin-left: 2vw;\n  margin-right: 2vw;\n  margin-bottom: 2vh;\n  height: auto;\n  overflow: auto;\n  padding-top: 2vw; }\n\n.viewable-document {\n  width: 23.25vw;\n  height: 30vw;\n  margin-left: 2.8vw;\n  float: left;\n  margin-bottom: 2.5vh;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.5em;\n  cursor: pointer;\n  position: relative;\n  z-index: 1; }\n\n.viewable-document-title {\n  position: absolute;\n  padding-top: 5%;\n  padding-bottom: 5%;\n  top: 1px;\n  left: 1px;\n  z-index: 3;\n  font-size: 1.4em;\n  text-align: center;\n  background-color: #266ba8;\n  color: white;\n  width: 100%; }\n\n.viewable-document-action-title {\n  position: absolute;\n  top: auto;\n  left: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.1em;\n  z-index: 3; }\n\n.viewable-document-action {\n  font-size: 0.8em;\n  text-decoration: none;\n  z-index: 3; }\n\n.viewable-document-status-title {\n  position: absolute;\n  left: 5%;\n  bottom: 2.5%;\n  font-size: 1em;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  z-index: 3; }\n\n.viewable-document-status {\n  font-size: 0.8em;\n  text-decoration: none;\n  margin-left: 5%;\n  z-index: 3; }\n\n.pdf-preview-container {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  left: 0;\n  z-index: 1;\n  border: solid 1px black;\n  background-color: white; }\n\n.pdf-preview {\n  height: 30vw !important;\n  width: auto !important;\n  z-index: 1; }\n\n.pdf-preview-shader {\n  height: 100%;\n  width: 100%;\n  z-index: 5;\n  background: #2bba18;\n  opacity: 0;\n  position: absolute;\n  left: 0;\n  top: 0; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n.DocumentList {\n  width: 100%;\n  height: 90vh;\n  overflow: auto; }\n\n#search-bar-header {\n  margin-top: 2.5vh; }\n\n#document-search-bar-container {\n  height: 5vh;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-start;\n  margin-top: 0vh !important;\n  padding-bottom: 5vh; }\n\n#document-search-bar {\n  font-size: 30px;\n  margin-left: 2.8vw;\n  height: 100% !important; }\n\n#document-search-submit-button {\n  height: 100% !important;\n  width: auto;\n  margin: 0;\n  cursor: pointer; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw;\n  cursor: default;\n  color: black; }\n\n.document-list-container {\n  position: relative;\n  padding-bottom: 10vh;\n  width: calc(100%-8vw-4px);\n  margin-left: 2vw;\n  margin-right: 2vw;\n  margin-bottom: 2vh;\n  height: auto;\n  overflow: auto;\n  padding-top: 2vw; }\n\n.viewable-document {\n  width: 98%;\n  margin-left: 1vw;\n  height: auto;\n  padding-top: 1.5%;\n  margin-top: 1.5vh;\n  padding-bottom: 1.5%;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-start;\n  background-color: white;\n  cursor: pointer;\n  border: solid 2px transparent; }\n\n.viewable-document-field {\n  font-size: 1.25em;\n  margin-left: 3%; }\n\n#first-field {\n  margin-left: 1.5%; }\n\n.viewable-document-title {\n  position: absolute;\n  padding-top: 5%;\n  padding-bottom: 5%;\n  top: 1px;\n  left: 1px;\n  z-index: 3;\n  font-size: 1.4em;\n  text-align: center;\n  background-color: #266ba8;\n  color: white;\n  width: 100%; }\n\n.viewable-document-action-title {\n  position: absolute;\n  top: auto;\n  left: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.1em;\n  z-index: 3; }\n\n.viewable-document-action {\n  font-size: 0.8em;\n  text-decoration: none;\n  z-index: 3; }\n\n.viewable-document-status-title {\n  position: absolute;\n  left: 5%;\n  bottom: 2.5%;\n  font-size: 1em;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  z-index: 3; }\n\n.viewable-document-status {\n  font-size: 0.8em;\n  text-decoration: none;\n  margin-left: 5%;\n  z-index: 3; }\n\n.pdf-preview-container {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  left: 0;\n  z-index: 1;\n  border: solid 1px black;\n  background-color: white; }\n\n.pdf-preview {\n  height: 30vw !important;\n  width: auto !important;\n  z-index: 1; }\n\n.pdf-preview-shader {\n  height: 100%;\n  width: 100%;\n  z-index: 5;\n  background: #2bba18;\n  opacity: 0;\n  position: absolute;\n  left: 0;\n  top: 0; }\n", ""]);
 
 // exports
 
@@ -34151,7 +34155,7 @@ exports = module.exports = __webpack_require__(14)(false);
 
 
 // module
-exports.push([module.i, ".DocumentView {\n  width: 85vw;\n  margin-left: 15vw;\n  height: 90vh;\n  overflow: auto;\n  padding-top: 5vh;\n  position: relative; }\n\n#save-button {\n  font-size: 2em;\n  padding: 1%;\n  position: fixed;\n  top: 11vh;\n  right: 1vw;\n  z-index: 500;\n  background-color: lightblue;\n  cursor: pointer;\n  border-radius: 3px; }\n\n.pdf-image {\n  position: absolute;\n  width: 90% !important;\n  height: auto !important;\n  margin-left: calc(85vw * 0.05);\n  margin-bottom: 5vh; }\n\n#document-form-div {\n  margin-left: calc(85vw * 0.05);\n  position: relative;\n  top: 0;\n  left: 0; }\n\n.document-checkbox {\n  width: 100% !important;\n  height: 100% !important;\n  background-color: lightgrey !important;\n  border: none;\n  margin: 0; }\n\n.document-form {\n  overflow: auto; }\n\n.input-form-name {\n  font-size: 1.3em;\n  text-indent: -5px; }\n\n.document-input {\n  background-color: lightgrey;\n  border: none; }\n\n.document-input:focus {\n  outline: none; }\n\n.pdf-viewer {\n  margin-bottom: 5vh;\n  margin-top: 5vh;\n  margin-left: 22.5%; }\n\n.document {\n  background-color: white;\n  width: 595px;\n  max-width: 70%;\n  height: 842px;\n  margin-top: 50px;\n  margin-bottom: 50px;\n  margin-left: calc((100vw - 15vw - 595px)/2);\n  float: left; }\n", ""]);
+exports.push([module.i, ".DocumentView {\n  width: 100%;\n  height: 90vh;\n  overflow: auto;\n  padding-top: 5vh;\n  position: relative; }\n\n#save-button {\n  font-size: 2em;\n  padding: 1%;\n  position: fixed;\n  top: 11vh;\n  right: 1vw;\n  z-index: 500;\n  background-color: lightblue;\n  cursor: pointer;\n  border-radius: 3px; }\n\n.pdf-image {\n  position: absolute;\n  width: 90% !important;\n  height: auto !important;\n  margin-left: calc(85vw * 0.05);\n  margin-bottom: 5vh; }\n\n#document-form-div {\n  margin-left: calc(85vw * 0.05);\n  position: relative;\n  top: 0;\n  left: 0; }\n\n.document-checkbox {\n  width: 100% !important;\n  height: 100% !important;\n  background-color: lightgrey !important;\n  border: none;\n  margin: 0; }\n\n.document-form {\n  overflow: auto; }\n\n.input-form-name {\n  font-size: 1.3em;\n  text-indent: -5px; }\n\n.document-input {\n  background-color: lightgrey;\n  border: none; }\n\n.document-input:focus {\n  outline: none; }\n\n.pdf-viewer {\n  margin-bottom: 5vh;\n  margin-top: 5vh;\n  margin-left: 22.5%; }\n\n.document {\n  background-color: white;\n  width: 595px;\n  max-width: 70%;\n  height: 842px;\n  margin-top: 50px;\n  margin-bottom: 50px;\n  margin-left: calc((100vw - 15vw - 595px)/2);\n  float: left; }\n", ""]);
 
 // exports
 
@@ -34179,7 +34183,7 @@ exports = module.exports = __webpack_require__(14)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n.HomeHeader {\n  width: 100%;\n  height: 10vh;\n  background-color: white;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: flex-end;\n  position: fixed;\n  top: 0;\n  z-index: 20;\n  color: black; }\n\n.header-tab {\n  cursor: default;\n  height: auto;\n  width: auto;\n  padding: 1vh 2vw 1vh 1vw;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  color: black !important; }\n\n.header-link {\n  width: 100%;\n  height: 90%;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: center;\n  cursor: pointer; }\n\n.header-link:hover {\n  text-decoration: underline; }\n\n.home-tab {\n  position: absolute;\n  left: 0;\n  border-left: none;\n  font-size: 2em;\n  padding: none;\n  width: auto;\n  height: 100%;\n  background-color: #266ba8;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  justify-content: flex-end; }\n\n#header-logo {\n  padding-left: 1.25vw;\n  padding-right: 2.75vw;\n  width: 11vw;\n  height: auto; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n#HomeHeader {\n  width: 90vw;\n  left: 10vw;\n  height: 7.5vh;\n  background-color: white;\n  background-color: #266ba8;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: flex-end;\n  position: fixed;\n  top: 0;\n  z-index: 20;\n  color: #f0f0f0;\n  font-size: 1.5em; }\n\n.show-full-header {\n  width: 100vw !important;\n  left: 0 !important;\n  height: 10vh !important; }\n\n.header-tab {\n  cursor: default;\n  height: auto;\n  width: auto;\n  padding: 1vh 2vw 1vh 1vw;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center; }\n\n.header-link {\n  width: 100%;\n  height: 90%;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: center;\n  cursor: pointer; }\n\n.header-link:hover {\n  text-decoration: underline; }\n\n.home-tab {\n  position: absolute;\n  left: 0;\n  border-left: none;\n  font-size: 2em;\n  padding: none;\n  width: auto;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  justify-content: flex-end; }\n\n#header-logo {\n  padding-left: 1.25vw;\n  padding-right: 2.75vw;\n  width: auto;\n  height: 100%; }\n", ""]);
 
 // exports
 
@@ -34193,7 +34197,7 @@ exports = module.exports = __webpack_require__(14)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n.Home {\n  padding-top: 10vh;\n  overflow: hidden;\n  height: 90vh;\n  background-color: #ebebeb; }\n\n.documents-container {\n  padding-bottom: 5vh;\n  background-color: #ebebeb; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n.Home {\n  padding-top: 7.5vh;\n  overflow: hidden;\n  height: 92.5vh;\n  background-color: #ebebeb; }\n\n.documents-container {\n  padding-bottom: 5vh;\n  background-color: #ebebeb;\n  width: 90vw;\n  margin-left: 10vw; }\n", ""]);
 
 // exports
 
@@ -34221,7 +34225,7 @@ exports = module.exports = __webpack_require__(14)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n.MetaBar {\n  position: absolute;\n  left: 0;\n  top: 10vh;\n  width: 15vw;\n  height: 90vh;\n  background-color: lightgrey; }\n\n.metabar-link {\n  height: auto;\n  padding: 5% 0 5% 0;\n  margin-bottom: 0.5vh;\n  width: 100%;\n  text-indent: 10%;\n  align-items: center;\n  font-size: 1.15em;\n  cursor: pointer; }\n\n.metabar-link:hover {\n  background-color: grey; }\n\n.document-list-links-container {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  font-size: 1.1em; }\n\n.document-link {\n  text-decoration: none;\n  padding: 2.5% 0 2.5% 0;\n  width: 100%;\n  text-indent: 20%;\n  cursor: pointer; }\n\n.document-link:hover {\n  background-color: grey; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n#MetaBar {\n  position: absolute;\n  width: 10vw;\n  left: 0;\n  top: 0;\n  height: 100vh;\n  background-color: #323232;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start; }\n\n.metabar-link {\n  height: auto;\n  padding: 5% 0 5% 0;\n  width: 100%;\n  text-indent: 10%;\n  align-items: center;\n  font-size: 1.15em;\n  cursor: pointer; }\n\n#logo-container {\n  opacity: 1;\n  height: 10vh;\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 0; }\n\n#logo {\n  width: auto;\n  height: 90%; }\n  @media screen and (max-width: 1000px) {\n    #logo {\n      width: 60%;\n      height: auto; } }\n  @media screen and (max-width: 600px) {\n    #logo {\n      width: 80%;\n      height: auto; } }\n\n.metabar-link {\n  width: 40%;\n  padding-left: 30%;\n  padding-right: 30%;\n  padding-top: 15%;\n  padding-bottom: 15%;\n  opacity: 0.6; }\n\n.metabar-link:hover {\n  background-color: rgba(250, 250, 250, 0.1); }\n\n.metabar-link-selected {\n  background-color: rgba(250, 250, 250, 0.1); }\n\n.document-list-links-container {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  font-size: 1.1em; }\n\n.document-link {\n  text-decoration: none;\n  padding: 2.5% 0 2.5% 0;\n  width: 100%;\n  text-indent: 20%;\n  cursor: pointer; }\n\n.document-link:hover {\n  background-color: rgba(0, 0, 0, 0.1); }\n", ""]);
 
 // exports
 
@@ -110750,7 +110754,6 @@ exports.default = About;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __webpack_require__(4);
-const react_pdf_js_1 = __webpack_require__(105);
 const s = __webpack_require__(415);
 class CreateDocument extends React.Component {
     constructor(props) {
@@ -110758,64 +110761,110 @@ class CreateDocument extends React.Component {
         this.state = {
             documentResults: this.props.documentResults,
             currentView: '',
+            view: '',
             documentList: [],
-            document_id: ''
+            document_id: '',
+            nextButton: '',
+            readyForNext: false
         };
         // this.handleDocumentLinkPress = this.handleDocumentLinkPress.bind(this)
         this.handleSelectDocumentView = this.handleSelectDocumentView.bind(this);
-        this.handleCreateDocumentView = this.handleCreateDocumentView.bind(this);
+        this.handleSelectPermissionsView = this.handleSelectPermissionsView.bind(this);
+        this.handleNext = this.handleNext.bind(this);
+        this.handleBack = this.handleBack.bind(this);
     }
     //Views
+    handleNext() {
+        if (this.state.view === 'SelectDocument') {
+            if (this.state.document_id === '') {
+                return;
+            }
+            this.handleSelectPermissionsView();
+            return;
+        }
+        if (this.state.view === 'SelectPermissions') {
+            return;
+        }
+    }
+    handleBack() {
+        if (this.state.view === 'SelectPermissions') {
+            this.handleSelectDocumentView();
+            return;
+        }
+    }
     handleSelectDocumentView() {
         let currentView = (React.createElement("div", null,
-            React.createElement("div", { className: 'documents-header' }, "Select Document"),
-            React.createElement("div", { className: 'document-list-container' },
-                this.state.documentList,
-                React.createElement("button", { className: 'create-document-button', onClick: this.handleCreateDocumentView, id: 'create-document-next-button' }, "Next"))));
+            React.createElement("div", { className: 'documents-header' }, "Select Template Document"),
+            React.createElement("div", { className: 'document-list-container' }, this.state.documentList)));
         this.setState({
-            currentView: currentView
+            currentView: currentView,
+            view: 'SelectDocument'
+        }, () => {
+            this.handleButtons();
         });
     }
-    handleCreateDocumentView() {
+    handleSelectPermissionsView() {
         let currentView = (React.createElement("div", null,
-            React.createElement("div", { className: 'documents-header' }, "Create Document"),
+            React.createElement("div", { className: 'documents-header' }, "Select Document Permissions"),
             React.createElement("div", { className: 'document-list-container' },
                 React.createElement("div", null,
                     "Selected Document: ",
                     this.state.document_id),
                 React.createElement("div", null, "Send to:"),
-                React.createElement("div", null, "Allow viewing priviledge:"),
-                React.createElement("button", { className: 'create-document-button', id: 'create-document-back-button', onClick: this.handleSelectDocumentView }, "Back"),
-                React.createElement("button", { className: 'create-document-button', id: 'create-document-next-button' }, "Next"))));
+                React.createElement("div", null, "Allow viewing priviledge:"))));
         this.setState({
-            currentView: currentView
+            currentView: currentView,
+            view: 'SelectPermissions'
+        }, () => {
+            this.handleButtons();
+            this.clearBorder();
         });
     }
-    // async handleDocumentLinkPress(e) {
-    //     let target = e.target
-    //     while (!target.classList.contains('viewable-document')) {
-    //         target = target.parentNode
-    //     }
-    //     let document_id = target.id
-    //     let setFile = await this.setState({
-    //         document_id: document_id
-    //     })
-    //     this.setState({
-    //         currentView: <DocumentView file={this.state.document_id} />
-    //     })
-    //     let getCurrentView = await this.props.getCurrentView(this.state.currentView)
-    // }
+    handleButtons() {
+        let backButton;
+        if (this.state.view === 'SelectDocument') {
+            backButton = '';
+            this.setState({
+                backButton: backButton
+            });
+        }
+        if (this.state.view === 'SelectPermissions') {
+            backButton =
+                React.createElement("button", { className: 'create-document-button selectable-button', id: 'create-document-back-button', onClick: this.handleBack }, "Back");
+            this.setState({
+                backButton: backButton
+            });
+        }
+        let nextButton;
+        if (!this.state.readyForNext) {
+            nextButton =
+                React.createElement("button", { className: 'create-document-button', id: 'create-document-next-button' }, "Next");
+            this.setState({
+                nextButton: nextButton
+            }, () => {
+                this.forceUpdate();
+                return nextButton;
+            });
+        }
+        else {
+            nextButton =
+                React.createElement("button", { className: 'create-document-button selectable-button', id: 'create-document-next-button', onClick: this.handleNext }, "Next");
+            this.setState({
+                nextButton: nextButton
+            }, () => {
+                return nextButton;
+            });
+        }
+    }
     //Creates list in state of objects to be rendered
     renderDocuments() {
         let documents = this.props.documentResults;
         let documentList = [];
         for (let i = 0; i < documents.length; i++) {
             let file = '/dist/documents/' + documents[i].file;
-            let newDocument = React.createElement("div", { className: 'viewable-document', key: i, id: documents[i].file, onClick: (e) => { this.selectDocument(e); } },
-                React.createElement("div", { className: 'pdf-preview-container' },
-                    React.createElement(react_pdf_js_1.default, { className: 'pdf-preview', file: file }),
-                    React.createElement("div", { className: 'pdf-preview-shader' })),
-                React.createElement("div", { className: 'viewable-document-title' }, documents[i].title));
+            let newDocument = React.createElement("div", { key: i, className: 'viewable-document', id: documents[i].file, onClick: (e) => { this.selectDocument(e); } },
+                React.createElement("div", { className: 'viewable-document-field', id: 'first-field' }, (i + 1) + '.'),
+                React.createElement("div", { className: 'viewable-document-field' }, documents[i].title));
             documentList.push(newDocument);
         }
         this.setState({
@@ -110832,19 +110881,35 @@ class CreateDocument extends React.Component {
         let parent = target.parentNode;
         for (let i = 0; i < parent.children.length; i++) {
             if (parent.children[i].className === 'viewable-document') {
-                parent.children[i].children[0].children[1].style.opacity = 0;
+                parent.children[i].style.border = 'solid 2px rgba(0, 0, 0, 0)';
             }
         }
-        target.children[0].children[1].style.opacity = 0.5;
+        if (target.classList.contains('viewable-document')) {
+            target.style.border = 'solid 2px rgba(38, 107, 168, 0.7)';
+        }
         this.setState({
-            document_id: target.id
+            document_id: target.id,
+            readyForNext: true
+        }, () => {
+            this.handleButtons();
         });
     }
+    clearBorder() {
+        let children = document.getElementsByClassName('document-list-container')[0].childNodes;
+        for (let i = 0; i < children.length; i++) {
+            children[i].style.border = 'none';
+        }
+    }
     componentWillMount() {
+        this.handleButtons();
         this.renderDocuments();
     }
     render() {
-        return (React.createElement("div", { id: 'NewDocument' }, this.state.currentView));
+        return (React.createElement("div", { id: 'NewDocument' },
+            this.state.currentView,
+            React.createElement("div", { id: 'button-container' },
+                this.state.backButton,
+                this.state.nextButton)));
     }
 }
 exports.default = CreateDocument;
@@ -110858,7 +110923,6 @@ exports.default = CreateDocument;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __webpack_require__(4);
-const react_pdf_js_1 = __webpack_require__(105);
 const s = __webpack_require__(416);
 class DocumentList extends React.Component {
     constructor(props) {
@@ -110873,11 +110937,9 @@ class DocumentList extends React.Component {
         let documentList = [];
         for (let i = 0; i < documents.length; i++) {
             let file = '/dist/documents/' + documents[i].file;
-            let newDocument = React.createElement("div", { className: 'viewable-document', key: i, id: documents[i].file, onClick: (e) => { this.props.viewDocument(e); } },
-                React.createElement("div", { className: 'pdf-preview-container' },
-                    React.createElement(react_pdf_js_1.default, { className: 'pdf-preview', file: file }),
-                    React.createElement("div", { className: 'pdf-preview-shader' })),
-                React.createElement("div", { className: 'viewable-document-title' }, documents[i].title));
+            let newDocument = React.createElement("div", { key: i, className: 'viewable-document', id: documents[i].file, onClick: (e) => { this.props.viewDocument(e); } },
+                React.createElement("div", { className: 'viewable-document-field', id: 'first-field' }, (i + 1) + '.'),
+                React.createElement("div", { className: 'viewable-document-field' }, documents[i].title));
             documentList.push(newDocument);
         }
         this.setState({
@@ -110890,11 +110952,7 @@ class DocumentList extends React.Component {
     render() {
         return (React.createElement("div", { className: 'DocumentList' },
             React.createElement("div", { className: 'documents-header' }, "Pending Documents"),
-            React.createElement("div", { className: 'document-list-container' },
-                React.createElement("div", { id: 'document-search-bar-container' },
-                    React.createElement("input", { placeholder: ' ** Not Implemented **', id: 'document-search-bar', type: "text" }),
-                    React.createElement("button", { id: 'document-search-submit-button' }, "Search")),
-                this.state.documentList)));
+            React.createElement("div", { className: 'document-list-container' }, this.state.documentList)));
     }
 }
 exports.default = DocumentList;
@@ -110923,6 +110981,7 @@ const DocumentView_1 = __webpack_require__(115);
 const Account_1 = __webpack_require__(114);
 const About_1 = __webpack_require__(426);
 const CreateDocument_1 = __webpack_require__(427);
+const UploadDocument_1 = __webpack_require__(443);
 class MetaBar extends React.Component {
     constructor(props) {
         super(props);
@@ -110941,6 +111000,7 @@ class MetaBar extends React.Component {
         this.getDocuments = this.getDocuments.bind(this);
         this.populateDocumentLinks = this.populateDocumentLinks.bind(this);
         this.handleNewDocumentPress = this.handleNewDocumentPress.bind(this);
+        this.handleUploadDocumentPress = this.handleUploadDocumentPress.bind(this);
     }
     getCurrentUser() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -110994,7 +111054,6 @@ class MetaBar extends React.Component {
                 console.log(documentList);
                 let pdfID = documentList[0].idDocument;
                 let returnPDF = yield $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`);
-                // console.log(returnPDF)
             }
             catch (e) {
                 console.log(e);
@@ -111045,7 +111104,13 @@ class MetaBar extends React.Component {
                 currentView: React.createElement(DocumentView_1.default, { file: this.state.file })
             });
             let getCurrentView = yield this.props.getCurrentView(this.state.currentView);
-            console.log(this.props);
+        });
+    }
+    handleUploadDocumentPress() {
+        this.setState({
+            currentView: React.createElement(UploadDocument_1.default, null)
+        }, () => {
+            this.props.getCurrentView(this.state.currentView);
         });
     }
     handleStudioPress() {
@@ -111089,18 +111154,19 @@ class MetaBar extends React.Component {
     componentDidMount() {
         this.getDocuments();
         this.getCurrentUser();
-        // this.handleDocumentListPress()
     }
     render() {
         let studio;
         if (this.state.user.authorization > 1) {
             studio = React.createElement("div", { className: 'metabar-link', onClick: this.handleStudioPress }, "Studio (Unfinished)");
         }
-        return (React.createElement("div", { className: 'MetaBar' },
-            React.createElement("div", { className: 'metabar-link', onClick: this.handleDocumentListPress }, "Document List"),
-            React.createElement("div", { className: 'document-list-links-container' }, this.state.documentLinks),
-            React.createElement("div", { className: 'metabar-link', onClick: this.handleNewDocumentPress }, "Create Document"),
-            React.createElement("div", { className: 'metabar-link', onClick: this.handleSettingsPress }, "Account")));
+        return (React.createElement("div", { id: 'MetaBar' },
+            React.createElement("div", { id: 'logo-container' },
+                React.createElement("img", { id: 'logo', src: '/images/MAPR_logo_edit.png' })),
+            React.createElement("img", { className: 'metabar-link', src: '/images/doc_icon.png', onClick: this.handleDocumentListPress }),
+            React.createElement("img", { className: 'metabar-link', src: '/images/new_document-white.png', onClick: this.handleNewDocumentPress }),
+            React.createElement("img", { className: 'metabar-link', src: '/images/upload-document.png', onClick: this.handleUploadDocumentPress }),
+            React.createElement("img", { className: 'metabar-link', src: '/images/settings.png', onClick: this.handleSettingsPress })));
     }
 }
 exports.default = MetaBar;
@@ -112039,6 +112105,105 @@ module.exports = function(module) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 441 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(14)(false);
+// imports
+
+
+// module
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n#UploadDocument {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding-top: 10vh; }\n\n#dropzone {\n  width: 80%;\n  height: 50%;\n  background-color: #e0f5ff;\n  border: dashed 2px #6194ad;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 10vh;\n  font-size: 2em;\n  color: grey;\n  cursor: default; }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 442 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(441);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(17)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/sass-loader/lib/loader.js!./style.sass", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/sass-loader/lib/loader.js!./style.sass");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 443 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = __webpack_require__(4);
+const s = __webpack_require__(442);
+class UploadDocument extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
+    render() {
+        return (React.createElement("div", { id: 'UploadDocument', onDragOver: (e) => {
+                e.preventDefault();
+            } },
+            React.createElement("div", { id: 'dropzone', onDrop: (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log(e.dataTransfer.files);
+                } }, "Drop Files Here"),
+            React.createElement("form", { action: "", method: 'post', onSubmit: (e) => {
+                    e.preventDefault();
+                    console.log(document.getElementById('uploadedFile').value);
+                    console.log(e);
+                } },
+                React.createElement("input", { id: 'uploadedFile', type: "file", name: 'file[]', multiple: true }),
+                React.createElement("input", { type: "submit", value: 'Upload' }))));
+    }
+}
+exports.default = UploadDocument;
+
 
 /***/ })
 /******/ ]);

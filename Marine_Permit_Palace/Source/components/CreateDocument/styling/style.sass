@@ -1,11 +1,9 @@
 @import ../../../style
     
 #NewDocument
-    width: 85%
+    width: 100%
     height: 90vh
     overflow: auto
-    margin-left: 15%
-    background-color: $main-back
 
 #notice
     border: none
@@ -15,8 +13,16 @@
     position: absolute
     font-size: 1.5em
     padding: 0.25em 0.75em 0.25em 0.75em
+    background-color: lightgrey
+
+.selectable-button
     background-color: $button-color
     cursor: pointer
+
+#button-container
+    position: relative
+    width: 100%
+    height: auto
 
 #create-document-next-button
     bottom: 2vh

@@ -24,26 +24,9 @@ export default class DocumentList extends React.Component<any, any> {
             let file = '/dist/documents/' + documents[i].file
 
             let newDocument = 
-                <div className='viewable-document' key={i} id={documents[i].file} onClick={(e) => {this.props.viewDocument(e)}}> 
-                    <div className='pdf-preview-container'>
-                        <PDF className='pdf-preview' file={file}/>
-                        <div className='pdf-preview-shader'></div>
-                    </div>
-                    <div className='viewable-document-title'>
-                        {documents[i].title}
-                    </div>
-                    {/* <div className='viewable-document-action-title'>
-                        Action Required:
-                        <div className='viewable-document-action'>
-                            {documents[i].action_required}
-                        </div>
-                     </div>
-                     <div className='viewable-document-status-title'>
-                        Status: 
-                        <div className='viewable-document-status'>
-                            {documents[i].status}
-                        </div>
-                     </div> */}
+                <div key={i} className='viewable-document' id={documents[i].file} onClick={(e) => {this.props.viewDocument(e)}}>
+                    <div className='viewable-document-field' id='first-field'>{(i+1) + '.'}</div>
+                    <div className='viewable-document-field'>{documents[i].title}</div>
                 </div>
 
             documentList.push(newDocument)
@@ -62,15 +45,12 @@ export default class DocumentList extends React.Component<any, any> {
     render() {
         return(
             <div className='DocumentList'>
-                {/* <div id='search-bar-header' className='documents-header'>
-                    Search
-                </div> */}
                 <div className='documents-header'>Pending Documents</div>
                 <div className='document-list-container'>
-                    <div id='document-search-bar-container'>
+                    {/* <div id='document-search-bar-container'>
                         <input placeholder=' ** Not Implemented **' id='document-search-bar' type="text"/>
                         <button id='document-search-submit-button'>Search</button>
-                    </div>
+                    </div> */}
                     {this.state.documentList}
                 </div>
             </div>

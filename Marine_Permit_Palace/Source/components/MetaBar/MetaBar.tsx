@@ -9,6 +9,7 @@ import DocumentView from '../DocumentView/DocumentView'
 import Account from '../Account/Account'
 import About from '../About/About'
 import CreateDocument from '../CreateDocument/CreateDocument'
+import UploadDocument from '../UploadDocument/UploadDocument'
 
 export default class MetaBar extends React.Component<any, any> {
 
@@ -30,6 +31,7 @@ export default class MetaBar extends React.Component<any, any> {
         this.getDocuments = this.getDocuments.bind(this)
         this.populateDocumentLinks = this.populateDocumentLinks.bind(this)
         this.handleNewDocumentPress = this.handleNewDocumentPress.bind(this)
+        this.handleUploadDocumentPress = this.handleUploadDocumentPress.bind(this)
     }
 
     async getCurrentUser() {
@@ -90,7 +92,6 @@ export default class MetaBar extends React.Component<any, any> {
             let pdfID = documentList[0].idDocument
 
             let returnPDF = await $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`)
-            // console.log(returnPDF)
 
         } catch(e) {
             console.log(e)
@@ -162,7 +163,16 @@ export default class MetaBar extends React.Component<any, any> {
         })
 
         let getCurrentView = await this.props.getCurrentView(this.state.currentView)
-        console.log(this.props)
+    }
+
+    handleUploadDocumentPress() {
+
+        this.setState({
+            currentView: <UploadDocument />
+        }, () => {
+            this.props.getCurrentView(this.state.currentView)
+        })
+
     }
 
     handleStudioPress() {
@@ -212,7 +222,6 @@ export default class MetaBar extends React.Component<any, any> {
     componentDidMount() {
         this.getDocuments()
         this.getCurrentUser()
-        // this.handleDocumentListPress()
     }
 
     render() {
@@ -226,18 +235,14 @@ export default class MetaBar extends React.Component<any, any> {
         }
 
         return(
-            <div className='MetaBar'>
-                <div className='metabar-link' onClick={this.handleDocumentListPress}>
-                    Document List
+            <div id='MetaBar'>
+                <div id='logo-container'>
+                    <img id='logo' src='/images/MAPR_logo_edit.png'/>
                 </div>
-                <div className='document-list-links-container'>
-                    {this.state.documentLinks}
-                </div>
-                <div className='metabar-link' onClick={this.handleNewDocumentPress}>
-                    Create Document
-                </div>
-                <div className='metabar-link' onClick={this.handleSettingsPress}>Account</div>
-                {/* <div className='metabar-link' onClick={this.handleAboutPress}>About</div> */}
+                <img className='metabar-link' src='/images/doc_icon.png' onClick={this.handleDocumentListPress}/>
+                <img className='metabar-link' src='/images/new_document-white.png' onClick={this.handleNewDocumentPress}/>
+                <img className='metabar-link' src='/images/upload-document.png' onClick={this.handleUploadDocumentPress}/>
+                <img className='metabar-link' src='/images/settings.png' onClick={this.handleSettingsPress}/>
             </div>
         )
     }

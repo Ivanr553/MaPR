@@ -22560,7 +22560,7 @@ class DocumentView extends React.Component {
     render() {
         let file = '../../dist/documents/NAVMC10694.pdf';
         return (React.createElement("div", { className: 'DocumentView' },
-            React.createElement("div", { id: 'docuemnt-view-header' },
+            React.createElement("div", { id: 'document-view-header' },
                 React.createElement("div", { id: 'save-button', onClick: () => { this.saveFile(this.state.submitted_file_id); } }, "Save File")),
             React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: file }),
             React.createElement("div", { id: 'document-form-div' }, this.state.documentFields)));
@@ -34109,7 +34109,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n#NewDocument {\n  width: 100%;\n  height: 90vh;\n  overflow: auto; }\n\n#notice {\n  border: none;\n  text-align: center; }\n\n.create-document-button {\n  position: absolute;\n  font-size: 1.5em;\n  padding: 0.25em 0.75em 0.25em 0.75em;\n  background-color: lightgrey; }\n\n.selectable-button {\n  background-color: #2990d6;\n  cursor: pointer; }\n\n#button-container {\n  position: relative;\n  width: 100%;\n  height: auto; }\n\n#create-document-next-button {\n  bottom: 2vh;\n  right: 2vw; }\n\n#create-document-back-button {\n  bottom: 2vh;\n  left: 2vw; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n#CreateDocument {\n  width: 100%;\n  height: 90vh;\n  overflow: auto; }\n\n#notice {\n  border: none;\n  text-align: center; }\n\n.create-document-button {\n  position: absolute;\n  font-size: 1.5em;\n  padding: 0.25em 0.75em 0.25em 0.75em;\n  background-color: lightgrey; }\n\n.selectable-button {\n  background-color: #2990d6;\n  cursor: pointer; }\n\n#button-container {\n  position: relative;\n  width: 100%;\n  height: auto; }\n\n#create-document-next-button {\n  bottom: 2vh;\n  right: 2vw; }\n\n#create-document-back-button {\n  bottom: 2vh;\n  left: 2vw; }\n", ""]);
 
 // exports
 
@@ -34137,7 +34137,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, ".DocumentView {\n  width: 100%;\n  height: 90vh;\n  overflow: auto;\n  padding-top: 5vh;\n  position: relative; }\n\n#docuemnt-view-header {\n  width: 100%;\n  height: 10vh;\n  background-color: lightgrey; }\n\n#save-button {\n  font-size: 2em;\n  padding: 1%;\n  z-index: 500;\n  background-color: lightblue;\n  cursor: pointer;\n  border-radius: 3px; }\n\n.pdf-image {\n  position: absolute;\n  width: 90% !important;\n  height: auto !important;\n  margin-left: calc(85vw * 0.05);\n  margin-bottom: 5vh; }\n\n#document-form-div {\n  margin-left: calc(85vw * 0.05);\n  position: relative;\n  top: 0;\n  left: 0; }\n\n.document-checkbox {\n  width: 100% !important;\n  height: 100% !important;\n  background-color: lightgrey !important;\n  border: none;\n  margin: 0; }\n\n.document-form {\n  overflow: auto; }\n\n.input-form-name {\n  font-size: 1.3em;\n  text-indent: -5px; }\n\n.document-input {\n  background-color: lightgrey;\n  border: none; }\n\n.document-input:focus {\n  outline: none; }\n\n.pdf-viewer {\n  margin-bottom: 5vh;\n  margin-top: 5vh;\n  margin-left: 22.5%; }\n\n.document {\n  background-color: white;\n  width: 595px;\n  max-width: 70%;\n  height: 842px;\n  margin-top: 50px;\n  margin-bottom: 50px;\n  margin-left: calc((100vw - 15vw - 595px)/2);\n  float: left; }\n", ""]);
+exports.push([module.i, ".DocumentView {\n  width: 100%;\n  height: 90vh;\n  overflow: auto;\n  padding-top: 5vh;\n  position: relative; }\n\n#document-view-header {\n  width: 100%;\n  height: 10vh;\n  background-color: lightgrey; }\n\n.pdf-image {\n  position: absolute;\n  width: 90% !important;\n  height: auto !important;\n  margin-left: calc(85vw * 0.05);\n  margin-bottom: 5vh; }\n\n#document-form-div {\n  margin-left: calc(85vw * 0.05);\n  position: relative;\n  top: 0;\n  left: 0; }\n\n.document-checkbox {\n  width: 100% !important;\n  height: 100% !important;\n  background-color: lightgrey !important;\n  border: none;\n  margin: 0; }\n\n.document-form {\n  overflow: auto; }\n\n.input-form-name {\n  font-size: 1.3em;\n  text-indent: -5px; }\n\n.document-input {\n  background-color: lightgrey;\n  border: none; }\n\n.document-input:focus {\n  outline: none; }\n\n.pdf-viewer {\n  margin-bottom: 5vh;\n  margin-top: 5vh;\n  margin-left: 22.5%; }\n\n.document {\n  background-color: white;\n  width: 595px;\n  max-width: 70%;\n  height: 842px;\n  margin-top: 50px;\n  margin-bottom: 50px;\n  margin-left: calc((100vw - 15vw - 595px)/2);\n  float: left; }\n", ""]);
 
 // exports
 
@@ -110839,24 +110839,6 @@ class CreateDocument extends React.Component {
         this.handleBack = this.handleBack.bind(this);
     }
     //Views
-    handleNext() {
-        if (this.state.view === 'SelectDocument') {
-            if (this.state.document_id === '') {
-                return;
-            }
-            this.handleSelectPermissionsView();
-            return;
-        }
-        if (this.state.view === 'SelectPermissions') {
-            return;
-        }
-    }
-    handleBack() {
-        if (this.state.view === 'SelectPermissions') {
-            this.handleSelectDocumentView();
-            return;
-        }
-    }
     handleSelectDocumentView() {
         let currentView = (React.createElement("div", null,
             React.createElement("div", { className: 'documents-header' }, "Select Template Document"),
@@ -110882,9 +110864,28 @@ class CreateDocument extends React.Component {
             view: 'SelectPermissions'
         }, () => {
             this.handleButtons();
-            // this.clearBorder()
         });
     }
+    //Handle View Switching
+    handleNext() {
+        if (this.state.view === 'SelectDocument') {
+            if (this.state.document_id === '') {
+                return;
+            }
+            this.handleSelectPermissionsView();
+            return;
+        }
+        if (this.state.view === 'SelectPermissions') {
+            return;
+        }
+    }
+    handleBack() {
+        if (this.state.view === 'SelectPermissions') {
+            this.handleSelectDocumentView();
+            return;
+        }
+    }
+    //Creating Buttons
     handleButtons() {
         let backButton;
         if (this.state.view === 'SelectDocument') {
@@ -110921,7 +110922,7 @@ class CreateDocument extends React.Component {
             });
         }
     }
-    //Creates list in state of objects to be rendered
+    //Creates list in state of documents to be rendered
     renderDocuments() {
         let documents = this.props.documentResults;
         let documentList = [];
@@ -110959,18 +110960,12 @@ class CreateDocument extends React.Component {
             this.handleButtons();
         });
     }
-    // clearBorder() {
-    //     let children = document.getElementsByClassName('document-list-container')[0].childNodes
-    //     for(let i = 0; i < children.length; i++) {
-    //         console.log(children[i])
-    //     }
-    // }
     componentWillMount() {
         this.handleButtons();
         this.renderDocuments();
     }
     render() {
-        return (React.createElement("div", { id: 'NewDocument' },
+        return (React.createElement("div", { id: 'CreateDocument' },
             this.state.currentView,
             React.createElement("div", { id: 'button-container' },
                 this.state.backButton,

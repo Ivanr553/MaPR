@@ -189,7 +189,7 @@ export default class DocumentView extends React.Component<any, any> {
 
         return(
             <div className='DocumentView'>
-                <div id='docuemnt-view-header'>
+                <div id='document-view-header'>
                     <div id='save-button' onClick={() => {this.saveFile(this.state.submitted_file_id)}}>Save File</div>
                 </div>
                 <PDF className='pdf-image' file={file} >

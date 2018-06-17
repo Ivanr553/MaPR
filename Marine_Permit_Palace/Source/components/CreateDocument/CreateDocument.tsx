@@ -29,37 +29,6 @@ export default class CreateDocument extends React.Component<any, any> {
     }
 
     //Views
-
-    handleNext() {
-
-        if(this.state.view === 'SelectDocument') {
-
-            if(this.state.document_id === '') {
-                return
-            }
-
-            this.handleSelectPermissionsView()
-            return
-        }
-
-        if(this.state.view === 'SelectPermissions') {
-
-            return
-
-        }
-
-    }
-
-    handleBack() {
-
-        if(this.state.view === 'SelectPermissions') {
-
-            this.handleSelectDocumentView()
-            return
-        }
-
-    }
-
     handleSelectDocumentView() {
 
         let currentView = (
@@ -94,10 +63,41 @@ export default class CreateDocument extends React.Component<any, any> {
             view: 'SelectPermissions'
         }, () => {
             this.handleButtons()
-            // this.clearBorder()
         })
     }
 
+    //Handle View Switching
+    handleNext() {
+
+        if(this.state.view === 'SelectDocument') {
+
+            if(this.state.document_id === '') {
+                return
+            }
+
+            this.handleSelectPermissionsView()
+            return
+        }
+
+        if(this.state.view === 'SelectPermissions') {
+
+            return
+
+        }
+
+    }
+
+    handleBack() {
+
+        if(this.state.view === 'SelectPermissions') {
+
+            this.handleSelectDocumentView()
+            return
+        }
+
+    }
+
+    //Creating Buttons
     handleButtons() {
 
         let backButton
@@ -155,7 +155,7 @@ export default class CreateDocument extends React.Component<any, any> {
 
     }
 
-    //Creates list in state of objects to be rendered
+    //Creates list in state of documents to be rendered
     renderDocuments() {
 
         let documents = this.props.documentResults
@@ -211,16 +211,6 @@ export default class CreateDocument extends React.Component<any, any> {
 
     }
 
-    // clearBorder() {
-
-    //     let children = document.getElementsByClassName('document-list-container')[0].childNodes
-
-    //     for(let i = 0; i < children.length; i++) {
-    //         console.log(children[i])
-    //     }
-
-    // }
-
     componentWillMount() {
         this.handleButtons()
         this.renderDocuments()
@@ -229,7 +219,7 @@ export default class CreateDocument extends React.Component<any, any> {
     render() {
 
         return(
-            <div id='NewDocument'>
+            <div id='CreateDocument'>
                 {this.state.currentView}
                 <div id='button-container'>
                     {this.state.backButton}

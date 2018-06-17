@@ -94,7 +94,7 @@ export default class CreateDocument extends React.Component<any, any> {
             view: 'SelectPermissions'
         }, () => {
             this.handleButtons()
-            this.clearBorder()
+            // this.clearBorder()
         })
     }
 
@@ -211,15 +211,15 @@ export default class CreateDocument extends React.Component<any, any> {
 
     }
 
-    clearBorder() {
+    // clearBorder() {
 
-        let children = document.getElementsByClassName('document-list-container')[0].childNodes
+    //     let children = document.getElementsByClassName('document-list-container')[0].childNodes
 
-        for(let i = 0; i < children.length; i++) {
-            children[i].style.border = 'none'
-        }
+    //     for(let i = 0; i < children.length; i++) {
+    //         console.log(children[i])
+    //     }
 
-    }
+    // }
 
     componentWillMount() {
         this.handleButtons()

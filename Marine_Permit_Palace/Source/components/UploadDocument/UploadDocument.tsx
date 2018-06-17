@@ -32,7 +32,7 @@ export default class UploadDocument extends React.Component<any, any> {
                 <form action="" method='post'
                     onSubmit={(e) => {
                         e.preventDefault()
-                        console.log(document.getElementById('uploadedFile').value)
+                        // console.log(document.getElementById('uploadedFile').value)
                         console.log(e)
                     }}>
                     <input id='uploadedFile' type="file" name='file[]' multiple={true}/>

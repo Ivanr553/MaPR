@@ -43,6 +43,7 @@ namespace Marine_Permit_Palace
             services.AddScoped<ISubmittedDocumentService, SubmittedDocumentService>();
             services.AddScoped<IDocumentFormFieldService, DocumentFormFieldService>();
             services.AddScoped<IDocumentCheckBoxFieldService, DocumentCheckBoxFieldService>();
+            services.AddScoped<IDocumentSignatureDataService, DocumentSigService>();
             //services.AddScoped<IUserDocumentIntermediateService, UserDocumentIntermediateService>();
 
 

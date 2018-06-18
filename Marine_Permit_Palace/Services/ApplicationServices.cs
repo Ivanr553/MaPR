@@ -141,8 +141,76 @@ namespace Marine_Permit_Palace.Services
                 .Include(e => e.Document)
                 .Include(e => e.DocumentFormFields)
                 .Include(e => e.DocumentCheckBoxFields)
-                .Include(e => e.DocumentSignatureFields)
+                .Include(e => e.DocumentSignatureFields.Select(f => f.SignatureData))
                 .FirstOrDefault(e => e.IdSubmittedDocument == IdSubmittedDocument);
         }
     }
+
+    public interface IDataStorageService : IDataRowPropertiesInterface<DataStorage>
+    {
+
+    }
+    public class DataStorageService : DataRowPropertiesInterfaceImplementation<DataStorage> , IDataStorageService
+    {
+        public DataStorageService(ApplicationDbContext ctx, UserManager<ApplicationUser> um) : base(ctx, um)
+        {
+
+        }
+    }
+
+    public interface IDocumentSignatureDataService : IDataRowPropertiesInterface<DocumentSignatureField>
+    {
+        DocumentSignatureField SaveWithDocumentSignatureData(DocumentSignatureField field);
+        List<DocumentSignatureField> SaveWithDocumentSignatureData(List<DocumentSignatureField> fields);
+    }
+
+    public class DocumentSigService : DataRowPropertiesInterfaceImplementation<DocumentSignatureField>, IDocumentSignatureDataService
+    {
+        IDataStorageService _DataStor;
+        public DocumentSigService(ApplicationDbContext ctx, UserManager<ApplicationUser> um) :base(ctx, um)
+        {
+            _DataStor = new DataStorageService(ctx, um);
+        }
+
+        public DocumentSignatureField SaveWithDocumentSignatureData(DocumentSignatureField field)
+        {
+            if (field.SignatureData == null) return null;
+            DataStorage stor;
+            if (field.SignatureData.IdDataStorage == Guid.Empty)
+            {
+                //Add
+                
+                stor = _DataStor.Add(field.SignatureData);
+            }
+            else
+            {
+                //Update
+                ///TODO - Confirm the storage data exists
+                stor = _DataStor.Update(field.SignatureData);
+            }
+
+            field.SignatureData = stor;
+            if(_context.DocumentSignatureField.FirstOrDefault(e => e.IdFormName == field.IdFormName && e.IdSubmittedDocumentId == field.IdSubmittedDocumentId) != null)
+            {
+                //Update
+                return Update(field);
+            }
+            else
+            {
+                //add
+                return Add(field);
+            }
+        }
+
+        public List<DocumentSignatureField> SaveWithDocumentSignatureData(List<DocumentSignatureField> fields)
+        {
+            List<DocumentSignatureField> Result = new List<DocumentSignatureField>();
+            foreach(var field in fields)
+            {
+                Result.Add(SaveWithDocumentSignatureData(field));
+            }
+            return Result;
+        }
+    }
+
 }

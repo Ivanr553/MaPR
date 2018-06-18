@@ -22,15 +22,18 @@ namespace Marine_Permit_Palace.Controllers
         private readonly ISubmittedDocumentService _SubmittedDocumentService;
         private readonly IDocumentCheckBoxFieldService _DocumentCheckBoxService;
         private readonly IDocumentFormFieldService _DocumentFormFieldService;
+        private readonly IDocumentSignatureDataService _DocumentSignatureService;
         private UserManager<ApplicationUser> _UserManager { get; }
         public DocumentSaveController(IDocumentService ids,
             IDocumentCheckBoxFieldService idcbs,
             IDocumentFormFieldService idffs,
+            IDocumentSignatureDataService idss,
             UserManager<ApplicationUser> um,
             ISubmittedDocumentService isds)
         {
             _DocumentSerivce = ids;
             _UserManager = um;
+            _DocumentSignatureService = idss;
             _DocumentFormFieldService = idffs;
             _SubmittedDocumentService = isds;
             _DocumentCheckBoxService = idcbs;
@@ -182,7 +185,6 @@ namespace Marine_Permit_Palace.Controllers
                     List<DocumentMeta> JsonDocument = new List<DocumentMeta>();
                     foreach (string field in FieldNames)
                     {
-
                         var Position = pdfFormFields.GetFieldPositions(field).FirstOrDefault();
                         if (Position == null) continue;
                         string value = pdfFormFields.GetField(field);
@@ -289,14 +291,6 @@ namespace Marine_Permit_Palace.Controllers
                         Name = document.name
                     };
                 }
-                //if (SignatureFields.All(e => !string.IsNullOrEmpty(e.Value)))
-                //{
-                //    //Check if all Fields are occupied based on javascript results ??? 
-                //    //Use NODEJs to execute the stored Javascript code (Will call from a list of fields)
-                //    //Like IsCompleted? Will return false if the field is empty and required
-                //    //Think of other cool ideas to check if these fields are required or not
-                //    SubmittedDoc.IsCompleted = true;
-                //}
                 if (sub_file_guid == Guid.Empty)
                 {
                     SubmittedDoc = _SubmittedDocumentService.Add(SubmittedDoc);
@@ -306,7 +300,7 @@ namespace Marine_Permit_Palace.Controllers
                     SubmittedDoc = _SubmittedDocumentService.Update(SubmittedDoc);
                 }
                 List<DocumentCheckBoxField> CBFields = document.document_meta
-                    .Where(e => e.value == "True" || e.value == "False")
+                    .Where(e => e.field_type  == "Checkbox")
                     .Select(e => new DocumentCheckBoxField()
                     {
                         FormValue = (e.value == "On"),
@@ -315,7 +309,7 @@ namespace Marine_Permit_Palace.Controllers
                     }).ToList();
 
                 List<DocumentFormField> FMFields = document.document_meta
-                    .Where(e => e.value != "True" && e.value != "False")
+                    .Where(e => e.field_type == "Text")
                     .Select(e => new DocumentFormField()
                     {
                         FormValue = e.value,
@@ -323,11 +317,46 @@ namespace Marine_Permit_Palace.Controllers
                         IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument
                     }).ToList();
 
-                ///TODO SIGNATURE FIELDS
-                //Save the Sig Fields
+                List<DocumentSignatureField> SigFields = document.document_meta
+                    .Where(e => e.field_type == "Signature")
+                    .Select(e => new DocumentSignatureField()
+                    {
+                        IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument,
+                        IdFormName = e.field_name,
+                        SignatureData = new DataStorage()
+                        {
+                            Data = Convert.FromBase64String(e.value),
+                            Type = AppDataType.SIGNATURE
+                        }
+                    }).ToList();
 
-                _DocumentCheckBoxService.SaveAllCheckBoxFields(CBFields);
-                _DocumentFormFieldService.SaveAllFormFields(FMFields);
+                try { _DocumentSignatureService.SaveWithDocumentSignatureData(SigFields); } catch(Exception ex)
+                {
+                    return Json(new Result()
+                    {
+                        reason = ex.Message,
+                        result = "Failure",
+                        status_code = 500
+                    });
+                }
+                try { _DocumentCheckBoxService.SaveAllCheckBoxFields(CBFields); }catch(Exception ex)
+                {
+                    return Json(new Result()
+                    {
+                        reason = ex.Message,
+                        result = "Failure",
+                        status_code = 500
+                    });
+                }
+                try { _DocumentFormFieldService.SaveAllFormFields(FMFields); }catch(Exception ex)
+                {
+                    return Json(new Result()
+                    {
+                        reason = ex.Message,
+                        result = "Failure",
+                        status_code = 500
+                    });
+                }
 
 
                 return Json(new Result(){ result = "Success", reason = SubmittedDoc.IdSubmittedDocument.ToString()});

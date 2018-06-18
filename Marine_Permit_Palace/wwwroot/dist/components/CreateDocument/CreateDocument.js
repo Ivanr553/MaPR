@@ -21,24 +21,6 @@ class CreateDocument extends React.Component {
         this.handleBack = this.handleBack.bind(this);
     }
     //Views
-    handleNext() {
-        if (this.state.view === 'SelectDocument') {
-            if (this.state.document_id === '') {
-                return;
-            }
-            this.handleSelectPermissionsView();
-            return;
-        }
-        if (this.state.view === 'SelectPermissions') {
-            return;
-        }
-    }
-    handleBack() {
-        if (this.state.view === 'SelectPermissions') {
-            this.handleSelectDocumentView();
-            return;
-        }
-    }
     handleSelectDocumentView() {
         let currentView = (React.createElement("div", null,
             React.createElement("div", { className: 'documents-header' }, "Select Template Document"),
@@ -64,9 +46,28 @@ class CreateDocument extends React.Component {
             view: 'SelectPermissions'
         }, () => {
             this.handleButtons();
-            // this.clearBorder()
         });
     }
+    //Handle View Switching
+    handleNext() {
+        if (this.state.view === 'SelectDocument') {
+            if (this.state.document_id === '') {
+                return;
+            }
+            this.handleSelectPermissionsView();
+            return;
+        }
+        if (this.state.view === 'SelectPermissions') {
+            return;
+        }
+    }
+    handleBack() {
+        if (this.state.view === 'SelectPermissions') {
+            this.handleSelectDocumentView();
+            return;
+        }
+    }
+    //Creating Buttons
     handleButtons() {
         let backButton;
         if (this.state.view === 'SelectDocument') {
@@ -103,7 +104,7 @@ class CreateDocument extends React.Component {
             });
         }
     }
-    //Creates list in state of objects to be rendered
+    //Creates list in state of documents to be rendered
     renderDocuments() {
         let documents = this.props.documentResults;
         let documentList = [];
@@ -141,18 +142,12 @@ class CreateDocument extends React.Component {
             this.handleButtons();
         });
     }
-    // clearBorder() {
-    //     let children = document.getElementsByClassName('document-list-container')[0].childNodes
-    //     for(let i = 0; i < children.length; i++) {
-    //         console.log(children[i])
-    //     }
-    // }
     componentWillMount() {
         this.handleButtons();
         this.renderDocuments();
     }
     render() {
-        return (React.createElement("div", { id: 'NewDocument' },
+        return (React.createElement("div", { id: 'CreateDocument' },
             this.state.currentView,
             React.createElement("div", { id: 'button-container' },
                 this.state.backButton,

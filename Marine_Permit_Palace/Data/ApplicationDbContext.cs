@@ -29,7 +29,7 @@ namespace Marine_Permit_Palace.Data
         public virtual DbSet<PermitSubmittedDocIntermediate> PermitSubmittedDocIntermediate { get; set; }
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<StoredToken> StoredToken { get; set; }
-
+        public virtual DbSet<DataStorage> DataStorage { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -220,6 +220,11 @@ namespace Marine_Permit_Palace.Data
                 entity.HasOne(e => e.SubmittedDocument)
                     .WithMany(e => e.DocumentSignatureFields)
                     .HasForeignKey(e => e.IdSubmittedDocumentId);
+
+                entity.HasOne(e => e.SignatureData)
+                    .WithMany(e => e.DocumentSignatureFields)
+                    .HasForeignKey(e => e.SignatureDataId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
                 //No User Edit Prop 
             });
 
@@ -257,6 +262,12 @@ namespace Marine_Permit_Palace.Data
                 entity.ToTable("Stored_Token");
                 entity.HasKey(e => e.IdToken); 
 
+            });
+
+            builder.Entity<DataStorage>(entity =>
+            {
+                entity.ToTable("Data_Storage");
+                entity.HasKey(e => e.IdDataStorage);
             });
         }
     }

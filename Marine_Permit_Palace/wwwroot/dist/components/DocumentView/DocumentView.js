@@ -158,7 +158,7 @@ class DocumentView extends React.Component {
     render() {
         let file = '../../dist/documents/NAVMC10694.pdf';
         return (React.createElement("div", { className: 'DocumentView' },
-            React.createElement("div", { id: 'docuemnt-view-header' },
+            React.createElement("div", { id: 'document-view-header' },
                 React.createElement("div", { id: 'save-button', onClick: () => { this.saveFile(this.state.submitted_file_id); } }, "Save File")),
             React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: file }),
             React.createElement("div", { id: 'document-form-div' }, this.state.documentFields)));

@@ -22046,10 +22046,13 @@ class Header extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: ''
+            username: '',
+            hamburgerMenu: '',
+            hamburgerMenuShow: false
         };
         this.getCurrentUser = this.getCurrentUser.bind(this);
         this.logOff = this.logOff.bind(this);
+        this.handleHamburgerMenuPress = this.handleHamburgerMenuPress.bind(this);
     }
     logOff() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -22081,6 +22084,30 @@ class Header extends React.Component {
             }
         });
     }
+    //Hamburger Menu
+    handleHamburgerMenuPress() {
+        if (!this.state.hamburgerMenuShow) {
+            // animation: show-hamburger-menu 1.25s forwards
+            let hamburgerMenu = React.createElement("div", { id: 'hamburger-menu', style: { animation: 'show-hamburger-menu 1.5s forwards' } },
+                React.createElement("div", { className: 'hamburger-menu-item' }, "Account"),
+                React.createElement("div", { className: 'hamburger-menu-item' }, "Settings"),
+                React.createElement("div", { className: 'hamburger-menu-item' }, "Log Out"));
+            this.setState({
+                hamburgerMenu: hamburgerMenu,
+                hamburgerMenuShow: true
+            });
+        }
+        if (this.state.hamburgerMenuShow) {
+            let hamburgerMenu = React.createElement("div", { id: 'hamburger-menu', style: { animation: 'hide-hamburger-menu 0.75s forwards' } },
+                React.createElement("div", { className: 'hamburger-menu-item' }, "Account"),
+                React.createElement("div", { className: 'hamburger-menu-item' }, "Settings"),
+                React.createElement("div", { className: 'hamburger-menu-item' }, "Log Out"));
+            this.setState({
+                hamburgerMenu: hamburgerMenu,
+                hamburgerMenuShow: false
+            });
+        }
+    }
     componentDidMount() {
         this.getCurrentUser();
     }
@@ -22092,30 +22119,27 @@ class Header extends React.Component {
         let logInTab = (React.createElement("div", { className: 'header-tab log-in-tab' },
             React.createElement(react_router_dom_1.Link, { className: 'Link header-link', to: { pathname: '/A/App/' } }, " Log In ")));
         let homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/' } },
-            " ",
-            React.createElement("img", { src: '/images/MAPR_logo_edit.png', id: 'header-logo' }),
-            " ");
+            React.createElement("img", { src: '/images/MAPR_logo_edit.png', id: 'header-logo' }));
         let logOff;
         let fullHeader = 'show-full-header';
         if (this.state.username != '') {
-            accountInnerHtml = 'User: ' + this.state.username;
             accountLink = '/Account';
             registerTab = React.createElement("div", null);
             logInTab =
-                React.createElement("div", { className: 'header-tab log-in-tab' }, accountInnerHtml);
-            homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/Home' } },
-                " ",
-                React.createElement("img", { src: '/images/MAPR_logo_edit.png', id: 'header-logo' }),
-                " ");
+                React.createElement("div", { onClick: this.handleHamburgerMenuPress, className: 'header-tab log-in-tab', id: 'hamburger-menu-container' },
+                    React.createElement("img", { id: 'hamburger-icon', src: "/images/hamburger-menu.png", alt: "" }),
+                    this.state.hamburgerMenu);
+            homeTab =
+                React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/Home' } },
+                    React.createElement("img", { src: '/images/MAPR_logo_edit.png', id: 'header-logo' }));
             homeTab = React.createElement("div", null);
             logOff =
                 React.createElement("div", { className: 'header-tab log-in-tab', onClick: this.logOff },
-                    React.createElement("div", { className: 'Link header-link' }, " Log Off "));
+                    React.createElement("img", { id: 'logoff-icon', src: "/images/logoff.png", alt: "" }));
             fullHeader = '';
         }
         return (React.createElement("div", { id: 'HomeHeader', className: fullHeader },
             React.createElement("div", { className: 'home-tab' }, homeTab),
-            logOff,
             logInTab,
             registerTab));
     }
@@ -22413,7 +22437,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = __webpack_require__(4);
 const react_pdf_js_1 = __webpack_require__(374);
 const $ = __webpack_require__(37);
-const timers_1 = __webpack_require__(182);
 const s = __webpack_require__(418);
 class DocumentView extends React.Component {
     constructor(props) {
@@ -22480,6 +22503,10 @@ class DocumentView extends React.Component {
                         React.createElement("input", { id: form, style: { position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw` }, className: 'document-input', defaultValue: currentForm.value, type: "text", onChange: (e) => { this.handleFormEdit(e, form); } }));
                     documentFields.push(newForm);
                 }
+                else if (currentForm.field_type === 'Signature') {
+                    let newForm = React.createElement("canvas", { key: form, className: 'document-signature-canvas', style: { position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw`, backgroundColor: 'red' } });
+                    documentFields.push(newForm);
+                }
                 delete currentForm.field_position;
             }
             this.setState({
@@ -22489,6 +22516,13 @@ class DocumentView extends React.Component {
             }, () => {
                 this.saveFile(null);
             });
+        });
+    }
+    handleDocumentNameChange(e) {
+        let documentName = this.state.documentName;
+        documentName = e.target.value;
+        this.setState({
+            documentName: documentName
         });
     }
     handleFormEdit(e, id) {
@@ -22515,6 +22549,7 @@ class DocumentView extends React.Component {
     }
     saveFile(submitted_file_id) {
         return __awaiter(this, void 0, void 0, function* () {
+            document.getElementById('save-button').style.backgroundColor = 'lightblue';
             let saveFile = {
                 document_meta: this.state.documentObject.document_meta,
                 name: this.state.documentName,
@@ -22534,15 +22569,12 @@ class DocumentView extends React.Component {
                     data: JSON.stringify(saveFile)
                 });
                 if (saveResult && saveResult.status_code < 201) {
-                    document.getElementById('save-button').style.backgroundColor = 'green';
-                    timers_1.setTimeout(() => {
-                        document.getElementById('save-button').style.backgroundColor = 'lightblue';
-                    }, 1500);
+                    document.getElementById('save-button').style.backgroundColor = 'rgb(131, 198, 125)';
                 }
             }
             catch (e) {
                 console.log('Error saving:', e);
-                document.getElementById('save-button').style.backgroundColor = 'red';
+                document.getElementById('save-button').style.backgroundColor = 'rgb(198, 125, 125)';
             }
             if (!submitted_file_id || submitted_file_id === null) {
                 this.setState({
@@ -22561,6 +22593,7 @@ class DocumentView extends React.Component {
         let file = '../../dist/documents/NAVMC10694.pdf';
         return (React.createElement("div", { className: 'DocumentView' },
             React.createElement("div", { id: 'document-view-header' },
+                React.createElement("input", { placeholder: 'Document Name', onChange: (e) => { this.handleDocumentNameChange(e); }, id: 'document-name-input', type: "text" }),
                 React.createElement("div", { id: 'save-button', onClick: () => { this.saveFile(this.state.submitted_file_id); } }, "Save File")),
             React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: file }),
             React.createElement("div", { id: 'document-form-div' }, this.state.documentFields)));
@@ -34109,7 +34142,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n#CreateDocument {\n  width: 100%;\n  height: 90vh;\n  overflow: auto; }\n\n#notice {\n  border: none;\n  text-align: center; }\n\n.create-document-button {\n  position: absolute;\n  font-size: 1.5em;\n  padding: 0.25em 0.75em 0.25em 0.75em;\n  background-color: lightgrey; }\n\n.selectable-button {\n  background-color: #2990d6;\n  cursor: pointer; }\n\n#button-container {\n  position: relative;\n  width: 100%;\n  height: auto; }\n\n#create-document-next-button {\n  bottom: 2vh;\n  right: 2vw; }\n\n#create-document-back-button {\n  bottom: 2vh;\n  left: 2vw; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n#CreateDocument {\n  width: 100%;\n  height: 90vh;\n  overflow: auto; }\n\n.container {\n  width: 100%;\n  height: auto; }\n\n#user-search-main-container {\n  width: 70%;\n  min-height: 40vh;\n  background-color: lightgrey;\n  margin-left: 15%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  margin-top: 5vh; }\n\n#user-search-bar-container {\n  margin-top: 2.5vh; }\n\n#user-search-bar {\n  font-size: 2em;\n  border-radius: 8px;\n  border: none;\n  text-indent: 2.5%; }\n\n#user-search-bar-magnifying-glass {\n  height: 100%;\n  width: auto;\n  backgroudn-color: black; }\n\n#added-users-title {\n  margin-top: 5vh;\n  margin-bottom: 1vh;\n  font-size: 2.25em;\n  width: 100%;\n  text-indent: 1%; }\n\n#added-users-container {\n  width: 98%;\n  min-height: 10vh;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  padding-top: 0.5%;\n  border: solid 1px grey;\n  background-color: #e6e6e6; }\n\n.added-user {\n  width: 99%;\n  font-size: 1.5em;\n  background-color: white;\n  cursor: pointer;\n  border: solid 1px grey;\n  margin-bottom: 0.5%;\n  padding: 2% 0 2% 0;\n  text-indent: 1%; }\n\n.create-document-button {\n  position: absolute;\n  font-size: 1.5em;\n  padding: 0.25em 0.75em 0.25em 0.75em;\n  background-color: lightgrey; }\n\n.selectable-button {\n  background-color: #2990d6;\n  cursor: pointer; }\n\n#button-container {\n  position: relative;\n  width: 100%;\n  height: auto; }\n\n#create-document-next-button {\n  bottom: 2vh;\n  right: 2vw; }\n\n#create-document-back-button {\n  bottom: 2vh;\n  left: 2vw; }\n", ""]);
 
 // exports
 
@@ -34123,7 +34156,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n.DocumentList {\n  width: 100%;\n  height: 90vh;\n  overflow: auto; }\n\n#search-bar-header {\n  margin-top: 2.5vh; }\n\n#document-search-bar-container {\n  height: 5vh;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-start;\n  margin-top: 0vh !important;\n  padding-bottom: 5vh; }\n\n#document-search-bar {\n  font-size: 30px;\n  margin-left: 2.8vw;\n  height: 100% !important; }\n\n#document-search-submit-button {\n  height: 100% !important;\n  width: auto;\n  margin: 0;\n  cursor: pointer; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw;\n  cursor: default;\n  color: black; }\n\n.document-list-container {\n  position: relative;\n  padding-bottom: 10vh;\n  width: calc(100%-8vw-4px);\n  margin-left: 2vw;\n  margin-right: 2vw;\n  margin-bottom: 2vh;\n  height: auto;\n  overflow: auto;\n  padding-top: 2vw; }\n\n.viewable-document {\n  width: 98%;\n  margin-left: 1vw;\n  height: auto;\n  padding-top: 1.5%;\n  margin-top: 1.5vh;\n  padding-bottom: 1.5%;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-start;\n  background-color: white;\n  cursor: pointer;\n  border: solid 2px transparent; }\n\n.viewable-document-field {\n  font-size: 1.25em;\n  margin-left: 3%; }\n\n#first-field {\n  margin-left: 1.5%; }\n\n.viewable-document-title {\n  position: absolute;\n  padding-top: 5%;\n  padding-bottom: 5%;\n  top: 1px;\n  left: 1px;\n  z-index: 3;\n  font-size: 1.4em;\n  text-align: center;\n  background-color: #266ba8;\n  color: white;\n  width: 100%; }\n\n.viewable-document-action-title {\n  position: absolute;\n  top: auto;\n  left: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.1em;\n  z-index: 3; }\n\n.viewable-document-action {\n  font-size: 0.8em;\n  text-decoration: none;\n  z-index: 3; }\n\n.viewable-document-status-title {\n  position: absolute;\n  left: 5%;\n  bottom: 2.5%;\n  font-size: 1em;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  z-index: 3; }\n\n.viewable-document-status {\n  font-size: 0.8em;\n  text-decoration: none;\n  margin-left: 5%;\n  z-index: 3; }\n\n.pdf-preview-container {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  left: 0;\n  z-index: 1;\n  border: solid 1px black;\n  background-color: white; }\n\n.pdf-preview {\n  height: 30vw !important;\n  width: auto !important;\n  z-index: 1; }\n\n.pdf-preview-shader {\n  height: 100%;\n  width: 100%;\n  z-index: 5;\n  background: #2bba18;\n  opacity: 0;\n  position: absolute;\n  left: 0;\n  top: 0; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n.DocumentList {\n  width: 100%;\n  height: 90vh;\n  overflow: auto; }\n\n#search-bar-header {\n  margin-top: 2.5vh; }\n\n#document-search-bar-container {\n  height: 5vh;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-start;\n  margin-top: 0vh !important;\n  padding-bottom: 5vh; }\n\n#document-search-bar {\n  font-size: 30px;\n  margin-left: 2.8vw;\n  height: 100% !important; }\n\n#document-search-submit-button {\n  height: 100% !important;\n  width: auto;\n  margin: 0;\n  cursor: pointer; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black; }\n\n.document-list-container {\n  position: relative;\n  padding-bottom: 10vh;\n  width: calc(100%-8vw-4px);\n  margin-left: 2vw;\n  margin-right: 2vw;\n  margin-bottom: 2vh;\n  height: auto;\n  overflow: auto;\n  padding-top: 2vw; }\n\n.viewable-document {\n  width: 98%;\n  margin-left: 1vw;\n  height: auto;\n  padding-top: 1.5%;\n  margin-top: 1.5vh;\n  padding-bottom: 1.5%;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-start;\n  background-color: white;\n  cursor: pointer;\n  border: solid 2px transparent; }\n\n.viewable-document:hover {\n  transform: translatex(2.5vw) scale(1.05);\n  border-left: solid 3px #266ba8; }\n\n.viewable-document-field {\n  font-size: 1.25em;\n  margin-left: 3%; }\n\n#first-field {\n  margin-left: 1.5%; }\n\n.viewable-document-title {\n  position: absolute;\n  padding-top: 5%;\n  padding-bottom: 5%;\n  top: 1px;\n  left: 1px;\n  z-index: 3;\n  font-size: 1.4em;\n  text-align: center;\n  background-color: #266ba8;\n  color: white;\n  width: 100%; }\n\n.viewable-document-action-title {\n  position: absolute;\n  top: auto;\n  left: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.1em;\n  z-index: 3; }\n\n.viewable-document-action {\n  font-size: 0.8em;\n  text-decoration: none;\n  z-index: 3; }\n\n.viewable-document-status-title {\n  position: absolute;\n  left: 5%;\n  bottom: 2.5%;\n  font-size: 1em;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  z-index: 3; }\n\n.viewable-document-status {\n  font-size: 0.8em;\n  text-decoration: none;\n  margin-left: 5%;\n  z-index: 3; }\n\n.pdf-preview-container {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  left: 0;\n  z-index: 1;\n  border: solid 1px black;\n  background-color: white; }\n\n.pdf-preview {\n  height: 30vw !important;\n  width: auto !important;\n  z-index: 1; }\n\n.pdf-preview-shader {\n  height: 100%;\n  width: 100%;\n  z-index: 5;\n  background: #2bba18;\n  opacity: 0;\n  position: absolute;\n  left: 0;\n  top: 0; }\n", ""]);
 
 // exports
 
@@ -34137,7 +34170,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, ".DocumentView {\n  width: 100%;\n  height: 90vh;\n  overflow: auto;\n  padding-top: 5vh;\n  position: relative; }\n\n#document-view-header {\n  width: 100%;\n  height: 10vh;\n  background-color: lightgrey; }\n\n.pdf-image {\n  position: absolute;\n  width: 90% !important;\n  height: auto !important;\n  margin-left: calc(85vw * 0.05);\n  margin-bottom: 5vh; }\n\n#document-form-div {\n  margin-left: calc(85vw * 0.05);\n  position: relative;\n  top: 0;\n  left: 0; }\n\n.document-checkbox {\n  width: 100% !important;\n  height: 100% !important;\n  background-color: lightgrey !important;\n  border: none;\n  margin: 0; }\n\n.document-form {\n  overflow: auto; }\n\n.input-form-name {\n  font-size: 1.3em;\n  text-indent: -5px; }\n\n.document-input {\n  background-color: lightgrey;\n  border: none; }\n\n.document-input:focus {\n  outline: none; }\n\n.pdf-viewer {\n  margin-bottom: 5vh;\n  margin-top: 5vh;\n  margin-left: 22.5%; }\n\n.document {\n  background-color: white;\n  width: 595px;\n  max-width: 70%;\n  height: 842px;\n  margin-top: 50px;\n  margin-bottom: 50px;\n  margin-left: calc((100vw - 15vw - 595px)/2);\n  float: left; }\n", ""]);
+exports.push([module.i, ".DocumentView {\n  width: 100%;\n  height: 90vh;\n  overflow: auto;\n  position: relative; }\n\ninput:focus {\n  outline: none; }\n\n#document-view-header {\n  width: 90%;\n  height: 10vh;\n  right: 0;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  position: fixed;\n  top: 7.5vh;\n  z-index: 400;\n  animation: fade-out-header 0.7s forwards; }\n\n#document-view-header:hover {\n  animation: fade-in-header 0.5s forwards; }\n\n#document-view-header:hover > #save-button {\n  animation: fade-in-save-button 0.5s forwards; }\n\n#document-view-header:hover > #document-name-input {\n  animation: fade-in-name-input 0.5s forwards; }\n\n#document-name-input:focus {\n  opacity: 1 !important;\n  animation: name-input-selected 1s forwards; }\n\n#document-name-input:focus > #document-view-header {\n  background-color: red !important;\n  animation: header-selected 1s forwards !important; }\n\n#save-button {\n  width: auto;\n  padding: 1%;\n  font-size: 1.5em;\n  z-index: 500;\n  background-color: lightblue;\n  border: solid 1px #969696;\n  cursor: pointer;\n  border-radius: 3px;\n  position: absolute;\n  top: 1vh;\n  right: 1vw;\n  opacity: 0.5;\n  animation: fade-out-save-button 0.7s forwards; }\n\n#document-name-input {\n  font-size: 1.75em;\n  padding: 1%;\n  background-color: #e6e6e6;\n  min-width: 40%;\n  font-weight: bold;\n  animation: fade-out-name-input 0.7s forwards;\n  text-align: center; }\n\n.pdf-image {\n  position: absolute;\n  width: 90% !important;\n  height: auto !important;\n  margin-left: calc(85vw * 0.05);\n  margin-bottom: 5vh; }\n\n#document-form-div {\n  margin-left: calc(85vw * 0.05);\n  position: relative;\n  top: 0;\n  left: 0; }\n\n.document-checkbox {\n  width: 100% !important;\n  height: 100% !important;\n  background-color: lightgrey !important;\n  border: none;\n  margin: 0; }\n\n.document-form {\n  overflow: auto; }\n\n.input-form-name {\n  font-size: 1.3em;\n  text-indent: -5px; }\n\n.document-input {\n  background-color: lightgrey;\n  border: none; }\n\n.document-input:focus {\n  outline: none; }\n\n.document-signature-canvas {\n  position: relative; }\n\n.canvas-button {\n  position: absolute;\n  font-size: 1em;\n  padding: 0.5% 1% 0.5% 1%;\n  background-color: lightblue;\n  cursor: pointer;\n  border: solid 1px #8bb2e5;\n  height: auto; }\n\n.document {\n  background-color: white;\n  width: 595px;\n  max-width: 70%;\n  height: 842px;\n  margin-top: 50px;\n  margin-bottom: 50px;\n  margin-left: calc((100vw - 15vw - 595px)/2);\n  float: left; }\n\n@keyframes fade-in-header {\n  0% {\n    background-color: transparent; }\n  100% {\n    background-color: rgba(50, 50, 50, 0.8); } }\n\n@keyframes fade-out-header {\n  0% {\n    background-color: rgba(50, 50, 50, 0.8); }\n  100% {\n    background-color: transparent; } }\n\n@keyframes fade-in-save-button {\n  0% {\n    opacity: 0.5; }\n  100% {\n    opacity: 1; } }\n\n@keyframes fade-out-save-button {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0.5; } }\n\n@keyframes fade-in-name-input {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n\n@keyframes fade-out-name-input {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes name-input-selected {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 1; } }\n\n@keyframes header-selected {\n  0% {\n    background-color: rgba(50, 50, 50, 0.8); }\n  100% {\n    background-color: rgba(50, 50, 50, 0.8); } }\n", ""]);
 
 // exports
 
@@ -34165,7 +34198,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n#HomeHeader {\n  width: 90vw;\n  left: 10vw;\n  height: 7.5vh;\n  background-color: white;\n  background-color: #266ba8;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: flex-end;\n  position: fixed;\n  top: 0;\n  z-index: 20;\n  color: #f0f0f0;\n  font-size: 1.5em; }\n\n.show-full-header {\n  width: 100vw !important;\n  left: 0 !important;\n  height: 10vh !important; }\n\n.header-tab {\n  cursor: default;\n  height: auto;\n  width: auto;\n  padding: 1vh 2vw 1vh 1vw;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center; }\n\n.header-link {\n  width: 100%;\n  height: 90%;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: center;\n  cursor: pointer; }\n\n.header-link:hover {\n  text-decoration: underline; }\n\n.home-tab {\n  position: absolute;\n  left: 0;\n  border-left: none;\n  font-size: 2em;\n  padding: none;\n  width: auto;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  justify-content: flex-end; }\n\n#header-logo {\n  padding-left: 1.25vw;\n  padding-right: 2.75vw;\n  width: auto;\n  height: 100%; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n#HomeHeader {\n  width: 90vw;\n  left: 10vw;\n  height: 7.5vh;\n  background-color: rgba(38, 107, 168, 0.8);\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: flex-end;\n  position: fixed;\n  top: 0;\n  z-index: 20;\n  color: #f0f0f0;\n  font-size: 1.5em; }\n\n.show-full-header {\n  width: 100vw !important;\n  left: 0 !important;\n  height: 10vh !important; }\n\n.header-tab {\n  cursor: default;\n  height: auto;\n  width: auto;\n  padding: 1vh 2vw 1vh 1vw;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center; }\n\n.header-link {\n  width: 100%;\n  height: 90%;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: center;\n  cursor: pointer; }\n\n.header-link:hover {\n  text-decoration: underline; }\n\n.home-tab {\n  position: absolute;\n  left: 0;\n  border-left: none;\n  font-size: 2em;\n  padding: none;\n  width: auto;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  justify-content: flex-end; }\n\n#header-logo {\n  padding-left: 1.25vw;\n  padding-right: 2.75vw;\n  width: auto;\n  height: 100%; }\n\n.log-in-tab {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center; }\n\n#logoff-icon {\n  width: auto;\n  height: 70%;\n  cursor: pointer; }\n\n#hamburger-icon {\n  width: auto;\n  height: 60%;\n  cursor: pointer;\n  opacity: 0.9;\n  padding-bottom: 10%; }\n\n#hamburger-menu {\n  width: 12.5vw;\n  height: 0;\n  min-height: 0;\n  color: white;\n  position: absolute;\n  top: 7vh;\n  right: 1vw;\n  border-top: solid 3px #323232;\n  padding-top: 2.5px;\n  overflow: hidden;\n  opacity: 0; }\n\n.hamburger-menu-item {\n  width: 100%;\n  padding: 5% 0 5% 0;\n  font-size: 0.9em;\n  text-indent: 5%;\n  color: whitesmoke;\n  cursor: pointer;\n  background-color: #515f82;\n  margin-bottom: 2.5px; }\n\n.hamburger-menu-item:hover {\n  background-color: rgba(38, 107, 168, 0.7); }\n\n@keyframes show-hamburger-menu {\n  0% {\n    opacity: 0;\n    height: 0;\n    min-height: 0; }\n  50% {\n    opacity: 1; }\n  99% {\n    min-height: 30vh; }\n  100% {\n    opacity: 1;\n    height: auto; } }\n\n@keyframes hide-hamburger-menu {\n  0% {\n    opacity: 1;\n    height: auto;\n    min-height: 30vh; }\n  50% {\n    opacity: 1; }\n  100% {\n    min-height: 0vh;\n    opacity: 0;\n    height: 0; } }\n", ""]);
 
 // exports
 
@@ -34235,7 +34268,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n#UploadDocument {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding-top: 10vh; }\n\n#dropzone {\n  width: 80%;\n  height: 50%;\n  background-color: #e0f5ff;\n  border: dashed 2px #6194ad;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 10vh;\n  font-size: 2em;\n  color: grey;\n  cursor: default; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 1vw; }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\n#UploadDocument {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center; }\n\n#upload-document-header {\n  width: 100%;\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0vw 2.5vh 0vw;\n  margin: 2.5vh 0vw 0vh 0vw !important;\n  text-indent: 3vw;\n  cursor: default;\n  color: black; }\n\n#dropzone {\n  margin-top: 5vh;\n  width: calc(100% - 6vw - 4px);\n  height: 50%;\n  background-color: #e0f5ff;\n  border: dashed 2px #6194ad;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 10vh;\n  font-size: 2em;\n  color: grey;\n  cursor: default; }\n", ""]);
 
 // exports
 
@@ -110817,8 +110850,17 @@ exports.default = About;
 
 "use strict";
 
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __webpack_require__(4);
+const $ = __webpack_require__(37);
 const s = __webpack_require__(416);
 class CreateDocument extends React.Component {
     constructor(props) {
@@ -110830,17 +110872,19 @@ class CreateDocument extends React.Component {
             documentList: [],
             document_id: '',
             nextButton: '',
-            readyForNext: false
+            readyForNext: false,
+            userList: []
         };
         // this.handleDocumentLinkPress = this.handleDocumentLinkPress.bind(this)
         this.handleSelectDocumentView = this.handleSelectDocumentView.bind(this);
         this.handleSelectPermissionsView = this.handleSelectPermissionsView.bind(this);
         this.handleNext = this.handleNext.bind(this);
         this.handleBack = this.handleBack.bind(this);
+        this.handleAddUser = this.handleAddUser.bind(this);
     }
     //Views
     handleSelectDocumentView() {
-        let currentView = (React.createElement("div", null,
+        let currentView = (React.createElement("div", { className: 'container' },
             React.createElement("div", { className: 'documents-header' }, "Select Template Document"),
             React.createElement("div", { className: 'document-list-container' }, this.state.documentList)));
         this.setState({
@@ -110851,14 +110895,19 @@ class CreateDocument extends React.Component {
         });
     }
     handleSelectPermissionsView() {
-        let currentView = (React.createElement("div", null,
+        let currentView = (React.createElement("div", { className: 'container' },
             React.createElement("div", { className: 'documents-header' }, "Select Document Permissions"),
             React.createElement("div", { className: 'document-list-container' },
                 React.createElement("div", null,
                     "Selected Document: ",
                     this.state.document_id),
-                React.createElement("div", null, "Send to:"),
-                React.createElement("div", null, "Allow viewing priviledge:"))));
+                React.createElement("div", { className: 'documents-header' }, "Select Users"),
+                React.createElement("div", { id: 'user-search-main-container' },
+                    React.createElement("div", { id: 'user-search-bar-container' },
+                        React.createElement("div", { id: 'search-bar-magnifying-glass' }),
+                        React.createElement("input", { onClick: this.handleAddUser, onChange: (e) => { this.handleFindUser(e); }, id: 'user-search-bar', placeholder: 'Find Users', type: "text" })),
+                    React.createElement("div", { id: 'added-users-title' }, "Selected Users"),
+                    React.createElement("div", { id: 'added-users-container' }, this.state.userList)))));
         this.setState({
             currentView: currentView,
             view: 'SelectPermissions'
@@ -110959,6 +111008,31 @@ class CreateDocument extends React.Component {
         }, () => {
             this.handleButtons();
         });
+    }
+    //Finding and displaying added users
+    handleFindUser(e) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let query = e.target.value;
+            try {
+                let result = $.ajax({});
+            }
+            catch (e) {
+                console.log(e);
+            }
+        });
+    }
+    handleAddUser() {
+        let userList = this.state.userList.slice();
+        let user = 'Example User';
+        let addedUser = React.createElement("div", { className: 'added-user' }, user);
+        userList.push(addedUser);
+        this.setState({
+            userList: userList
+        }, () => {
+            this.handleSelectPermissionsView();
+        });
+    }
+    handleDeleteUser() {
     }
     componentWillMount() {
         this.handleButtons();
@@ -111250,6 +111324,7 @@ class UploadDocument extends React.Component {
         return (React.createElement("div", { id: 'UploadDocument', onDragOver: (e) => {
                 e.preventDefault();
             } },
+            React.createElement("div", { id: 'upload-document-header' }, "Upload Document"),
             React.createElement("div", { id: 'dropzone', onDrop: (e) => {
                     e.preventDefault();
                     e.stopPropagation();

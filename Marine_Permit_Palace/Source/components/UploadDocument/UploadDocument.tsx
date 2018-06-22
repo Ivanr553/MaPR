@@ -18,6 +18,7 @@ export default class UploadDocument extends React.Component<any, any> {
             <div id='UploadDocument' onDragOver={(e) => {
                 e.preventDefault()
             }}>
+                <div id='upload-document-header'>Upload Document</div>
 
                 <div id='dropzone' onDrop={(e) => {
                     e.preventDefault()

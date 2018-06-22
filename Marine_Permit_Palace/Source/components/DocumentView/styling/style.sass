@@ -2,22 +2,64 @@
   width: 100%
   height: 90vh
   overflow: auto
-  padding-top: 5vh
   position: relative
 
+input:focus
+  outline: none
+
 #document-view-header
-  width: 100%
+  width: 90%
   height: 10vh
-  background-color: lightgrey
-  display:
+  right: 0
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  position: fixed
+  top: 7.5vh
+  z-index: 400
+  animation: fade-out-header 0.7s forwards
+
+#document-view-header:hover
+  animation: fade-in-header 0.5s forwards
+
+#document-view-header:hover > #save-button
+  animation: fade-in-save-button 0.5s forwards
+
+#document-view-header:hover > #document-name-input
+  animation: fade-in-name-input 0.5s forwards
+
+#document-name-input:focus
+  opacity: 1 !important
+  animation: name-input-selected 1s forwards
+
+#document-name-input:focus > #document-view-header
+  background-color: red !important
+  animation: header-selected 1s forwards !important
 
 #save-button
-  // width: auto
-  // font-size: 2em
-  // z-index: 500
-  // background-color: lightblue
-  // cursor: pointer
-  // border-radius: 3px
+  width: auto
+  padding: 1%
+  font-size: 1.5em
+  z-index: 500
+  background-color: lightblue
+  border: solid 1px rgb(150, 150, 150)
+  cursor: pointer
+  border-radius: 3px
+  position: absolute
+  top: 1vh
+  right: 1vw
+  opacity: 0.5
+  animation: fade-out-save-button 0.7s forwards
+
+#document-name-input
+  font-size: 1.75em
+  padding: 1%
+  background-color: rgba(230, 230, 230, 1)
+  min-width: 40%
+  font-weight: bold
+  animation: fade-out-name-input 0.7s forwards
+  text-align: center
 
 .pdf-image
   position: absolute
@@ -53,10 +95,17 @@
 .document-input:focus
   outline: none
 
-.pdf-viewer
-  margin-bottom: 5vh
-  margin-top: 5vh
-  margin-left: 22.5%
+.document-signature-canvas
+  position: relative
+
+.canvas-button
+  position: absolute
+  font-size: 1em
+  padding: 0.5% 1% 0.5% 1%
+  background-color: lightblue
+  cursor: pointer
+  border: solid 1px rgb(139, 178, 229)
+  height: auto
 
 .document
   background-color: white
@@ -67,3 +116,55 @@
   margin-bottom: 50px
   margin-left: calc((100vw - 15vw - 595px)/2)
   float: left
+
+
+//Animations
+@keyframes fade-in-header
+  0%
+    background-color: rgba(0, 0, 0, 0)
+  100%
+    background-color: rgba(50, 50, 50, 0.8)
+
+@keyframes fade-out-header
+  0%
+    background-color: rgba(50, 50, 50, 0.8)
+  100%
+    background-color: rgba(0, 0, 0, 0)
+
+@keyframes fade-in-save-button
+  0%
+    opacity: 0.5
+  100%
+    opacity: 1
+
+@keyframes fade-out-save-button
+  0%
+    opacity: 1
+  100%
+    opacity: 0.5
+
+@keyframes fade-in-name-input
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+@keyframes fade-out-name-input
+  0%
+    opacity: 1
+  100%
+    opacity: 0
+
+@keyframes name-input-selected
+  0%
+    opacity: 1
+  100%
+    opacity: 1
+
+@keyframes header-selected
+  0%
+    background-color: rgba(50, 50, 50, 0.8)
+  100%
+    background-color: rgba(50, 50, 50, 0.8)
+
+        

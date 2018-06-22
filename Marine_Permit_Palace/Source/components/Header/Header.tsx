@@ -9,10 +9,14 @@ export default class Header extends React.Component<any, any> {
     constructor(props) {
         super(props)
         this.state = {
-            username: ''
+            username: '',
+            hamburgerMenu: '',
+            hamburgerMenuShow: false
         }
+
         this.getCurrentUser = this.getCurrentUser.bind(this)
         this.logOff = this.logOff.bind(this)
+        this.handleHamburgerMenuPress = this.handleHamburgerMenuPress.bind(this)
     }
 
     async logOff() {
@@ -48,6 +52,44 @@ export default class Header extends React.Component<any, any> {
         }
     }
 
+    //Hamburger Menu
+    handleHamburgerMenuPress() {
+
+        if(!this.state.hamburgerMenuShow) {
+
+            // animation: show-hamburger-menu 1.25s forwards
+
+            let hamburgerMenu = 
+            <div id='hamburger-menu' style={{animation: 'show-hamburger-menu 1.5s forwards'}}>
+                <div className='hamburger-menu-item'>Account</div>
+                <div className='hamburger-menu-item'>Settings</div>
+                <div className='hamburger-menu-item'>Log Out</div>
+            </div>
+
+            this.setState({
+                hamburgerMenu: hamburgerMenu,
+                hamburgerMenuShow: true
+            })
+        }
+
+        if(this.state.hamburgerMenuShow) {
+
+            let hamburgerMenu = 
+            <div id='hamburger-menu' style={{animation: 'hide-hamburger-menu 0.75s forwards'}}>
+                <div className='hamburger-menu-item'>Account</div>
+                <div className='hamburger-menu-item'>Settings</div>
+                <div className='hamburger-menu-item'>Log Out</div>
+            </div>
+
+            this.setState({
+                hamburgerMenu: hamburgerMenu,
+                hamburgerMenuShow: false
+            })
+
+        }
+
+    }
+
     componentDidMount() {
         this.getCurrentUser()
     }
@@ -66,25 +108,30 @@ export default class Header extends React.Component<any, any> {
                 <Link className='Link header-link' to={{pathname: '/A/App/'}}> Log In </Link>
             </div>
         )
-        let homeTab = <Link className='Link home-header-link' to={{pathname: '/A/App/'}}> <img src='/images/MAPR_logo_edit.png' id='header-logo' /> </Link>
+        let homeTab = 
+            <Link className='Link home-header-link' to={{pathname: '/A/App/'}}> 
+                <img src='/images/MAPR_logo_edit.png' id='header-logo' />
+            </Link>
         let logOff
         let fullHeader = 'show-full-header'
 
         if(this.state.username != '') {
-            
-            accountInnerHtml = 'User: ' + this.state.username
             accountLink = '/Account'
             registerTab = <div></div>
             logInTab = 
-                <div className='header-tab log-in-tab'>
-                    {accountInnerHtml}
+                <div onClick={this.handleHamburgerMenuPress} className='header-tab log-in-tab' id='hamburger-menu-container'>
+                    <img id='hamburger-icon' src="/images/hamburger-menu.png" alt=""/>
+                    {this.state.hamburgerMenu}
                 </div>
-            homeTab = <Link className='Link home-header-link' to={{pathname: '/A/App/Home'}}> <img src='/images/MAPR_logo_edit.png' id='header-logo' /> </Link>
+            homeTab =
+                <Link className='Link home-header-link' to={{pathname: '/A/App/Home'}}>
+                    <img src='/images/MAPR_logo_edit.png' id='header-logo' />
+                </Link>
             homeTab = <div></div>
             logOff = 
-            <div className='header-tab log-in-tab' onClick={this.logOff}>
-                <div className='Link header-link'> Log Off </div>
-            </div>
+                <div className='header-tab log-in-tab' onClick={this.logOff}>
+                    <img id='logoff-icon' src="/images/logoff.png" alt=""/>
+                </div>
             fullHeader = ''
         }
 
@@ -93,9 +140,9 @@ export default class Header extends React.Component<any, any> {
                 <div className='home-tab'>
                     {homeTab}
                 </div>
-                {logOff}
                 {logInTab}
                 {registerTab}
+                {/* {logOff} */}
             </div>
         )
     }

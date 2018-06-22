@@ -18,7 +18,8 @@ export default class CreateDocument extends React.Component<any, any> {
             documentList: [],
             document_id: '',
             nextButton: '',
-            readyForNext: false
+            readyForNext: false,
+            userList: []
         }
 
         // this.handleDocumentLinkPress = this.handleDocumentLinkPress.bind(this)
@@ -26,13 +27,14 @@ export default class CreateDocument extends React.Component<any, any> {
         this.handleSelectPermissionsView = this.handleSelectPermissionsView.bind(this)
         this.handleNext = this.handleNext.bind(this)
         this.handleBack = this.handleBack.bind(this)
+        this.handleAddUser = this.handleAddUser.bind(this)
     }
 
     //Views
     handleSelectDocumentView() {
 
         let currentView = (
-            <div>
+            <div className='container'>
                 <div className='documents-header'>Select Template Document</div>
                 <div className='document-list-container'>
                     {this.state.documentList}
@@ -49,12 +51,21 @@ export default class CreateDocument extends React.Component<any, any> {
 
     handleSelectPermissionsView() {
         let currentView = (
-            <div>
+            <div className='container'>
                 <div className='documents-header'>Select Document Permissions</div>
                 <div className='document-list-container'>
                     <div>Selected Document: {this.state.document_id}</div>
-                    <div>Send to:</div>
-                    <div>Allow viewing priviledge:</div>
+                    <div className='documents-header'>Select Users</div>
+                    <div id='user-search-main-container'>
+                        <div id='user-search-bar-container'>
+                            <div id='search-bar-magnifying-glass'></div>
+                            <input onClick={this.handleAddUser} onChange={(e) => {this.handleFindUser(e)}} id='user-search-bar' placeholder='Find Users' type="text"/>
+                        </div>
+                        <div id='added-users-title'>Selected Users</div>
+                        <div id='added-users-container'>
+                            {this.state.userList}
+                        </div> 
+                    </div>
                 </div>
             </div>
         )
@@ -208,6 +219,50 @@ export default class CreateDocument extends React.Component<any, any> {
         }, () => {
             this.handleButtons()
         })
+
+    }
+
+    //Finding and displaying added users
+    async handleFindUser(e) {
+        let query = e.target.value
+
+        try {
+
+            let result = $.ajax({
+
+            })
+            
+        } catch(e) {
+            console.log(e)
+        }
+
+    }
+
+
+    handleAddUser() {
+        
+        let userList = this.state.userList.slice() 
+
+        let user = 'Example User'
+
+        let addedUser = 
+            <div className='added-user'>
+                {user}
+            </div>
+
+        userList.push(addedUser)
+
+        this.setState({
+            userList: userList
+        }, () => {
+            this.handleSelectPermissionsView()
+        })
+
+    }
+
+    handleDeleteUser() {
+
+
 
     }
 

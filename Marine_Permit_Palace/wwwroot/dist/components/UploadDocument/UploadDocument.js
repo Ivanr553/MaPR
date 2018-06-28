@@ -11,6 +11,7 @@ class UploadDocument extends React.Component {
         return (React.createElement("div", { id: 'UploadDocument', onDragOver: (e) => {
                 e.preventDefault();
             } },
+            React.createElement("div", { id: 'upload-document-header' }, "Upload Document"),
             React.createElement("div", { id: 'dropzone', onDrop: (e) => {
                     e.preventDefault();
                     e.stopPropagation();

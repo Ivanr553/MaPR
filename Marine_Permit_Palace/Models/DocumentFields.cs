@@ -14,7 +14,12 @@ namespace Marine_Permit_Palace.Models
         public string IdFormName { get; set; }
         //
         public string FormValue { get; set; }
-        public bool IsSupervisor { get; set; }
+        /// <summary>
+        /// The user assigned to this field
+        /// </summary>
+        public ApplicationUser Assignee { get; set; }
+        public string AssigneeId { get; set; }
+        public bool IsCompleted { get; set; }
     }
 
     public class DocumentCheckBoxField : DataRowProperties
@@ -26,7 +31,12 @@ namespace Marine_Permit_Palace.Models
         //
         public bool FormValue { get; set; }
 
-        public bool IsSupervisor { get; set; }
+        /// <summary>
+        /// The user assigned to this field
+        /// </summary>
+        public ApplicationUser Assignee { get; set; }
+        public string AssigneeId { get; set; }
+        public bool IsCompleted { get; set; }
     }
 
     public class DocumentSignatureField : DataRowProperties
@@ -53,6 +63,11 @@ namespace Marine_Permit_Palace.Models
         public DataStorage SignatureData { get; set; }
         public Guid SignatureDataId { get; set; }
 
-        public bool IsSupervisor { get; set; } // If true, only the owner supervisor can sign this
+        /// <summary>
+        /// The user assigned to this field
+        /// </summary>
+        public ApplicationUser Assignee { get; set; }
+        public string AssigneeId { get; set; }
+        public bool IsCompleted { get; set; }
     }
 }

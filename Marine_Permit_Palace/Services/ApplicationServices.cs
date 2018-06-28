@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Marine_Permit_Palace.Services
@@ -16,6 +17,7 @@ namespace Marine_Permit_Palace.Services
     public interface ISubmittedDocumentService : IDataRowPropertiesInterface<SubmittedDocument>
     {
         SubmittedDocument GetPopulated(Guid IdSubmittedDocument);
+        List<SubmittedDocument> GetAllAssigedToUser(string UserId, bool RequiresAttentionOnly = false);
     }
 
     public interface IDocumentFormFieldService : IDataRowPropertiesInterface<DocumentFormField>
@@ -135,6 +137,21 @@ namespace Marine_Permit_Palace.Services
 
         }
 
+        public List<SubmittedDocument> GetAllAssigedToUser(string UserId, bool RequiresAttentionOnly = false)
+        {
+            var AssignedDocuments = _context.DocumentAssigneeIntermediate
+                .Include(e => e.ActiveDocument)
+                .Where(e => e.IdAssigneeId == UserId)
+                .Select(e => e.ActiveDocument);
+            if(RequiresAttentionOnly)
+            {
+                AssignedDocuments = AssignedDocuments
+                .Where(e => e.IsCompleted);
+            }
+            return AssignedDocuments.ToList();
+        }
+        
+
         public SubmittedDocument GetPopulated(Guid IdSubmittedDocument)
         {
             return _context.SubmittedDocument
@@ -212,5 +229,57 @@ namespace Marine_Permit_Palace.Services
             return Result;
         }
     }
+
+    public interface IDocumentAssigneeIntermediateService : IDataRowPropertiesInterface<DocumentAssigneeIntermediate>
+    {
+        List<ApplicationUser> GetAssignedUsers(Guid SubmittedDocumentId);
+        List<SubmittedDocument> GetAssignedDocuments(string UserId);
+        List<DocumentAssigneeIntermediate> GetByUser(string UserId);
+        List<DocumentAssigneeIntermediate> GetByDocument(Guid SubmittedDocId);
+    }
+
+    public class DocumentAssigneeIntermediateService : DataRowPropertiesInterfaceImplementation<DocumentAssigneeIntermediate>, IDocumentAssigneeIntermediateService
+    {
+        public DocumentAssigneeIntermediateService(ApplicationDbContext ctx, UserManager<ApplicationUser> um) : base(ctx, um)
+        {
+
+        }
+
+        public List<SubmittedDocument> GetAssignedDocuments(string UserId)
+        {
+            return _context.DocumentAssigneeIntermediate
+                .Include(e => e.ActiveDocument)
+                .Where(e => e.IsActive && e.IdAssigneeId == UserId)
+                .Select(e => e.ActiveDocument)
+                .ToList();
+        }
+
+        public List<ApplicationUser> GetAssignedUsers(Guid SubmittedDocumentId)
+        {
+            return _context.DocumentAssigneeIntermediate
+                .Include(e => e.ActiveDocument)
+                .Where(e => e.IsActive && e.IdActiveDocumentId == SubmittedDocumentId)
+                .Select(e => e.Assignee)
+                .ToList();
+        }
+
+        public List<DocumentAssigneeIntermediate> GetByDocument(Guid SubmittedDocumentId)
+        {
+            return _context.DocumentAssigneeIntermediate
+                .Include(e => e.ActiveDocument)
+                .Where(e => e.IsActive && e.IdActiveDocumentId == SubmittedDocumentId)
+                .ToList();
+        }
+
+        public List<DocumentAssigneeIntermediate> GetByUser(string UserId)
+        {
+            return _context.DocumentAssigneeIntermediate
+                .Include(e => e.ActiveDocument)
+                .Where(e => e.IsActive && e.IdAssigneeId == UserId)
+                .ToList();
+        }
+    }
+
+    
 
 }

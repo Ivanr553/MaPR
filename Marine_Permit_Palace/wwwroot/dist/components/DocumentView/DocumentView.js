@@ -11,7 +11,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const react_pdf_js_1 = require("react-pdf-js");
 const $ = require("jquery");
-const timers_1 = require("timers");
 const s = require('./styling/style.sass');
 class DocumentView extends React.Component {
     constructor(props) {
@@ -78,6 +77,10 @@ class DocumentView extends React.Component {
                         React.createElement("input", { id: form, style: { position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw` }, className: 'document-input', defaultValue: currentForm.value, type: "text", onChange: (e) => { this.handleFormEdit(e, form); } }));
                     documentFields.push(newForm);
                 }
+                else if (currentForm.field_type === 'Signature') {
+                    let newForm = React.createElement("canvas", { key: form, className: 'document-signature-canvas', style: { position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw`, backgroundColor: 'red' } });
+                    documentFields.push(newForm);
+                }
                 delete currentForm.field_position;
             }
             this.setState({
@@ -87,6 +90,13 @@ class DocumentView extends React.Component {
             }, () => {
                 this.saveFile(null);
             });
+        });
+    }
+    handleDocumentNameChange(e) {
+        let documentName = this.state.documentName;
+        documentName = e.target.value;
+        this.setState({
+            documentName: documentName
         });
     }
     handleFormEdit(e, id) {
@@ -113,6 +123,7 @@ class DocumentView extends React.Component {
     }
     saveFile(submitted_file_id) {
         return __awaiter(this, void 0, void 0, function* () {
+            document.getElementById('save-button').style.backgroundColor = 'lightblue';
             let saveFile = {
                 document_meta: this.state.documentObject.document_meta,
                 name: this.state.documentName,
@@ -132,15 +143,12 @@ class DocumentView extends React.Component {
                     data: JSON.stringify(saveFile)
                 });
                 if (saveResult && saveResult.status_code < 201) {
-                    document.getElementById('save-button').style.backgroundColor = 'green';
-                    timers_1.setTimeout(() => {
-                        document.getElementById('save-button').style.backgroundColor = 'lightblue';
-                    }, 1500);
+                    document.getElementById('save-button').style.backgroundColor = 'rgb(131, 198, 125)';
                 }
             }
             catch (e) {
                 console.log('Error saving:', e);
-                document.getElementById('save-button').style.backgroundColor = 'red';
+                document.getElementById('save-button').style.backgroundColor = 'rgb(198, 125, 125)';
             }
             if (!submitted_file_id || submitted_file_id === null) {
                 this.setState({
@@ -159,6 +167,7 @@ class DocumentView extends React.Component {
         let file = '../../dist/documents/NAVMC10694.pdf';
         return (React.createElement("div", { className: 'DocumentView' },
             React.createElement("div", { id: 'document-view-header' },
+                React.createElement("input", { placeholder: 'Document Name', onChange: (e) => { this.handleDocumentNameChange(e); }, id: 'document-name-input', type: "text" }),
                 React.createElement("div", { id: 'save-button', onClick: () => { this.saveFile(this.state.submitted_file_id); } }, "Save File")),
             React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: file }),
             React.createElement("div", { id: 'document-form-div' }, this.state.documentFields)));

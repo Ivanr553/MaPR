@@ -19,6 +19,7 @@ namespace Marine_Permit_Palace.Models
             SubmittedDocumentsLockedBy = new HashSet<SubmittedDocument>();
             SubmittedDocumentsApproveCompletion = new HashSet<SubmittedDocument>();
             UserDocumentCategoriesApproved = new HashSet<UserDocumentCategory>();
+            DocumentAssigneeIntermediates = new HashSet<DocumentAssigneeIntermediate>();
 
             //User Editable
             SubmittedDocumentsCreatedBy = new HashSet<SubmittedDocument>();
@@ -36,6 +37,12 @@ namespace Marine_Permit_Palace.Models
             CategoryCreatedBy = new HashSet<Category>();
             InUserDocumentCategories = new HashSet<UserDocumentCategory>();
             CategoryLastModBy = new HashSet<Category>();
+
+            //Assigned
+            AssignedDocumentCheckBoxFields = new HashSet<DocumentCheckBoxField>();
+            AssignedDocumentFormFields = new HashSet<DocumentFormField>();
+            AssignedDocumentSignatureFields = new HashSet<DocumentSignatureField>();
+
         }
         //PK Defined by Identity Framework
         public string Rank { get; set; }
@@ -71,6 +78,8 @@ namespace Marine_Permit_Palace.Models
         public ICollection<SubmittedDocument> SubmittedDocumentsApproveCompletion { get; set; }
         public ICollection<UserDocumentCategory> UserDocumentCategoriesApproved { get; set; }
         public ICollection<UserDocumentCategory> InUserDocumentCategories { get; set; }
+        public ICollection<DocumentAssigneeIntermediate> DocumentAssigneeIntermediates { get; set; }
+        public ICollection<SubmittedDocument> AssignedDocuments { get; set; }
 
         //User Editable Links
         public ICollection<SubmittedDocument> SubmittedDocumentsCreatedBy { get; set; }
@@ -88,7 +97,11 @@ namespace Marine_Permit_Palace.Models
         public IReadOnlyCollection<Category> CategoryCreatedBy { get; set; }
         public IReadOnlyCollection<Category> CategoryLastModBy { get; set; }
 
+        //Assigned Fields
 
+        public ICollection<DocumentCheckBoxField> AssignedDocumentCheckBoxFields { get; set; }
+        public ICollection<DocumentFormField> AssignedDocumentFormFields { get; set; }
+        public ICollection<DocumentSignatureField> AssignedDocumentSignatureFields { get; set; }
 
     }
 }

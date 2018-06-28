@@ -30,6 +30,7 @@ namespace Marine_Permit_Palace.Data
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<StoredToken> StoredToken { get; set; }
         public virtual DbSet<DataStorage> DataStorage { get; set; }
+        public virtual DbSet<DocumentAssigneeIntermediate> DocumentAssigneeIntermediate { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -68,12 +69,11 @@ namespace Marine_Permit_Palace.Data
                 entity.HasKey(e => e.IdSubmittedDocument);
 
                 //Model Linking
-                entity.HasOne(e => e.UserApprovingCompletion)
-                    .WithMany(e => e.SubmittedDocumentsApproveCompletion)
-                    .HasForeignKey(e => e.UserApprovingCompletionId);
-                entity.HasOne(e => e.UserLockingEdit)
-                    .WithMany(e => e.SubmittedDocumentsLockedBy)
-                    .HasForeignKey(e => e.UserLockingEditId);
+                entity.HasOne(e => e.Assigner)
+                    .WithMany(e => e.AssignedDocuments)
+                    .HasForeignKey(e => e.AssignerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
                 entity.HasOne(e => e.Document)
                     .WithMany(e => e.SubmittedDocuments)
                     .HasForeignKey(e => e.DocumentId);
@@ -101,6 +101,7 @@ namespace Marine_Permit_Palace.Data
                     .WithMany(e => e.UserSupervisors)
                     .HasForeignKey(e => e.IdSupervisorId)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+
                 //User Editable Data Linkage
                 entity.HasOne(e => e.CreatedBy)
                     .WithMany(e => e.UserSupervisorIntermediateCreatedBy)
@@ -108,6 +109,23 @@ namespace Marine_Permit_Palace.Data
                 entity.HasOne(e => e.LastModifiedBy)
                     .WithMany(e => e.UserSupervisorIntermediateLastModBy)
                     .HasForeignKey(e => e.LastModifiedById);
+            });
+
+            builder.Entity<DocumentAssigneeIntermediate>(entity =>
+            {
+                entity.ToTable("Document_Assignee_Intermediate");
+
+                entity.HasKey(e => new { e.IdActiveDocumentId, e.IdAssigneeId });
+
+                entity.HasOne(e => e.ActiveDocument)
+                    .WithMany(e => e.DocumentAssigneeIntermediates)
+                    .HasForeignKey(e => e.IdActiveDocumentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(e => e.Assignee)
+                    .WithMany(e => e.DocumentAssigneeIntermediates)
+                    .HasForeignKey(e => e.IdAssigneeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             builder.Entity<UserDocumentCategory>(entity =>
@@ -198,6 +216,12 @@ namespace Marine_Permit_Palace.Data
                     .HasForeignKey(e => e.IdSubmittedDocumentId);
 
                 //No User Edit Prop
+
+                //Assigned
+                entity.HasOne(e => e.Assignee)
+                    .WithMany(e => e.AssignedDocumentFormFields)
+                    .HasForeignKey(e => e.AssigneeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             builder.Entity<DocumentCheckBoxField>(entity =>
@@ -210,6 +234,12 @@ namespace Marine_Permit_Palace.Data
                     .HasForeignKey(e => e.IdSubmittedDocumentId);
 
                 //No User Edit Prop 
+
+                //Assigned
+                entity.HasOne(e => e.Assignee)
+                    .WithMany(e => e.AssignedDocumentCheckBoxFields)
+                    .HasForeignKey(e => e.AssigneeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             builder.Entity<DocumentSignatureField>(entity =>
@@ -226,6 +256,12 @@ namespace Marine_Permit_Palace.Data
                     .HasForeignKey(e => e.SignatureDataId)
                     .OnDelete(DeleteBehavior.ClientSetNull);
                 //No User Edit Prop 
+
+                //Assigned
+                entity.HasOne(e => e.Assignee)
+                    .WithMany(e => e.AssignedDocumentSignatureFields)
+                    .HasForeignKey(e => e.AssigneeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             builder.Entity<PermitSubmittedDocIntermediate>(entity =>

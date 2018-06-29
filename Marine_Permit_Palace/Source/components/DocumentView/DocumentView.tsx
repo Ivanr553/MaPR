@@ -207,10 +207,10 @@ export default class DocumentView extends React.Component<any, any> {
 
         return(
             <div className='DocumentView'>
-                <div id='document-view-header'>
+                {/* <div id='document-view-header'>
                     <input placeholder='Document Name' onChange={(e) => {this.handleDocumentNameChange(e)}} id='document-name-input' type="text"/>
                     <div id='save-button' onClick={() => {this.saveFile(this.state.submitted_file_id)}}>Save File</div>
-                </div>
+                </div> */}
                 <PDF className='pdf-image' file={file} >
                 </PDF>
                 <div id='document-form-div'>

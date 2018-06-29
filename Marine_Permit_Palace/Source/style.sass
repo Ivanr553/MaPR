@@ -2,18 +2,18 @@ body
   font-family: sans-serif
   padding: 0
   margin: 0
-  font-size: 1vw
+  font-size: 0.5vw
+  @media screen and (max-width: 1000px)
+    font-size: 1vw
 
 .Link
   text-decoration: none
-
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button
     display: none
     -webkit-appearance: none
     margin: 0
-
 
 //Custom Colors
 $main-color: rgb(53, 62, 84)
@@ -33,3 +33,10 @@ $button-color: rgb(41, 144, 214)
 // $button-color: rgb(26, 188, 156)
 $main-back: rgb(247, 250, 255)
 $main-back: rgb(235, 235, 235)
+
+
+@keyframes fade-in
+  0%
+    opacity: 0.2
+  100%
+    opacity: 1

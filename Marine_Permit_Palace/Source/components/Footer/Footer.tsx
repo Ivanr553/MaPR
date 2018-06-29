@@ -14,7 +14,7 @@ export default class Footer extends React.Component<any, any> {
     render() {
         return(
             <div id='Footer'>
-                Marin Permit Repository 2018
+                Marine Permit Repository 2018
             </div>
         )
     }

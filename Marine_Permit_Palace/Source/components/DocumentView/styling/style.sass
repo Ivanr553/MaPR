@@ -1,6 +1,6 @@
 .DocumentView
   width: 100%
-  height: 90vh
+  height: 100%
   overflow: auto
   position: relative
 
@@ -8,15 +8,15 @@ input:focus
   outline: none
 
 #document-view-header
-  width: 90%
+  width: 100%
   height: 10vh
   right: 0
   display: flex
   flex-direction: column
   align-items: center
   justify-content: center
-  position: fixed
-  top: 7.5vh
+  position: sticky
+  top: 0vh
   z-index: 400
   animation: fade-out-header 0.7s forwards
 
@@ -47,8 +47,8 @@ input:focus
   cursor: pointer
   border-radius: 3px
   position: absolute
-  top: 1vh
-  right: 1vw
+  top: 1.5vh
+  right: 6vw
   opacity: 0.5
   animation: fade-out-save-button 0.7s forwards
 
@@ -67,11 +67,12 @@ input:focus
   height: auto !important
   margin-left: calc(85vw * 0.05)
   margin-bottom: 5vh
+  top: 12.5vh
 
 #document-form-div
   margin-left: calc(85vw * 0.05)
   position: relative
-  top: 0
+  top: 12.5vh
   left: 0
 
 .document-checkbox

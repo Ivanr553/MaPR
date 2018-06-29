@@ -53,17 +53,15 @@ export default class Header extends React.Component<any, any> {
     }
 
     //Hamburger Menu
-    handleHamburgerMenuPress() {
+    handleHamburgerMenuPress(e) {
 
         if(!this.state.hamburgerMenuShow) {
 
-            // animation: show-hamburger-menu 1.25s forwards
-
             let hamburgerMenu = 
-            <div id='hamburger-menu' style={{animation: 'show-hamburger-menu 1.5s forwards'}}>
-                <div className='hamburger-menu-item'>Account</div>
-                <div className='hamburger-menu-item'>Settings</div>
-                <div className='hamburger-menu-item'>Log Out</div>
+            <div className='hamburger-menu-element' id='hamburger-menu' style={{animation: 'show-hamburger-menu 1.5s forwards'}}>
+                <div className='hamburger-menu-item hamburger-menu-element' id='account-hamburger-menu-item'>Account</div>
+                <div className='hamburger-menu-item hamburger-menu-element' id='settings-hamburger-menu-item'>Settings</div>
+                <div className='hamburger-menu-item hamburger-menu-element' id='log-out-hamburger-menu-item'>Log Out</div>
             </div>
 
             this.setState({
@@ -118,11 +116,11 @@ export default class Header extends React.Component<any, any> {
         if(this.state.username != '') {
             accountLink = '/Account'
             registerTab = <div></div>
-            logInTab = 
-                <div onClick={this.handleHamburgerMenuPress} className='header-tab log-in-tab' id='hamburger-menu-container'>
-                    <img id='hamburger-icon' src="/images/hamburger-menu.png" alt=""/>
-                    {this.state.hamburgerMenu}
-                </div>
+            logInTab = <div></div>
+                // <div onClick={(e) => {this.handleHamburgerMenuPress(e)}} className='header-tab log-in-tab' id='hamburger-menu-container'>
+                //     <img id='hamburger-icon' src="/images/hamburger-menu.png" alt=""/>
+                //     {this.state.hamburgerMenu}
+                // </div>
             homeTab =
                 <Link className='Link home-header-link' to={{pathname: '/A/App/Home'}}>
                     <img src='/images/MAPR_logo_edit.png' id='header-logo' />
@@ -142,7 +140,6 @@ export default class Header extends React.Component<any, any> {
                 </div>
                 {logInTab}
                 {registerTab}
-                {/* {logOff} */}
             </div>
         )
     }

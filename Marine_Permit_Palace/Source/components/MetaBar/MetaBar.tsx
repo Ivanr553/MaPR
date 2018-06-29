@@ -239,10 +239,10 @@ export default class MetaBar extends React.Component<any, any> {
                 <div id='logo-container'>
                     <img id='logo' src='/images/MAPR_logo_edit.png'/>
                 </div>
-                <img className='metabar-link' src='/images/doc_icon.png' onClick={this.handleDocumentListPress}/>
-                <img className='metabar-link' src='/images/new_document-white.png' onClick={this.handleNewDocumentPress}/>
-                <img className='metabar-link' src='/images/upload-document.png' onClick={this.handleUploadDocumentPress}/>
-                <img className='metabar-link' src='/images/settings.png' onClick={this.handleSettingsPress}/>
+                <abbr title='Pending Documents'><img className='metabar-link' src='/images/doc_icon.png' onClick={this.handleDocumentListPress}/></abbr>
+                <abbr title='Create New Document'><img className='metabar-link' src='/images/new_document-white.png' onClick={this.handleNewDocumentPress}/></abbr>
+                <abbr title='Upload Document'><img className='metabar-link' src='/images/upload-document.png' onClick={this.handleUploadDocumentPress}/></abbr>
+                <abbr title='Account Page'><img className='metabar-link' src='/images/settings.png' onClick={this.handleSettingsPress}/></abbr>
             </div>
         )
     }

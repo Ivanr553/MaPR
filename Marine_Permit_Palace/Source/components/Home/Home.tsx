@@ -19,7 +19,9 @@ export default class Home extends React.Component<Props, any> {
       username: '',
       currentView: '',
       documentResults: [],
-      documentList: []
+      documentList: [],
+      hamburgerMenu: '',
+      hamburgerMenuShow: false
     }
 
     this.getUser = this.getUser.bind(this)
@@ -27,9 +29,65 @@ export default class Home extends React.Component<Props, any> {
     this.getCurrentView = this.getCurrentView.bind(this)
   }
 
+    //Hamburger Menu
+  handleHamburgerMenuPress(e) {
+
+    if(!this.state.hamburgerMenuShow) {
+
+        let hamburgerMenu = 
+        <div className='hamburger-menu-element' id='hamburger-menu' style={{animation: 'show-hamburger-menu 1.5s forwards'}}>
+            <div className='hamburger-menu-item hamburger-menu-element' id='account-hamburger-menu-item'>Account</div>
+            <div className='hamburger-menu-item hamburger-menu-element' id='settings-hamburger-menu-item'>Settings</div>
+            <div className='hamburger-menu-item hamburger-menu-element' id='log-out-hamburger-menu-item' onClick={this.logOff}>Log Out</div>
+        </div>
+
+        this.setState({
+            hamburgerMenu: hamburgerMenu,
+            hamburgerMenuShow: true
+        })
+    }
+
+    if(this.state.hamburgerMenuShow) {
+
+        let hamburgerMenu = 
+        <div id='hamburger-menu' style={{animation: 'hide-hamburger-menu 0.75s forwards'}}>
+            <div className='hamburger-menu-item'>Account</div>
+            <div className='hamburger-menu-item'>Settings</div>
+            <div className='hamburger-menu-item'>Log Out</div>
+        </div>
+
+        this.setState({
+            hamburgerMenu: hamburgerMenu,
+            hamburgerMenuShow: false
+        })
+
+    }
+
+  }
+
+  logOff = async () => {
+
+    console.log('logging off')
+
+    let response = await $.get('/Account/Logout')
+    console.log(response)
+
+    if(!response) {
+        alert('There was an error with your request')
+    } else {
+        this.setState({
+            username: ''
+        }, () => {
+            window.open('/A/App', '_self')
+        })
+    }
+
+  }
+
   async getUser() {
 
     let response = await $.get('/Account/WhoAmI')
+    console.log('Who Am I:', response)
     
     if(!response) {
       window.open('/A/App', '_self')
@@ -78,7 +136,12 @@ export default class Home extends React.Component<Props, any> {
 
         <MetaBar getCurrentView={this.getCurrentView} getCurrentUser={this.getCurrentUser}/>
 
-        <div className='documents-container'>
+        <div onClick={(e) => {this.handleHamburgerMenuPress(e)}} id='hamburger-menu-container'>
+          <img id='hamburger-icon' src="/images/hamburger-menu.png" alt=""/>
+          {this.state.hamburgerMenu}
+        </div>
+
+        <div id='documents-container' className={this.state.animate} >
           {this.state.currentView}
         </div>
 

@@ -25,6 +25,7 @@ export default class CreateDocument extends React.Component<any, any> {
         // this.handleDocumentLinkPress = this.handleDocumentLinkPress.bind(this)
         this.handleSelectDocumentView = this.handleSelectDocumentView.bind(this)
         this.handleSelectPermissionsView = this.handleSelectPermissionsView.bind(this)
+        // this.handleSelectPreviewView = this.handleSelectPreviewView.bind(this)
         this.handleNext = this.handleNext.bind(this)
         this.handleBack = this.handleBack.bind(this)
         this.handleAddUser = this.handleAddUser.bind(this)
@@ -45,7 +46,7 @@ export default class CreateDocument extends React.Component<any, any> {
             currentView: currentView,
             view: 'SelectDocument'
         }, () => {
-            this.handleButtons()
+            // this.handleButtons()
         })
     }
 
@@ -73,8 +74,27 @@ export default class CreateDocument extends React.Component<any, any> {
             currentView: currentView,
             view: 'SelectPermissions'
         }, () => {
-            this.handleButtons()
+            // this.handleButtons()
         })
+    }
+
+    handleSelectPreviewView = () => {
+
+        let currentView = (
+            <div className='container'>
+                <div className='documents-header'>Document Preview</div>
+                <div id='document-view-container'>
+                    <DocumentView file={this.state.document_id}/>
+                </div>
+            </div>
+        )
+        this.setState({
+            currentView: currentView,
+            view: 'Preview'
+        }, () => {
+
+        })
+
     }
 
     //Handle View Switching
@@ -109,62 +129,62 @@ export default class CreateDocument extends React.Component<any, any> {
     }
 
     //Creating Buttons
-    handleButtons() {
+    // handleButtons() {
 
-        let backButton
+    //     let backButton
 
-        if(this.state.view === 'SelectDocument') {
+    //     if(this.state.view === 'SelectDocument') {
             
-            backButton = ''
+    //         backButton = ''
 
-            this.setState({
-                backButton: backButton
-            })
-        }
+    //         this.setState({
+    //             backButton: backButton
+    //         })
+    //     }
 
-        if(this.state.view === 'SelectPermissions') {
+    //     if(this.state.view === 'SelectPermissions') {
          
-            backButton = 
-            <button className='create-document-button selectable-button' id='create-document-back-button' onClick={this.handleBack}>
-                Back
-            </button>
+    //         backButton = 
+    //         <button className='create-document-button selectable-button' id='create-document-back-button' onClick={this.handleBack}>
+    //             Back
+    //         </button>
 
-            this.setState({
-                backButton: backButton
-            })
-        }
+    //         this.setState({
+    //             backButton: backButton
+    //         })
+    //     }
 
-        let nextButton
+    //     let nextButton
 
-        if(!this.state.readyForNext) {
+    //     if(!this.state.readyForNext) {
 
-            nextButton =
-                <button className='create-document-button' id='create-document-next-button'>
-                    Next
-                </button>
+    //         nextButton =
+    //             <button className='create-document-button' id='create-document-next-button'>
+    //                 Next
+    //             </button>
 
-            this.setState({
-                nextButton: nextButton
-            }, () => {
-                this.forceUpdate()
-                return nextButton
-            })
-        }
-        else {
+    //         this.setState({
+    //             nextButton: nextButton
+    //         }, () => {
+    //             this.forceUpdate()
+    //             return nextButton
+    //         })
+    //     }
+    //     else {
 
-            nextButton =
-            <button className='create-document-button selectable-button' id='create-document-next-button' onClick={this.handleNext}>
-                Next
-            </button>
+    //         nextButton =
+    //         <button className='create-document-button selectable-button' id='create-document-next-button' onClick={this.handleNext}>
+    //             Next
+    //         </button>
 
-            this.setState({
-                nextButton: nextButton
-            }, () => {
-                return nextButton
-            }) 
-        }
+    //         this.setState({
+    //             nextButton: nextButton
+    //         }, () => {
+    //             return nextButton
+    //         }) 
+    //     }
 
-    }
+    // }
 
     //Creates list in state of documents to be rendered
     renderDocuments() {
@@ -217,7 +237,7 @@ export default class CreateDocument extends React.Component<any, any> {
             document_id: target.id,
             readyForNext: true
         }, () => {
-            this.handleButtons()
+            // this.handleButtons()
         })
 
     }
@@ -267,7 +287,7 @@ export default class CreateDocument extends React.Component<any, any> {
     }
 
     componentWillMount() {
-        this.handleButtons()
+        // this.handleButtons()
         this.renderDocuments()
     }
 
@@ -275,11 +295,12 @@ export default class CreateDocument extends React.Component<any, any> {
 
         return(
             <div id='CreateDocument'>
-                {this.state.currentView}
-                <div id='button-container'>
-                    {this.state.backButton}
-                    {this.state.nextButton}
+                <div id='create-document-nav-bar'>
+                    <div id='create-document-nav-bar-item-document' className='create-document-nav-bar-item' onClick={this.handleSelectDocumentView}>Select Document</div>
+                    <div className='create-document-nav-bar-item' onClick={this.handleSelectPermissionsView}>Create Permissions</div>
+                    <div className='create-document-nav-bar-item' onClick={this.handleSelectPreviewView}>Preview</div>
                 </div>
+                {this.state.currentView}
             </div>
         )
 

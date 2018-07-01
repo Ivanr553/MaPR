@@ -17,52 +17,38 @@ export default class DocumentView extends React.Component<any, any> {
             url: '',
             documentObject: {},
             documentName: 'document',
-            submitted_file_id: ''
+            submitted_file_id: '',
+            noDocument: false
         }
 
-    }
-
-    async getDocument() {
-
-        try {
-
-            let documentList = await $.get('/DocumentSave/GetAllDocuments')
-
-            let pdfID = documentList[0].idDocument
-
-            let pdfURL = `/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`
-
-            this.setState({
-                url: pdfURL
-            })
-
-        } catch(err) {
-            console.log('Error:', err)
-        }
     }
 
     async populatePage() {
 
-        let documentList = await $.get('/DocumentSave/GetAllDocuments')
+        console.log(this.props.document_id)
 
-        let document_id = documentList[0].idDocument
-
-        let pdf = await $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${document_id}`)
+        if(this.props.document_id === '') {
+            this.setState({
+                noDocument: true
+            })
+            return
+        } else {
+            this.setState({
+                noDocument: false
+            })
+        }
         
-        let documentObject = await $.get(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`)
+        let documentObject = await $.get(`/DocumentSave/GetDocumentMeta?document_id=${this.props.document_id}`)
+
         console.log(documentObject)
 
         let documentFields = []
 
-        //Document Variables
-        //Width: 0.9*90vw
-        //Height: auto
-
         let pdfWidth = documentObject.document_size.right
         let pdfHeight = documentObject.document_size.height
         let pdfRatio = pdfHeight/pdfWidth
-        let webWidth = 0.9*90 //in vw
-        let webHeigth = webWidth * pdfRatio // in vw
+        let webWidth = 612 //in px
+        let webHeigth = 792 // in px
 
         for(let form in documentObject.document_meta) {
             let currentForm = documentObject.document_meta[form]
@@ -81,7 +67,7 @@ export default class DocumentView extends React.Component<any, any> {
                 currentForm.value = false
 
                 let newForm = 
-                    <div key={form} className='form-wrapper' style={{position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw`}}>
+                    <div key={form} className='form-wrapper' style={{position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`}}>
                         <input id={form} className='document-checkbox' style={{}} type="checkbox" onChange={(e) => {this.handleFormEdit(e, form)}}/>
                     </div>
 
@@ -90,14 +76,14 @@ export default class DocumentView extends React.Component<any, any> {
             else if(currentForm.field_type === 'Text') {
                 let newForm = 
                     <div key={form} className='form-wrapper'>
-                        <input id={form} style={{position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw`}} className='document-input' defaultValue={currentForm.value} type="text" onChange={(e) => {this.handleFormEdit(e, form)}}/>
+                        <input id={form} style={{position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`}} className='document-input' defaultValue={currentForm.value} type="text" onChange={(e) => {this.handleFormEdit(e, form)}}/>
                     </div>
 
                 documentFields.push(newForm)
             }
             else if(currentForm.field_type === 'Signature') {
                 let newForm = 
-                    <canvas key={form} className='document-signature-canvas' style={{position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw`, backgroundColor: 'red'}}>
+                    <canvas key={form} className='document-signature-canvas' style={{position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`, backgroundColor: 'red'}}>
                     </canvas>
 
                 documentFields.push(newForm)
@@ -110,7 +96,7 @@ export default class DocumentView extends React.Component<any, any> {
         this.setState({
             documentFields: documentFields,
             documentObject: documentObject,
-            document_id: document_id
+            document_id: this.props.document_id
         }, () => {
             this.saveFile(null)
         })
@@ -198,20 +184,29 @@ export default class DocumentView extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        this.getDocument()
         this.populatePage()
     }
 
     render() {
-        let file = '../../dist/documents/NAVMC10694.pdf'
+        let document_id = '../../dist/documents/NAVMC10694.pdf'
+        let noDocumentWarning
+
+        if(this.state.noDocument) {
+            noDocumentWarning = (
+                <div id='document-view-no-document-warning'>
+                    There is no document selected
+                </div>
+            )
+        }
 
         return(
             <div className='DocumentView'>
+                {noDocumentWarning}
                 {/* <div id='document-view-header'>
                     <input placeholder='Document Name' onChange={(e) => {this.handleDocumentNameChange(e)}} id='document-name-input' type="text"/>
                     <div id='save-button' onClick={() => {this.saveFile(this.state.submitted_file_id)}}>Save File</div>
                 </div> */}
-                <PDF className='pdf-image' file={file} >
+                <PDF className='pdf-image' file={document_id} >
                 </PDF>
                 <div id='document-form-div'>
                     {this.state.documentFields}

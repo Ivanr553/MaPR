@@ -22,7 +22,6 @@ export default class Header extends React.Component<any, any> {
     async logOff() {
 
         let response = await $.get('/Account/Logout')
-        console.log(response)
 
         if(!response) {
             alert('There was an error with your request')
@@ -43,7 +42,6 @@ export default class Header extends React.Component<any, any> {
         }
 
         let user = await this.props.getCurrentUser()
-        console.log('header user:', user)
 
         if(user.username) {
             this.setState({
@@ -94,17 +92,18 @@ export default class Header extends React.Component<any, any> {
 
     render() {
 
+        //Header state if user is NOT logged in
         let accountInnerHtml
         let accountLink = '/Register'
         let registerTab = (
-            <div className='header-tab register-tab'>
-                <Link className='Link header-link' to={{pathname: '/A/App/Register'}}> Register </Link>
-            </div>
+            <Link className='Link header-tab register-tab' to={{pathname: '/A/App/Register'}}>
+                Register
+            </Link>
         )
         let logInTab = (
-            <div className='header-tab log-in-tab'>
-                <Link className='Link header-link' to={{pathname: '/A/App/'}}> Log In </Link>
-            </div>
+            <Link className='Link header-tab log-in-tab' to={{pathname: '/A/App/'}}>
+                Log In
+            </Link>
         )
         let homeTab = 
             <Link className='Link home-header-link' to={{pathname: '/A/App/'}}> 
@@ -113,23 +112,24 @@ export default class Header extends React.Component<any, any> {
         let logOff
         let fullHeader = 'show-full-header'
 
+        //Header state if user IS logged in
         if(this.state.username != '') {
-            accountLink = '/Account'
-            registerTab = <div></div>
-            logInTab = <div></div>
-                // <div onClick={(e) => {this.handleHamburgerMenuPress(e)}} className='header-tab log-in-tab' id='hamburger-menu-container'>
-                //     <img id='hamburger-icon' src="/images/hamburger-menu.png" alt=""/>
-                //     {this.state.hamburgerMenu}
-                // </div>
-            homeTab =
-                <Link className='Link home-header-link' to={{pathname: '/A/App/Home'}}>
-                    <img src='/images/MAPR_logo_edit.png' id='header-logo' />
-                </Link>
-            homeTab = <div></div>
-            logOff = 
-                <div className='header-tab log-in-tab' onClick={this.logOff}>
-                    <img id='logoff-icon' src="/images/logoff.png" alt=""/>
-                </div>
+            // accountLink = '/Account'
+            // registerTab = <div></div>
+            // logInTab = <div></div>
+            //     // <div onClick={(e) => {this.handleHamburgerMenuPress(e)}} className='header-tab log-in-tab' id='hamburger-menu-container'>
+            //     //     <img id='hamburger-icon' src="/images/hamburger-menu.png" alt=""/>
+            //     //     {this.state.hamburgerMenu}
+            //     // </div>
+            // homeTab =
+            //     <Link className='Link home-header-link' to={{pathname: '/A/App/Home'}}>
+            //         <img src='/images/MAPR_logo_edit.png' id='header-logo' />
+            //     </Link>
+            // homeTab = <div></div>
+            // logOff = 
+            //     <div className='header-tab log-in-tab' onClick={this.logOff}>
+            //         <img id='logoff-icon' src="/images/logoff.png" alt=""/>
+            //     </div>
             fullHeader = ''
         }
 

@@ -36,7 +36,7 @@
 
 .container
     width: 100%
-    height: auto
+    height: 92.5%
     overflow: auto
 
 #user-search-main-container
@@ -53,18 +53,40 @@
 
 #user-search-bar-container
     margin-top: 2.5vh
-    overflow: auto
+    position: relative
 
 #user-search-bar
     font-size: 2em
     border-radius: 8px
     border: none
-    text-indent: 2.5%
+    text-indent: 1vw
 
 #user-search-bar-magnifying-glass
     height: 100%
     width: auto
-    backgroudn-color: black
+    background-color: black
+
+#user-search-results-list
+    width: 100%
+    height: auto
+    position: absolute
+    top: 80%
+    left: 0
+    z-index: 600
+    background-color: white
+    list-style-type: none
+    padding-left: 0
+
+.user-search-result
+    width: calc(100% - 1vw)
+    height: auto
+    font-size: 2em
+    cursor: pointer
+    margin-bottom: 0.5vh
+    padding: 1vh 0 1vh 1vw
+
+.user-search-result:hover
+    background-color: rgb(200, 200, 200)
 
 #added-users-title
     margin-top: 5vh

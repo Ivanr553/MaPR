@@ -67,10 +67,7 @@ export default class Home extends React.Component<Props, any> {
 
   logOff = async () => {
 
-    console.log('logging off')
-
     let response = await $.get('/Account/Logout')
-    console.log(response)
 
     if(!response) {
         alert('There was an error with your request')
@@ -87,7 +84,6 @@ export default class Home extends React.Component<Props, any> {
   async getUser() {
 
     let response = await $.get('/Account/WhoAmI')
-    console.log('Who Am I:', response)
     
     if(!response) {
       window.open('/A/App', '_self')

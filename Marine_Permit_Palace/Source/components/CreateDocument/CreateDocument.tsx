@@ -46,7 +46,7 @@ export default class CreateDocument extends React.Component<any, any> {
             currentView: currentView,
             view: 'SelectDocument'
         }, () => {
-            // this.handleButtons()
+
         })
     }
 
@@ -60,7 +60,8 @@ export default class CreateDocument extends React.Component<any, any> {
                     <div id='user-search-main-container'>
                         <div id='user-search-bar-container'>
                             <div id='search-bar-magnifying-glass'></div>
-                            <input onClick={this.handleAddUser} onChange={(e) => {this.handleFindUser(e)}} id='user-search-bar' placeholder='Find Users' type="text"/>
+                            <input onChange={(e) => {this.handleFindUser(e)}} id='user-search-bar' placeholder='Find Users' type="text"/>
+                            {this.state.userSearchResults}
                         </div>
                         <div id='added-users-title'>Selected Users</div>
                         <div id='added-users-container'>
@@ -74,7 +75,7 @@ export default class CreateDocument extends React.Component<any, any> {
             currentView: currentView,
             view: 'SelectPermissions'
         }, () => {
-            // this.handleButtons()
+
         })
     }
 
@@ -82,9 +83,8 @@ export default class CreateDocument extends React.Component<any, any> {
 
         let currentView = (
             <div className='container'>
-                <div className='documents-header'>Document Preview</div>
                 <div id='document-view-container'>
-                    <DocumentView file={this.state.document_id}/>
+                    <DocumentView document_id={this.state.document_id}/>
                 </div>
             </div>
         )
@@ -128,64 +128,6 @@ export default class CreateDocument extends React.Component<any, any> {
 
     }
 
-    //Creating Buttons
-    // handleButtons() {
-
-    //     let backButton
-
-    //     if(this.state.view === 'SelectDocument') {
-            
-    //         backButton = ''
-
-    //         this.setState({
-    //             backButton: backButton
-    //         })
-    //     }
-
-    //     if(this.state.view === 'SelectPermissions') {
-         
-    //         backButton = 
-    //         <button className='create-document-button selectable-button' id='create-document-back-button' onClick={this.handleBack}>
-    //             Back
-    //         </button>
-
-    //         this.setState({
-    //             backButton: backButton
-    //         })
-    //     }
-
-    //     let nextButton
-
-    //     if(!this.state.readyForNext) {
-
-    //         nextButton =
-    //             <button className='create-document-button' id='create-document-next-button'>
-    //                 Next
-    //             </button>
-
-    //         this.setState({
-    //             nextButton: nextButton
-    //         }, () => {
-    //             this.forceUpdate()
-    //             return nextButton
-    //         })
-    //     }
-    //     else {
-
-    //         nextButton =
-    //         <button className='create-document-button selectable-button' id='create-document-next-button' onClick={this.handleNext}>
-    //             Next
-    //         </button>
-
-    //         this.setState({
-    //             nextButton: nextButton
-    //         }, () => {
-    //             return nextButton
-    //         }) 
-    //     }
-
-    // }
-
     //Creates list in state of documents to be rendered
     renderDocuments() {
 
@@ -194,12 +136,12 @@ export default class CreateDocument extends React.Component<any, any> {
 
         for(let i = 0; i < documents.length; i++) {
 
-            let file = '/dist/documents/' + documents[i].file
+            let document_id = '/dist/documents/' + documents[i].document_id
 
             let newDocument = 
-                <div key={i} className='viewable-document' id={documents[i].file} onClick={(e) => {this.selectDocument(e)}}>
+                <div key={i} className='viewable-document' id={documents[i].idDocument} onClick={(e) => {this.selectDocument(e)}}>
                     <div className='viewable-document-field' id='first-field'>{(i+1) + '.'}</div>
-                    <div className='viewable-document-field'>{documents[i].title}</div>
+                    <div className='viewable-document-field'>{documents[i].name}</div>
                 </div>
 
             documentList.push(newDocument)
@@ -234,10 +176,9 @@ export default class CreateDocument extends React.Component<any, any> {
 
 
         this.setState({
-            document_id: target.id,
-            readyForNext: true
+            document_id: target.id
         }, () => {
-            // this.handleButtons()
+
         })
 
     }
@@ -248,13 +189,46 @@ export default class CreateDocument extends React.Component<any, any> {
 
         try {
 
-            let result = $.ajax({
+            // let result = $.ajax({
 
-            })
+            // })
+
+            let userArray = ['user1', 'user2', 'user3']
             
+            this.displayUsersFromSearch(userArray)
+
         } catch(e) {
             console.log(e)
         }
+
+    }
+
+    displayUsersFromSearch(userArray) {
+
+        console.log('called')
+
+        let userSearchResultsArray = []
+
+        for(let i = 0; i < userArray.length; i++) {
+            let userSearchResult = (
+                <li className='user-search-result'>
+                    {userArray[i]}
+                </li>
+            )
+            userSearchResultsArray.push(userSearchResult)
+        }
+
+        let userSearchResults = (
+            <ul id='user-search-results-list'>
+                {userSearchResultsArray}
+            </ul>
+        )
+
+        this.setState({
+            userSearchResults: userSearchResults
+        }, () => {
+            this.handleSelectPermissionsView()            
+        })
 
     }
 
@@ -287,7 +261,6 @@ export default class CreateDocument extends React.Component<any, any> {
     }
 
     componentWillMount() {
-        // this.handleButtons()
         this.renderDocuments()
     }
 

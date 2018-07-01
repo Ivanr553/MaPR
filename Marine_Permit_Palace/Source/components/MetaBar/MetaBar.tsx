@@ -46,62 +46,20 @@ export default class MetaBar extends React.Component<any, any> {
 
     //Will get the documents from the back end, for now is just using a hardcoded object
     async getDocuments() {
-        
-        let result = {
-            documents: [
-            {
-                id: '23456',
-                title: 'NAVMC',
-                created_by: 'Officer',
-                action_required: 'Fill Out',
-                status: 'pending',
-                file: 'NAVMC10694.pdf'
-            },
-            {
-                id: '23456',
-                title: 'NAVMC',
-                created_by: 'Officer',
-                action_required: 'Fill Out',
-                status: 'pending',
-                file: 'NAVMC10694.pdf'
-            },
-            {
-                id: '23456',
-                title: 'NAVMC',
-                created_by: 'Officer',
-                action_required: 'Fill Out',
-                status: 'pending',
-                file: 'NAVMC10694.pdf'
-            },
-            {
-                id: '23456',
-                title: 'NAVMC',
-                created_by: 'Officer',
-                action_required: 'Fill Out',
-                status: 'pending',
-                file: 'NAVMC10694.pdf'
-            }
-            ]
-        }
 
         try {
 
             let documentList = await $.get('/DocumentSave/GetAllDocuments')
-            console.log(documentList)
 
-            let pdfID = documentList[0].idDocument
-
-            let returnPDF = await $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`)
+            this.setState({
+                documentResults: documentList
+            }, () => {
+                this.populateDocumentLinks()
+            })
 
         } catch(e) {
             console.log(e)
         }
-
-        this.setState({
-            documentResults: result.documents
-        }, () => {
-            this.populateDocumentLinks()
-        })
 
     }
 
@@ -113,8 +71,8 @@ export default class MetaBar extends React.Component<any, any> {
         for(let i = 0; i < documents.length; i++) {
 
             let documentLink = 
-                <div className='document-link' id={documents[i].file} key={i} data-params={{ id: documents[i].id, document: documents[i]}} onClick={(e) => {this.handleLinkPress(e)}}>
-                    {documents[i].title}
+                <div className='document-link' id={documents[i].idDocument} key={i} data-params={{ id: documents[i].id, document: documents[i]}} onClick={(e) => {this.handleLinkPress(e)}}>
+                    {documents[i].name}
                 </div>
 
             documentLinks.push(documentLink)
@@ -130,14 +88,14 @@ export default class MetaBar extends React.Component<any, any> {
 
     async handleLinkPress(e) {
 
-        let file = e.target.id
+        let document_id = e.target.id
 
         let setFile = await this.setState({
-            file: file
+            document_id: document_id
         })
 
         let setCurrentView = await this.setState({
-            currentView: <DocumentView file={this.state.file} />
+            currentView: <DocumentView document_id={this.state.document_id} />
         })
 
         let getCurrentView = await this.props.getCurrentView(this.state.currentView)
@@ -151,15 +109,15 @@ export default class MetaBar extends React.Component<any, any> {
             target = target.parentNode
         }
 
-        let file = target.id
+        let document_id = target.id
 
         let setFile = await this.setState({
-            file: file
+            document_id: document_id
         })
 
 
         let setCurrentView = await this.setState({
-            currentView: <DocumentView file={this.state.file} />
+            currentView: <DocumentView document_id={this.state.document_id} />
         })
 
         let getCurrentView = await this.props.getCurrentView(this.state.currentView)

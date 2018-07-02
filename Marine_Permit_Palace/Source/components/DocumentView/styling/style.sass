@@ -19,27 +19,28 @@ input:focus
   flex-direction: column
   align-items: center
   justify-content: center
-  position: sticky
+  position: absolute
   top: 0vh
   z-index: 400
-  animation: fade-out-header 0.7s forwards
+  background-color: rgba(50, 50, 50, 0.8)
+  // animation: fade-out-header 0.7s forwards
 
-#document-view-header:hover
-  animation: fade-in-header 0.5s forwards
+// #document-view-header:hover
+//   animation: fade-in-header 0.5s forwards
 
-#document-view-header:hover > #save-button
-  animation: fade-in-save-button 0.5s forwards
+// #document-view-header:hover > #save-button
+//   animation: fade-in-save-button 0.5s forwards
 
-#document-view-header:hover > #document-name-input
-  animation: fade-in-name-input 0.5s forwards
+// #document-view-header:hover > #document-name-input
+//   animation: fade-in-name-input 0.5s forwards
 
-#document-name-input:focus
-  opacity: 1 !important
-  animation: name-input-selected 1s forwards
+// #document-name-input:focus
+//   opacity: 1 !important
+//   animation: name-input-selected 1s forwards
 
-#document-name-input:focus > #document-view-header
-  background-color: red !important
-  animation: header-selected 1s forwards !important
+// #document-name-input:focus > #document-view-header
+//   background-color: red !important
+//   animation: header-selected 1s forwards !important
 
 #save-button
   width: auto
@@ -54,11 +55,11 @@ input:focus
   top: 1.5vh
   right: 6vw
   opacity: 0.5
-  animation: fade-out-save-button 0.7s forwards
+  // animation: fade-out-save-button 0.7s forwards
 
 #document-view-no-document-warning
-  position: fixed
-  top: 25vh
+  position: sticky
+  top: 30vh
   width: auto
   height: auto
   padding: 1vh 1vw 1vh 1vw
@@ -69,7 +70,9 @@ input:focus
   align-items: center
   justify-content: center
   text-align: center
-  font-size: 2em
+  font-size: 3em
+  border: solid 1px grey
+  font-weight: bold
 
 #document-name-input
   font-size: 1.75em
@@ -77,7 +80,7 @@ input:focus
   background-color: rgba(230, 230, 230, 1)
   min-width: 40%
   font-weight: bold
-  animation: fade-out-name-input 0.7s forwards
+  // animation: fade-out-name-input 0.7s forwards
   text-align: center
 
 .pdf-image
@@ -91,8 +94,8 @@ input:focus
 #document-form-div
   position: relative
   width: 612px
-  height: 712px
-  left: calc((100% - 612px)/2 )
+  height: 712px !important
+  // left: calc((100% - 612px)/2 )
   top: 12.5vh
   left: 0
 

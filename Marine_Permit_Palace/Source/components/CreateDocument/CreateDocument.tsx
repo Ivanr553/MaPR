@@ -19,20 +19,13 @@ export default class CreateDocument extends React.Component<any, any> {
             document_id: '',
             nextButton: '',
             readyForNext: false,
-            userList: []
+            userList: [],
+            userObjects: []
         }
-
-        // this.handleDocumentLinkPress = this.handleDocumentLinkPress.bind(this)
-        this.handleSelectDocumentView = this.handleSelectDocumentView.bind(this)
-        this.handleSelectPermissionsView = this.handleSelectPermissionsView.bind(this)
-        // this.handleSelectPreviewView = this.handleSelectPreviewView.bind(this)
-        this.handleNext = this.handleNext.bind(this)
-        this.handleBack = this.handleBack.bind(this)
-        this.handleAddUser = this.handleAddUser.bind(this)
     }
 
     //Views
-    handleSelectDocumentView() {
+    handleSelectDocumentView = () => {
 
         let currentView = (
             <div className='container'>
@@ -50,21 +43,19 @@ export default class CreateDocument extends React.Component<any, any> {
         })
     }
 
-    handleSelectPermissionsView() {
+    handleSelectPermissionsView = () => {
         let currentView = (
             <div className='container'>
-                <div className='documents-header'>Select Document Permissions</div>
+                <div id='select-users-header' className='documents-header'>Select Users</div>
                 <div className='document-list-container'>
-                    <div>Selected Document: {this.state.document_id}</div>
-                    <div className='documents-header'>Select Users</div>
                     <div id='user-search-main-container'>
                         <div id='user-search-bar-container'>
                             <div id='search-bar-magnifying-glass'></div>
-                            <input onChange={(e) => {this.handleFindUser(e)}} id='user-search-bar' placeholder='Find Users' type="text"/>
+                            <input onBlur={this.clearUsersFromSearch} onFocus={(e) => {this.handleFindUser(e)}} onChange={(e) => {this.handleFindUser(e)}} id='user-search-bar' placeholder='Find Users' type="text"/>
                             {this.state.userSearchResults}
                         </div>
                         <div id='added-users-title'>Selected Users</div>
-                        <div id='added-users-container'>
+                        <div className='added-users-container'>
                             {this.state.userList}
                         </div> 
                     </div>
@@ -86,6 +77,16 @@ export default class CreateDocument extends React.Component<any, any> {
                 <div id='document-view-container'>
                     <DocumentView document_id={this.state.document_id}/>
                 </div>
+                <div id='show-sidebar-icon-container' onClick={this.showSidebar}>
+                    <img id='show-sidebar-icon' src="/images/left-arrow-1.png" alt=""/>
+                </div>
+                <div id='document-view-sidebar' className=''>
+                    <div id='close-sidebar-icon' onClick={this.hideSidebar}>x</div>
+                    <div className='documents-header'>Selected Users</div>
+                    <div id='added-users-container-preview' className='added-users-container'>
+                        {this.state.userList}
+                    </div>
+                </div>
             </div>
         )
         this.setState({
@@ -97,39 +98,8 @@ export default class CreateDocument extends React.Component<any, any> {
 
     }
 
-    //Handle View Switching
-    handleNext() {
-
-        if(this.state.view === 'SelectDocument') {
-
-            if(this.state.document_id === '') {
-                return
-            }
-
-            this.handleSelectPermissionsView()
-            return
-        }
-
-        if(this.state.view === 'SelectPermissions') {
-
-            return
-
-        }
-
-    }
-
-    handleBack() {
-
-        if(this.state.view === 'SelectPermissions') {
-
-            this.handleSelectDocumentView()
-            return
-        }
-
-    }
-
     //Creates list in state of documents to be rendered
-    renderDocuments() {
+    renderDocuments = () => {
 
         let documents = this.props.documentResults
         let documentList = []
@@ -155,7 +125,7 @@ export default class CreateDocument extends React.Component<any, any> {
 
     }
 
-    selectDocument(e) {
+    selectDocument = (e) => {
         let target = e.target
 
         while (!target.classList.contains('viewable-document')) {
@@ -184,8 +154,13 @@ export default class CreateDocument extends React.Component<any, any> {
     }
 
     //Finding and displaying added users
-    async handleFindUser(e) {
+     handleFindUser = async (e) => {
         let query = e.target.value
+
+        if(query === '') {
+            this.clearUsersFromSearch()
+            return
+        }
 
         try {
 
@@ -203,15 +178,26 @@ export default class CreateDocument extends React.Component<any, any> {
 
     }
 
-    displayUsersFromSearch(userArray) {
+    clearUsersFromSearch = () => {
+        setTimeout(
+            () => {
+                this.setState({
+                    userSearchResults: ''
+                }, () => {
+                    this.handleSelectPermissionsView()                        
+                })
+            },
+            150
+        )
+    }
 
-        console.log('called')
+    displayUsersFromSearch = (userArray) => {
 
         let userSearchResultsArray = []
 
         for(let i = 0; i < userArray.length; i++) {
             let userSearchResult = (
-                <li className='user-search-result'>
+                <li className='user-search-result' onClick={this.addUser}>
                     {userArray[i]}
                 </li>
             )
@@ -233,30 +219,81 @@ export default class CreateDocument extends React.Component<any, any> {
     }
 
 
-    handleAddUser() {
-        
+    addUser = () => {
+
+        let userObjects = this.state.userObjects.slice()
         let userList = this.state.userList.slice() 
 
-        let user = 'Example User'
+        let user = {
+            name: 'Example User',
+            id: Math.random()
+        }
+
+        userObjects.push(user)
 
         let addedUser = 
-            <div className='added-user'>
-                {user}
+            <div className='added-user' id={user.id.toString()}>
+                {user.name}
+                <div className='added-user-delete-icon' onClick={(e) => {this.deleteUser(e)}}>x</div>
             </div>
 
         userList.push(addedUser)
 
+        let input = document.getElementById('user-search-bar') as HTMLInputElement
+        input.value = ''
+
         this.setState({
-            userList: userList
+            userList: userList,
+            userObjects: userObjects
         }, () => {
             this.handleSelectPermissionsView()
         })
 
     }
 
-    handleDeleteUser() {
+    deleteUser = (e) => {
+
+        let id = e.target.parentNode.id
+        let userList = this.state.userList.slice()
+        let userObjects = this.state.userObjects.slice()
 
 
+        userList.forEach(element => {
+            if(element.props.id === id) {
+                userList.pop(element)
+            }
+        })
+
+        userObjects.forEach(user => {
+            if(user.id === parseFloat(id)) {
+                userObjects.pop(user)
+            }
+        })
+
+        this.setState({
+            userList: userList,
+            userObjects: userObjects
+        }, () => {
+            this.handleSelectPermissionsView()
+        })
+
+    }
+
+    //Sidebar Functions
+
+    hideSidebar() {
+
+        let sidebar = document.getElementById('document-view-sidebar')
+        sidebar.classList.add('hide-sidebar')
+        sidebar.classList.remove('show-sidebar')
+
+    }
+
+    showSidebar() {
+
+        let sidebar = document.getElementById('document-view-sidebar')
+        sidebar.classList.add('show-sidebar')
+        sidebar.classList.remove('hide-sidebar')
 
     }
 

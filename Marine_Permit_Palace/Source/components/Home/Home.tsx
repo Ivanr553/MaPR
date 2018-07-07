@@ -37,7 +37,7 @@ export default class Home extends React.Component<Props, any> {
         let hamburgerMenu = 
         <div className='hamburger-menu-element' id='hamburger-menu' style={{animation: 'show-hamburger-menu 1.5s forwards'}}>
             <div className='hamburger-menu-item hamburger-menu-element' id='account-hamburger-menu-item'>Account</div>
-            <div className='hamburger-menu-item hamburger-menu-element' id='settings-hamburger-menu-item'>Settings</div>
+            <div className='hamburger-menu-item hamburger-menu-element' id='settings-hamburger-menu-item'>Help</div>
             <div className='hamburger-menu-item hamburger-menu-element' id='log-out-hamburger-menu-item' onClick={this.logOff}>Log Out</div>
         </div>
 
@@ -52,7 +52,7 @@ export default class Home extends React.Component<Props, any> {
         let hamburgerMenu = 
         <div id='hamburger-menu' style={{animation: 'hide-hamburger-menu 0.75s forwards'}}>
             <div className='hamburger-menu-item'>Account</div>
-            <div className='hamburger-menu-item'>Settings</div>
+            <div className='hamburger-menu-item'>Help</div>
             <div className='hamburger-menu-item'>Log Out</div>
         </div>
 

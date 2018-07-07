@@ -22288,9 +22288,9 @@ class Header extends React.Component {
         //Header state if user is NOT logged in
         let accountInnerHtml;
         let accountLink = '/Register';
-        let registerTab = (React.createElement(react_router_dom_1.Link, { className: 'Link header-tab register-tab', to: { pathname: '/A/App/Register' } }, "Register"));
+        let registerTab = (React.createElement(react_router_dom_1.Link, { id: 'register-tab', className: 'Link header-tab register-tab', to: { pathname: '/A/App/Register' } }, "Register"));
         let logInTab = (React.createElement(react_router_dom_1.Link, { className: 'Link header-tab log-in-tab', to: { pathname: '/A/App/' } }, "Log In"));
-        let homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/' } },
+        let homeTab = React.createElement(react_router_dom_1.Link, { id: 'header-logo-container', className: 'Link home-header-link', to: { pathname: '/A/App/' } },
             React.createElement("img", { src: '/images/MAPR_logo_edit.png', id: 'header-logo' }));
         let logOff;
         let fullHeader = 'show-full-header';
@@ -30215,7 +30215,7 @@ class Home extends React.Component {
         if (!this.state.hamburgerMenuShow) {
             let hamburgerMenu = React.createElement("div", { className: 'hamburger-menu-element', id: 'hamburger-menu', style: { animation: 'show-hamburger-menu 1.5s forwards' } },
                 React.createElement("div", { className: 'hamburger-menu-item hamburger-menu-element', id: 'account-hamburger-menu-item' }, "Account"),
-                React.createElement("div", { className: 'hamburger-menu-item hamburger-menu-element', id: 'settings-hamburger-menu-item' }, "Settings"),
+                React.createElement("div", { className: 'hamburger-menu-item hamburger-menu-element', id: 'settings-hamburger-menu-item' }, "Help"),
                 React.createElement("div", { className: 'hamburger-menu-item hamburger-menu-element', id: 'log-out-hamburger-menu-item', onClick: this.logOff }, "Log Out"));
             this.setState({
                 hamburgerMenu: hamburgerMenu,
@@ -30225,7 +30225,7 @@ class Home extends React.Component {
         if (this.state.hamburgerMenuShow) {
             let hamburgerMenu = React.createElement("div", { id: 'hamburger-menu', style: { animation: 'hide-hamburger-menu 0.75s forwards' } },
                 React.createElement("div", { className: 'hamburger-menu-item' }, "Account"),
-                React.createElement("div", { className: 'hamburger-menu-item' }, "Settings"),
+                React.createElement("div", { className: 'hamburger-menu-item' }, "Help"),
                 React.createElement("div", { className: 'hamburger-menu-item' }, "Log Out"));
             this.setState({
                 hamburgerMenu: hamburgerMenu,
@@ -34109,7 +34109,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#CreateDocument {\n  width: 100%;\n  height: 100vh;\n  margin-top: 0; }\n\n#create-document-nav-bar {\n  width: 100%;\n  height: 7.5vh;\n  background-color: #4b4b4b;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start; }\n\n.create-document-nav-bar-item {\n  width: auto;\n  height: 100%;\n  padding: 0% 2% 0% 2%;\n  font-size: 2em;\n  color: white;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  border-right: solid 1px rgba(255, 255, 255, 0.4); }\n\n.create-document-nav-bar-item:hover {\n  background-color: #646464; }\n\n#create-document-nav-bar-item-document {\n  border-left: solid 1px rgba(255, 255, 255, 0.4); }\n\n.container {\n  width: 100%;\n  height: 92.5%;\n  overflow: hidden;\n  position: relative; }\n\n#user-search-main-container {\n  width: calc(100% - 2vw - 4px);\n  margin-left: 1vw;\n  padding-left: 1vw;\n  background-color: white;\n  border: solid 2px lightgrey;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  overflow: auto; }\n\n#user-search-bar-container {\n  margin-top: 2.5vh;\n  position: relative; }\n\n#user-search-bar {\n  font-size: 2.5em;\n  border: solid 1px grey;\n  border-radius: 1px;\n  text-indent: 1vw;\n  padding: 0.5vh 0 0.5vh 0; }\n\n#user-search-bar-magnifying-glass {\n  height: 100%;\n  width: auto;\n  background-color: black; }\n\n#user-search-results-list {\n  width: 100%;\n  height: auto;\n  position: absolute;\n  top: 80%;\n  left: 0;\n  z-index: 600;\n  background-color: white;\n  list-style-type: none;\n  padding-left: 0; }\n\n.user-search-result {\n  width: calc(100% - 1vw);\n  height: auto;\n  font-size: 2em;\n  cursor: pointer;\n  margin-bottom: 0.5vh;\n  padding: 1vh 0 1vh 1vw; }\n\n.user-search-result:hover {\n  background-color: #c8c8c8; }\n\n#added-users-title {\n  margin-top: 5vh;\n  margin-bottom: 1vh;\n  font-size: 2.25em;\n  width: 100%;\n  text-indent: 1%; }\n\n.added-users-container {\n  width: 50%;\n  height: 40%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  padding-top: 0.5%;\n  border: solid 1px grey;\n  background-color: #e6e6e6;\n  position: relative;\n  overflow: auto;\n  margin-bottom: 1%; }\n\n.added-user {\n  width: 99%;\n  font-size: 2.25em;\n  background-color: white;\n  cursor: default;\n  border: solid 1px grey;\n  margin-bottom: 0.5%;\n  padding: 0.3em 0 0.3em 0;\n  text-indent: 1%;\n  display: grid;\n  grid-template-columns: 9fr 1fr;\n  justify-content: center;\n  align-items: center; }\n\n.added-user-delete-icon {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 2em;\n  color: #ff8e84;\n  cursor: pointer; }\n\n.added-user-delete-icon:hover {\n  color: #ff6b5e; }\n\n.create-document-button {\n  position: absolute;\n  font-size: 1.5em;\n  padding: 0.25em 0.75em 0.25em 0.75em;\n  background-color: lightgrey; }\n\n#document-view-container {\n  width: 100%;\n  height: auto;\n  overflow: hidden; }\n\n#document-view-sidebar {\n  width: 20vw;\n  height: 100%;\n  position: absolute;\n  right: -20vw;\n  top: 0;\n  background-color: #c8c8c8;\n  border-left: solid 2px grey;\n  z-index: 600;\n  box-shadow: -5px 5px 10px rgba(190, 190, 190, 0.6); }\n\n#show-sidebar-icon-container {\n  position: absolute;\n  right: 2vw;\n  top: 2vh;\n  background-color: #afafaf;\n  border-radius: 5px;\n  z-index: 500;\n  cursor: pointer;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 1vw 1.5vw 1vw 1.5vw;\n  animation: shrink 0.3s forwards; }\n\n#show-sidebar-icon-container:hover {\n  animation: grow 0.3s forwards; }\n\n#show-sidebar-icon {\n  width: auto;\n  height: 35px; }\n\n.show-sidebar {\n  animation: show-sidebar 1s forwards; }\n\n.hide-sidebar {\n  animation: hide-sidebar 1s forwards; }\n\n#close-sidebar-icon {\n  font-size: 4em;\n  color: grey;\n  font-weight: bold;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  top: 1vh;\n  right: 1vw;\n  z-index: 600;\n  cursor: pointer; }\n\n#close-sidebar-icon:hover {\n  color: black; }\n\n#added-users-container-preview {\n  width: calc(98% - 4px);\n  margin-left: calc(2% - 2px); }\n\n@keyframes show-sidebar {\n  0% {\n    right: -20vw; }\n  100% {\n    right: 0; } }\n\n@keyframes hide-sidebar {\n  0% {\n    right: 0; }\n  100% {\n    right: -20vw; } }\n\n@keyframes grow {\n  0% {\n    transform: scale(1); }\n  100% {\n    transform: scale(1.05); } }\n\n@keyframes shrink {\n  0% {\n    transform: scale(1.05); }\n  100% {\n    transform: scale(1); } }\n\n@keyframes hide {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes show {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#CreateDocument {\n  width: 100%;\n  height: 100vh; }\n\n#create-document-nav-bar {\n  width: 100%;\n  height: 7.5vh;\n  background-color: #4b4b4b;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start; }\n\n.create-document-nav-bar-item {\n  width: auto;\n  height: 100%;\n  padding: 0% 2% 0% 2%;\n  font-size: 2em;\n  color: white;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  border-right: solid 1px rgba(255, 255, 255, 0.4); }\n\n.create-document-nav-bar-item:hover {\n  background-color: #646464; }\n\n#create-document-nav-bar-item-document {\n  border-left: solid 1px rgba(255, 255, 255, 0.4); }\n\n.container {\n  width: 100%;\n  height: 92.5%;\n  overflow: hidden;\n  position: relative; }\n\n#user-search-main-container {\n  width: calc(100% - 2vw - 4px);\n  margin-left: 1vw;\n  padding-left: 1vw;\n  background-color: white;\n  border: solid 2px lightgrey;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  overflow: auto; }\n\n#user-search-bar-container {\n  margin-top: 2.5vh;\n  position: relative; }\n\n#user-search-bar {\n  font-size: 2.5em;\n  border: solid 1px grey;\n  border-radius: 1px;\n  text-indent: 1vw;\n  padding: 0.5vh 0 0.5vh 0; }\n\n#user-search-bar-magnifying-glass {\n  height: 100%;\n  width: auto;\n  background-color: black; }\n\n#user-search-results-list {\n  width: 100%;\n  height: auto;\n  position: absolute;\n  top: 80%;\n  left: 0;\n  z-index: 600;\n  background-color: white;\n  list-style-type: none;\n  padding-left: 0; }\n\n.user-search-result {\n  width: calc(100% - 1vw);\n  height: auto;\n  font-size: 2em;\n  cursor: pointer;\n  margin-bottom: 0.5vh;\n  padding: 1vh 0 1vh 1vw; }\n\n.user-search-result:hover {\n  background-color: #c8c8c8; }\n\n#added-users-title {\n  margin-top: 5vh;\n  margin-bottom: 1vh;\n  font-size: 2.25em;\n  width: 100%;\n  text-indent: 1%; }\n\n.added-users-container {\n  width: 50%;\n  height: 40%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  padding-top: 0.5%;\n  border: solid 1px grey;\n  background-color: #e6e6e6;\n  position: relative;\n  overflow: auto;\n  margin-bottom: 1%; }\n\n.added-user {\n  width: 99%;\n  font-size: 2.25em;\n  background-color: white;\n  cursor: default;\n  border: solid 1px grey;\n  margin-bottom: 0.5%;\n  padding: 0.3em 0 0.3em 0;\n  text-indent: 1%;\n  display: grid;\n  grid-template-columns: 9fr 1fr;\n  justify-content: center;\n  align-items: center; }\n\n.added-user-delete-icon {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 2em;\n  color: #ff8e84;\n  cursor: pointer; }\n\n.added-user-delete-icon:hover {\n  color: #ff6b5e; }\n\n.create-document-button {\n  position: absolute;\n  font-size: 1.5em;\n  padding: 0.25em 0.75em 0.25em 0.75em;\n  background-color: lightgrey; }\n\n#document-view-container {\n  width: 100%;\n  height: auto;\n  overflow: hidden; }\n\n#document-view-sidebar {\n  width: 20vw;\n  height: 100%;\n  position: absolute;\n  right: -20vw;\n  top: 0;\n  background-color: #c8c8c8;\n  border-left: solid 2px grey;\n  z-index: 600;\n  box-shadow: -5px 5px 10px rgba(190, 190, 190, 0.6); }\n\n#show-sidebar-icon-container {\n  position: absolute;\n  right: 2vw;\n  top: 2vh;\n  background-color: #afafaf;\n  border-radius: 5px;\n  z-index: 500;\n  cursor: pointer;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 1vw 1.5vw 1vw 1.5vw;\n  animation: shrink 0.3s forwards; }\n\n#show-sidebar-icon-container:hover {\n  animation: grow 0.3s forwards; }\n\n#show-sidebar-icon {\n  width: auto;\n  height: 35px; }\n\n.show-sidebar {\n  animation: show-sidebar 1s forwards; }\n\n.hide-sidebar {\n  animation: hide-sidebar 1s forwards; }\n\n#close-sidebar-icon {\n  font-size: 4em;\n  color: grey;\n  font-weight: bold;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  top: 1vh;\n  right: 1vw;\n  z-index: 600;\n  cursor: pointer; }\n\n#close-sidebar-icon:hover {\n  color: black; }\n\n#added-users-container-preview {\n  width: calc(98% - 4px);\n  margin-left: calc(2% - 2px); }\n\n@keyframes show-sidebar {\n  0% {\n    right: -20vw; }\n  100% {\n    right: 0; } }\n\n@keyframes hide-sidebar {\n  0% {\n    right: 0; }\n  100% {\n    right: -20vw; } }\n\n@keyframes grow {\n  0% {\n    transform: scale(1); }\n  100% {\n    transform: scale(1.05); } }\n\n@keyframes shrink {\n  0% {\n    transform: scale(1.05); }\n  100% {\n    transform: scale(1); } }\n\n@keyframes hide {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes show {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n", ""]);
 
 // exports
 
@@ -34123,7 +34123,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n.DocumentList {\n  width: 100%;\n  height: 90vh;\n  overflow: auto; }\n\n#search-bar-header {\n  margin-top: 2.5vh; }\n\n#document-search-bar-container {\n  height: 5vh;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-start;\n  margin-top: 0vh !important;\n  padding-bottom: 5vh; }\n\n#document-search-bar {\n  font-size: 30px;\n  margin-left: 2.8vw;\n  height: 100% !important; }\n\n#document-search-submit-button {\n  height: 100% !important;\n  width: auto;\n  margin: 0;\n  cursor: pointer; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black; }\n\n.document-list-container {\n  position: relative;\n  padding-bottom: 10vh;\n  width: calc(100%-8vw-4px);\n  margin-left: 2vw;\n  margin-right: 2vw;\n  margin-bottom: 2vh;\n  height: auto;\n  overflow: auto;\n  padding-top: 2vw; }\n\n.viewable-document {\n  width: 90%;\n  margin-left: 1vw;\n  height: auto;\n  padding-top: 1.5%;\n  margin-top: 1.5vh;\n  padding-bottom: 1.5%;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-start;\n  background-color: white;\n  cursor: pointer;\n  border: solid 2px transparent;\n  font-size: 1.5em; }\n\n.viewable-document:hover {\n  transform: translatex(1vw);\n  border-left: solid 3px #266ba8; }\n\n.viewable-document-field {\n  font-size: 1.25em;\n  margin-left: 3%; }\n\n#first-field {\n  margin-left: 1.5%; }\n\n.viewable-document-title {\n  position: absolute;\n  padding-top: 5%;\n  padding-bottom: 5%;\n  top: 1px;\n  left: 1px;\n  z-index: 3;\n  font-size: 1.4em;\n  text-align: center;\n  background-color: #266ba8;\n  color: white;\n  width: 100%; }\n\n.viewable-document-action-title {\n  position: absolute;\n  top: auto;\n  left: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.1em;\n  z-index: 3; }\n\n.viewable-document-action {\n  font-size: 0.8em;\n  text-decoration: none;\n  z-index: 3; }\n\n.viewable-document-status-title {\n  position: absolute;\n  left: 5%;\n  bottom: 2.5%;\n  font-size: 1em;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  z-index: 3; }\n\n.viewable-document-status {\n  font-size: 0.8em;\n  text-decoration: none;\n  margin-left: 5%;\n  z-index: 3; }\n\n.pdf-preview-container {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  left: 0;\n  z-index: 1;\n  border: solid 1px black;\n  background-color: white; }\n\n.pdf-preview {\n  height: 30vw !important;\n  width: auto !important;\n  z-index: 1; }\n\n.pdf-preview-shader {\n  height: 100%;\n  width: 100%;\n  z-index: 5;\n  background: #2bba18;\n  opacity: 0;\n  position: absolute;\n  left: 0;\n  top: 0; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n.DocumentList {\n  width: 100%;\n  height: 90vh;\n  overflow: auto; }\n\n#search-bar-header {\n  margin-top: 2.5vh; }\n\n#document-search-bar-container {\n  height: 5vh;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-start;\n  margin-top: 0vh !important;\n  padding-bottom: 5vh; }\n\n#document-search-bar {\n  font-size: 30px;\n  margin-left: 2.8vw;\n  height: 100% !important; }\n\n#document-search-submit-button {\n  height: 100% !important;\n  width: auto;\n  margin: 0;\n  cursor: pointer; }\n\n.document-list-container {\n  position: relative;\n  padding-bottom: 10vh;\n  width: calc(100%-8vw-4px);\n  margin-left: 2vw;\n  margin-right: 2vw;\n  margin-bottom: 2vh;\n  height: auto;\n  overflow: auto;\n  padding-top: 2vw; }\n\n.viewable-document {\n  width: 90%;\n  margin-left: 1vw;\n  height: auto;\n  padding-top: 1.5%;\n  margin-top: 1.5vh;\n  padding-bottom: 1.5%;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-start;\n  background-color: white;\n  cursor: pointer;\n  border: solid 2px transparent;\n  font-size: 1.5em; }\n\n.viewable-document:hover {\n  transform: translatex(1vw);\n  border-left: solid 3px #266ba8; }\n\n.viewable-document-field {\n  font-size: 1.25em;\n  margin-left: 3%; }\n\n#first-field {\n  margin-left: 1.5%; }\n\n.viewable-document-title {\n  position: absolute;\n  padding-top: 5%;\n  padding-bottom: 5%;\n  top: 1px;\n  left: 1px;\n  z-index: 3;\n  font-size: 1.4em;\n  text-align: center;\n  background-color: #266ba8;\n  color: white;\n  width: 100%; }\n\n.viewable-document-action-title {\n  position: absolute;\n  top: auto;\n  left: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.1em;\n  z-index: 3; }\n\n.viewable-document-action {\n  font-size: 0.8em;\n  text-decoration: none;\n  z-index: 3; }\n\n.viewable-document-status-title {\n  position: absolute;\n  left: 5%;\n  bottom: 2.5%;\n  font-size: 1em;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  z-index: 3; }\n\n.viewable-document-status {\n  font-size: 0.8em;\n  text-decoration: none;\n  margin-left: 5%;\n  z-index: 3; }\n\n.pdf-preview-container {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  left: 0;\n  z-index: 1;\n  border: solid 1px black;\n  background-color: white; }\n\n.pdf-preview {\n  height: 30vw !important;\n  width: auto !important;\n  z-index: 1; }\n\n.pdf-preview-shader {\n  height: 100%;\n  width: 100%;\n  z-index: 5;\n  background: #2bba18;\n  opacity: 0;\n  position: absolute;\n  left: 0;\n  top: 0; }\n", ""]);
 
 // exports
 
@@ -34151,7 +34151,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#Footer {\n  width: 100%;\n  height: 8vh;\n  background-color: #323232;\n  color: white;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  bottom: 0;\n  left: 0; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#Footer {\n  width: 100%;\n  height: 8vh;\n  background-color: #323232;\n  color: white;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  font-size: 2em;\n  cursor: default; }\n", ""]);
 
 // exports
 
@@ -34165,7 +34165,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#HomeHeader {\n  width: 90vw;\n  left: 10vw;\n  height: 0vh;\n  background-color: #266ba8;\n  backgrojnd-color: #323232;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: flex-end;\n  position: fixed;\n  top: 0;\n  z-index: 20;\n  color: #f0f0f0;\n  font-size: 1.5em; }\n\n.show-full-header {\n  width: 100vw !important;\n  left: 0 !important;\n  height: 7.5vh !important; }\n\n.header-tab {\n  cursor: default;\n  height: auto;\n  width: auto;\n  padding: 1vh 1vw 1vh 1vw;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  border: solid 1px grey;\n  background-color: lightgrey;\n  cursor: pointer;\n  margin-bottom: 1vh;\n  margin-right: 1vw;\n  color: black;\n  font-size: 1.4em; }\n\n.header-link {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: center;\n  cursor: pointer;\n  text-align: center; }\n\n.home-tab {\n  position: absolute;\n  left: 0;\n  border-left: none;\n  font-size: 2em;\n  padding: none;\n  width: auto;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  justify-content: flex-end; }\n\n#header-logo {\n  padding-left: 1.25vw;\n  padding-right: 2.75vw;\n  width: auto;\n  height: 100%; }\n\n.log-in-tab {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center; }\n\n#logoff-icon {\n  width: auto;\n  height: 70%;\n  cursor: pointer; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#HomeHeader {\n  width: 90vw;\n  left: 10vw;\n  background-color: #323232;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-end;\n  position: fixed;\n  top: 0;\n  z-index: 20;\n  color: #f0f0f0;\n  font-size: 1.5em;\n  display: none; }\n\n.show-full-header {\n  width: 100vw !important;\n  left: 0 !important;\n  height: 10vh !important;\n  display: flex; }\n\n.header-tab {\n  cursor: default;\n  height: auto;\n  width: auto;\n  padding: 1vh 1.5vw 1vh 1.5vw;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  border: solid 1px #c8c8c8;\n  background-color: transparent;\n  cursor: pointer;\n  margin-right: 2vw;\n  color: white;\n  font-size: 1.4em;\n  margin-top: 2vh; }\n\n.header-tab:hover {\n  color: black;\n  background-color: #c8c8c8; }\n\n.header-link {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: center;\n  cursor: pointer;\n  text-align: center; }\n\n.home-tab {\n  position: absolute;\n  left: 0;\n  border-left: none;\n  font-size: 2em;\n  padding: none;\n  width: auto;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  justify-content: flex-end; }\n\n#header-logo-container {\n  width: auto;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-left: 1vw; }\n\n#header-logo {\n  width: auto;\n  height: 90%; }\n\n.log-in-tab {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center; }\n\n#register-tab {\n  margin-right: 1vw; }\n\n#logoff-icon {\n  width: auto;\n  height: 70%;\n  cursor: pointer; }\n", ""]);
 
 // exports
 
@@ -34179,7 +34179,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n.Home {\n  overflow: hidden;\n  height: 100vh;\n  background-color: #ebebeb;\n  position: relative; }\n\n#documents-container {\n  padding-bottom: 5vh;\n  background-color: #ebebeb;\n  width: 90vw;\n  margin-left: 10vw; }\n  @media screen and (max-width: 600px) {\n    #documents-container {\n      width: 85vw;\n      margin-left: 15vw; } }\n  @media screen and (min-width: 1000px) {\n    #documents-container {\n      width: 95vw;\n      margin-left: 5vw; } }\n\n#hamburger-menu-container {\n  position: absolute;\n  top: 1vh;\n  right: 2vw;\n  z-index: 700; }\n\n#hamburger-icon {\n  width: auto;\n  height: 5vh;\n  cursor: pointer;\n  opacity: 0.9;\n  padding-bottom: 10%;\n  z-index: 700; }\n\n#hamburger-menu {\n  width: auto;\n  height: 0;\n  min-height: 0;\n  color: white;\n  position: absolute;\n  top: 7vh;\n  right: 0vw;\n  border-top: solid 3px #266ba8;\n  padding-top: 2.5px;\n  overflow: hidden;\n  opacity: 0;\n  z-index: 700; }\n\n.hamburger-menu-item {\n  width: auto;\n  padding: 5% 60% 5% 5%;\n  font-size: 2em;\n  text-indent: 5%;\n  color: whitesmoke;\n  cursor: pointer;\n  background-color: #787878;\n  margin-bottom: 2.5px;\n  z-index: 700; }\n\n.hamburger-menu-item:hover {\n  background-color: #4c5766; }\n\n@keyframes show-hamburger-menu {\n  0% {\n    opacity: 0;\n    height: 0;\n    min-height: 0; }\n  50% {\n    opacity: 1; }\n  99% {\n    min-height: 30vh; }\n  100% {\n    opacity: 1;\n    height: auto; } }\n\n@keyframes hide-hamburger-menu {\n  0% {\n    opacity: 1;\n    height: auto;\n    min-height: 30vh; }\n  50% {\n    opacity: 1; }\n  100% {\n    min-height: 0vh;\n    opacity: 0;\n    height: 0; } }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n.Home {\n  overflow: hidden;\n  height: 100vh;\n  background-color: #ebebeb;\n  position: relative; }\n\n#documents-container {\n  padding-bottom: 5vh;\n  background-color: #ebebeb;\n  width: 90vw;\n  margin-left: 10vw; }\n  @media screen and (max-width: 600px) {\n    #documents-container {\n      width: 85vw;\n      margin-left: 15vw; } }\n  @media screen and (min-width: 1000px) {\n    #documents-container {\n      width: 95vw;\n      margin-left: 5vw; } }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n#hamburger-menu-container {\n  position: absolute;\n  top: 1vh;\n  right: 2vw;\n  z-index: 700; }\n\n#hamburger-icon {\n  width: auto;\n  height: 5vh;\n  cursor: pointer;\n  opacity: 0.9;\n  padding-bottom: 10%;\n  z-index: 700; }\n\n#hamburger-menu {\n  width: auto;\n  height: 0;\n  min-height: 0;\n  color: white;\n  position: absolute;\n  top: 7vh;\n  right: 0vw;\n  border-top: solid 3px #266ba8;\n  padding-top: 2.5px;\n  overflow: hidden;\n  opacity: 0;\n  z-index: 700; }\n\n.hamburger-menu-item {\n  width: auto;\n  padding: 5% 60% 5% 5%;\n  font-size: 2em;\n  text-indent: 5%;\n  color: whitesmoke;\n  cursor: pointer;\n  background-color: #787878;\n  margin-bottom: 2.5px;\n  z-index: 700; }\n\n.hamburger-menu-item:hover {\n  background-color: #4c5766; }\n\n@keyframes show-hamburger-menu {\n  0% {\n    opacity: 0;\n    height: 0;\n    min-height: 0; }\n  50% {\n    opacity: 1; }\n  99% {\n    min-height: 30vh; }\n  100% {\n    opacity: 1;\n    height: auto; } }\n\n@keyframes hide-hamburger-menu {\n  0% {\n    opacity: 1;\n    height: auto;\n    min-height: 30vh; }\n  50% {\n    opacity: 1; }\n  100% {\n    min-height: 0vh;\n    opacity: 0;\n    height: 0; } }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n", ""]);
 
 // exports
 
@@ -34193,7 +34193,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n.Login {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  padding-top: 10vh;\n  width: 100vw;\n  height: 90vh;\n  background-color: #ebebeb; }\n\n.login-content-container {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start;\n  padding-top: 10vh;\n  width: 100%; }\n\n.login-container-section {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  width: 95%;\n  height: auto;\n  padding-left: 5%; }\n\n.login-paragraph {\n  width: 75%;\n  color: #505050; }\n\n.login-title {\n  font-size: 2.25em;\n  text-align: left;\n  margin-bottom: 2.5vh;\n  padding-bottom: 2.5vh;\n  border-bottom: solid 1px rgba(0, 0, 0, 0.1);\n  min-width: 25%; }\n\n.login-input-container {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  font-size: 1.4em; }\n\n.login-input {\n  font-size: 0.8em;\n  color: black;\n  margin-top: 1vh;\n  padding-top: 1vh;\n  padding-bottom: 1vh;\n  padding-left: 1vh;\n  padding-right: 1vh;\n  border-radius: 5px;\n  min-width: 25vw; }\n\n#login-password-container {\n  margin-top: 5vh; }\n\n.login-button-link {\n  cursor: pointer; }\n\n#login-button {\n  margin-top: 2.5vw;\n  border: none;\n  font-size: 1.75em;\n  padding: 0.5vw 1vw 0.5vw 1vw;\n  cursor: pointer;\n  border-radius: 2.5px;\n  background-color: #2990d6; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n.Login {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  padding-top: 10vh;\n  width: 100vw;\n  height: 90vh;\n  background-color: #ebebeb; }\n\n.login-content-container {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start;\n  padding-top: 10vh;\n  width: 100%;\n  font-size: 1.5em; }\n\n.login-container-section {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  width: 95%;\n  height: auto;\n  padding-left: 5%; }\n\n.login-paragraph {\n  width: 75%;\n  color: #505050; }\n\n.login-title {\n  font-size: 2.25em;\n  text-align: left;\n  margin-bottom: 2.5vh;\n  padding-bottom: 2.5vh;\n  border-bottom: solid 1px rgba(0, 0, 0, 0.1);\n  min-width: 25%; }\n\n.login-input-container {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  font-size: 1.4em; }\n\n.login-input {\n  font-size: 0.8em;\n  color: black;\n  margin-top: 1vh;\n  padding-top: 1vh;\n  padding-bottom: 1vh;\n  padding-left: 1vh;\n  padding-right: 1vh;\n  border-radius: 5px;\n  min-width: 25vw; }\n\n#login-password-container {\n  margin-top: 5vh; }\n\n.login-button-link {\n  cursor: pointer; }\n\n#login-button {\n  margin-top: 2.5vw;\n  border: none;\n  font-size: 1.75em;\n  padding: 0.5vw 1vw 0.5vw 1vw;\n  cursor: pointer;\n  border-radius: 2.5px;\n  background-color: #2990d6; }\n", ""]);
 
 // exports
 
@@ -34221,7 +34221,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n.Register {\n  width: 100vw;\n  height: 90vh;\n  padding-top: 10vh;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  background-color: #ebebeb; }\n\n.register-title {\n  font-size: 2.25em;\n  text-align: left;\n  margin-bottom: 2.5vh;\n  padding-bottom: 2.5vh;\n  border-bottom: solid 1px rgba(0, 0, 0, 0.1);\n  min-width: 25%; }\n\n.register-input-container {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  margin-bottom: 2.5vh;\n  font-size: 1.4em; }\n\n#register-password-container {\n  margin-top: 1vh; }\n\n.register-input {\n  font-size: 0.75em;\n  color: black;\n  margin-top: 1vh; }\n\n.register-content-container {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start;\n  padding-top: 10vh;\n  width: 100%; }\n\n.register-container-section {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  width: 95%;\n  height: auto;\n  padding-left: 5%; }\n\n.username-register-container {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center; }\n\n.password-register-container {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-top: 5vh; }\n\n.register-input {\n  font-size: 0.8em;\n  color: black;\n  margin-top: 1vh;\n  padding-top: 1vh;\n  padding-bottom: 1vh;\n  padding-left: 1vh;\n  padding-right: 1vh;\n  border-radius: 5px;\n  min-width: 25vw; }\n\n.register-button {\n  margin-top: 2.5vw;\n  border: none;\n  font-size: 1.75em;\n  padding: 0.5vw 1vw 0.5vw 1vw;\n  cursor: pointer;\n  border-radius: 2.5px;\n  background-color: #2990d6; }\n\n.register-paragraph {\n  width: 75%;\n  color: #505050; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n.Register {\n  width: 100vw;\n  height: 90vh;\n  padding-top: 10vh;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  background-color: #ebebeb; }\n\n.Register > * {\n  font-size: 1.5em; }\n\n.register-title {\n  font-size: 2.25em;\n  text-align: left;\n  margin-bottom: 2.5vh;\n  padding-bottom: 2.5vh;\n  border-bottom: solid 1px rgba(0, 0, 0, 0.1);\n  min-width: 25%; }\n\n.register-input-container {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  margin-bottom: 2.5vh;\n  font-size: 1.4em; }\n\n#register-password-container {\n  margin-top: 1vh; }\n\n.register-input {\n  font-size: 0.75em;\n  color: black;\n  margin-top: 1vh; }\n\n.register-content-container {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start;\n  padding-top: 10vh;\n  width: 100%; }\n\n.register-container-section {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  width: 95%;\n  height: auto;\n  padding-left: 5%; }\n\n.username-register-container {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center; }\n\n.password-register-container {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-top: 5vh; }\n\n.register-input {\n  font-size: 0.8em;\n  color: black;\n  margin-top: 1vh;\n  padding-top: 1vh;\n  padding-bottom: 1vh;\n  padding-left: 1vh;\n  padding-right: 1vh;\n  border-radius: 5px;\n  min-width: 25vw; }\n\n.register-button {\n  margin-top: 2.5vw;\n  border: none;\n  font-size: 1.75em;\n  padding: 0.5vw 1vw 0.5vw 1vw;\n  cursor: pointer;\n  border-radius: 2.5px;\n  background-color: #2990d6; }\n\n.register-paragraph {\n  width: 75%;\n  color: #505050; }\n", ""]);
 
 // exports
 
@@ -34235,7 +34235,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#UploadDocument {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center; }\n\n#upload-document-header {\n  width: 100%;\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0vw 2.5vh 0vw;\n  margin: 2.5vh 0vw 0vh 0vw !important;\n  text-indent: 3vw;\n  cursor: default;\n  color: black; }\n\n#dropzone {\n  margin-top: 5vh;\n  width: calc(100% - 6vw - 4px);\n  height: 50%;\n  background-color: #e0f5ff;\n  border: dashed 2px #6194ad;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 10vh;\n  font-size: 2em;\n  color: grey;\n  cursor: default; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#UploadDocument {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start; }\n\n#upload-document-header {\n  width: 100%;\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0vw 2.5vh 0vw;\n  margin: 2.5vh 0vw 0vh 0vw !important;\n  text-indent: 3vw;\n  cursor: default;\n  color: black; }\n\n#dropzone {\n  margin-top: 5vh;\n  margin-left: 3vw;\n  width: calc(100% - 6vw - 4px);\n  height: 50%;\n  background-color: #e0f5ff;\n  border: dashed 2px #6194ad;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 10vh;\n  font-size: 2em;\n  color: grey;\n  cursor: default; }\n\n#file-submition-form {\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center; }\n", ""]);
 
 // exports
 
@@ -111161,41 +111161,21 @@ const $ = __webpack_require__(37);
 const s = __webpack_require__(422);
 const DocumentList_1 = __webpack_require__(430);
 const DocumentView_1 = __webpack_require__(71);
-const Account_1 = __webpack_require__(114);
 const About_1 = __webpack_require__(428);
 const CreateDocument_1 = __webpack_require__(429);
 const UploadDocument_1 = __webpack_require__(432);
+const SignatureView_1 = __webpack_require__(449);
 class MetaBar extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            user: {},
-            currentView: '',
-            documentResults: [],
-            currentDocuments: []
-        };
-        this.getCurrentView = this.getCurrentView.bind(this);
-        this.getCurrentUser = this.getCurrentUser.bind(this);
-        this.handleDocumentListPress = this.handleDocumentListPress.bind(this);
-        this.handleDocumentLinkPress = this.handleDocumentLinkPress.bind(this);
-        this.handleSettingsPress = this.handleSettingsPress.bind(this);
-        this.handleAboutPress = this.handleAboutPress.bind(this);
-        this.getDocuments = this.getDocuments.bind(this);
-        this.populateDocumentLinks = this.populateDocumentLinks.bind(this);
-        this.handleNewDocumentPress = this.handleNewDocumentPress.bind(this);
-        this.handleUploadDocumentPress = this.handleUploadDocumentPress.bind(this);
-    }
-    getCurrentUser() {
-        return __awaiter(this, void 0, void 0, function* () {
+        this.getCurrentUser = () => __awaiter(this, void 0, void 0, function* () {
             let user = yield this.props.getCurrentUser();
             this.setState({
                 user: user
             });
         });
-    }
-    //Will get the documents from the back end, for now is just using a hardcoded object
-    getDocuments() {
-        return __awaiter(this, void 0, void 0, function* () {
+        //Will get the documents from the back end, for now is just using a hardcoded object
+        this.getDocuments = () => __awaiter(this, void 0, void 0, function* () {
             try {
                 let documentList = yield $.get('/DocumentSave/GetAllDocuments');
                 this.setState({
@@ -111208,22 +111188,20 @@ class MetaBar extends React.Component {
                 console.log(e);
             }
         });
-    }
-    populateDocumentLinks() {
-        let documents = this.state.documentResults.slice();
-        let documentLinks = [];
-        for (let i = 0; i < documents.length; i++) {
-            let documentLink = React.createElement("div", { className: 'document-link', id: documents[i].idDocument, key: i, "data-params": { id: documents[i].id, document: documents[i] }, onClick: (e) => { this.handleLinkPress(e); } }, documents[i].name);
-            documentLinks.push(documentLink);
-        }
-        this.setState({
-            documentLinks: documentLinks
-        }, () => {
-            this.handleDocumentListPress();
-        });
-    }
-    handleLinkPress(e) {
-        return __awaiter(this, void 0, void 0, function* () {
+        this.populateDocumentLinks = () => {
+            let documents = this.state.documentResults.slice();
+            let documentLinks = [];
+            for (let i = 0; i < documents.length; i++) {
+                let documentLink = React.createElement("div", { className: 'document-link', id: documents[i].idDocument, key: i, "data-params": { id: documents[i].id, document: documents[i] }, onClick: (e) => { this.handleLinkPress(e); } }, documents[i].name);
+                documentLinks.push(documentLink);
+            }
+            this.setState({
+                documentLinks: documentLinks
+            }, () => {
+                this.handleDocumentListPress();
+            });
+        };
+        this.handleLinkPress = (e) => __awaiter(this, void 0, void 0, function* () {
             let document_id = e.target.id;
             let setFile = yield this.setState({
                 document_id: document_id
@@ -111233,9 +111211,7 @@ class MetaBar extends React.Component {
             });
             let getCurrentView = yield this.props.getCurrentView(this.state.currentView);
         });
-    }
-    handleDocumentLinkPress(e) {
-        return __awaiter(this, void 0, void 0, function* () {
+        this.handleDocumentLinkPress = (e) => __awaiter(this, void 0, void 0, function* () {
             let target = e.target;
             while (!target.classList.contains('viewable-document')) {
                 target = target.parentNode;
@@ -111249,51 +111225,57 @@ class MetaBar extends React.Component {
             });
             let getCurrentView = yield this.props.getCurrentView(this.state.currentView);
         });
-    }
-    handleUploadDocumentPress() {
-        this.setState({
-            currentView: React.createElement(UploadDocument_1.default, null)
-        }, () => {
-            this.props.getCurrentView(this.state.currentView);
-        });
-    }
-    handleStudioPress() {
-        window.open('/A/App/Studio', '_self');
-    }
-    getCurrentView(currentView) {
-        this.setState({
-            currentView: currentView
-        }, () => {
-            this.props.getCurrentView(this.state.currentView);
-        });
-    }
-    handleNewDocumentPress() {
-        this.setState({
-            currentView: React.createElement(CreateDocument_1.default, { getCurrentView: this.getCurrentView, documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
-        }, () => {
-            this.props.getCurrentView(this.state.currentView);
-        });
-    }
-    handleDocumentListPress() {
-        this.setState({
-            currentView: React.createElement(DocumentList_1.default, { documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
-        }, () => {
-            this.props.getCurrentView(this.state.currentView);
-        });
-    }
-    handleSettingsPress() {
-        this.setState({
-            currentView: React.createElement(Account_1.default, { getCurrentUser: this.props.getCurrentUser })
-        }, () => {
-            this.props.getCurrentView(this.state.currentView);
-        });
-    }
-    handleAboutPress() {
-        this.setState({
-            currentView: React.createElement(About_1.default, null)
-        }, () => {
-            this.props.getCurrentView(this.state.currentView);
-        });
+        this.handleUploadDocumentPress = () => {
+            this.setState({
+                currentView: React.createElement(UploadDocument_1.default, null)
+            }, () => {
+                this.props.getCurrentView(this.state.currentView);
+            });
+        };
+        this.handleStudioPress = () => {
+            window.open('/A/App/Studio', '_self');
+        };
+        this.getCurrentView = (currentView) => {
+            this.setState({
+                currentView: currentView
+            }, () => {
+                this.props.getCurrentView(this.state.currentView);
+            });
+        };
+        this.handleNewDocumentPress = () => {
+            this.setState({
+                currentView: React.createElement(CreateDocument_1.default, { getCurrentView: this.getCurrentView, documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
+            }, () => {
+                this.props.getCurrentView(this.state.currentView);
+            });
+        };
+        this.handleDocumentListPress = () => {
+            this.setState({
+                currentView: React.createElement(DocumentList_1.default, { documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
+            }, () => {
+                this.props.getCurrentView(this.state.currentView);
+            });
+        };
+        this.handleSignaturePress = () => {
+            this.setState({
+                currentView: React.createElement(SignatureView_1.default, null)
+            }, () => {
+                this.props.getCurrentView(this.state.currentView);
+            });
+        };
+        this.handleAboutPress = () => {
+            this.setState({
+                currentView: React.createElement(About_1.default, null)
+            }, () => {
+                this.props.getCurrentView(this.state.currentView);
+            });
+        };
+        this.state = {
+            user: {},
+            currentView: '',
+            documentResults: [],
+            currentDocuments: []
+        };
     }
     componentDidMount() {
         this.getDocuments();
@@ -111313,8 +111295,8 @@ class MetaBar extends React.Component {
                 React.createElement("img", { className: 'metabar-link', src: '/images/new_document-white.png', onClick: this.handleNewDocumentPress })),
             React.createElement("abbr", { title: 'Upload Document' },
                 React.createElement("img", { className: 'metabar-link', src: '/images/upload-document.png', onClick: this.handleUploadDocumentPress })),
-            React.createElement("abbr", { title: 'Account Page' },
-                React.createElement("img", { className: 'metabar-link', src: '/images/settings.png', onClick: this.handleSettingsPress }))));
+            React.createElement("abbr", { title: 'Signature Page' },
+                React.createElement("img", { className: 'metabar-link', src: '/images/pencil.png', onClick: this.handleSignaturePress }))));
     }
 }
 exports.default = MetaBar;
@@ -111338,13 +111320,13 @@ class UploadDocument extends React.Component {
         return (React.createElement("div", { id: 'UploadDocument', onDragOver: (e) => {
                 e.preventDefault();
             } },
-            React.createElement("div", { id: 'upload-document-header' }, "Upload Document"),
+            React.createElement("div", { className: 'documents-header' }, "Upload Document"),
             React.createElement("div", { id: 'dropzone', onDrop: (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     console.log(e.dataTransfer.files);
                 } }, "Drop Files Here"),
-            React.createElement("form", { action: "", method: 'post', onSubmit: (e) => {
+            React.createElement("form", { id: 'file-submition-form', action: "", method: 'post', onSubmit: (e) => {
                     e.preventDefault();
                     // console.log(document.getElementById('uploadedFile').value)
                     console.log(e);
@@ -112289,6 +112271,216 @@ module.exports = function(module) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 444 */,
+/* 445 */,
+/* 446 */,
+/* 447 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(12)(false);
+// imports
+
+
+// module
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#Signature {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start; }\n\n.info-container {\n  width: calc(100% - 6vw);\n  height: auto;\n  margin-left: 4vw;\n  margin-top: 1vw;\n  font-size: 2em;\n  padding-right: 2vw; }\n\n#signature-main-container {\n  width: auto;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  margin-left: 3vw;\n  margin-top: 2vh;\n  position: relative; }\n\n#signature-edit-button {\n  font-size: 2.5em;\n  border: solid 2px grey;\n  background-color: transparent;\n  background-color: gainsboro;\n  cursor: pointer;\n  padding: 0.5em 1.5em 0.5em 1.5em;\n  margin: 5vh 0 0 3vw; }\n\n.pen-disabled {\n  border-color: #5ea35b !important;\n  color: #40a83c !important; }\n\n.pen-enabled {\n  border-color: #c1716a !important;\n  color: #bc4f45 !important; }\n\n#signature-canvas {\n  background-color: white;\n  border: solid 2px grey; }\n\n.canvas-icon {\n  width: 25px;\n  height: 25px;\n  cursor: pointer;\n  opacity: 0.5;\n  position: absolute;\n  z-index: 500;\n  top: 4px;\n  right: 4px;\n  opacity: 0; }\n\n#redo-icon {\n  bottom: 0;\n  right: 2px; }\n\n#saving-icon {\n  animation: pulse 1.5s infinite linear; }\n\n#saving-icon-complete {\n  top: 4px;\n  right: 4px;\n  opacity: 0;\n  animation: fade-in 1s forwards; }\n\n#redo-icon:hover {\n  opacity: 1; }\n\n#signature-button-container {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start; }\n\n.signature-button {\n  font-size: 3em;\n  background-color: white;\n  padding: 1vh 2vh 1vh 2vh;\n  border: solid 1px grey; }\n\n@keyframes pulse {\n  0% {\n    opacity: 0.5; }\n  50% {\n    opacity: 0.2; }\n  100% {\n    opacity: 0.5; } }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 448 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(447);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(15)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/sass-loader/lib/loader.js!./style.sass", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/sass-loader/lib/loader.js!./style.sass");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 449 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = __webpack_require__(4);
+const timers_1 = __webpack_require__(426);
+const s = __webpack_require__(448);
+class SignatureView extends React.Component {
+    constructor(props) {
+        super(props);
+        this.enablePen = () => {
+            this.setState({
+                enablePen: !this.state.enablePen
+            }, () => {
+                if (this.state.enablePen) {
+                    this.setState({
+                        enablePenStyle: 'pen-enabled',
+                        enablePenText: 'Finish Editing'
+                    });
+                }
+                else {
+                    this.setState({
+                        enablePenStyle: 'pen-disabled',
+                        enablePenText: 'Edit Signature',
+                        editingCanvas: false
+                    }, () => {
+                        if (this.state.canvasEdited) {
+                            this.printCanvas();
+                        }
+                    });
+                }
+            });
+        };
+        this.canvasPen = (e) => {
+            if (!this.state.enablePen) {
+                return;
+            }
+            this.setState({
+                canvasEdited: true
+            });
+            let canvas = document.getElementById('signature-canvas');
+            let context = canvas.getContext('2d');
+            let bounds = canvas.getBoundingClientRect();
+            let prevX = this.state.prevX || e.screenX - bounds.left;
+            let prevY = this.state.prevX || e.screenY - bounds.top;
+            let x = e.screenX - bounds.left;
+            let y = e.screenY - bounds.bottom + (canvas.height / 2);
+            context.fillStyle = 'rgb(0, 0, 0)';
+            context.beginPath();
+            context.moveTo(this.state.prevX, this.state.prevY);
+            context.lineTo(x, y);
+            context.stroke();
+            context.closePath();
+            this.setState({
+                prevX: x,
+                prevY: y
+            });
+        };
+        this.printCanvas = () => {
+            this.startSave();
+            let canvas = document.getElementById('signature-canvas');
+            let source = canvas.toDataURL('image/png');
+            let testImage = new Image();
+            testImage.src = source;
+            document.body.appendChild(testImage);
+            this.setState({
+                canvasEdited: false
+            }, () => {
+                timers_1.setTimeout(() => {
+                    this.completeSave();
+                }, 1000);
+            });
+        };
+        this.setCanvasDimensions = () => {
+            this.setState({
+                canvasWidth: window.innerWidth * 0.6,
+                canvasHeight: window.innerHeight * 0.2
+            });
+        };
+        this.clearCanvas = () => {
+            let canvas = document.getElementById('signature-canvas');
+            let context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        };
+        this.clearPrevMousePos = () => {
+            this.setState({
+                prevX: undefined,
+                prevY: undefined
+            });
+        };
+        this.startSave = () => {
+            this.setState({
+                savingIconId: 'saving-icon'
+            });
+        };
+        this.completeSave = () => {
+            this.setState({
+                savingIconSource: '/images/check-green.png',
+                savingIconId: 'saving-icon-complete'
+            }, () => {
+                timers_1.setTimeout(() => {
+                    this.setState({
+                        savingIconId: ''
+                    });
+                }, 1000);
+            });
+        };
+        this.state = {
+            savingIconSource: '/images/clock.png',
+            savingIconId: '',
+            canvasWidth: '',
+            canvasHeight: '',
+            enablePen: false,
+            enablePenStyle: 'pen-disabled',
+            enablePenText: 'Edit Signature',
+            editingCanvas: false,
+            canvasEdited: true
+        };
+    }
+    componentWillMount() {
+        this.setCanvasDimensions();
+    }
+    componentDidMount() {
+        window.addEventListener('resize', this.setCanvasDimensions);
+    }
+    render() {
+        return (React.createElement("div", { id: 'Signature' },
+            React.createElement("div", { className: 'documents-header' }, "Your Signature"),
+            React.createElement("div", { className: 'info-container' }, "This is your signature that is used throughout the application. You may edit the signature here and save it for use in auto-signing documents."),
+            React.createElement("div", { id: 'signature-edit-button', className: this.state.enablePenStyle, onClick: this.enablePen }, this.state.enablePenText),
+            React.createElement("div", { id: 'signature-main-container' },
+                React.createElement("img", { className: 'canvas-icon', id: 'redo-icon', src: "/images/cached.png", alt: "", onClick: this.clearCanvas }),
+                React.createElement("img", { className: 'canvas-icon', id: this.state.savingIconId, src: this.state.savingIconSource, alt: "", onClick: this.completeSave }),
+                React.createElement("canvas", { id: 'signature-canvas', width: this.state.canvasWidth, height: this.state.canvasHeight, onMouseMoveCapture: (e) => this.canvasPen(e), onMouseLeave: this.clearPrevMousePos }),
+                React.createElement("div", { id: 'signature-button-container' }))));
+    }
+}
+exports.default = SignatureView;
+
 
 /***/ })
 /******/ ]);

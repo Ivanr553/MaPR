@@ -1,0 +1,108 @@
+@import ../../../style
+    
+#Signature
+    width: 100%
+    height: 100%
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    justify-content: flex-start
+
+.info-container
+    width: calc(100% - 6vw)
+    height: auto
+    margin-left: 4vw
+    margin-top: 1vw
+    font-size: 2em
+    padding-right: 2vw
+
+#signature-main-container
+    width: auto
+    height: auto
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    justify-content: flex-start
+    margin-left: 3vw
+    margin-top: 2vh
+    position: relative
+
+#signature-edit-button
+    font-size: 2.5em
+    border: solid 2px grey
+    background-color: rgba(0, 0, 0, 0)
+    background-color: rgba(220, 220, 220, 1)
+    cursor: pointer
+    padding: 0.5em 1.5em 0.5em 1.5em
+    margin: 5vh 0 0 3vw
+
+.pen-disabled
+    border-color: rgb(94, 163, 91) !important
+    // color: rgb(94, 163, 91) !important
+    color: rgb(64, 168, 60) !important
+    // background-color: rgb(164, 188, 164) !important
+
+.pen-enabled
+    border-color: rgb(193, 113, 106) !important
+    // color: rgb(193, 113, 106) !important
+    color: rgb(188, 79, 69) !important
+    // background-color: rgb(201, 157, 153) !important
+
+#signature-canvas
+    background-color: white
+    border: solid 2px grey
+
+.canvas-icon
+    width: 25px
+    height: 25px
+    cursor: pointer
+    opacity: 0.5
+    position: absolute
+    z-index: 500
+    top: 4px
+    right: 4px
+    opacity: 0
+
+#redo-icon
+    bottom: 0
+    right: 2px
+
+#saving-icon
+    animation: pulse 1.5s infinite linear
+
+#saving-icon-complete
+    top: 4px
+    right: 4px
+    opacity: 0
+    animation: fade-in 1s forwards
+
+#redo-icon:hover
+    opacity: 1
+
+#signature-button-container
+    width: 100%
+    height: auto
+    display: flex
+    flex-direction: row
+    align-items: flex-start
+    justify-content: flex-start
+
+.signature-button
+    font-size: 3em
+    background-color: white
+    padding: 1vh 2vh 1vh 2vh
+    border: solid 1px grey
+
+@keyframes pulse
+    0%
+        opacity: 0.5
+    50%
+        opacity: 0.2
+    100%
+        opacity: 0.5
+
+@keyframes fade-in
+    0%
+        opacity: 0
+    100%
+        opacity: 1

@@ -6,10 +6,10 @@ const s = require('./styling/style.sass')
 
 import DocumentList from '../DocumentList/DocumentList'
 import DocumentView from '../DocumentView/DocumentView'
-import Account from '../Account/Account'
 import About from '../About/About'
 import CreateDocument from '../CreateDocument/CreateDocument'
 import UploadDocument from '../UploadDocument/UploadDocument'
+import SignatureView from '../SignatureView/SignatureView'
 
 export default class MetaBar extends React.Component<any, any> {
 
@@ -22,19 +22,9 @@ export default class MetaBar extends React.Component<any, any> {
             currentDocuments: []
         }
         
-        this.getCurrentView = this.getCurrentView.bind(this)
-        this.getCurrentUser = this.getCurrentUser.bind(this)
-        this.handleDocumentListPress = this.handleDocumentListPress.bind(this)
-        this.handleDocumentLinkPress = this.handleDocumentLinkPress.bind(this)
-        this.handleSettingsPress = this.handleSettingsPress.bind(this)
-        this.handleAboutPress = this.handleAboutPress.bind(this)
-        this.getDocuments = this.getDocuments.bind(this)
-        this.populateDocumentLinks = this.populateDocumentLinks.bind(this)
-        this.handleNewDocumentPress = this.handleNewDocumentPress.bind(this)
-        this.handleUploadDocumentPress = this.handleUploadDocumentPress.bind(this)
     }
 
-    async getCurrentUser() {
+    getCurrentUser = async () => {
 
         let user = await this.props.getCurrentUser()
 
@@ -45,7 +35,7 @@ export default class MetaBar extends React.Component<any, any> {
     }
 
     //Will get the documents from the back end, for now is just using a hardcoded object
-    async getDocuments() {
+    getDocuments = async () => {
 
         try {
 
@@ -63,7 +53,7 @@ export default class MetaBar extends React.Component<any, any> {
 
     }
 
-    populateDocumentLinks() {
+    populateDocumentLinks = () => {
 
         let documents = this.state.documentResults.slice()
         let documentLinks = []
@@ -86,7 +76,7 @@ export default class MetaBar extends React.Component<any, any> {
 
     }
 
-    async handleLinkPress(e) {
+    handleLinkPress = async (e) => {
 
         let document_id = e.target.id
 
@@ -101,7 +91,7 @@ export default class MetaBar extends React.Component<any, any> {
         let getCurrentView = await this.props.getCurrentView(this.state.currentView)
     }
 
-    async handleDocumentLinkPress(e) {
+    handleDocumentLinkPress = async (e) => {
 
         let target = e.target
 
@@ -123,7 +113,7 @@ export default class MetaBar extends React.Component<any, any> {
         let getCurrentView = await this.props.getCurrentView(this.state.currentView)
     }
 
-    handleUploadDocumentPress() {
+    handleUploadDocumentPress = () => {
 
         this.setState({
             currentView: <UploadDocument />
@@ -133,11 +123,11 @@ export default class MetaBar extends React.Component<any, any> {
 
     }
 
-    handleStudioPress() {
+    handleStudioPress = () => {
         window.open('/A/App/Studio', '_self')
     }
 
-    getCurrentView(currentView) {
+    getCurrentView = (currentView) => {
         this.setState({
             currentView: currentView
           }, () => {
@@ -145,7 +135,7 @@ export default class MetaBar extends React.Component<any, any> {
           })
     }
 
-    handleNewDocumentPress() {
+    handleNewDocumentPress = () => {
         this.setState({
             currentView: <CreateDocument getCurrentView={this.getCurrentView} documentResults={this.state.documentResults} viewDocument={this.handleDocumentLinkPress} />
         }, () => {
@@ -153,7 +143,7 @@ export default class MetaBar extends React.Component<any, any> {
         })
     }
 
-    handleDocumentListPress() {
+    handleDocumentListPress = () => {
         this.setState({
             currentView: <DocumentList documentResults={this.state.documentResults} viewDocument={this.handleDocumentLinkPress} />
         }, () => {
@@ -161,15 +151,15 @@ export default class MetaBar extends React.Component<any, any> {
         })
     }
 
-    handleSettingsPress() {
+    handleSignaturePress = () => {
         this.setState({
-            currentView: <Account getCurrentUser={this.props.getCurrentUser} />
+            currentView: <SignatureView />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
         })
     }
 
-    handleAboutPress() {
+    handleAboutPress = () => {
         this.setState({
             currentView: <About />
         }, () => {
@@ -200,7 +190,7 @@ export default class MetaBar extends React.Component<any, any> {
                 <abbr title='Pending Documents'><img className='metabar-link' src='/images/doc_icon.png' onClick={this.handleDocumentListPress}/></abbr>
                 <abbr title='Create New Document'><img className='metabar-link' src='/images/new_document-white.png' onClick={this.handleNewDocumentPress}/></abbr>
                 <abbr title='Upload Document'><img className='metabar-link' src='/images/upload-document.png' onClick={this.handleUploadDocumentPress}/></abbr>
-                <abbr title='Account Page'><img className='metabar-link' src='/images/settings.png' onClick={this.handleSettingsPress}/></abbr>
+                <abbr title='Signature Page'><img className='metabar-link' src='/images/pencil.png' onClick={this.handleSignaturePress}/></abbr>
             </div>
         )
     }

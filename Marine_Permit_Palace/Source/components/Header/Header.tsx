@@ -96,7 +96,7 @@ export default class Header extends React.Component<any, any> {
         let accountInnerHtml
         let accountLink = '/Register'
         let registerTab = (
-            <Link className='Link header-tab register-tab' to={{pathname: '/A/App/Register'}}>
+            <Link id='register-tab' className='Link header-tab register-tab' to={{pathname: '/A/App/Register'}}>
                 Register
             </Link>
         )
@@ -106,7 +106,7 @@ export default class Header extends React.Component<any, any> {
             </Link>
         )
         let homeTab = 
-            <Link className='Link home-header-link' to={{pathname: '/A/App/'}}> 
+            <Link id='header-logo-container' className='Link home-header-link' to={{pathname: '/A/App/'}}> 
                 <img src='/images/MAPR_logo_edit.png' id='header-logo' />
             </Link>
         let logOff

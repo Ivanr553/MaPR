@@ -9,20 +9,22 @@ interface Props {
     width: number,
     height: number,
     left: number,
-    top: number
+    top: number,
+    checked: boolean,
+    onChange: any
 }
 
-export default class SignatureForm extends React.Component<Props, any> {
+export default class CheckboxInput extends React.Component<Props, any> {
 
     constructor(props) {
         super(props)
         this.state = {
-            style: {},
-            signatureContent: 'Click to Sign'
+            style: {}
         }
+
+
     }
 
-    //Getting style from props
     setStyle = () => {
 
         let style = this.state.style
@@ -37,32 +39,24 @@ export default class SignatureForm extends React.Component<Props, any> {
         })
     }
 
-
-    //Takes signature png and embeds it into component
-    sign = async () => {
-
-        let signatureSource
-        let signature = <img className='user-signature' src={signatureSource} alt=""/>
-
-        this.setState({
-            signatureContent: signature
-        })
-    }
-
-    //React lifecycle methods
     componentWillMount() {
         this.setStyle()
     }
 
     componentDidMount() {
-
     }
 
     render() {
 
+        let checkmark
+
+        if(this.state.checked) {
+            checkmark = 'X'
+        }
+
         return(
-            <div id='SignatureForm' style={this.state.style} onClick={this.sign}>
-                {this.state.signatureContent}
+            <div id='CheckboxInput' style={this.state.style} onClick={(e) => this.props.onChange(e)}>
+                {checkmark}
             </div>
         )
     }

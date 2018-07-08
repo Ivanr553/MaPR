@@ -14504,6 +14504,9 @@ const React = __webpack_require__(0);
 const react_pdf_js_1 = __webpack_require__(231);
 const $ = __webpack_require__(26);
 const s = __webpack_require__(264);
+const SignatureForm_1 = __webpack_require__(294);
+const CheckboxInput_1 = __webpack_require__(297);
+const TextInput_1 = __webpack_require__(300);
 class DocumentView extends React.Component {
     constructor(props) {
         super(props);
@@ -14552,17 +14555,16 @@ class DocumentView extends React.Component {
                 let width = (currentForm.field_position.position.width * webWidth) / pdfWidth;
                 if (currentForm.field_type === 'Checkbox') {
                     currentForm.value = false;
-                    let newForm = React.createElement("div", { key: form, className: 'form-wrapper', style: { position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px` } },
-                        React.createElement("input", { id: form, className: 'document-checkbox', style: {}, type: "checkbox", onChange: (e) => { this.handleFormEdit(e, form); } }));
+                    let newForm = React.createElement(CheckboxInput_1.default, { key: form, width: width, height: height, top: top, left: left, checked: currentForm.value, onChange: (e) => { this.handleFormEdit(e, form); } });
                     documentFields.push(newForm);
                 }
                 else if (currentForm.field_type === 'Text') {
                     let newForm = React.createElement("div", { key: form, className: 'form-wrapper' },
-                        React.createElement("input", { id: form, style: { position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px` }, className: 'document-input', defaultValue: currentForm.value, type: "text", onChange: (e) => { this.handleFormEdit(e, form); } }));
+                        React.createElement(TextInput_1.default, { key: form, width: width, height: height, top: top, left: left, value: currentForm.value, onChange: (e) => { this.handleFormEdit(e, form); } }));
                     documentFields.push(newForm);
                 }
                 else if (currentForm.field_type === 'Signature') {
-                    let newForm = React.createElement("canvas", { key: form, className: 'document-signature-canvas', style: { position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`, backgroundColor: 'red' } });
+                    let newForm = React.createElement(SignatureForm_1.default, { key: form, width: width, height: height, top: top, left: left });
                     documentFields.push(newForm);
                 }
                 delete currentForm.field_position;
@@ -14574,13 +14576,6 @@ class DocumentView extends React.Component {
             }, () => {
                 this.saveFile(null);
             });
-        });
-    }
-    handleDocumentNameChange(e) {
-        let documentName = this.state.documentName;
-        documentName = e.target.value;
-        this.setState({
-            documentName: documentName
         });
     }
     handleFormEdit(e, id) {
@@ -14607,7 +14602,7 @@ class DocumentView extends React.Component {
     }
     saveFile(submitted_file_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            document.getElementById('save-button').style.backgroundColor = 'lightblue';
+            // document.getElementById('save-button').style.backgroundColor = 'lightblue'
             let saveFile = {
                 document_meta: this.state.documentObject.document_meta,
                 name: this.state.documentName,
@@ -14627,12 +14622,12 @@ class DocumentView extends React.Component {
                     data: JSON.stringify(saveFile)
                 });
                 if (saveResult && saveResult.status_code < 201) {
-                    document.getElementById('save-button').style.backgroundColor = 'rgb(131, 198, 125)';
+                    // document.getElementById('save-button').style.backgroundColor = 'rgb(131, 198, 125)'
                 }
             }
             catch (e) {
                 console.log('Error saving:', e);
-                document.getElementById('save-button').style.backgroundColor = 'rgb(198, 125, 125)';
+                // document.getElementById('save-button').style.backgroundColor = 'rgb(198, 125, 125)'
             }
             if (!submitted_file_id || submitted_file_id === null) {
                 this.setState({
@@ -25359,7 +25354,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#CreateDocument {\n  width: 100%;\n  height: 100vh; }\n\n#create-document-nav-bar {\n  width: 100%;\n  height: 7.5vh;\n  background-color: #4b4b4b;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start; }\n\n.create-document-nav-bar-item {\n  width: auto;\n  height: 100%;\n  padding: 0% 2% 0% 2%;\n  font-size: 2em;\n  color: white;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  border-right: solid 1px rgba(255, 255, 255, 0.4); }\n\n.create-document-nav-bar-item:hover {\n  background-color: #646464; }\n\n#create-document-nav-bar-item-document {\n  border-left: solid 1px rgba(255, 255, 255, 0.4); }\n\n.container {\n  width: 100%;\n  height: 92.5%;\n  overflow: hidden;\n  position: relative; }\n\n#user-search-main-container {\n  width: calc(100% - 2vw - 4px);\n  margin-left: 1vw;\n  padding-left: 1vw;\n  background-color: white;\n  border: solid 2px lightgrey;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  overflow: auto; }\n\n#user-search-bar-container {\n  margin-top: 2.5vh;\n  position: relative; }\n\n#user-search-bar {\n  font-size: 2.5em;\n  border: solid 1px grey;\n  border-radius: 1px;\n  text-indent: 1vw;\n  padding: 0.5vh 0 0.5vh 0; }\n\n#user-search-bar-magnifying-glass {\n  height: 100%;\n  width: auto;\n  background-color: black; }\n\n#user-search-results-list {\n  width: 100%;\n  height: auto;\n  position: absolute;\n  top: 80%;\n  left: 0;\n  z-index: 600;\n  background-color: white;\n  list-style-type: none;\n  padding-left: 0; }\n\n.user-search-result {\n  width: calc(100% - 1vw);\n  height: auto;\n  font-size: 2em;\n  cursor: pointer;\n  margin-bottom: 0.5vh;\n  padding: 1vh 0 1vh 1vw; }\n\n.user-search-result:hover {\n  background-color: #c8c8c8; }\n\n#added-users-title {\n  margin-top: 5vh;\n  margin-bottom: 1vh;\n  font-size: 2.25em;\n  width: 100%;\n  text-indent: 1%; }\n\n.added-users-container {\n  width: 50%;\n  height: 40%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  padding-top: 0.5%;\n  border: solid 1px grey;\n  background-color: #e6e6e6;\n  position: relative;\n  overflow: auto;\n  margin-bottom: 1%; }\n\n.added-user {\n  width: 99%;\n  font-size: 2.25em;\n  background-color: white;\n  cursor: default;\n  border: solid 1px grey;\n  margin-bottom: 0.5%;\n  padding: 0.3em 0 0.3em 0;\n  text-indent: 1%;\n  display: grid;\n  grid-template-columns: 9fr 1fr;\n  justify-content: center;\n  align-items: center; }\n\n.added-user-delete-icon {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 2em;\n  color: #ff8e84;\n  cursor: pointer; }\n\n.added-user-delete-icon:hover {\n  color: #ff6b5e; }\n\n.create-document-button {\n  position: absolute;\n  font-size: 1.5em;\n  padding: 0.25em 0.75em 0.25em 0.75em;\n  background-color: lightgrey; }\n\n#document-view-container {\n  width: 100%;\n  height: auto;\n  overflow: hidden; }\n\n#document-view-sidebar {\n  width: 20vw;\n  height: 100%;\n  position: absolute;\n  right: -20vw;\n  top: 0;\n  background-color: #c8c8c8;\n  border-left: solid 2px grey;\n  z-index: 600;\n  box-shadow: -5px 5px 10px rgba(190, 190, 190, 0.6); }\n\n#show-sidebar-icon-container {\n  position: absolute;\n  right: 2vw;\n  top: 2vh;\n  background-color: #afafaf;\n  border-radius: 5px;\n  z-index: 500;\n  cursor: pointer;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 1vw 1.5vw 1vw 1.5vw;\n  animation: shrink 0.3s forwards; }\n\n#show-sidebar-icon-container:hover {\n  animation: grow 0.3s forwards; }\n\n#show-sidebar-icon {\n  width: auto;\n  height: 35px; }\n\n.show-sidebar {\n  animation: show-sidebar 1s forwards; }\n\n.hide-sidebar {\n  animation: hide-sidebar 1s forwards; }\n\n#close-sidebar-icon {\n  font-size: 4em;\n  color: grey;\n  font-weight: bold;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  top: 1vh;\n  right: 1vw;\n  z-index: 600;\n  cursor: pointer; }\n\n#close-sidebar-icon:hover {\n  color: black; }\n\n#added-users-container-preview {\n  width: calc(98% - 4px);\n  margin-left: calc(2% - 2px); }\n\n@keyframes show-sidebar {\n  0% {\n    right: -20vw; }\n  100% {\n    right: 0; } }\n\n@keyframes hide-sidebar {\n  0% {\n    right: 0; }\n  100% {\n    right: -20vw; } }\n\n@keyframes grow {\n  0% {\n    transform: scale(1); }\n  100% {\n    transform: scale(1.05); } }\n\n@keyframes shrink {\n  0% {\n    transform: scale(1.05); }\n  100% {\n    transform: scale(1); } }\n\n@keyframes hide {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes show {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#CreateDocument {\n  width: 100%;\n  height: 100vh; }\n\n#create-document-nav-bar {\n  width: 100%;\n  height: 7.5vh;\n  background-color: #4b4b4b;\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start; }\n\n.create-document-nav-bar-item {\n  width: auto;\n  height: 100%;\n  padding: 0% 2% 0% 2%;\n  font-size: 2em;\n  color: white;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  border-right: solid 1px rgba(255, 255, 255, 0.4); }\n\n.create-document-nav-bar-item:hover {\n  background-color: #646464; }\n\n#create-document-nav-bar-item-document {\n  border-left: solid 1px rgba(255, 255, 255, 0.4); }\n\n.container {\n  width: 100%;\n  height: 92.5%;\n  overflow: hidden;\n  position: relative; }\n\n#user-search-main-container {\n  width: calc(100% - 2vw - 4px);\n  margin-left: 1vw;\n  padding-left: 1vw;\n  background-color: white;\n  border: solid 2px lightgrey;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  overflow: auto; }\n\n#user-search-bar-container {\n  margin-top: 2.5vh;\n  position: relative; }\n\n#user-search-bar {\n  font-size: 2.5em;\n  border: solid 1px grey;\n  border-radius: 1px;\n  text-indent: 1vw;\n  padding: 0.5vh 0 0.5vh 0; }\n\n#user-search-bar-magnifying-glass {\n  height: 100%;\n  width: auto;\n  background-color: black; }\n\n#user-search-results-list {\n  width: 100%;\n  height: auto;\n  position: absolute;\n  top: 80%;\n  left: 0;\n  z-index: 600;\n  background-color: white;\n  list-style-type: none;\n  padding-left: 0; }\n\n.user-search-result {\n  width: calc(100% - 1vw);\n  height: auto;\n  font-size: 2em;\n  cursor: pointer;\n  margin-bottom: 0.5vh;\n  padding: 1vh 0 1vh 1vw; }\n\n.user-search-result:hover {\n  background-color: #c8c8c8; }\n\n#added-users-title {\n  margin-top: 5vh;\n  margin-bottom: 1vh;\n  font-size: 2.25em;\n  width: 100%;\n  text-indent: 1%; }\n\n.added-users-container {\n  width: 50%;\n  height: 40%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  padding-top: 0.5%;\n  border: solid 1px grey;\n  background-color: #e6e6e6;\n  position: relative;\n  overflow: auto;\n  margin-bottom: 1%; }\n\n.added-user {\n  width: 99%;\n  font-size: 2.25em;\n  background-color: white;\n  cursor: default;\n  border: solid 1px grey;\n  margin-bottom: 0.5%;\n  padding: 0.3em 0 0.3em 0;\n  text-indent: 1%;\n  display: grid;\n  grid-template-columns: 9fr 1fr;\n  justify-content: center;\n  align-items: center; }\n\n.added-user-delete-icon {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 2em;\n  color: #ff8e84;\n  cursor: pointer; }\n\n.added-user-delete-icon:hover {\n  color: #ff6b5e; }\n\n.create-document-button {\n  position: absolute;\n  font-size: 1.5em;\n  padding: 0.25em 0.75em 0.25em 0.75em;\n  background-color: lightgrey; }\n\n#document-view-container {\n  width: 100%;\n  height: auto;\n  overflow: hidden; }\n\ninput:focus {\n  outline: none; }\n\n#document-view-header {\n  width: 100%;\n  height: 10vh;\n  right: 0;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  top: 0vh;\n  z-index: 400;\n  background-color: rgba(50, 50, 50, 0.8); }\n\n#save-button {\n  width: auto;\n  padding: 1%;\n  font-size: 1.5em;\n  z-index: 500;\n  background-color: lightblue;\n  border: solid 1px #969696;\n  cursor: pointer;\n  border-radius: 3px;\n  opacity: 0.5;\n  position: absolute;\n  right: 15vw; }\n\n#document-view-no-document-warning {\n  position: sticky;\n  top: 30vh;\n  width: auto;\n  height: auto;\n  padding: 1vh 1vw 1vh 1vw;\n  background-color: lightgrey;\n  z-index: 600;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n  font-size: 3em;\n  border: solid 1px grey;\n  font-weight: bold; }\n\n#document-name-input {\n  font-size: 1.75em;\n  padding: 1%;\n  background-color: #e6e6e6;\n  min-width: 40%;\n  font-weight: bold;\n  text-align: center; }\n\n#document-view-sidebar {\n  width: 20vw;\n  height: 100%;\n  position: absolute;\n  right: -20vw;\n  top: 0;\n  background-color: #c8c8c8;\n  border-left: solid 2px grey;\n  z-index: 600;\n  box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.1); }\n\n#show-sidebar-icon-container {\n  position: absolute;\n  right: 2vw;\n  top: 2vh;\n  background-color: #afafaf;\n  border-radius: 5px;\n  z-index: 500;\n  cursor: pointer;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 1vw 1.5vw 1vw 1.5vw;\n  animation: shrink 0.3s forwards; }\n\n#show-sidebar-icon-container:hover {\n  animation: grow 0.3s forwards; }\n\n#show-sidebar-icon {\n  width: auto;\n  height: 35px; }\n\n.show-sidebar {\n  animation: show-sidebar 1s forwards; }\n\n.hide-sidebar {\n  animation: hide-sidebar 1s forwards; }\n\n#close-sidebar-icon {\n  font-size: 4em;\n  color: grey;\n  font-weight: bold;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  top: 1vh;\n  right: 1vw;\n  z-index: 600;\n  cursor: pointer; }\n\n#close-sidebar-icon:hover {\n  color: black; }\n\n#added-users-container-preview {\n  width: calc(98% - 4px);\n  margin-left: calc(2% - 2px); }\n\n@keyframes show-sidebar {\n  0% {\n    right: -20vw; }\n  100% {\n    right: 0; } }\n\n@keyframes hide-sidebar {\n  0% {\n    right: 0; }\n  100% {\n    right: -20vw; } }\n\n@keyframes grow {\n  0% {\n    transform: scale(1); }\n  100% {\n    transform: scale(1.05); } }\n\n@keyframes shrink {\n  0% {\n    transform: scale(1.05); }\n  100% {\n    transform: scale(1); } }\n\n@keyframes hide {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes show {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n", ""]);
 
 // exports
 
@@ -25387,7 +25382,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, ".DocumentView {\n  width: 100%;\n  height: 100%;\n  overflow: auto;\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start; }\n\ninput:focus {\n  outline: none; }\n\n#document-view-header {\n  width: 100%;\n  height: 10vh;\n  right: 0;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  top: 0vh;\n  z-index: 400;\n  background-color: rgba(50, 50, 50, 0.8); }\n\n#save-button {\n  width: auto;\n  padding: 1%;\n  font-size: 1.5em;\n  z-index: 500;\n  background-color: lightblue;\n  border: solid 1px #969696;\n  cursor: pointer;\n  border-radius: 3px;\n  position: absolute;\n  top: 1.5vh;\n  right: 6vw;\n  opacity: 0.5; }\n\n#document-view-no-document-warning {\n  position: sticky;\n  top: 30vh;\n  width: auto;\n  height: auto;\n  padding: 1vh 1vw 1vh 1vw;\n  background-color: lightgrey;\n  z-index: 600;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n  font-size: 3em;\n  border: solid 1px grey;\n  font-weight: bold; }\n\n#document-name-input {\n  font-size: 1.75em;\n  padding: 1%;\n  background-color: #e6e6e6;\n  min-width: 40%;\n  font-weight: bold;\n  text-align: center; }\n\n.pdf-image {\n  position: absolute;\n  left: calc((100% - 612px) / 2);\n  top: 12.5vh;\n  width: 612px !important;\n  height: 792px !important;\n  margin-bottom: 6vh; }\n\n#document-form-div {\n  position: relative;\n  width: 612px;\n  height: 712px !important;\n  top: 12.5vh;\n  left: 0; }\n\n.document-checkbox {\n  width: 100% !important;\n  height: 100% !important;\n  background-color: lightgrey !important;\n  border: none;\n  margin: 0; }\n\n.document-form {\n  overflow: auto; }\n\n.input-form-name {\n  font-size: 1.3em;\n  text-indent: -5px; }\n\n.document-input {\n  background-color: lightgrey;\n  border: none; }\n\n.document-input:focus {\n  outline: none; }\n\n.document-signature-canvas {\n  position: relative; }\n\n.canvas-button {\n  position: absolute;\n  font-size: 1em;\n  padding: 0.5% 1% 0.5% 1%;\n  background-color: lightblue;\n  cursor: pointer;\n  border: solid 1px #8bb2e5;\n  height: auto; }\n\n.document {\n  background-color: white;\n  width: 595px;\n  max-width: 70%;\n  height: 842px;\n  margin-top: 50px;\n  margin-bottom: 50px;\n  margin-left: calc((100vw - 15vw - 595px)/2);\n  float: left; }\n\n@keyframes fade-in-header {\n  0% {\n    background-color: transparent; }\n  100% {\n    background-color: rgba(50, 50, 50, 0.8); } }\n\n@keyframes fade-out-header {\n  0% {\n    background-color: rgba(50, 50, 50, 0.8); }\n  100% {\n    background-color: transparent; } }\n\n@keyframes fade-in-save-button {\n  0% {\n    opacity: 0.5; }\n  100% {\n    opacity: 1; } }\n\n@keyframes fade-out-save-button {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0.5; } }\n\n@keyframes fade-in-name-input {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n\n@keyframes fade-out-name-input {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes name-input-selected {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 1; } }\n\n@keyframes header-selected {\n  0% {\n    background-color: rgba(50, 50, 50, 0.8); }\n  100% {\n    background-color: rgba(50, 50, 50, 0.8); } }\n", ""]);
+exports.push([module.i, ".DocumentView {\n  width: 100%;\n  height: 100%;\n  overflow: auto;\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start; }\n\n.pdf-image {\n  position: absolute;\n  left: calc((100% - 612px) / 2);\n  top: 12.5vh;\n  width: 612px !important;\n  height: 792px !important;\n  margin-bottom: 6vh; }\n\n#document-form-div {\n  position: relative;\n  width: 612px;\n  height: 712px !important;\n  top: 12.5vh;\n  left: 0; }\n\n.document-checkbox {\n  width: 100% !important;\n  height: 100% !important;\n  background-color: lightgrey !important;\n  border: none;\n  margin: 0; }\n\n.document-form {\n  overflow: auto; }\n\n.input-form-name {\n  font-size: 1.3em;\n  text-indent: -5px; }\n\n.document-input {\n  background-color: lightgrey;\n  border: none; }\n\n.document-input:focus {\n  outline: none; }\n\n.document-signature-canvas {\n  position: relative; }\n\n.canvas-button {\n  position: absolute;\n  font-size: 1em;\n  padding: 0.5% 1% 0.5% 1%;\n  background-color: lightblue;\n  cursor: pointer;\n  border: solid 1px #8bb2e5;\n  height: auto; }\n\n.document {\n  background-color: white;\n  width: 595px;\n  max-width: 70%;\n  height: 842px;\n  margin-top: 50px;\n  margin-bottom: 50px;\n  margin-left: calc((100vw - 15vw - 595px)/2);\n  float: left; }\n\n@keyframes fade-in-header {\n  0% {\n    background-color: transparent; }\n  100% {\n    background-color: rgba(50, 50, 50, 0.8); } }\n\n@keyframes fade-out-header {\n  0% {\n    background-color: rgba(50, 50, 50, 0.8); }\n  100% {\n    background-color: transparent; } }\n\n@keyframes fade-in-save-button {\n  0% {\n    opacity: 0.5; }\n  100% {\n    opacity: 1; } }\n\n@keyframes fade-out-save-button {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0.5; } }\n\n@keyframes fade-in-name-input {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n\n@keyframes fade-out-name-input {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes name-input-selected {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 1; } }\n\n@keyframes header-selected {\n  0% {\n    background-color: rgba(50, 50, 50, 0.8); }\n  100% {\n    background-color: rgba(50, 50, 50, 0.8); } }\n", ""]);
 
 // exports
 
@@ -25457,7 +25452,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#MetaBar {\n  position: absolute;\n  width: 10vw;\n  left: 0;\n  top: 0;\n  height: 100vh;\n  background-color: #323232;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start; }\n  @media screen and (max-width: 600px) {\n    #MetaBar {\n      width: 15vw; } }\n  @media screen and (min-width: 1000px) {\n    #MetaBar {\n      width: 5vw; } }\n\n#logo-container {\n  opacity: 1;\n  height: auto;\n  width: 60%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 0; }\n\n#logo {\n  width: 100%;\n  height: auto; }\n\n.metabar-button-abbr {\n  position: relative; }\n\n.metabar-link {\n  width: 40%;\n  padding: 15% 30% 15% 30%;\n  opacity: 0.6;\n  cursor: pointer; }\n  @media screen and (min-width: 1000px) {\n    .metabar-link {\n      padding: 30% 30% 30% 30%; } }\n\n.metabar-link:hover {\n  background-color: rgba(250, 250, 250, 0.1); }\n\n.metabar-link-selected {\n  background-color: rgba(250, 250, 250, 0.1);\n  cursor: default; }\n\n.metabar-triangle {\n  width: 0;\n  height: 0;\n  border-left: solid 10px #3e3e3e;\n  border-top: solid 10px transparent;\n  border-bottom: solid 10px transparent;\n  position: absolute;\n  right: 0;\n  top: calc((100% - 10px) / 2);\n  display: none; }\n\n.metabar-triangle-selected {\n  display: block !important;\n  animation: translateTriangle 0.2s forwards; }\n\n.document-list-links-container {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  font-size: 1.1em; }\n\n.document-link {\n  text-decoration: none;\n  padding: 2.5% 0 2.5% 0;\n  width: 100%;\n  text-indent: 20%;\n  cursor: pointer; }\n\n.document-link:hover {\n  background-color: rgba(0, 0, 0, 0.1); }\n\n@keyframes translateTriangle {\n  0% {\n    transform: translateX(5px); }\n  100% {\n    transform: translateX(10px); } }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#MetaBar {\n  position: absolute;\n  width: 10vw;\n  left: 0;\n  top: 0;\n  height: 100vh;\n  background-color: #323232;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start; }\n  @media screen and (max-width: 600px) {\n    #MetaBar {\n      width: 15vw; } }\n  @media screen and (min-width: 1000px) {\n    #MetaBar {\n      width: 5vw; } }\n\n#logo-container {\n  opacity: 1;\n  height: auto;\n  width: 60%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-top: 1.2vh;\n  margin-bottom: 1.2vh; }\n\n#logo {\n  width: 100%;\n  height: auto; }\n\n.metabar-button-abbr {\n  position: relative; }\n\n.metabar-link {\n  width: 40%;\n  padding: 15% 30% 15% 30%;\n  opacity: 0.6;\n  cursor: pointer; }\n  @media screen and (min-width: 1000px) {\n    .metabar-link {\n      padding: 30% 30% 30% 30%; } }\n\n.metabar-link:hover {\n  background-color: rgba(250, 250, 250, 0.1); }\n\n.metabar-link-selected {\n  background-color: rgba(250, 250, 250, 0.1);\n  cursor: default; }\n\n.metabar-triangle {\n  width: 0;\n  height: 0;\n  border-left: solid 10px #3e3e3e;\n  border-top: solid 10px transparent;\n  border-bottom: solid 10px transparent;\n  position: absolute;\n  right: 0;\n  top: calc((100% - 10px) / 2);\n  display: none;\n  opacity: 0.5; }\n\n.metabar-triangle-selected {\n  display: block !important;\n  animation: translateTriangle 0.2s forwards; }\n\n.document-list-links-container {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  font-size: 1.1em; }\n\n.document-link {\n  text-decoration: none;\n  padding: 2.5% 0 2.5% 0;\n  width: 100%;\n  text-indent: 20%;\n  cursor: pointer; }\n\n.document-link:hover {\n  background-color: rgba(0, 0, 0, 0.1); }\n\n@keyframes translateTriangle {\n  0% {\n    opacity: 0.5;\n    transform: translateX(5px); }\n  100% {\n    opacity: 1;\n    transform: translateX(10px); } }\n", ""]);
 
 // exports
 
@@ -111122,6 +111117,9 @@ class CreateDocument extends React.Component {
         this.handleSelectPreviewView = () => {
             let currentView = (React.createElement("div", { className: 'container' },
                 React.createElement("div", { id: 'document-view-container' },
+                    React.createElement("div", { id: 'document-view-header' },
+                        React.createElement("input", { placeholder: 'Document Name', onChange: (e) => { this.handleDocumentNameChange(e); }, id: 'document-name-input', type: "text" }),
+                        React.createElement("div", { id: 'save-button' }, "Save File")),
                     React.createElement(DocumentView_1.default, { document_id: this.state.document_id })),
                 React.createElement("div", { id: 'show-sidebar-icon-container', onClick: this.showSidebar },
                     React.createElement("img", { id: 'show-sidebar-icon', src: "/images/left-arrow-1.png", alt: "" })),
@@ -111258,6 +111256,7 @@ class CreateDocument extends React.Component {
             view: '',
             documentList: [],
             document_id: '',
+            documentName: '',
             nextButton: '',
             readyForNext: false,
             userList: [],
@@ -111274,6 +111273,14 @@ class CreateDocument extends React.Component {
         let sidebar = document.getElementById('document-view-sidebar');
         sidebar.classList.add('show-sidebar');
         sidebar.classList.remove('hide-sidebar');
+    }
+    //Input Handlers
+    handleDocumentNameChange(e) {
+        let documentName = this.state.documentName;
+        documentName = e.target.value;
+        this.setState({
+            documentName: documentName
+        });
     }
     componentWillMount() {
         this.renderDocuments();
@@ -112700,6 +112707,337 @@ module.exports = function(module) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 292 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#SignatureForm {\n  position: absolute;\n  cursor: pointer;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.75em; }\n\n.user-signature {\n  width: auto;\n  height: 100%; }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 293 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(292);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(5)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/sass-loader/lib/loader.js!./style.sass", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/sass-loader/lib/loader.js!./style.sass");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 294 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = __webpack_require__(0);
+const s = __webpack_require__(293);
+class SignatureForm extends React.Component {
+    constructor(props) {
+        super(props);
+        //Getting style from props
+        this.setStyle = () => {
+            let style = this.state.style;
+            style.width = this.props.width + 'px';
+            style.height = this.props.height + 'px';
+            style.top = this.props.top + 'px';
+            style.left = this.props.left + 'px';
+            this.setState({
+                style: style
+            });
+        };
+        //Takes signature png and embeds it into component
+        this.sign = () => __awaiter(this, void 0, void 0, function* () {
+            let signatureSource;
+            let signature = React.createElement("img", { className: 'user-signature', src: signatureSource, alt: "" });
+            this.setState({
+                signatureContent: signature
+            });
+        });
+        this.state = {
+            style: {},
+            signatureContent: 'Click to Sign'
+        };
+    }
+    //React lifecycle methods
+    componentWillMount() {
+        this.setStyle();
+    }
+    componentDidMount() {
+    }
+    render() {
+        return (React.createElement("div", { id: 'SignatureForm', style: this.state.style, onClick: this.sign }, this.state.signatureContent));
+    }
+}
+exports.default = SignatureForm;
+
+
+/***/ }),
+/* 295 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#CheckboxInput {\n  position: absolute;\n  cursor: pointer;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.75em;\n  border: solid 1px grey; }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 296 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(295);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(5)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/sass-loader/lib/loader.js!./style.sass", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/sass-loader/lib/loader.js!./style.sass");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 297 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = __webpack_require__(0);
+const s = __webpack_require__(296);
+class CheckboxInput extends React.Component {
+    constructor(props) {
+        super(props);
+        this.setStyle = () => {
+            let style = this.state.style;
+            style.width = this.props.width + 'px';
+            style.height = this.props.height + 'px';
+            style.top = this.props.top + 'px';
+            style.left = this.props.left + 'px';
+            this.setState({
+                style: style
+            });
+        };
+        this.state = {
+            style: {}
+        };
+    }
+    componentWillMount() {
+        this.setStyle();
+    }
+    componentDidMount() {
+    }
+    render() {
+        let checkmark;
+        if (this.state.checked) {
+            checkmark = 'X';
+        }
+        return (React.createElement("div", { id: 'CheckboxInput', style: this.state.style, onClick: (e) => this.props.onChange(e) }, checkmark));
+    }
+}
+exports.default = CheckboxInput;
+
+
+/***/ }),
+/* 298 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#TextInput {\n  position: absolute;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.75em;\n  background-color: transparent; }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 299 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(298);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(5)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/sass-loader/lib/loader.js!./style.sass", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/sass-loader/lib/loader.js!./style.sass");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 300 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = __webpack_require__(0);
+const s = __webpack_require__(299);
+class TextInput extends React.Component {
+    constructor(props) {
+        super(props);
+        //Getting style from props
+        this.setStyle = () => {
+            let style = this.state.style;
+            style.width = this.props.width + 'px';
+            style.height = this.props.height + 'px';
+            style.top = this.props.top + 'px';
+            style.left = this.props.left + 'px';
+            this.setState({
+                style: style
+            });
+        };
+        this.state = {
+            style: {}
+        };
+    }
+    //React lifecycle methods
+    componentWillMount() {
+        this.setStyle();
+    }
+    componentDidMount() {
+    }
+    render() {
+        return (React.createElement("input", { id: 'TextInput', style: this.state.style, defaultValue: this.props.value, onChange: (e) => this.props.onChange(e) }));
+    }
+}
+exports.default = TextInput;
+
 
 /***/ })
 /******/ ]);

@@ -3,8 +3,11 @@ import PDF from 'react-pdf-js'
 import * as $ from 'jquery'
 import { setTimeout } from 'timers';
 
-
 const s = require('./styling/style.sass')
+
+import SignatureForm from '../SignatureForm/SignatureForm'
+import CheckboxInput from '../CheckboxInput/CheckboxInput'
+import TextInput from '../TextInput/TextInput'
 
 export default class DocumentView extends React.Component<any, any> {
 
@@ -66,25 +69,20 @@ export default class DocumentView extends React.Component<any, any> {
 
                 currentForm.value = false
 
-                let newForm = 
-                    <div key={form} className='form-wrapper' style={{position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`}}>
-                        <input id={form} className='document-checkbox' style={{}} type="checkbox" onChange={(e) => {this.handleFormEdit(e, form)}}/>
-                    </div>
+                let newForm = <CheckboxInput  key={form} width={width} height={height} top={top} left={left} checked={currentForm.value} onChange={(e) => {this.handleFormEdit(e, form)}} />
 
                 documentFields.push(newForm)
             }
             else if(currentForm.field_type === 'Text') {
                 let newForm = 
                     <div key={form} className='form-wrapper'>
-                        <input id={form} style={{position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`}} className='document-input' defaultValue={currentForm.value} type="text" onChange={(e) => {this.handleFormEdit(e, form)}}/>
+                        <TextInput key={form} width={width} height={height} top={top} left={left} value={currentForm.value} onChange={(e) => {this.handleFormEdit(e, form)}} />
                     </div>
 
                 documentFields.push(newForm)
             }
             else if(currentForm.field_type === 'Signature') {
-                let newForm = 
-                    <canvas key={form} className='document-signature-canvas' style={{position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`, backgroundColor: 'red'}}>
-                    </canvas>
+                let newForm = <SignatureForm key={form} width={width} height={height} top={top} left={left} />
 
                 documentFields.push(newForm)
             }
@@ -101,17 +99,6 @@ export default class DocumentView extends React.Component<any, any> {
             this.saveFile(null)
         })
 
-    }
-
-    handleDocumentNameChange(e) {
-
-        let documentName = this.state.documentName
-
-        documentName = e.target.value
-
-        this.setState({
-            documentName: documentName
-        })
     }
 
     async handleFormEdit(e, id) {
@@ -139,7 +126,7 @@ export default class DocumentView extends React.Component<any, any> {
 
     async saveFile(submitted_file_id) {
 
-        document.getElementById('save-button').style.backgroundColor = 'lightblue'
+        // document.getElementById('save-button').style.backgroundColor = 'lightblue'
         
         let saveFile = {
             document_meta: this.state.documentObject.document_meta,
@@ -165,12 +152,12 @@ export default class DocumentView extends React.Component<any, any> {
             })
 
             if(saveResult && saveResult.status_code < 201) {
-                document.getElementById('save-button').style.backgroundColor = 'rgb(131, 198, 125)'
+                // document.getElementById('save-button').style.backgroundColor = 'rgb(131, 198, 125)'
             }
 
         } catch(e) {
             console.log('Error saving:', e)
-            document.getElementById('save-button').style.backgroundColor = 'rgb(198, 125, 125)'
+            // document.getElementById('save-button').style.backgroundColor = 'rgb(198, 125, 125)'
         }
 
         if(!submitted_file_id || submitted_file_id === null) {
@@ -202,10 +189,6 @@ export default class DocumentView extends React.Component<any, any> {
         return(
             <div className='DocumentView'>
                 {noDocumentWarning}
-                {/* <div id='document-view-header'>
-                    <input placeholder='Document Name' onChange={(e) => {this.handleDocumentNameChange(e)}} id='document-name-input' type="text"/>
-                    <div id='save-button' onClick={() => {this.saveFile(this.state.submitted_file_id)}}>Save File</div>
-                </div> */}
                 <PDF className='pdf-image' file={document_id} >
                 </PDF>
                 <div id='document-form-div'>

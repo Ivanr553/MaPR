@@ -17,6 +17,7 @@ export default class CreateDocument extends React.Component<any, any> {
             view: '',
             documentList: [],
             document_id: '',
+            documentName: '',
             nextButton: '',
             readyForNext: false,
             userList: [],
@@ -75,6 +76,14 @@ export default class CreateDocument extends React.Component<any, any> {
         let currentView = (
             <div className='container'>
                 <div id='document-view-container'>
+                    <div id='document-view-header'>
+                        <input placeholder='Document Name'
+                        onChange={(e) => {this.handleDocumentNameChange(e)}}
+                        id='document-name-input' type="text"/>
+                        <div id='save-button' 
+                        // onClick={() => {this.saveFile(this.state.submitted_file_id)}}
+                        >Save File</div>
+                    </div>
                     <DocumentView document_id={this.state.document_id}/>
                 </div>
                 <div id='show-sidebar-icon-container' onClick={this.showSidebar}>
@@ -295,6 +304,18 @@ export default class CreateDocument extends React.Component<any, any> {
         sidebar.classList.add('show-sidebar')
         sidebar.classList.remove('hide-sidebar')
 
+    }
+
+    //Input Handlers
+    handleDocumentNameChange(e) {
+
+        let documentName = this.state.documentName
+
+        documentName = e.target.value
+
+        this.setState({
+            documentName: documentName
+        })
     }
 
     componentWillMount() {

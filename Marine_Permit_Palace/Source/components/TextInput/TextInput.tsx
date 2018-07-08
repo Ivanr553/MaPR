@@ -9,17 +9,20 @@ interface Props {
     width: number,
     height: number,
     left: number,
-    top: number
+    top: number,
+    value: any,
+    onChange: any
 }
 
-export default class SignatureForm extends React.Component<Props, any> {
+export default class TextInput extends React.Component<Props, any> {
 
     constructor(props) {
         super(props)
         this.state = {
-            style: {},
-            signatureContent: 'Click to Sign'
+            style: {}
         }
+
+
     }
 
     //Getting style from props
@@ -37,33 +40,18 @@ export default class SignatureForm extends React.Component<Props, any> {
         })
     }
 
-
-    //Takes signature png and embeds it into component
-    sign = async () => {
-
-        let signatureSource
-        let signature = <img className='user-signature' src={signatureSource} alt=""/>
-
-        this.setState({
-            signatureContent: signature
-        })
-    }
-
     //React lifecycle methods
     componentWillMount() {
         this.setStyle()
     }
 
     componentDidMount() {
-
     }
 
     render() {
 
         return(
-            <div id='SignatureForm' style={this.state.style} onClick={this.sign}>
-                {this.state.signatureContent}
-            </div>
+            <input id='TextInput' style={this.state.style} defaultValue={this.props.value} onChange={(e) => this.props.onChange(e)} />
         )
     }
 

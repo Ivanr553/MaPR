@@ -149,6 +149,61 @@
     height: auto
     overflow: hidden
 
+
+input:focus
+  outline: none
+
+#document-view-header
+  width: 100%
+  height: 10vh
+  right: 0
+  display: flex
+  flex-direction: row
+  align-items: center
+  justify-content: center
+  position: absolute
+  top: 0vh
+  z-index: 400
+  background-color: rgba(50, 50, 50, 0.8)
+
+#save-button
+  width: auto
+  padding: 1%
+  font-size: 1.5em
+  z-index: 500
+  background-color: lightblue
+  border: solid 1px rgb(150, 150, 150)
+  cursor: pointer
+  border-radius: 3px
+  opacity: 0.5
+  position: absolute
+  right: 15vw
+
+#document-view-no-document-warning
+  position: sticky
+  top: 30vh
+  width: auto
+  height: auto
+  padding: 1vh 1vw 1vh 1vw
+  background-color: lightgrey
+  z-index: 600
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  text-align: center
+  font-size: 3em
+  border: solid 1px grey
+  font-weight: bold
+
+#document-name-input
+  font-size: 1.75em
+  padding: 1%
+  background-color: rgba(230, 230, 230, 1)
+  min-width: 40%
+  font-weight: bold
+  text-align: center
+
 #document-view-sidebar
     width: 20vw
     height: 100%
@@ -158,7 +213,7 @@
     background-color: rgb(200, 200, 200)
     border-left: solid 2px grey
     z-index: 600
-    box-shadow: -5px 5px 10px rgba(190, 190, 190, 0.6)
+    box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.1)
 
 #show-sidebar-icon-container
     position: absolute

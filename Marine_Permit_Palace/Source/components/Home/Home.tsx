@@ -8,6 +8,7 @@ const s = require('./styling/style.sass')
 import Header from '../Header/Header'
 import MetaBar from '../MetaBar/MetaBar'
 import DocumentList from '../DocumentList/DocumentList'
+import Account from '../Account/Account'
 
 interface Props extends RouteComponentProps<any> {}
 export default class Home extends React.Component<Props, any> {
@@ -26,17 +27,16 @@ export default class Home extends React.Component<Props, any> {
 
     this.getUser = this.getUser.bind(this)
     this.getCurrentUser = this.getCurrentUser.bind(this)
-    this.getCurrentView = this.getCurrentView.bind(this)
   }
 
-    //Hamburger Menu
+  //Hamburger Menu
   handleHamburgerMenuPress(e) {
 
     if(!this.state.hamburgerMenuShow) {
 
         let hamburgerMenu = 
         <div className='hamburger-menu-element' id='hamburger-menu' style={{animation: 'show-hamburger-menu 1.5s forwards'}}>
-            <div className='hamburger-menu-item hamburger-menu-element' id='account-hamburger-menu-item'>Account</div>
+            <div className='hamburger-menu-item hamburger-menu-element' id='account-hamburger-menu-item' onClick={this.handleAccountPress}>Account</div>
             <div className='hamburger-menu-item hamburger-menu-element' id='settings-hamburger-menu-item'>Help</div>
             <div className='hamburger-menu-item hamburger-menu-element' id='log-out-hamburger-menu-item' onClick={this.logOff}>Log Out</div>
         </div>
@@ -63,6 +63,12 @@ export default class Home extends React.Component<Props, any> {
 
     }
 
+  }
+
+  handleAccountPress = () => {
+    this.setState({
+      currentView: <Account />
+    })
   }
 
   logOff = async () => {
@@ -114,7 +120,7 @@ export default class Home extends React.Component<Props, any> {
     return user
   }
 
-  getCurrentView(currentView) {
+  getCurrentView = (currentView) => {
     this.setState({
       currentView: currentView
     })
@@ -128,7 +134,7 @@ export default class Home extends React.Component<Props, any> {
     return(
       <div className="Home">
         
-        <Header getCurrentUser={this.getCurrentUser}/>
+        <Header getCurrentUser={this.getCurrentUser} page={'Home'}/>
 
         <MetaBar getCurrentView={this.getCurrentView} getCurrentUser={this.getCurrentUser}/>
 

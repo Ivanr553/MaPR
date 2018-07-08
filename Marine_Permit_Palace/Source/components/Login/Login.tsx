@@ -21,11 +21,9 @@ export default class Login extends React.Component<Props, any> {
                 remember_me: true
             }
         }
-
-        this.handleLogin = this.handleLogin.bind(this)
     }
 
-    handleUsername(e) {
+    handleUsername = (e) => {
 
         let user = this.state.user
 
@@ -36,7 +34,7 @@ export default class Login extends React.Component<Props, any> {
         })
     }
 
-    handlePassword(e) {
+    handlePassword = (e) => {
 
         let user = this.state.user
 
@@ -47,13 +45,13 @@ export default class Login extends React.Component<Props, any> {
         })
     }
 
-    handleSubmit(e) {
+    handleSubmit = (e) => {
         if(e.key === 'Enter') {
             this.handleLogin()
         }
     }
 
-    async handleLogin() {
+    handleLogin = async () => {
 
         try {
 
@@ -98,7 +96,7 @@ export default class Login extends React.Component<Props, any> {
         return(
             <div className='Login'>
 
-                <Header />
+                <Header page={'Login'}/>
 
                 <div className='login-content-container'>
                     <div className='login-container-section'>

@@ -11,15 +11,20 @@ export default class Header extends React.Component<any, any> {
         this.state = {
             username: '',
             hamburgerMenu: '',
-            hamburgerMenuShow: false
+            hamburgerMenuShow: false,
+            currentView: '',
+            page: ''
         }
-
-        this.getCurrentUser = this.getCurrentUser.bind(this)
-        this.logOff = this.logOff.bind(this)
-        this.handleHamburgerMenuPress = this.handleHamburgerMenuPress.bind(this)
+        
     }
 
-    async logOff() {
+    componentWillMount() {
+        this.setState({
+            page: this.props.page
+        })
+    }
+
+    logOff = async () => {
 
         let response = await $.get('/Account/Logout')
 
@@ -35,7 +40,7 @@ export default class Header extends React.Component<any, any> {
 
     }
 
-    async getCurrentUser() {
+    getCurrentUser = async () => {
         
         if(!this.props.getCurrentUser) {
             return
@@ -51,7 +56,7 @@ export default class Header extends React.Component<any, any> {
     }
 
     //Hamburger Menu
-    handleHamburgerMenuPress(e) {
+    handleHamburgerMenuPress = (e) => {
 
         if(!this.state.hamburgerMenuShow) {
 
@@ -91,55 +96,38 @@ export default class Header extends React.Component<any, any> {
     }
 
     render() {
-
-        //Header state if user is NOT logged in
-        let accountInnerHtml
-        let accountLink = '/Register'
-        let registerTab = (
-            <Link id='register-tab' className='Link header-tab register-tab' to={{pathname: '/A/App/Register'}}>
-                Register
-            </Link>
-        )
-        let logInTab = (
-            <Link className='Link header-tab log-in-tab' to={{pathname: '/A/App/'}}>
-                Log In
-            </Link>
-        )
-        let homeTab = 
-            <Link id='header-logo-container' className='Link home-header-link' to={{pathname: '/A/App/'}}> 
-                <img src='/images/MAPR_logo_edit.png' id='header-logo' />
-            </Link>
-        let logOff
+        
+        let headerLink
         let fullHeader = 'show-full-header'
 
-        //Header state if user IS logged in
-        if(this.state.username != '') {
-            // accountLink = '/Account'
-            // registerTab = <div></div>
-            // logInTab = <div></div>
-            //     // <div onClick={(e) => {this.handleHamburgerMenuPress(e)}} className='header-tab log-in-tab' id='hamburger-menu-container'>
-            //     //     <img id='hamburger-icon' src="/images/hamburger-menu.png" alt=""/>
-            //     //     {this.state.hamburgerMenu}
-            //     // </div>
-            // homeTab =
-            //     <Link className='Link home-header-link' to={{pathname: '/A/App/Home'}}>
-            //         <img src='/images/MAPR_logo_edit.png' id='header-logo' />
-            //     </Link>
-            // homeTab = <div></div>
-            // logOff = 
-            //     <div className='header-tab log-in-tab' onClick={this.logOff}>
-            //         <img id='logoff-icon' src="/images/logoff.png" alt=""/>
-            //     </div>
+        if(this.state.page === 'Home') {
             fullHeader = ''
+        }
+
+        if(this.state.page === 'Register') {
+            headerLink = (
+                <Link className='Link header-tab log-in-tab' to={{pathname: '/A/App/'}}>
+                    Log In
+                </Link>
+            )
+        }
+
+        if(this.state.page === 'Login') {
+            headerLink = (
+                <Link id='register-tab' className='Link header-tab register-tab' to={{pathname: '/A/App/Register'}}>
+                    Register
+                </Link>
+            )
         }
 
         return(
             <div id='HomeHeader' className={fullHeader}>
                 <div className='home-tab'>
-                    {homeTab}
+                    <Link id='header-logo-container' className='Link home-header-link' to={{pathname: '/A/App/'}}> 
+                        <img src='/images/MAPR_logo_edit.png' id='header-logo' />
+                    </Link>
                 </div>
-                {logInTab}
-                {registerTab}
+                {headerLink}
             </div>
         )
     }

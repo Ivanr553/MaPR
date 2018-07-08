@@ -20839,9 +20839,25 @@ class Home extends React.Component {
                 });
             }
         });
+        this.getHamburgerMenuBrightness = (hamburgerSource) => __awaiter(this, void 0, void 0, function* () {
+            this.setState({
+                hamburgerSource: hamburgerSource
+            });
+        });
         this.getCurrentView = (currentView) => {
             this.setState({
                 currentView: currentView
+            }, () => {
+                if (this.state.currentView.type.name === 'CreateDocument') {
+                    this.setState({
+                        hamburgerSource: '/images/hamburger-menu-edit.png'
+                    });
+                }
+                else {
+                    this.setState({
+                        hamburgerSource: '/images/hamburger-menu.png'
+                    });
+                }
             });
         };
         this.state = {
@@ -20851,7 +20867,8 @@ class Home extends React.Component {
             documentResults: [],
             documentList: [],
             hamburgerMenu: '',
-            hamburgerMenuShow: false
+            hamburgerMenuShow: false,
+            hamburgerSource: '/images/hamburger-menu.png'
         };
         this.getUser = this.getUser.bind(this);
         this.getCurrentUser = this.getCurrentUser.bind(this);
@@ -20859,7 +20876,7 @@ class Home extends React.Component {
     //Hamburger Menu
     handleHamburgerMenuPress(e) {
         if (!this.state.hamburgerMenuShow) {
-            let hamburgerMenu = React.createElement("div", { className: 'hamburger-menu-element', id: 'hamburger-menu', style: { animation: 'show-hamburger-menu 1.5s forwards' } },
+            let hamburgerMenu = React.createElement("div", { id: 'hamburger-menu', style: { animation: 'show-hamburger-menu 1.5s forwards' } },
                 React.createElement("div", { className: 'hamburger-menu-item hamburger-menu-element', id: 'account-hamburger-menu-item', onClick: this.handleAccountPress }, "Account"),
                 React.createElement("div", { className: 'hamburger-menu-item hamburger-menu-element', id: 'settings-hamburger-menu-item' }, "Help"),
                 React.createElement("div", { className: 'hamburger-menu-item hamburger-menu-element', id: 'log-out-hamburger-menu-item', onClick: this.logOff }, "Log Out"));
@@ -20918,7 +20935,7 @@ class Home extends React.Component {
             React.createElement(Header_1.default, { getCurrentUser: this.getCurrentUser, page: 'Home' }),
             React.createElement(MetaBar_1.default, { getCurrentView: this.getCurrentView, getCurrentUser: this.getCurrentUser }),
             React.createElement("div", { onClick: (e) => { this.handleHamburgerMenuPress(e); }, id: 'hamburger-menu-container' },
-                React.createElement("img", { id: 'hamburger-icon', src: "/images/hamburger-menu.png", alt: "" }),
+                React.createElement("img", { id: 'hamburger-icon', src: this.state.hamburgerSource, alt: "" }),
                 this.state.hamburgerMenu),
             React.createElement("div", { id: 'documents-container', className: this.state.animate }, this.state.currentView)));
     }
@@ -21056,41 +21073,27 @@ const Footer_1 = __webpack_require__(113);
 class Register extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            dodNumber: '',
-            password: '',
-            confirmPassword: '',
-            email: ''
+        this.handleUsername = (e) => {
+            this.setState({
+                dodNumber: e.target.value
+            });
         };
-        this.handleConfirmPassword = this.handleConfirmPassword.bind(this);
-        this.handleEmail = this.handleEmail.bind(this);
-        this.handlePassword = this.handlePassword.bind(this);
-        this.handleRegister = this.handleRegister.bind(this);
-        this.handleUsername = this.handleUsername.bind(this);
-        // this.handleConfirmPassword = this.handleConfirmPassword.bind(this)
-    }
-    handleUsername(e) {
-        this.setState({
-            dodNumber: e.target.value
-        });
-    }
-    handleEmail(e) {
-        this.setState({
-            email: e.target.value
-        });
-    }
-    handlePassword(e) {
-        this.setState({
-            password: e.target.value
-        });
-    }
-    handleConfirmPassword(e) {
-        this.setState({
-            confirmPassword: e.target.value
-        });
-    }
-    handleRegister() {
-        return __awaiter(this, void 0, void 0, function* () {
+        this.handleEmail = (e) => {
+            this.setState({
+                email: e.target.value
+            });
+        };
+        this.handlePassword = (e) => {
+            this.setState({
+                password: e.target.value
+            });
+        };
+        this.handleConfirmPassword = (e) => {
+            this.setState({
+                confirmPassword: e.target.value
+            });
+        };
+        this.handleRegister = () => __awaiter(this, void 0, void 0, function* () {
             // Check if inputs are not properly filled in
             if (!this.state.dodNumber || !this.state.password) {
                 alert('Fill in all fields');
@@ -21130,9 +21133,14 @@ class Register extends React.Component {
                 console.log(e);
             }
         });
+        this.state = {
+            dodNumber: '',
+            password: '',
+            confirmPassword: '',
+            email: ''
+        };
     }
     componentDidMount() {
-        console.log(document.cookie);
     }
     render() {
         return (React.createElement("div", { className: 'Register' },
@@ -25407,7 +25415,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#HomeHeader {\n  width: 90vw;\n  left: 10vw;\n  background-color: #323232;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-end;\n  position: fixed;\n  top: 0;\n  z-index: 20;\n  color: #f0f0f0;\n  font-size: 1.5em;\n  display: none; }\n\n.show-full-header {\n  width: 100vw !important;\n  left: 0 !important;\n  height: 10vh !important;\n  display: flex !important; }\n\n.header-tab {\n  cursor: default;\n  height: auto;\n  width: auto;\n  padding: 1vh 1.5vw 1vh 1.5vw;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  border: solid 1px #c8c8c8;\n  background-color: transparent;\n  cursor: pointer;\n  margin-right: 2vw;\n  color: white;\n  font-size: 1.4em;\n  margin-top: 2vh; }\n\n.header-tab:hover {\n  color: black;\n  background-color: #c8c8c8; }\n\n.header-link {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: center;\n  cursor: pointer;\n  text-align: center; }\n\n.home-tab {\n  position: absolute;\n  left: 0;\n  border-left: none;\n  font-size: 2em;\n  padding: none;\n  width: auto;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  justify-content: flex-end; }\n\n#header-logo-container {\n  width: auto;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-left: 1vw; }\n\n#header-logo {\n  width: auto;\n  height: 90%; }\n\n.log-in-tab {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center; }\n\n#logoff-icon {\n  width: auto;\n  height: 70%;\n  cursor: pointer; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#HomeHeader {\n  width: 90vw;\n  left: 10vw;\n  background-color: #323232;\n  flex-direction: row;\n  align-items: center;\n  justify-content: flex-end;\n  position: fixed;\n  top: 0;\n  z-index: 20;\n  color: #f0f0f0;\n  font-size: 1.5em;\n  display: none; }\n\n.show-full-header {\n  width: 100vw !important;\n  left: 0 !important;\n  height: 10vh !important;\n  display: flex !important; }\n\n.header-tab {\n  cursor: default;\n  height: auto;\n  width: auto;\n  padding: 1vh 1.5vw 1vh 1.5vw;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  border: solid 1px #c8c8c8;\n  background-color: transparent;\n  cursor: pointer;\n  margin-right: 2vw;\n  color: white;\n  font-size: 1.4em;\n  margin-top: 2vh; }\n\n.header-tab:hover {\n  color: black;\n  background-color: #c8c8c8; }\n\n.header-link {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-end;\n  justify-content: center;\n  cursor: pointer;\n  text-align: center; }\n\n.home-tab {\n  position: absolute;\n  left: 0;\n  border-left: none;\n  font-size: 2em;\n  padding: none;\n  width: auto;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  justify-content: flex-end; }\n\n#header-logo-container {\n  width: auto;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-left: 1vw;\n  cursor: default; }\n\n#header-logo {\n  width: auto;\n  height: 90%; }\n\n.log-in-tab {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center; }\n\n#logoff-icon {\n  width: auto;\n  height: 70%; }\n", ""]);
 
 // exports
 
@@ -25435,7 +25443,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n.Login {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  padding-top: 10vh;\n  width: 100vw;\n  height: 90vh;\n  background-color: #ebebeb; }\n\n.login-content-container {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start;\n  padding-top: 10vh;\n  width: 100%;\n  font-size: 1.5em; }\n\n.login-container-section {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  width: 95%;\n  height: auto;\n  padding-left: 5%; }\n\n.login-paragraph {\n  width: 75%;\n  color: #505050; }\n\n.login-title {\n  font-size: 2.25em;\n  text-align: left;\n  margin-bottom: 2.5vh;\n  padding-bottom: 2.5vh;\n  border-bottom: solid 1px rgba(0, 0, 0, 0.1);\n  min-width: 25%; }\n\n.login-input-container {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  font-size: 1.4em; }\n\n.login-input {\n  font-size: 0.8em;\n  color: black;\n  margin-top: 1vh;\n  padding-top: 1vh;\n  padding-bottom: 1vh;\n  padding-left: 1vh;\n  padding-right: 1vh;\n  border-radius: 5px;\n  min-width: 25vw; }\n\n#login-password-container {\n  margin-top: 5vh; }\n\n.login-button-link {\n  cursor: pointer; }\n\n#login-button {\n  margin-top: 2.5vw;\n  border: none;\n  font-size: 1.75em;\n  padding: 0.5vw 1vw 0.5vw 1vw;\n  cursor: pointer;\n  border-radius: 2.5px;\n  background-color: #2990d6; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n.Login {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  padding-top: 10vh;\n  width: 100vw;\n  height: 90vh;\n  background-color: #ebebeb; }\n\n.login-content-container {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start;\n  padding-top: 10vh;\n  width: 100%;\n  font-size: 1.5em; }\n\n.login-container-section {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  width: 95%;\n  height: auto;\n  padding-left: 5%; }\n\n.login-paragraph {\n  width: 75%;\n  color: #505050;\n  font-size: 1.25em; }\n\n.login-title {\n  font-size: 2.25em;\n  text-align: left;\n  margin-bottom: 2.5vh;\n  padding-bottom: 2.5vh;\n  border-bottom: solid 1px rgba(0, 0, 0, 0.1);\n  min-width: 25%; }\n\n.login-input-container {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  font-size: 1.4em; }\n\n.login-input {\n  font-size: 0.8em;\n  color: black;\n  margin-top: 1vh;\n  padding-top: 1vh;\n  padding-bottom: 1vh;\n  padding-left: 1vh;\n  padding-right: 1vh;\n  border-radius: 5px;\n  min-width: 25vw; }\n\n#login-password-container {\n  margin-top: 5vh; }\n\n.login-button-link {\n  cursor: pointer; }\n\n#login-button {\n  margin-top: 2.5vw;\n  border: none;\n  font-size: 1.75em;\n  padding: 0.5vw 1vw 0.5vw 1vw;\n  cursor: pointer;\n  border-radius: 2.5px;\n  background-color: #2990d6; }\n", ""]);
 
 // exports
 
@@ -25449,7 +25457,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#MetaBar {\n  position: absolute;\n  width: 10vw;\n  left: 0;\n  top: 0;\n  height: 100vh;\n  background-color: #323232;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start; }\n  @media screen and (max-width: 600px) {\n    #MetaBar {\n      width: 15vw; } }\n  @media screen and (min-width: 1000px) {\n    #MetaBar {\n      width: 5vw; } }\n\n#logo-container {\n  opacity: 1;\n  height: auto;\n  width: 60%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 0; }\n\n#logo {\n  width: 100%;\n  height: auto; }\n\n.metabar-link {\n  width: 40%;\n  padding: 15% 30% 15% 30%;\n  opacity: 0.6;\n  cursor: pointer; }\n  @media screen and (min-width: 1000px) {\n    .metabar-link {\n      padding: 30% 30% 30% 30%; } }\n\n.metabar-link:hover {\n  background-color: rgba(250, 250, 250, 0.1); }\n\n.metabar-link-selected {\n  background-color: rgba(250, 250, 250, 0.1); }\n\n.document-list-links-container {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  font-size: 1.1em; }\n\n.document-link {\n  text-decoration: none;\n  padding: 2.5% 0 2.5% 0;\n  width: 100%;\n  text-indent: 20%;\n  cursor: pointer; }\n\n.document-link:hover {\n  background-color: rgba(0, 0, 0, 0.1); }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#MetaBar {\n  position: absolute;\n  width: 10vw;\n  left: 0;\n  top: 0;\n  height: 100vh;\n  background-color: #323232;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start; }\n  @media screen and (max-width: 600px) {\n    #MetaBar {\n      width: 15vw; } }\n  @media screen and (min-width: 1000px) {\n    #MetaBar {\n      width: 5vw; } }\n\n#logo-container {\n  opacity: 1;\n  height: auto;\n  width: 60%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 0; }\n\n#logo {\n  width: 100%;\n  height: auto; }\n\n.metabar-button-abbr {\n  position: relative; }\n\n.metabar-link {\n  width: 40%;\n  padding: 15% 30% 15% 30%;\n  opacity: 0.6;\n  cursor: pointer; }\n  @media screen and (min-width: 1000px) {\n    .metabar-link {\n      padding: 30% 30% 30% 30%; } }\n\n.metabar-link:hover {\n  background-color: rgba(250, 250, 250, 0.1); }\n\n.metabar-link-selected {\n  background-color: rgba(250, 250, 250, 0.1);\n  cursor: default; }\n\n.metabar-triangle {\n  width: 0;\n  height: 0;\n  border-left: solid 10px #3e3e3e;\n  border-top: solid 10px transparent;\n  border-bottom: solid 10px transparent;\n  position: absolute;\n  right: 0;\n  top: calc((100% - 10px) / 2);\n  display: none; }\n\n.metabar-triangle-selected {\n  display: block !important;\n  animation: translateTriangle 0.2s forwards; }\n\n.document-list-links-container {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  font-size: 1.1em; }\n\n.document-link {\n  text-decoration: none;\n  padding: 2.5% 0 2.5% 0;\n  width: 100%;\n  text-indent: 20%;\n  cursor: pointer; }\n\n.document-link:hover {\n  background-color: rgba(0, 0, 0, 0.1); }\n\n@keyframes translateTriangle {\n  0% {\n    transform: translateX(5px); }\n  100% {\n    transform: translateX(10px); } }\n", ""]);
 
 // exports
 
@@ -25463,7 +25471,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n.Register {\n  width: 100vw;\n  height: 90vh;\n  padding-top: 10vh;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  background-color: #ebebeb; }\n\n.Register > * {\n  font-size: 1.5em; }\n\n.register-title {\n  font-size: 2.25em;\n  text-align: left;\n  margin-bottom: 2.5vh;\n  padding-bottom: 2.5vh;\n  border-bottom: solid 1px rgba(0, 0, 0, 0.1);\n  min-width: 25%; }\n\n.register-input-container {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  margin-bottom: 2.5vh;\n  font-size: 1.4em; }\n\n#register-password-container {\n  margin-top: 1vh; }\n\n.register-input {\n  font-size: 0.75em;\n  color: black;\n  margin-top: 1vh; }\n\n.register-content-container {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start;\n  padding-top: 10vh;\n  width: 100%; }\n\n.register-container-section {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  width: 95%;\n  height: auto;\n  padding-left: 5%; }\n\n.username-register-container {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center; }\n\n.password-register-container {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-top: 5vh; }\n\n.register-input {\n  font-size: 0.8em;\n  color: black;\n  margin-top: 1vh;\n  padding-top: 1vh;\n  padding-bottom: 1vh;\n  padding-left: 1vh;\n  padding-right: 1vh;\n  border-radius: 5px;\n  min-width: 25vw; }\n\n.register-button {\n  margin-top: 2.5vw;\n  border: none;\n  font-size: 1.75em;\n  padding: 0.5vw 1vw 0.5vw 1vw;\n  cursor: pointer;\n  border-radius: 2.5px;\n  background-color: #2990d6; }\n\n.register-paragraph {\n  width: 75%;\n  color: #505050; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n.Register {\n  width: 100vw;\n  height: 90vh;\n  padding-top: 10vh;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  background-color: #ebebeb; }\n\n.Register > * {\n  font-size: 1.5em; }\n\n.register-title {\n  font-size: 2.25em;\n  text-align: left;\n  margin-bottom: 2.5vh;\n  padding-bottom: 2.5vh;\n  border-bottom: solid 1px rgba(0, 0, 0, 0.1);\n  min-width: 25%; }\n\n.register-input-container {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  margin-bottom: 2.5vh;\n  font-size: 1.4em; }\n\n#register-password-container {\n  margin-top: 1vh; }\n\n.register-input {\n  font-size: 0.75em;\n  color: black;\n  margin-top: 1vh; }\n\n.register-content-container {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start;\n  padding-top: 10vh;\n  width: 100%; }\n\n.register-container-section {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  width: 95%;\n  height: auto;\n  padding-left: 5%; }\n\n.username-register-container {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center; }\n\n.password-register-container {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-top: 5vh; }\n\n.register-input {\n  font-size: 0.8em;\n  color: black;\n  margin-top: 1vh;\n  padding-top: 1vh;\n  padding-bottom: 1vh;\n  padding-left: 1vh;\n  padding-right: 1vh;\n  border-radius: 5px;\n  min-width: 25vw; }\n\n.register-button {\n  margin-top: 2.5vw;\n  border: none;\n  font-size: 1.75em;\n  padding: 0.5vw 1vw 0.5vw 1vw;\n  cursor: pointer;\n  border-radius: 2.5px;\n  background-color: #2990d6; }\n\n.register-paragraph {\n  width: 75%;\n  color: #505050;\n  font-size: 1.25em; }\n", ""]);
 
 // exports
 
@@ -111352,6 +111360,7 @@ const SignatureView_1 = __webpack_require__(279);
 class MetaBar extends React.Component {
     constructor(props) {
         super(props);
+        //============== Sending/Retrieving Data ================
         this.getCurrentUser = () => __awaiter(this, void 0, void 0, function* () {
             let user = yield this.props.getCurrentUser();
             this.setState({
@@ -111372,6 +111381,23 @@ class MetaBar extends React.Component {
                 console.log(e);
             }
         });
+        this.getCurrentView = (currentView) => {
+            this.setState({
+                currentView: currentView
+            }, () => {
+                this.props.getCurrentView(this.state.currentView);
+            });
+        };
+        this.getNotifications = () => __awaiter(this, void 0, void 0, function* () {
+            try {
+                let response = yield $.get('/Notification');
+                console.log(response);
+            }
+            catch (e) {
+                console.log(e);
+            }
+        });
+        //=============== Populating Content on Page ==============
         this.populateDocumentLinks = () => {
             let documents = this.state.documentResults.slice();
             let documentLinks = [];
@@ -111385,6 +111411,7 @@ class MetaBar extends React.Component {
                 this.handleDocumentListPress();
             });
         };
+        //=============== OnClick/Button Handlers ==============
         this.handleLinkPress = (e) => __awaiter(this, void 0, void 0, function* () {
             let document_id = e.target.id;
             let setFile = yield this.setState({
@@ -111409,28 +111436,21 @@ class MetaBar extends React.Component {
             });
             let getCurrentView = yield this.props.getCurrentView(this.state.currentView);
         });
-        this.handleUploadDocumentPress = () => {
-            this.setState({
-                currentView: React.createElement(UploadDocument_1.default, null)
-            }, () => {
-                this.props.getCurrentView(this.state.currentView);
-            });
-        };
-        this.handleStudioPress = () => {
-            window.open('/A/App/Studio', '_self');
-        };
-        this.getCurrentView = (currentView) => {
-            this.setState({
-                currentView: currentView
-            }, () => {
-                this.props.getCurrentView(this.state.currentView);
-            });
-        };
         this.handleNewDocumentPress = () => {
             this.setState({
                 currentView: React.createElement(CreateDocument_1.default, { getCurrentView: this.getCurrentView, documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
             }, () => {
                 this.props.getCurrentView(this.state.currentView);
+                document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('create-document-metabar-button').classList.add('metabar-link-selected');
+                document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('signature-page-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('create-document-metabar-triangle').classList.add('metabar-triangle-selected');
             });
         };
         this.handleDocumentListPress = () => {
@@ -111438,6 +111458,16 @@ class MetaBar extends React.Component {
                 currentView: React.createElement(DocumentList_1.default, { documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
             }, () => {
                 this.props.getCurrentView(this.state.currentView);
+                document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('document-list-metabar-button').classList.add('metabar-link-selected');
+                document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('signature-page-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('document-list-metabar-triangle').classList.add('metabar-triangle-selected');
             });
         };
         this.handleSignaturePress = () => {
@@ -111445,6 +111475,33 @@ class MetaBar extends React.Component {
                 currentView: React.createElement(SignatureView_1.default, null)
             }, () => {
                 this.props.getCurrentView(this.state.currentView);
+                document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('signature-page-metabar-button').classList.add('metabar-link-selected');
+                document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('signature-page-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('signature-page-metabar-triangle').classList.add('metabar-triangle-selected');
+            });
+        };
+        this.handleUploadDocumentPress = () => {
+            this.setState({
+                currentView: React.createElement(UploadDocument_1.default, null)
+            }, () => {
+                this.props.getCurrentView(this.state.currentView);
+                document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected');
+                document.getElementById('upload-document-metabar-button').classList.add('metabar-link-selected');
+                document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('signature-page-metabar-triangle').classList.remove('metabar-triangle-selected');
+                document.getElementById('upload-document-metabar-triangle').classList.add('metabar-triangle-selected');
             });
         };
         this.handleAboutPress = () => {
@@ -111464,23 +111521,24 @@ class MetaBar extends React.Component {
     componentDidMount() {
         this.getDocuments();
         this.getCurrentUser();
+        this.getNotifications();
     }
     render() {
-        let studio;
-        if (this.state.user.authorization > 1) {
-            studio = React.createElement("div", { className: 'metabar-link', onClick: this.handleStudioPress }, "Studio (Unfinished)");
-        }
         return (React.createElement("div", { id: 'MetaBar' },
             React.createElement("div", { id: 'logo-container' },
                 React.createElement("img", { id: 'logo', src: '/images/MAPR_logo_edit.png' })),
-            React.createElement("abbr", { title: 'Pending Documents' },
-                React.createElement("img", { className: 'metabar-link', src: '/images/doc_icon.png', onClick: this.handleDocumentListPress })),
-            React.createElement("abbr", { title: 'Create New Document' },
-                React.createElement("img", { className: 'metabar-link', src: '/images/new_document-white.png', onClick: this.handleNewDocumentPress })),
-            React.createElement("abbr", { title: 'Upload Document' },
-                React.createElement("img", { className: 'metabar-link', src: '/images/upload-document.png', onClick: this.handleUploadDocumentPress })),
-            React.createElement("abbr", { title: 'Signature Page' },
-                React.createElement("img", { className: 'metabar-link', src: '/images/pencil.png', onClick: this.handleSignaturePress }))));
+            React.createElement("abbr", { title: 'Pending Documents', className: 'metabar-button-abbr' },
+                React.createElement("img", { id: 'document-list-metabar-button', className: 'metabar-link', src: '/images/doc_icon.png', onClick: this.handleDocumentListPress }),
+                React.createElement("div", { id: 'document-list-metabar-triangle', className: 'metabar-triangle' })),
+            React.createElement("abbr", { title: 'Create New Document', className: 'metabar-button-abbr' },
+                React.createElement("img", { id: 'create-document-metabar-button', className: 'metabar-link', src: '/images/new_document-white.png', onClick: this.handleNewDocumentPress }),
+                React.createElement("div", { id: 'create-document-metabar-triangle', className: 'metabar-triangle' })),
+            React.createElement("abbr", { title: 'Upload Document', className: 'metabar-button-abbr' },
+                React.createElement("img", { id: 'upload-document-metabar-button', className: 'metabar-link', src: '/images/upload-document.png', onClick: this.handleUploadDocumentPress }),
+                React.createElement("div", { id: 'upload-document-metabar-triangle', className: 'metabar-triangle' })),
+            React.createElement("abbr", { title: 'Signature Page', className: 'metabar-button-abbr' },
+                React.createElement("img", { id: 'signature-page-metabar-button', className: 'metabar-link', src: '/images/pencil.png', onClick: this.handleSignaturePress }),
+                React.createElement("div", { id: 'signature-page-metabar-triangle', className: 'metabar-triangle' }))));
     }
 }
 exports.default = MetaBar;
@@ -111635,23 +111693,58 @@ exports.default = SignatureView;
 
 "use strict";
 
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __webpack_require__(123);
+const $ = __webpack_require__(26);
 const s = __webpack_require__(272);
 class UploadDocument extends React.Component {
     //@ts-ignore
     constructor(props) {
         super(props);
-        this.uploadDroppedFile = (e) => {
+        this.uploadDroppedFile = (e) => __awaiter(this, void 0, void 0, function* () {
             e.preventDefault();
             e.stopPropagation();
-            console.log(e.dataTransfer.files);
-        };
-        this.handleFormSubmit = (e) => {
+            try {
+                let file = e.dataTransfer.files[0];
+                let url = '/DocumentUpload/Upload';
+                let response = yield $.ajax({
+                    method: 'POST',
+                    url: url,
+                    contentType: 'application-pdf',
+                    body: file
+                });
+                console.log(response);
+            }
+            catch (e) {
+                Error(e);
+            }
+        });
+        this.handleFormSubmit = (e) => __awaiter(this, void 0, void 0, function* () {
             e.preventDefault();
-            //@ts-ignore
-            let files = this.files.current.files;
-        };
+            try {
+                // @ts-ignore
+                let file = this.files.current.files[0];
+                let url = '/DocumentUpload/Upload';
+                let response = yield $.ajax({
+                    method: 'POST',
+                    url: url,
+                    contentType: 'application-pdf',
+                    body: file
+                });
+                console.log(response);
+            }
+            catch (e) {
+                Error(e);
+            }
+        });
         this.state = {};
         //@ts-ignore
         this.files = React.createRef();

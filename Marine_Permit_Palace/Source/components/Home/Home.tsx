@@ -22,7 +22,8 @@ export default class Home extends React.Component<Props, any> {
       documentResults: [],
       documentList: [],
       hamburgerMenu: '',
-      hamburgerMenuShow: false
+      hamburgerMenuShow: false,
+      hamburgerSource: '/images/hamburger-menu.png'
     }
 
     this.getUser = this.getUser.bind(this)
@@ -35,7 +36,7 @@ export default class Home extends React.Component<Props, any> {
     if(!this.state.hamburgerMenuShow) {
 
         let hamburgerMenu = 
-        <div className='hamburger-menu-element' id='hamburger-menu' style={{animation: 'show-hamburger-menu 1.5s forwards'}}>
+        <div id='hamburger-menu' style={{animation: 'show-hamburger-menu 1.5s forwards'}}>
             <div className='hamburger-menu-item hamburger-menu-element' id='account-hamburger-menu-item' onClick={this.handleAccountPress}>Account</div>
             <div className='hamburger-menu-item hamburger-menu-element' id='settings-hamburger-menu-item'>Help</div>
             <div className='hamburger-menu-item hamburger-menu-element' id='log-out-hamburger-menu-item' onClick={this.logOff}>Log Out</div>
@@ -120,9 +121,25 @@ export default class Home extends React.Component<Props, any> {
     return user
   }
 
+  getHamburgerMenuBrightness = async (hamburgerSource) => {
+    this.setState({
+      hamburgerSource: hamburgerSource
+    })
+  }
+
   getCurrentView = (currentView) => {
     this.setState({
       currentView: currentView
+    }, () => {
+      if(this.state.currentView.type.name === 'CreateDocument') {
+        this.setState({
+          hamburgerSource: '/images/hamburger-menu-edit.png'
+        })
+      } else {
+        this.setState({
+          hamburgerSource: '/images/hamburger-menu.png'
+        })
+      }
     })
   }
 
@@ -139,7 +156,7 @@ export default class Home extends React.Component<Props, any> {
         <MetaBar getCurrentView={this.getCurrentView} getCurrentUser={this.getCurrentUser}/>
 
         <div onClick={(e) => {this.handleHamburgerMenuPress(e)}} id='hamburger-menu-container'>
-          <img id='hamburger-icon' src="/images/hamburger-menu.png" alt=""/>
+          <img id='hamburger-icon' src={this.state.hamburgerSource} alt=""/>
           {this.state.hamburgerMenu}
         </div>
 

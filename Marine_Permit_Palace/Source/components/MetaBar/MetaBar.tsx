@@ -24,6 +24,9 @@ export default class MetaBar extends React.Component<any, any> {
         
     }
 
+
+    //============== Sending/Retrieving Data ================
+
     getCurrentUser = async () => {
 
         let user = await this.props.getCurrentUser()
@@ -53,6 +56,29 @@ export default class MetaBar extends React.Component<any, any> {
 
     }
 
+    getCurrentView = (currentView) => {
+        this.setState({
+            currentView: currentView
+          }, () => {
+            this.props.getCurrentView(this.state.currentView)
+          })
+    }
+
+    getNotifications = async () => {
+
+        try{
+            let response = await $.get('/Notification')
+            console.log(response)
+
+        } catch(e) {
+            console.log(e)
+        }
+
+    }
+
+
+    //=============== Populating Content on Page ==============
+
     populateDocumentLinks = () => {
 
         let documents = this.state.documentResults.slice()
@@ -75,6 +101,9 @@ export default class MetaBar extends React.Component<any, any> {
         })
 
     }
+
+
+    //=============== OnClick/Button Handlers ==============
 
     handleLinkPress = async (e) => {
 
@@ -113,33 +142,22 @@ export default class MetaBar extends React.Component<any, any> {
         let getCurrentView = await this.props.getCurrentView(this.state.currentView)
     }
 
-    handleUploadDocumentPress = () => {
-
-        this.setState({
-            currentView: <UploadDocument />
-        }, () => {
-            this.props.getCurrentView(this.state.currentView)
-        })
-
-    }
-
-    handleStudioPress = () => {
-        window.open('/A/App/Studio', '_self')
-    }
-
-    getCurrentView = (currentView) => {
-        this.setState({
-            currentView: currentView
-          }, () => {
-            this.props.getCurrentView(this.state.currentView)
-          })
-    }
-
     handleNewDocumentPress = () => {
         this.setState({
             currentView: <CreateDocument getCurrentView={this.getCurrentView} documentResults={this.state.documentResults} viewDocument={this.handleDocumentLinkPress} />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
+            document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('create-document-metabar-button').classList.add('metabar-link-selected')
+
+            document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('signature-page-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('create-document-metabar-triangle').classList.add('metabar-triangle-selected')
         })
     }
 
@@ -148,6 +166,17 @@ export default class MetaBar extends React.Component<any, any> {
             currentView: <DocumentList documentResults={this.state.documentResults} viewDocument={this.handleDocumentLinkPress} />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
+            document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('document-list-metabar-button').classList.add('metabar-link-selected')
+
+            document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('signature-page-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('document-list-metabar-triangle').classList.add('metabar-triangle-selected')
         })
     }
 
@@ -156,7 +185,39 @@ export default class MetaBar extends React.Component<any, any> {
             currentView: <SignatureView />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
+            document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('signature-page-metabar-button').classList.add('metabar-link-selected')
+
+            document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('signature-page-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('signature-page-metabar-triangle').classList.add('metabar-triangle-selected')
         })
+    }
+
+    handleUploadDocumentPress = () => {
+
+        this.setState({
+            currentView: <UploadDocument />
+        }, () => {
+            this.props.getCurrentView(this.state.currentView)
+            document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected')
+            document.getElementById('upload-document-metabar-button').classList.add('metabar-link-selected')
+
+            document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('signature-page-metabar-triangle').classList.remove('metabar-triangle-selected')
+            document.getElementById('upload-document-metabar-triangle').classList.add('metabar-triangle-selected')
+        })
+
     }
 
     handleAboutPress = () => {
@@ -164,33 +225,38 @@ export default class MetaBar extends React.Component<any, any> {
             currentView: <About />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
+            
         })
     }
 
     componentDidMount() {
         this.getDocuments()
         this.getCurrentUser()
+        this.getNotifications()
     }
 
     render() {
-
-        let studio
-
-        if(this.state.user.authorization > 1) {
-
-            studio = <div className='metabar-link' onClick={this.handleStudioPress}>Studio (Unfinished)</div>
-
-        }
-
         return(
             <div id='MetaBar'>
                 <div id='logo-container'>
                     <img id='logo' src='/images/MAPR_logo_edit.png'/>
                 </div>
-                <abbr title='Pending Documents'><img className='metabar-link' src='/images/doc_icon.png' onClick={this.handleDocumentListPress}/></abbr>
-                <abbr title='Create New Document'><img className='metabar-link' src='/images/new_document-white.png' onClick={this.handleNewDocumentPress}/></abbr>
-                <abbr title='Upload Document'><img className='metabar-link' src='/images/upload-document.png' onClick={this.handleUploadDocumentPress}/></abbr>
-                <abbr title='Signature Page'><img className='metabar-link' src='/images/pencil.png' onClick={this.handleSignaturePress}/></abbr>
+                <abbr title='Pending Documents' className='metabar-button-abbr'>
+                    <img id='document-list-metabar-button' className='metabar-link' src='/images/doc_icon.png' onClick={this.handleDocumentListPress}/>
+                    <div id='document-list-metabar-triangle' className='metabar-triangle'></div>
+                </abbr>
+                <abbr title='Create New Document' className='metabar-button-abbr'>
+                    <img id='create-document-metabar-button' className='metabar-link' src='/images/new_document-white.png' onClick={this.handleNewDocumentPress}/>
+                    <div id='create-document-metabar-triangle' className='metabar-triangle'></div>
+                </abbr>
+                <abbr title='Upload Document' className='metabar-button-abbr'>
+                    <img id='upload-document-metabar-button' className='metabar-link' src='/images/upload-document.png' onClick={this.handleUploadDocumentPress}/>
+                    <div id='upload-document-metabar-triangle' className='metabar-triangle'></div>
+                </abbr>
+                <abbr title='Signature Page' className='metabar-button-abbr'>
+                    <img id='signature-page-metabar-button' className='metabar-link' src='/images/pencil.png' onClick={this.handleSignaturePress}/>
+                    <div id='signature-page-metabar-triangle' className='metabar-triangle'></div>
+                </abbr>
             </div>
         )
     }

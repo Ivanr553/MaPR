@@ -17,16 +17,51 @@ export default class UploadDocument extends React.Component<any, any> {
         this.files = React.createRef()
     }
 
-    uploadDroppedFile = (e) => {
+    uploadDroppedFile = async (e) => {
         e.preventDefault()
         e.stopPropagation()
-        console.log(e.dataTransfer.files)
+
+        try {
+
+            let file = e.dataTransfer.files[0]
+            let url = '/DocumentUpload/Upload'
+    
+            let response = await $.ajax({
+                method: 'POST',
+                url: url,
+                contentType: 'application-pdf',
+                body: file
+            })
+    
+            console.log(response)
+
+        } catch(e) {
+            Error(e)
+        }
+
     }
 
-    handleFormSubmit = (e) => {
+    handleFormSubmit = async (e) => {
         e.preventDefault()
-        //@ts-ignore
-        let files = this.files.current.files
+
+        try {
+
+            // @ts-ignore
+            let file = this.files.current.files[0]
+            let url = '/DocumentUpload/Upload'
+    
+            let response = await $.ajax({
+                method: 'POST',
+                url: url,
+                contentType: 'application-pdf',
+                body: file
+            })
+    
+            console.log(response)
+
+        } catch(e) {
+            Error(e)
+        }
     }
 
     render() {

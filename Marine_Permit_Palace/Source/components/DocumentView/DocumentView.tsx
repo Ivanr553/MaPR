@@ -76,7 +76,7 @@ export default class DocumentView extends React.Component<any, any> {
             else if(currentForm.field_type === 'Text') {
                 let newForm = 
                     <div key={form} className='form-wrapper'>
-                        <TextInput key={form} width={width} height={height} top={top} left={left} value={currentForm.value} onChange={(e) => {this.handleFormEdit(e, form)}} />
+                        <TextInput key={form} position={'absolute'} border={'none'} width={width} height={height} top={top} left={left} value={currentForm.value} onChange={(e) => {this.handleFormEdit(e, form)}} />
                     </div>
 
                 documentFields.push(newForm)

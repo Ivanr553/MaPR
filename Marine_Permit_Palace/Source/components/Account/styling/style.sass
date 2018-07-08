@@ -2,18 +2,19 @@
   
 #Account
   width: 100%
-  height: auto
+  height: 100%
   cursor: default
   display: flex
   flex-direction: column
   align-items: flex-start
   justify-content: center
   background-color: rgb(255, 255, 255)
+  overflow: auto
 
 .user-information-header
   font-size: 1.5em
 
-#account-content-container
+#main-account-content-container
   width: 100%
   height: auto
   display: flex
@@ -21,4 +22,24 @@
   align-items: flex-start
   justify-content: flex-start
   padding-left: 3vw
+  padding-bottom: 20vh
+
+.account-content-container
+  height: 100%
+  width: 100%
+  margin-bottom: 10vh
+  
+.account-info-description
+  font-weight: bold
+  font-size: 3em
+
+.account-content-line
+  width: 100%
+  height: auto
+  padding-top: 1vh
+  padding-bottom: 1vh
+  display: grid
+  grid-template-columns: 1fr 1fr 3fr
+  grid-gap: 1vw
+  align-items: center
 

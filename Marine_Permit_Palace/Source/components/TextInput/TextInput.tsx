@@ -6,8 +6,10 @@ const s = require('./styling/style.sass')
 
 
 interface Props {
-    width: number,
-    height: number,
+    position: string,
+    border: string,
+    width: any,
+    height: any,
     left: number,
     top: number,
     value: any,
@@ -21,8 +23,6 @@ export default class TextInput extends React.Component<Props, any> {
         this.state = {
             style: {}
         }
-
-
     }
 
     //Getting style from props
@@ -30,6 +30,8 @@ export default class TextInput extends React.Component<Props, any> {
 
         let style = this.state.style
 
+        style.position = this.props.position
+        style.border = this.props.border
         style.width = this.props.width + 'px'
         style.height = this.props.height + 'px'
         style.top = this.props.top + 'px'
@@ -51,7 +53,7 @@ export default class TextInput extends React.Component<Props, any> {
     render() {
 
         return(
-            <input id='TextInput' style={this.state.style} defaultValue={this.props.value} onChange={(e) => this.props.onChange(e)} />
+            <textarea id='TextInput' style={this.state.style} defaultValue={this.props.value} onChange={this.props.onChange} />
         )
     }
 

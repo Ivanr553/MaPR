@@ -14560,7 +14560,7 @@ class DocumentView extends React.Component {
                 }
                 else if (currentForm.field_type === 'Text') {
                     let newForm = React.createElement("div", { key: form, className: 'form-wrapper' },
-                        React.createElement(TextInput_1.default, { key: form, width: width, height: height, top: top, left: left, value: currentForm.value, onChange: (e) => { this.handleFormEdit(e, form); } }));
+                        React.createElement(TextInput_1.default, { key: form, position: 'absolute', border: 'none', width: width, height: height, top: top, left: left, value: currentForm.value, onChange: (e) => { this.handleFormEdit(e, form); } }));
                     documentFields.push(newForm);
                 }
                 else if (currentForm.field_type === 'Signature') {
@@ -16529,37 +16529,72 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __webpack_require__(0);
 const s = __webpack_require__(261);
+const TextInput_1 = __webpack_require__(300);
 class Account extends React.Component {
     constructor(props) {
         super(props);
+        this.generatePersonalInfo = () => {
+            let personalInfo = this.state.user.personalInfo;
+            let personalInfoArray = this.state.personalInfoArray;
+            for (let item in personalInfo) {
+                let itemDescription = item;
+                while (itemDescription.includes('_')) {
+                    itemDescription = itemDescription.replace('_', ' ');
+                }
+                let component = (React.createElement("div", { className: 'account-content-line' },
+                    React.createElement("div", { className: 'account-info-description' },
+                        itemDescription,
+                        ":"),
+                    React.createElement(TextInput_1.default, { position: 'block', width: 'auto', border: 'solid 2px lightgrey', height: null, left: null, top: null, value: personalInfo[item], onChange: (e) => this.handleInputChange(e, item, 'personalInfo') })));
+                personalInfoArray.push(component);
+            }
+            this.setState({
+                personalInfoArray: personalInfoArray
+            });
+        };
+        this.handleInputChange = (e, id, array) => {
+            let user = this.state.user;
+            user[array][id] = e.target.value;
+            this.setState({
+                user: user
+            });
+        };
         this.state = {
             user: {
-                username: '',
-                rank: 'PVT',
-                first_name: 'TRISTAN',
-                last_name: 'ABER',
-                middle_name: 'JOLYON',
-                DOB: '1998 Nov 08',
-                home_of_record: '19211 JEFFERSON DAVIS HWY, TRIANGLE, VA 22172',
-                place_of_birth: 'TUN TAVERN, PA',
-                civ_license_state: 'KY',
-                class_of_vehicle: 'C',
-                civ_license_num: 'MARCORDET 434',
-                civ_issued_date: '11/8/1998',
-                civ_exp_date: '11/9/2018',
-                medical_cert_req: '*MED CERT REQUIRED',
-                wears_glasses: false,
-                organization: 'MARCOR DET FLW, MTIC',
-                age: 27,
-                sex: 'M',
-                height: 66,
-                weight: '140',
-                hair_color: 'BLN',
-                eye_color: 'BLU',
-                authorization: 1,
+                personalInfo: {
+                    first_name: 'TRISTAN',
+                    last_name: 'ABER',
+                    middle_name: 'JOLYON',
+                    DOB: '1998 Nov 08',
+                    home_of_record: '19211 JEFFERSON DAVIS HWY, TRIANGLE, VA 22172',
+                    place_of_birth: 'TUN TAVERN, PA',
+                    age: 27,
+                    sex: 'M',
+                    height: 66,
+                    weight: '140',
+                    hair_color: 'BLN',
+                    eye_color: 'BLU',
+                    wears_glasses: false,
+                },
+                accountInfo: {
+                    dod_id: '',
+                    rank: 'PVT',
+                    civ_license_state: 'KY',
+                    class_of_vehicle: 'C',
+                    civ_license_num: 'MARCORDET 434',
+                    civ_issued_date: '11/8/1998',
+                    civ_exp_date: '11/9/2018',
+                    medical_cert_req: '*MED CERT REQUIRED',
+                    organization: 'MARCOR DET FLW, MTIC',
+                    authorization: 1,
+                }
             },
-            currentView: ''
+            currentView: '',
+            personalInfoArray: []
         };
+    }
+    componentWillMount() {
+        this.generatePersonalInfo();
     }
     componentDidMount() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -16568,10 +16603,20 @@ class Account extends React.Component {
     render() {
         return (React.createElement("div", { id: 'Account' },
             React.createElement("div", { className: 'documents-header' }, "Account Information"),
-            React.createElement("div", { id: 'account-content-container' },
-                React.createElement("div", { className: 'account-info' },
-                    "First Name: ",
-                    this.state.user.first_name))));
+            React.createElement("div", { id: 'main-account-content-container' },
+                React.createElement("div", { className: 'account-content-container' },
+                    React.createElement("div", { className: 'account-article-title' }, "Personal Information"),
+                    this.state.personalInfoArray),
+                React.createElement("article", { className: 'account-content-container' },
+                    React.createElement("div", { className: 'account-article-title' }, "Account Information"),
+                    React.createElement("div", { className: 'account-info' },
+                        "First Name: ",
+                        this.state.user.first_name)),
+                React.createElement("article", { className: 'account-content-container' },
+                    React.createElement("div", { className: 'account-article-title' }, "Additional Information"),
+                    React.createElement("div", { className: 'account-info' },
+                        "First Name: ",
+                        this.state.user.first_name)))));
     }
 }
 exports.default = Account;
@@ -25340,7 +25385,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#Account {\n  width: 100%;\n  height: auto;\n  cursor: default;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  background-color: white; }\n\n.user-information-header {\n  font-size: 1.5em; }\n\n#account-content-container {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  padding-left: 3vw; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#Account {\n  width: 100%;\n  height: 100%;\n  cursor: default;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  background-color: white;\n  overflow: auto; }\n\n.user-information-header {\n  font-size: 1.5em; }\n\n#main-account-content-container {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start;\n  padding-left: 3vw;\n  padding-bottom: 20vh; }\n\n.account-content-container {\n  height: 100%;\n  width: 100%;\n  margin-bottom: 10vh; }\n\n.account-info-description {\n  font-weight: bold;\n  font-size: 3em; }\n\n.account-content-line {\n  width: 100%;\n  height: auto;\n  padding-top: 1vh;\n  padding-bottom: 1vh;\n  display: grid;\n  grid-template-columns: 1fr 1fr 3fr;\n  grid-gap: 1vw;\n  align-items: center; }\n", ""]);
 
 // exports
 
@@ -112944,7 +112989,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#TextInput {\n  position: absolute;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.75em;\n  background-color: transparent; }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#TextInput {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.75em;\n  background-color: transparent;\n  word-break: break-word !important;\n  resize: none; }\n\n#TextInput:focus {\n  outline: none; }\n", ""]);
 
 // exports
 
@@ -113014,6 +113059,8 @@ class TextInput extends React.Component {
         //Getting style from props
         this.setStyle = () => {
             let style = this.state.style;
+            style.position = this.props.position;
+            style.border = this.props.border;
             style.width = this.props.width + 'px';
             style.height = this.props.height + 'px';
             style.top = this.props.top + 'px';
@@ -113033,7 +113080,7 @@ class TextInput extends React.Component {
     componentDidMount() {
     }
     render() {
-        return (React.createElement("input", { id: 'TextInput', style: this.state.style, defaultValue: this.props.value, onChange: (e) => this.props.onChange(e) }));
+        return (React.createElement("textarea", { id: 'TextInput', style: this.state.style, defaultValue: this.props.value, onChange: this.props.onChange }));
     }
 }
 exports.default = TextInput;

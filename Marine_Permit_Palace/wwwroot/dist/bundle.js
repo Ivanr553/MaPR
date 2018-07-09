@@ -25497,7 +25497,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#MetaBar {\n  position: absolute;\n  width: 10vw;\n  left: 0;\n  top: 0;\n  height: 100vh;\n  background-color: #323232;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start; }\n  @media screen and (max-width: 600px) {\n    #MetaBar {\n      width: 15vw; } }\n  @media screen and (min-width: 1000px) {\n    #MetaBar {\n      width: 5vw; } }\n\n#logo-container {\n  opacity: 1;\n  height: auto;\n  width: 60%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-top: 1.2vh;\n  margin-bottom: 1.2vh; }\n\n#logo {\n  width: 100%;\n  height: auto; }\n\n.metabar-button-abbr {\n  position: relative; }\n\n.metabar-link {\n  width: 40%;\n  padding: 15% 30% 15% 30%;\n  opacity: 0.6;\n  cursor: pointer; }\n  @media screen and (min-width: 1000px) {\n    .metabar-link {\n      padding: 30% 30% 30% 30%; } }\n\n.metabar-link:hover {\n  background-color: rgba(250, 250, 250, 0.1); }\n\n.metabar-link-selected {\n  background-color: rgba(250, 250, 250, 0.1);\n  cursor: default; }\n\n.metabar-triangle {\n  width: 0;\n  height: 0;\n  border-left: solid 10px #3e3e3e;\n  border-top: solid 10px transparent;\n  border-bottom: solid 10px transparent;\n  position: absolute;\n  right: 0;\n  top: calc((100% - 10px) / 2);\n  display: none;\n  opacity: 0.5; }\n\n.metabar-triangle-selected {\n  display: block !important;\n  animation: translateTriangle 0.2s forwards; }\n\n.document-list-links-container {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  font-size: 1.1em; }\n\n.document-link {\n  text-decoration: none;\n  padding: 2.5% 0 2.5% 0;\n  width: 100%;\n  text-indent: 20%;\n  cursor: pointer; }\n\n.document-link:hover {\n  background-color: rgba(0, 0, 0, 0.1); }\n\n@keyframes translateTriangle {\n  0% {\n    opacity: 0.5;\n    transform: translateX(5px); }\n  100% {\n    opacity: 1;\n    transform: translateX(10px); } }\n", ""]);
+exports.push([module.i, "body {\n  font-family: sans-serif;\n  padding: 0;\n  margin: 0;\n  font-size: 0.5vw; }\n  @media screen and (max-width: 1000px) {\n    body {\n      font-size: 1vw; } }\n\n.Link {\n  text-decoration: none; }\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; }\n\ninput {\n  border: none;\n  border-radius: 1px; }\n\n.documents-header {\n  font-size: 2.5em;\n  color: black;\n  padding: 2.5vh 0 2.5vh 0;\n  margin: 2.5vh 2vw 0vh 3vw !important;\n  cursor: default;\n  color: black;\n  font-weight: bold; }\n\n@keyframes fade-in {\n  0% {\n    opacity: 0.2; }\n  100% {\n    opacity: 1; } }\n\n#MetaBar {\n  position: absolute;\n  width: 10vw;\n  left: 0;\n  top: 0;\n  height: 100vh;\n  background-color: #323232;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start; }\n  @media screen and (max-width: 600px) {\n    #MetaBar {\n      width: 15vw; } }\n  @media screen and (min-width: 1000px) {\n    #MetaBar {\n      width: 5vw; } }\n\n#logo-container {\n  height: auto;\n  width: 60%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  margin-top: 1.2vh;\n  margin-bottom: 1.2vh; }\n\n#logo {\n  width: 100%;\n  height: auto; }\n\n.metabar-button-abbr {\n  position: relative;\n  opacity: 1; }\n\n.metabar-link {\n  width: 40%;\n  padding: 15% 30% 15% 30%;\n  opacity: 0.6;\n  cursor: pointer; }\n  @media screen and (min-width: 1000px) {\n    .metabar-link {\n      padding: 30% 30% 30% 30%; } }\n\n#document-list-metabar-button {\n  width: 40%;\n  padding: 15% 30% 15% 30%;\n  opacity: 0.6;\n  cursor: pointer; }\n  @media screen and (min-width: 1000px) {\n    #document-list-metabar-button {\n      padding: 30% 30% 30% 30%; } }\n\n.metabar-link:hover {\n  background-color: rgba(250, 250, 250, 0.1); }\n\n.metabar-link-selected {\n  background-color: rgba(250, 250, 250, 0.1);\n  cursor: default; }\n\n#pending-document-notification {\n  position: absolute;\n  top: calc(15%);\n  right: calc(15%);\n  width: 3vh;\n  height: auto;\n  z-index: 10;\n  cursor: pointer; }\n  @media screen and (max-width: 1000px) {\n    #pending-document-notification {\n      right: 20%; } }\n\n.metabar-triangle {\n  width: 0;\n  height: 0;\n  border-left: solid 10px #3e3e3e;\n  border-top: solid 10px transparent;\n  border-bottom: solid 10px transparent;\n  position: absolute;\n  right: 0;\n  top: calc((100% - 10px) / 2);\n  display: none;\n  opacity: 0.5; }\n\n.metabar-triangle-selected {\n  display: block !important;\n  animation: translateTriangle 0.2s forwards; }\n\n.document-list-links-container {\n  width: 100%;\n  height: auto;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n  font-size: 1.1em; }\n\n.document-link {\n  text-decoration: none;\n  padding: 2.5% 0 2.5% 0;\n  width: 100%;\n  text-indent: 20%;\n  cursor: pointer; }\n\n.document-link:hover {\n  background-color: rgba(0, 0, 0, 0.1); }\n\n@keyframes translateTriangle {\n  0% {\n    opacity: 0.5;\n    transform: translateX(5px); }\n  100% {\n    opacity: 1;\n    transform: translateX(10px); } }\n", ""]);
 
 // exports
 
@@ -111443,12 +111443,20 @@ class MetaBar extends React.Component {
         this.getNotifications = () => __awaiter(this, void 0, void 0, function* () {
             try {
                 let response = yield $.get('/Notification');
-                console.log(response);
+                let notificationCount = response.notification_count;
+                this.setState({
+                    notificationCount: notificationCount
+                });
             }
             catch (e) {
-                console.log(e);
+                Error(e);
             }
         });
+        this.renderNotification = () => {
+            if (this.state.notificationCount <= 0) {
+                return React.createElement("img", { id: 'pending-document-notification', src: "/images/notification-undefined.png", alt: "" });
+            }
+        };
         //=============== Populating Content on Page ==============
         this.populateDocumentLinks = () => {
             let documents = this.state.documentResults.slice();
@@ -111488,21 +111496,27 @@ class MetaBar extends React.Component {
             });
             let getCurrentView = yield this.props.getCurrentView(this.state.currentView);
         });
+        this.handleMetabarSelectionStyling = (selectedMetabarView, selectedMetabarViewButton) => {
+            //Removing classes from buttons
+            document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected');
+            document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected');
+            document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected');
+            document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected');
+            //Removing classes from triangles
+            document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected');
+            document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected');
+            document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected');
+            document.getElementById('signature-page-metabar-triangle').classList.remove('metabar-triangle-selected');
+            //Adding class to button and triangle
+            document.getElementById(selectedMetabarView).classList.add('metabar-link-selected');
+            document.getElementById(selectedMetabarViewButton).classList.add('metabar-triangle-selected');
+        };
         this.handleNewDocumentPress = () => {
             this.setState({
                 currentView: React.createElement(CreateDocument_1.default, { getCurrentView: this.getCurrentView, documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
             }, () => {
                 this.props.getCurrentView(this.state.currentView);
-                document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('create-document-metabar-button').classList.add('metabar-link-selected');
-                document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('signature-page-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('create-document-metabar-triangle').classList.add('metabar-triangle-selected');
+                this.handleMetabarSelectionStyling('create-document-metabar-button', 'create-document-metabar-triangle');
             });
         };
         this.handleDocumentListPress = () => {
@@ -111510,16 +111524,7 @@ class MetaBar extends React.Component {
                 currentView: React.createElement(DocumentList_1.default, { documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
             }, () => {
                 this.props.getCurrentView(this.state.currentView);
-                document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('document-list-metabar-button').classList.add('metabar-link-selected');
-                document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('signature-page-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('document-list-metabar-triangle').classList.add('metabar-triangle-selected');
+                this.handleMetabarSelectionStyling('document-list-metabar-button', 'document-list-metabar-triangle');
             });
         };
         this.handleSignaturePress = () => {
@@ -111527,16 +111532,7 @@ class MetaBar extends React.Component {
                 currentView: React.createElement(SignatureView_1.default, null)
             }, () => {
                 this.props.getCurrentView(this.state.currentView);
-                document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('signature-page-metabar-button').classList.add('metabar-link-selected');
-                document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('signature-page-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('signature-page-metabar-triangle').classList.add('metabar-triangle-selected');
+                this.handleMetabarSelectionStyling('signature-page-metabar-button', 'signature-page-metabar-triangle');
             });
         };
         this.handleUploadDocumentPress = () => {
@@ -111544,16 +111540,7 @@ class MetaBar extends React.Component {
                 currentView: React.createElement(UploadDocument_1.default, null)
             }, () => {
                 this.props.getCurrentView(this.state.currentView);
-                document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected');
-                document.getElementById('upload-document-metabar-button').classList.add('metabar-link-selected');
-                document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('signature-page-metabar-triangle').classList.remove('metabar-triangle-selected');
-                document.getElementById('upload-document-metabar-triangle').classList.add('metabar-triangle-selected');
+                this.handleMetabarSelectionStyling('upload-document-metabar-button', 'upload-document-metabar-triangle');
             });
         };
         this.handleAboutPress = () => {
@@ -111579,8 +111566,9 @@ class MetaBar extends React.Component {
         return (React.createElement("div", { id: 'MetaBar' },
             React.createElement("div", { id: 'logo-container' },
                 React.createElement("img", { id: 'logo', src: '/images/MAPR_logo_edit.png' })),
-            React.createElement("abbr", { title: 'Pending Documents', className: 'metabar-button-abbr' },
-                React.createElement("img", { id: 'document-list-metabar-button', className: 'metabar-link', src: '/images/doc_icon.png', onClick: this.handleDocumentListPress }),
+            React.createElement("div", { title: 'Pending Documents', className: 'metabar-button-abbr' },
+                this.renderNotification(),
+                React.createElement("img", { id: 'document-list-metabar-button', src: '/images/doc_icon.png', onClick: this.handleDocumentListPress }),
                 React.createElement("div", { id: 'document-list-metabar-triangle', className: 'metabar-triangle' })),
             React.createElement("abbr", { title: 'Create New Document', className: 'metabar-button-abbr' },
                 React.createElement("img", { id: 'create-document-metabar-button', className: 'metabar-link', src: '/images/new_document-white.png', onClick: this.handleNewDocumentPress }),
@@ -111719,9 +111707,9 @@ class SignatureView extends React.Component {
         };
     }
     componentWillMount() {
-        this.setCanvasDimensions();
     }
     componentDidMount() {
+        this.setCanvasDimensions();
         window.addEventListener('resize', this.setCanvasDimensions);
     }
     render() {
@@ -111732,8 +111720,7 @@ class SignatureView extends React.Component {
             React.createElement("div", { id: 'signature-main-container' },
                 React.createElement("img", { className: 'canvas-icon', id: 'redo-icon', src: "/images/cached.png", alt: "", onClick: this.clearCanvas }),
                 React.createElement("img", { className: 'canvas-icon', id: this.state.savingIconId, src: this.state.savingIconSource, alt: "", onClick: this.completeSave }),
-                React.createElement("canvas", { id: 'signature-canvas', width: this.state.canvasWidth, height: this.state.canvasHeight, onMouseMoveCapture: (e) => this.canvasPen(e), onMouseLeave: this.clearPrevMousePos }),
-                React.createElement("div", { id: 'signature-button-container' }))));
+                React.createElement("canvas", { id: 'signature-canvas', width: this.state.canvasWidth, height: this.state.canvasHeight, onMouseMoveCapture: (e) => this.canvasPen(e), onMouseLeave: this.clearPrevMousePos }))));
     }
 }
 exports.default = SignatureView;

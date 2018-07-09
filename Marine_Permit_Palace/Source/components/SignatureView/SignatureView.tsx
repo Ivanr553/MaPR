@@ -142,10 +142,11 @@ export default class SignatureView extends React.Component<any, any> {
     }
 
     componentWillMount() {
-        this.setCanvasDimensions()
+        
     }
 
     componentDidMount() {
+        this.setCanvasDimensions()
         window.addEventListener('resize', this.setCanvasDimensions)
     }
 
@@ -163,10 +164,6 @@ export default class SignatureView extends React.Component<any, any> {
                     <img className='canvas-icon' id={this.state.savingIconId} src={this.state.savingIconSource} alt="" onClick={this.completeSave}/>
                     <canvas id='signature-canvas' width={this.state.canvasWidth} height={this.state.canvasHeight} onMouseMoveCapture={(e) => this.canvasPen(e)} onMouseLeave={this.clearPrevMousePos}>
                     </canvas>
-                    <div id='signature-button-container'>
-                        {/* <div className='signature-button'>Clear</div> */}
-                        {/* <div className='signature-button' onClick={this.printCanvas}>Save Signature</div> */}
-                    </div>
                 </div>
             </div>
         )

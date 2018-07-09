@@ -6,7 +6,6 @@ const s = require('./styling/style.sass')
 import Header from '../Header/Header'
 import TextInput from '../TextInput/TextInput'
 
-interface Props extends RouteComponentProps<any> {}
 export default class Account extends React.Component<any, any> {
 
   constructor(props) {
@@ -42,7 +41,8 @@ export default class Account extends React.Component<any, any> {
         }
       },
       currentView: '',
-      personalInfoArray: []
+      personalInfoArray: [],
+      error: false
     }
 
   }
@@ -62,7 +62,7 @@ export default class Account extends React.Component<any, any> {
       let component = (
         <div className='account-content-line'>
           <div className='account-info-description'>{itemDescription}:</div>
-          <TextInput position='block' width={'auto'} border={'solid 2px lightgrey'} height={null} left={null} top={null} value={personalInfo[item]} onChange={(e) => this.handleInputChange(e, item, 'personalInfo')}/>
+          <TextInput position='block' width={'auto'} border={'solid 1px rgb(0, 0, 0, 0.1)'} height={null} left={null} top={null} value={personalInfo[item]} onChange={(e) => this.handleInputChange(e, item, 'personalInfo')}/>
         </div>
       )
 
@@ -92,7 +92,6 @@ export default class Account extends React.Component<any, any> {
   }
 
   async componentDidMount() {
-
   }
 
   render() {
@@ -102,7 +101,7 @@ export default class Account extends React.Component<any, any> {
         <div className='documents-header'>Account Information</div>
         <div id='main-account-content-container'>
           <div className='account-content-container'>
-            <div className='account-article-title'>Personal Information</div>
+              <div className='account-article-title'>Personal Information</div>
             {this.state.personalInfoArray}
           </div>
           <article className='account-content-container'>

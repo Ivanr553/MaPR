@@ -4,7 +4,6 @@ import { Route, Switch, BrowserRouter } from 'react-router-dom'
 
 import Home from './components/Home/Home'
 import Account from './components/Account/Account'
-// import Studio from './components/studio/Studio'
 import Register from './components/Register/Register'
 import Login from './components/Login/Login'
 import DocumentView from './components/DocumentView/DocumentView'
@@ -20,7 +19,6 @@ export default class App extends React.Component<any, any> {
                     <Switch>
                         <Route path='/A/App' exact component={Login} />
                         <Route path='/A/App/Account' exact component={Account} />
-                        {/* <Route path='/A/Studio' exact component={Studio} /> */}
                         <Route path='/A/App/Register' exact component={Register} />
                         <Route path='/A/App/Home' exact component={Home} />
                         <Route path='/A/App/DocumentView' exact component={DocumentView} />

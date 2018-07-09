@@ -25,7 +25,7 @@ export default class MetaBar extends React.Component<any, any> {
     }
 
 
-    //============== Sending/Retrieving Data ================
+    //========================== Sending/Retrieving Data ==========================
 
     getCurrentUser = async () => {
 
@@ -37,7 +37,6 @@ export default class MetaBar extends React.Component<any, any> {
 
     }
 
-    //Will get the documents from the back end, for now is just using a hardcoded object
     getDocuments = async () => {
 
         try {
@@ -51,7 +50,7 @@ export default class MetaBar extends React.Component<any, any> {
             })
 
         } catch(e) {
-            console.log(e)
+            Error(e)
         }
 
     }
@@ -63,6 +62,8 @@ export default class MetaBar extends React.Component<any, any> {
             this.props.getCurrentView(this.state.currentView)
           })
     }
+
+    //==================== Handle Notifications ======================
 
     getNotifications = async () => {
 
@@ -85,7 +86,7 @@ export default class MetaBar extends React.Component<any, any> {
     }
 
 
-    //=============== Populating Content on Page ==============
+    //================= Populating Content on Page ==================
 
     populateDocumentLinks = () => {
 
@@ -111,7 +112,7 @@ export default class MetaBar extends React.Component<any, any> {
     }
 
 
-    //=============== OnClick/Button Handlers ==============
+    //================== OnClick/Button Handlers =================
 
     handleLinkPress = async (e) => {
 
@@ -217,13 +218,21 @@ export default class MetaBar extends React.Component<any, any> {
         })
     }
 
+
+    //==================== React Lifecycle Methods ====================
+
     componentDidMount() {
         this.getDocuments()
         this.getCurrentUser()
         this.getNotifications()
     }
 
+    componentDidCatch() {
+
+    }
+
     render() {
+
         return(
             <div id='MetaBar'>
                 <div id='logo-container'>

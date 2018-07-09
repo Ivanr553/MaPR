@@ -21,8 +21,6 @@ export default class CheckboxInput extends React.Component<Props, any> {
         this.state = {
             style: {}
         }
-
-
     }
 
     setStyle = () => {

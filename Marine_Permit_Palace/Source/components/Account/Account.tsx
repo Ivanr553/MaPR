@@ -42,7 +42,10 @@ export default class Account extends React.Component<any, any> {
       },
       currentView: '',
       personalInfoArray: [],
-      error: false
+      error: false,
+      'personal-tab': false,
+      'account-tab': false,
+      'additional-tab': false
     }
 
   }
@@ -67,7 +70,6 @@ export default class Account extends React.Component<any, any> {
       )
 
       personalInfoArray.push(component)
-
     }
 
     this.setState({
@@ -87,6 +89,32 @@ export default class Account extends React.Component<any, any> {
 
   }
 
+  handleAccountTabPress = (tab, title, list, arrow) => {
+
+    if(this.state.tab) {
+      document.getElementById(tab).classList.remove('account-tab-open')
+      document.getElementById(title).classList.remove('account-tab-title-open')
+      document.getElementById(list).classList.remove('account-content-list-open')
+      document.getElementById(arrow).classList.remove('account-tab-title-arrow-open')
+
+      this.setState({
+        tab: false
+      })
+    } 
+    
+    else {
+      document.getElementById(tab).classList.add('account-tab-open')
+      document.getElementById(title).classList.add('account-tab-title-open')
+      document.getElementById(list).classList.add('account-content-list-open')
+      document.getElementById(arrow).classList.add('account-tab-title-arrow-open')
+
+      this.setState({
+        tab: true
+      })
+    }
+
+  }
+
   componentWillMount() {
     this.generatePersonalInfo()
   }
@@ -100,18 +128,33 @@ export default class Account extends React.Component<any, any> {
       <div id='Account'>
         <div className='documents-header'>Account Information</div>
         <div id='main-account-content-container'>
-          <div className='account-content-container'>
-              <div className='account-article-title'>Personal Information</div>
-            {this.state.personalInfoArray}
+          <div id='personal-tab' className='account-tab' onClick={() => this.handleAccountTabPress('personal-tab', 'personal-tab-title', 'personal-tab-list', 'personal-tab-arrow')}>
+            <div id='personal-tab-title' className='account-tab-title'>
+              Personal Information
+              <img id='personal-tab-arrow' className='account-tab-title-arrow' src="/images/down-arrow-1.png" alt=""/>
+            </div>
+            <div id='personal-tab-list' className='account-content-list'>
+              {this.state.personalInfoArray}
+            </div>
           </div>
-          <article className='account-content-container'>
-            <div className='account-article-title'>Account Information</div>
-            <div className='account-info'>First Name: {this.state.user.first_name}</div>
-          </article>
-          <article className='account-content-container'>
-            <div className='account-article-title'>Additional Information</div>
-            <div className='account-info'>First Name: {this.state.user.first_name}</div>
-          </article>
+          <div id='account-tab' className='account-tab' onClick={() => this.handleAccountTabPress('account-tab', 'account-tab-title', 'account-tab-list', 'account-tab-arrow')}>
+            <div id='account-tab-title' className='account-tab-title'>
+              Account Information
+              <img id='account-tab-arrow' className='account-tab-title-arrow' src="/images/down-arrow-1.png" alt=""/>
+            </div>
+            <div id='account-tab-list' className='account-content-list'>
+              {this.state.accountInfoArray}
+            </div>
+          </div>
+          <div id='additional-tab' className='account-tab' onClick={() => this.handleAccountTabPress('additional-tab', 'additional-tab-title', 'additional-tab-list', 'additional-tab-arrow')}>
+            <div id='additional-tab-title' className='account-tab-title'>
+              Additional Information
+              <img id='additional-tab-arrow' className='account-tab-title-arrow' src="/images/down-arrow-1.png" alt=""/>
+            </div>
+            <div id='additional-tab-list' className='account-content-list'>
+              {this.state.additionalInfoArray}
+            </div>
+          </div>
         </div>
       </div>
     )

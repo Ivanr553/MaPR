@@ -54,10 +54,13 @@
   cursor: pointer
   border: solid 2px rgba(0, 0, 0, 0)
   font-size: 1.5em
+  border-radius: 2px
+  box-shadow: 0px 2px 5px rgba(50, 50, 50, 0.4)
+  animation: leave-document 0.2s forwards
+  transform-origin: top
 
 .viewable-document:hover
-  transform: translatex(1vw)
-  border-left: solid 3px $main-color
+  animation: hover-over-document 0.3s forwards
 
 .viewable-document-field
   font-size: 1.25em
@@ -136,3 +139,21 @@
   position: absolute
   left: 0
   top: 0
+
+
+@keyframes hover-over-document
+  0%
+    transform: scale(1)
+    box-shadow: 0px 2px 5px rgba(50, 50, 50, 0.4)
+  100%
+    transform: scale(1.01)
+    box-shadow: 2px 5px 5px rgba(50, 50, 50, 0.3)
+
+@keyframes leave-document
+  0%
+    transform: scale(1.01)
+    box-shadow: 2px 5px 5px rgba(50, 50, 50, 0.3)
+  100%
+    transform: scale(1)
+    box-shadow: 0px 2px 5px rgba(50, 50, 50, 0.4)
+    

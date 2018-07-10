@@ -7,8 +7,8 @@
   display: flex
   flex-direction: column
   align-items: flex-start
-  justify-content: center
-  background-color: rgb(255, 255, 255)
+  justify-content: flex-start
+  background-color: $main-back
   overflow: auto
 
 .user-information-header
@@ -21,20 +21,68 @@
   flex-direction: column
   align-items: flex-start
   justify-content: flex-start
-  padding-left: 3vw
   padding-bottom: 20vh
 
-.account-content-container
-  height: 100%
-  width: 100%
-  margin-bottom: 10vh
-  
-.account-info-description
-  font-weight: bold
+.account-tab
+  height: auto
+  width: calc(100% - 6vw)
+  margin-left: 3vw
+  margin-right: 3vw
+  background-color: rgb(245, 245, 245)
+  margin-bottom: 2vh
+  transform-origin: top
+
+.account-tab-title:hover
+  animation: hover-over-account-tab-title 0.3s forwards
+
+.account-tab-open
+  padding-bottom: 2vh
+  animation: none !important
+
+.account-tab-title
   font-size: 3em
+  width: calc(100% - 3vw)
+  height: auto
+  padding: 3vh 0 3vh 3vw
+  background-color: rgb(230, 230, 230)
+  cursor: pointer
+  background-color: white
+  border-radius: 5px
+  display: grid
+  grid-template-columns: 12fr 1fr
+  align-items: center
+  animation: leave-account-tab-title 0.2s forwards
+  @media screen and (max-width: 1000px)
+    font-size: 2em
+
+.account-tab-title-arrow
+  width: auto
+  height: 80%
+  animation: close-tab-arrow 0.2s forwards
+
+.account-tab-title-arrow-open
+  animation: open-tab-arrow 0.2s forwards
+  
+.account-tab-title-open
+  margin-bottom: 2vh
+  animation: leave-account-tab-title 0.2s forwards
+
+.account-tab-title-open:hover
+  animation: leave-account-tab-title 0.2s forwards !important
+
+.account-content-list
+  width: 100%
+  overflow: hidden
+  max-height: 0
+  transition: max-height 0.7s ease
+
+.account-content-list-open
+  max-height: 100vh
+  transition: max-height 0.7s ease
+  // animation: open-content-list 1s forwards
 
 .account-content-line
-  width: 100%
+  width: calc(100% - 3vw)
   height: auto
   padding-top: 1vh
   padding-bottom: 1vh
@@ -42,4 +90,46 @@
   grid-template-columns: 1fr 1fr 3fr
   grid-gap: 1vw
   align-items: center
+  padding-left: 3vw
 
+.account-info-description
+  font-weight: bold
+  font-size: 3em
+
+
+//Animations
+@keyframes hover-over-account-tab-title
+  0%
+    transform: scale(1)
+    box-shadow: 0px 2px 5px rgba(50, 50, 50, 0.4)
+  100%
+    transform: scale(1.01)
+    box-shadow: 2px 5px 5px rgba(50, 50, 50, 0.3)
+
+@keyframes leave-account-tab-title
+  0%
+    transform: scale(1.01)
+    box-shadow: 2px 5px 5px rgba(50, 50, 50, 0.3)
+  100%
+    transform: scale(1)
+    box-shadow: 0px 2px 5px rgba(50, 50, 50, 0.4)
+
+@keyframes open-tab-arrow
+  0%
+    transform: rotate(270deg)
+  100%
+    transform: rotate(360deg)
+
+@keyframes close-tab-arrow
+  0%
+    transform: rotate(360deg)
+  100%
+    transform: rotate(270deg)
+
+@keyframes open-content-list
+  0%
+    height: 0
+  99%
+    height: max-height
+  100%
+    height: auto

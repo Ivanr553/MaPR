@@ -81,7 +81,7 @@ export default class MetaBar extends React.Component<any, any> {
 
     renderNotification = () => {
         if(this.state.notificationCount <= 0) {
-            return <img id='pending-document-notification' src="/images/notification-undefined.png" alt=""/>
+            return <img id='pending-document-notification' src="/images/notification-undefined.png" alt="" onClick={this.handleDocumentListPress}/>
         }  
     }
 

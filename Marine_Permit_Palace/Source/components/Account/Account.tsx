@@ -38,10 +38,15 @@ export default class Account extends React.Component<any, any> {
           medical_cert_req: '*MED CERT REQUIRED',
           organization: 'MARCOR DET FLW, MTIC',
           authorization: 1,
+        },
+        additionalInfo: {
+
         }
       },
       currentView: '',
       personalInfoArray: [],
+      accountInfoArray: [],
+      additionalInfoArray: [],
       error: false,
       'personal-tab': false,
       'account-tab': false,
@@ -50,30 +55,36 @@ export default class Account extends React.Component<any, any> {
 
   }
 
-  generatePersonalInfo = () => {
+  generateInfo = (userArray: Array<any> , displayArrayName: String) => {
 
-    let personalInfo = this.state.user.personalInfo
-    let personalInfoArray = this.state.personalInfoArray
+    let elementArray = []
 
-    for(let item in personalInfo) {
+    for(let item in userArray) {
 
       let itemDescription = item
+      
+      //Replacing _ with ' '
       while(itemDescription.includes('_')) {
         itemDescription = itemDescription.replace('_', ' ')
       }
 
+      //Capitalizing the first word
+      itemDescription = itemDescription.charAt(0).toUpperCase() + itemDescription.slice(1)
+
+
       let component = (
-        <div className='account-content-line'>
+        <div key={item} className='account-content-line'>
           <div className='account-info-description'>{itemDescription}:</div>
-          <TextInput position='block' width={'auto'} border={'solid 1px rgb(0, 0, 0, 0.1)'} height={null} left={null} top={null} value={personalInfo[item]} onChange={(e) => this.handleInputChange(e, item, 'personalInfo')}/>
+          <TextInput position='block' width={'auto'} border={'solid 1px rgb(0, 0, 0, 0.1)'} height={null} left={null} top={null} value={userArray[item]} onChange={(e) => this.handleInputChange(e, item, 'personalInfo')}/>
         </div>
       )
 
-      personalInfoArray.push(component)
+      
+      elementArray.push(component)
     }
 
     this.setState({
-      personalInfoArray: personalInfoArray
+      [`${displayArrayName}`]: elementArray
     })
 
   }
@@ -89,16 +100,22 @@ export default class Account extends React.Component<any, any> {
 
   }
 
-  handleAccountTabPress = (tab, title, list, arrow) => {
+  handleAccountTabPress = (e, tab, title, list, arrow) => {
 
-    if(this.state.tab) {
+    if(e.target.id == tab || e.target.id == title || e.target.id == arrow) {
+
+    } else {
+      return
+    }
+
+    if(this.state[tab]) {
       document.getElementById(tab).classList.remove('account-tab-open')
       document.getElementById(title).classList.remove('account-tab-title-open')
       document.getElementById(list).classList.remove('account-content-list-open')
       document.getElementById(arrow).classList.remove('account-tab-title-arrow-open')
 
       this.setState({
-        tab: false
+        [`${tab}`]: false
       })
     } 
     
@@ -109,14 +126,16 @@ export default class Account extends React.Component<any, any> {
       document.getElementById(arrow).classList.add('account-tab-title-arrow-open')
 
       this.setState({
-        tab: true
+        [`${tab}`]: true
       })
     }
 
   }
 
   componentWillMount() {
-    this.generatePersonalInfo()
+    this.generateInfo(this.state.user.personalInfo, 'personalInfoArray')
+    this.generateInfo(this.state.user.accountInfo, 'accountInfoArray')
+    this.generateInfo(this.state.user.additionalInfo, 'additionalInfoArray')
   }
 
   async componentDidMount() {
@@ -128,7 +147,7 @@ export default class Account extends React.Component<any, any> {
       <div id='Account'>
         <div className='documents-header'>Account Information</div>
         <div id='main-account-content-container'>
-          <div id='personal-tab' className='account-tab' onClick={() => this.handleAccountTabPress('personal-tab', 'personal-tab-title', 'personal-tab-list', 'personal-tab-arrow')}>
+          <div id='personal-tab' className='account-tab' onClick={(e) => this.handleAccountTabPress(e, 'personal-tab', 'personal-tab-title', 'personal-tab-list', 'personal-tab-arrow')}>
             <div id='personal-tab-title' className='account-tab-title'>
               Personal Information
               <img id='personal-tab-arrow' className='account-tab-title-arrow' src="/images/down-arrow-1.png" alt=""/>
@@ -137,7 +156,7 @@ export default class Account extends React.Component<any, any> {
               {this.state.personalInfoArray}
             </div>
           </div>
-          <div id='account-tab' className='account-tab' onClick={() => this.handleAccountTabPress('account-tab', 'account-tab-title', 'account-tab-list', 'account-tab-arrow')}>
+          <div id='account-tab' className='account-tab' onClick={(e) => this.handleAccountTabPress(e, 'account-tab', 'account-tab-title', 'account-tab-list', 'account-tab-arrow')}>
             <div id='account-tab-title' className='account-tab-title'>
               Account Information
               <img id='account-tab-arrow' className='account-tab-title-arrow' src="/images/down-arrow-1.png" alt=""/>
@@ -146,7 +165,7 @@ export default class Account extends React.Component<any, any> {
               {this.state.accountInfoArray}
             </div>
           </div>
-          <div id='additional-tab' className='account-tab' onClick={() => this.handleAccountTabPress('additional-tab', 'additional-tab-title', 'additional-tab-list', 'additional-tab-arrow')}>
+          <div id='additional-tab' className='account-tab' onClick={(e) => this.handleAccountTabPress(e, 'additional-tab', 'additional-tab-title', 'additional-tab-list', 'additional-tab-arrow')}>
             <div id='additional-tab-title' className='account-tab-title'>
               Additional Information
               <img id='additional-tab-arrow' className='account-tab-title-arrow' src="/images/down-arrow-1.png" alt=""/>

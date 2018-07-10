@@ -36,7 +36,6 @@
   animation: hover-over-account-tab-title 0.3s forwards
 
 .account-tab-open
-  padding-bottom: 2vh
   animation: none !important
 
 .account-tab-title
@@ -64,22 +63,27 @@
   animation: open-tab-arrow 0.2s forwards
   
 .account-tab-title-open
-  margin-bottom: 2vh
-  animation: leave-account-tab-title 0.2s forwards
+  animation: leave-account-tab-title 0.5s forwards
 
 .account-tab-title-open:hover
   animation: leave-account-tab-title 0.2s forwards !important
 
 .account-content-list
-  width: 100%
+  width: calc(100% - 2vw)
   overflow: hidden
   max-height: 0
-  transition: max-height 0.7s ease
+  transition: max-height 0.3s ease
+  display: grid
+  grid-template-columns: 1fr 1fr
+  grid-template-rows: auto
+  padding-right: 1vw
+  padding-left: 1vw
+  animation: close-content-list 0.3s ease
 
 .account-content-list-open
   max-height: 100vh
-  transition: max-height 0.7s ease
-  // animation: open-content-list 1s forwards
+  transition: max-height 0.5s ease
+  animation: open-content-list 0.2s forwards
 
 .account-content-line
   width: calc(100% - 3vw)
@@ -87,14 +91,13 @@
   padding-top: 1vh
   padding-bottom: 1vh
   display: grid
-  grid-template-columns: 1fr 1fr 3fr
-  grid-gap: 1vw
+  grid-template-columns: 1fr 2fr
   align-items: center
   padding-left: 3vw
 
 .account-info-description
   font-weight: bold
-  font-size: 3em
+  font-size: 2em
 
 
 //Animations
@@ -128,8 +131,13 @@
 
 @keyframes open-content-list
   0%
-    height: 0
-  99%
-    height: max-height
+    padding: 0 0 0 0
   100%
-    height: auto
+    padding: 2vh 0 2vh 0
+
+@keyframes close-content-list
+  0%
+    padding: 2vh 0 2vh 0
+  100%
+    padding: 0 0 0 0
+        

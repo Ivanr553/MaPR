@@ -13,6 +13,7 @@ const s = require('./style.sass')
 export default class App extends React.Component<any, any> {
 
     render() {
+        if (module['hot']) { module['hot'].accept(); }
         return(
             <div id='App'>
                 <BrowserRouter>
@@ -31,6 +32,7 @@ export default class App extends React.Component<any, any> {
 }
 
 ReactDOM.render(
+    
     <App />,
     document.getElementById('react-app')
 )

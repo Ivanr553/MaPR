@@ -1,10 +1,11 @@
 ﻿const path = require('path');
 
 module.exports = {
-  entry: './Source/App.tsx',
+    entry: { 'main-client': './Source/App.tsx'},
   output: {
     path: path.resolve(__dirname, 'wwwroot/dist'),
-    filename: 'bundle.js'
+      filename: 'bundle.js',
+      publicPath: '/dist/'
   },
   mode: 'development',
   module: {

@@ -15,9 +15,9 @@ class DocumentList extends React.Component {
         let documentList = [];
         for (let i = 0; i < documents.length; i++) {
             let file = '/dist/documents/' + documents[i].file;
-            let newDocument = React.createElement("div", { key: i, className: 'viewable-document', id: documents[i].file, onClick: (e) => { this.props.viewDocument(e); } },
+            let newDocument = React.createElement("div", { key: i, className: 'viewable-document', id: documents[i].idDocument, onClick: (e) => { this.props.viewDocument(e); } },
                 React.createElement("div", { className: 'viewable-document-field', id: 'first-field' }, (i + 1) + '.'),
-                React.createElement("div", { className: 'viewable-document-field' }, documents[i].title));
+                React.createElement("div", { className: 'viewable-document-field' }, documents[i].name));
             documentList.push(newDocument);
         }
         this.setState({

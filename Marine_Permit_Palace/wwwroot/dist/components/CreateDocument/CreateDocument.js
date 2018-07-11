@@ -9,11 +9,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const $ = require("jquery");
 const s = require('./styling/style.sass');
+const DocumentView_1 = require("../DocumentView/DocumentView");
 class CreateDocument extends React.Component {
     constructor(props) {
         super(props);
+        this.handleSelectPreviewView = () => {
+            let currentView = (React.createElement("div", { className: 'container' },
+                React.createElement("div", { id: 'document-view-container' },
+                    React.createElement(DocumentView_1.default, { document_id: this.state.document_id }))));
+            this.setState({
+                currentView: currentView,
+                view: 'Preview'
+            }, () => {
+            });
+        };
         this.state = {
             documentResults: this.props.documentResults,
             currentView: '',
@@ -27,6 +37,7 @@ class CreateDocument extends React.Component {
         // this.handleDocumentLinkPress = this.handleDocumentLinkPress.bind(this)
         this.handleSelectDocumentView = this.handleSelectDocumentView.bind(this);
         this.handleSelectPermissionsView = this.handleSelectPermissionsView.bind(this);
+        // this.handleSelectPreviewView = this.handleSelectPreviewView.bind(this)
         this.handleNext = this.handleNext.bind(this);
         this.handleBack = this.handleBack.bind(this);
         this.handleAddUser = this.handleAddUser.bind(this);
@@ -40,7 +51,6 @@ class CreateDocument extends React.Component {
             currentView: currentView,
             view: 'SelectDocument'
         }, () => {
-            this.handleButtons();
         });
     }
     handleSelectPermissionsView() {
@@ -54,14 +64,14 @@ class CreateDocument extends React.Component {
                 React.createElement("div", { id: 'user-search-main-container' },
                     React.createElement("div", { id: 'user-search-bar-container' },
                         React.createElement("div", { id: 'search-bar-magnifying-glass' }),
-                        React.createElement("input", { onClick: this.handleAddUser, onChange: (e) => { this.handleFindUser(e); }, id: 'user-search-bar', placeholder: 'Find Users', type: "text" })),
+                        React.createElement("input", { onChange: (e) => { this.handleFindUser(e); }, id: 'user-search-bar', placeholder: 'Find Users', type: "text" }),
+                        this.state.userSearchResults),
                     React.createElement("div", { id: 'added-users-title' }, "Selected Users"),
                     React.createElement("div", { id: 'added-users-container' }, this.state.userList)))));
         this.setState({
             currentView: currentView,
             view: 'SelectPermissions'
         }, () => {
-            this.handleButtons();
         });
     }
     //Handle View Switching
@@ -83,52 +93,15 @@ class CreateDocument extends React.Component {
             return;
         }
     }
-    //Creating Buttons
-    handleButtons() {
-        let backButton;
-        if (this.state.view === 'SelectDocument') {
-            backButton = '';
-            this.setState({
-                backButton: backButton
-            });
-        }
-        if (this.state.view === 'SelectPermissions') {
-            backButton =
-                React.createElement("button", { className: 'create-document-button selectable-button', id: 'create-document-back-button', onClick: this.handleBack }, "Back");
-            this.setState({
-                backButton: backButton
-            });
-        }
-        let nextButton;
-        if (!this.state.readyForNext) {
-            nextButton =
-                React.createElement("button", { className: 'create-document-button', id: 'create-document-next-button' }, "Next");
-            this.setState({
-                nextButton: nextButton
-            }, () => {
-                this.forceUpdate();
-                return nextButton;
-            });
-        }
-        else {
-            nextButton =
-                React.createElement("button", { className: 'create-document-button selectable-button', id: 'create-document-next-button', onClick: this.handleNext }, "Next");
-            this.setState({
-                nextButton: nextButton
-            }, () => {
-                return nextButton;
-            });
-        }
-    }
     //Creates list in state of documents to be rendered
     renderDocuments() {
         let documents = this.props.documentResults;
         let documentList = [];
         for (let i = 0; i < documents.length; i++) {
-            let file = '/dist/documents/' + documents[i].file;
-            let newDocument = React.createElement("div", { key: i, className: 'viewable-document', id: documents[i].file, onClick: (e) => { this.selectDocument(e); } },
+            let document_id = '/dist/documents/' + documents[i].document_id;
+            let newDocument = React.createElement("div", { key: i, className: 'viewable-document', id: documents[i].idDocument, onClick: (e) => { this.selectDocument(e); } },
                 React.createElement("div", { className: 'viewable-document-field', id: 'first-field' }, (i + 1) + '.'),
-                React.createElement("div", { className: 'viewable-document-field' }, documents[i].title));
+                React.createElement("div", { className: 'viewable-document-field' }, documents[i].name));
             documentList.push(newDocument);
         }
         this.setState({
@@ -152,10 +125,8 @@ class CreateDocument extends React.Component {
             target.style.border = 'solid 2px rgba(38, 107, 168, 0.7)';
         }
         this.setState({
-            document_id: target.id,
-            readyForNext: true
+            document_id: target.id
         }, () => {
-            this.handleButtons();
         });
     }
     //Finding and displaying added users
@@ -163,11 +134,28 @@ class CreateDocument extends React.Component {
         return __awaiter(this, void 0, void 0, function* () {
             let query = e.target.value;
             try {
-                let result = $.ajax({});
+                // let result = $.ajax({
+                // })
+                let userArray = ['user1', 'user2', 'user3'];
+                this.displayUsersFromSearch(userArray);
             }
             catch (e) {
                 console.log(e);
             }
+        });
+    }
+    displayUsersFromSearch(userArray) {
+        console.log('called');
+        let userSearchResultsArray = [];
+        for (let i = 0; i < userArray.length; i++) {
+            let userSearchResult = (React.createElement("li", { className: 'user-search-result' }, userArray[i]));
+            userSearchResultsArray.push(userSearchResult);
+        }
+        let userSearchResults = (React.createElement("ul", { id: 'user-search-results-list' }, userSearchResultsArray));
+        this.setState({
+            userSearchResults: userSearchResults
+        }, () => {
+            this.handleSelectPermissionsView();
         });
     }
     handleAddUser() {
@@ -184,15 +172,15 @@ class CreateDocument extends React.Component {
     handleDeleteUser() {
     }
     componentWillMount() {
-        this.handleButtons();
         this.renderDocuments();
     }
     render() {
         return (React.createElement("div", { id: 'CreateDocument' },
-            this.state.currentView,
-            React.createElement("div", { id: 'button-container' },
-                this.state.backButton,
-                this.state.nextButton)));
+            React.createElement("div", { id: 'create-document-nav-bar' },
+                React.createElement("div", { id: 'create-document-nav-bar-item-document', className: 'create-document-nav-bar-item', onClick: this.handleSelectDocumentView }, "Select Document"),
+                React.createElement("div", { className: 'create-document-nav-bar-item', onClick: this.handleSelectPermissionsView }, "Create Permissions"),
+                React.createElement("div", { className: 'create-document-nav-bar-item', onClick: this.handleSelectPreviewView }, "Preview")),
+            this.state.currentView));
     }
 }
 exports.default = CreateDocument;

@@ -12,6 +12,9 @@ const DocumentView_1 = require("./components/DocumentView/DocumentView");
 const s = require('./style.sass');
 class App extends React.Component {
     render() {
+        if (module['hot']) {
+            module['hot'].accept();
+        }
         return (React.createElement("div", { id: 'App' },
             React.createElement(react_router_dom_1.BrowserRouter, null,
                 React.createElement(react_router_dom_1.Switch, null,

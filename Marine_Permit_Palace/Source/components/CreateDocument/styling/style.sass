@@ -3,8 +3,6 @@
 #CreateDocument
     width: 100%
     height: 100vh
-    // overflow: hidden
-    margin-top: 0
 
 #create-document-nav-bar
     width: 100%
@@ -37,18 +35,22 @@
 .container
     width: 100%
     height: 92.5%
-    overflow: auto
+    overflow: hidden
+    position: relative
+
+#select-users-header
+    // font-size: 4em
 
 #user-search-main-container
-    width: 99%
-    padding-left: 1%
-    min-height: 40vh
-    background-color: lightgrey
+    width: calc(100% - 2vw - 4px)
+    margin-left: 1vw
+    padding-left: 1vw
+    background-color: white
+    border: solid 2px lightgrey
     display: flex
     flex-direction: column
     align-items: flex-start
     justify-content: flex-start
-    margin-top: 5vh
     overflow: auto
 
 #user-search-bar-container
@@ -56,10 +58,11 @@
     position: relative
 
 #user-search-bar
-    font-size: 2em
-    border-radius: 8px
-    border: none
+    font-size: 2.5em
+    border: solid 1px grey
+    border-radius: 1px
     text-indent: 1vw
+    padding: 0.5vh 0 0.5vh 0
 
 #user-search-bar-magnifying-glass
     height: 100%
@@ -95,9 +98,9 @@
     width: 100%
     text-indent: 1%
 
-#added-users-container
+.added-users-container
     width: 50%
-    height: 30%
+    height: 40%
     display: flex
     flex-direction: column
     align-items: center
@@ -107,17 +110,33 @@
     background-color: rgb(230, 230, 230)
     position: relative
     overflow: auto
-    margin-bottom: 5%
+    margin-bottom: 1%
 
 .added-user    
     width: 99%
-    font-size: 1.5em
+    font-size: 2.25em
     background-color: white
-    cursor: pointer
+    cursor: default
     border: solid 1px grey
     margin-bottom: 0.5%
-    padding: 2% 0 2% 0
+    padding: 0.3em 0 0.3em 0
     text-indent: 1%
+    display: grid
+    grid-template-columns: 9fr 1fr
+    justify-content: center
+    align-items: center
+
+.added-user-delete-icon
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    font-size: 2em
+    color: rgb(255, 142, 132)
+    cursor: pointer
+
+.added-user-delete-icon:hover
+    color: rgb(255, 107, 94)
 
 .create-document-button
     position: absolute
@@ -131,3 +150,153 @@
     overflow: hidden
 
 
+input:focus
+  outline: none
+
+#document-view-header
+  width: 100%
+  height: 10vh
+  right: 0
+  display: flex
+  flex-direction: row
+  align-items: center
+  justify-content: center
+  position: absolute
+  top: 0vh
+  z-index: 400
+  background-color: rgba(50, 50, 50, 0.8)
+
+#save-button
+  width: auto
+  padding: 1%
+  font-size: 1.5em
+  z-index: 500
+  background-color: lightblue
+  border: solid 1px rgb(150, 150, 150)
+  cursor: pointer
+  border-radius: 3px
+  opacity: 0.5
+  position: absolute
+  right: 15vw
+
+#document-view-no-document-warning
+  position: sticky
+  top: 30vh
+  width: auto
+  height: auto
+  padding: 1vh 1vw 1vh 1vw
+  background-color: lightgrey
+  z-index: 600
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  text-align: center
+  font-size: 3em
+  border: solid 1px grey
+  font-weight: bold
+
+#document-name-input
+  font-size: 1.75em
+  padding: 1%
+  background-color: rgba(230, 230, 230, 1)
+  min-width: 40%
+  font-weight: bold
+  text-align: center
+
+#document-view-sidebar
+    width: 20vw
+    height: 100%
+    position: absolute
+    right: -20vw
+    top: 0
+    background-color: rgb(200, 200, 200)
+    border-left: solid 2px grey
+    z-index: 600
+    box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.1)
+
+#show-sidebar-icon-container
+    position: absolute
+    right: 2vw
+    top: 2vh
+    background-color: rgb(175, 175, 175)
+    border-radius: 5px
+    z-index: 500
+    cursor: pointer
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    padding: 1vw 1.5vw 1vw 1.5vw
+    animation: shrink 0.3s forwards
+
+#show-sidebar-icon-container:hover
+    animation: grow 0.3s forwards
+
+#show-sidebar-icon
+    width: auto
+    height: 35px
+
+.show-sidebar
+    animation: show-sidebar 1s forwards   
+
+.hide-sidebar
+    animation: hide-sidebar 1s forwards
+
+#close-sidebar-icon
+    font-size: 4em
+    color: grey
+    font-weight: bold
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    position: absolute
+    top: 1vh
+    right: 1vw
+    z-index: 600
+    cursor: pointer
+
+#close-sidebar-icon:hover
+    color: black
+
+#added-users-container-preview
+    width: calc(98% - 4px)
+    margin-left: calc(2% - 2px)
+
+@keyframes show-sidebar
+    0%
+        right: -20vw
+    100%
+        right: 0
+
+@keyframes hide-sidebar
+    0%
+        right: 0
+    100%
+        right: -20vw
+
+@keyframes grow
+    0%
+        transform: scale(1)
+    100%
+        transform: scale(1.05)
+
+@keyframes shrink
+    0%
+        transform: scale(1.05)
+    100%
+        transform: scale(1)
+
+@keyframes hide
+    0%
+        opacity: 1
+    100%
+        opacity: 0
+
+@keyframes show
+    0%
+        opacity: 0
+    100%
+        opacity: 1
+                

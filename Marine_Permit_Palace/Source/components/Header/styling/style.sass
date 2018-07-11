@@ -3,40 +3,43 @@
 #HomeHeader
   width: 90vw
   left: 10vw
-  height: 0vh
-  background-color: rgba(38, 107, 168, 1)
-  backgrojnd-color: $metabar-color
-  display: flex
+  background-color: $metabar-color
   flex-direction: row
-  align-items: flex-end
+  align-items: center
   justify-content: flex-end
   position: fixed
   top: 0
   z-index: 20
   color: rgb(240, 240, 240)
   font-size: 1.5em
+  display: none
 
 .show-full-header
   width: 100vw !important
   left: 0 !important
-  height: 7.5vh !important
+  height: 10vh !important
+  display: flex !important
 
 .header-tab
   cursor: default
   height: auto
   width: auto
-  padding: 1vh 1vw 1vh 1vw
+  padding: 1vh 1.5vw 1vh 1.5vw
   display: flex
   flex-direction: row
   align-items: center
   justify-content: center
-  border: solid 1px grey
-  background-color: lightgrey
+  border: solid 1px rgb(200, 200, 200)
+  background-color: rgba(0, 0, 0, 0)
   cursor: pointer
-  margin-bottom: 1vh
-  margin-right: 1vw
-  color: black
+  margin-right: 2vw
+  color: white
   font-size: 1.4em
+  margin-top: 2vh
+
+.header-tab:hover
+  color: rgba(0, 0, 0, 1)
+  background-color: rgb(200, 200, 200)
 
 .header-link
   display: flex
@@ -59,22 +62,26 @@
   align-items: flex-end
   justify-content: flex-end
 
-#header-logo
-  padding-left: 1.25vw
-  padding-right: 2.75vw
+#header-logo-container
   width: auto
   height: 100%
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  margin-left: 1vw
+  cursor: default
+
+#header-logo
+  width: auto
+  height: 90%
 
 .log-in-tab
   display: flex
   flex-direction: column
   align-items: center
   justify-content: center
-  // height: 100%
-  // font-size: 0.75em
-  // padding-bottom: 0
 
 #logoff-icon
   width: auto
   height: 70%
-  cursor: pointer

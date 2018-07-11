@@ -18,41 +18,33 @@ export default class Register extends React.Component<Props, any> {
             confirmPassword: '',
             email: ''
         }
-
-        this.handleConfirmPassword = this.handleConfirmPassword.bind(this)
-        this.handleEmail = this.handleEmail.bind(this)
-        this.handlePassword = this.handlePassword.bind(this)
-        this.handleRegister = this.handleRegister.bind(this)
-        this.handleUsername = this.handleUsername.bind(this)
-        // this.handleConfirmPassword = this.handleConfirmPassword.bind(this)
-
     }
 
-    handleUsername(e) {
+    handleUsername = (e) => {
         this.setState({
             dodNumber: e.target.value
         })
     }
 
-    handleEmail(e) {
+    handleEmail = (e) => {
         this.setState({
             email: e.target.value
         }) 
     }
 
-    handlePassword(e) {
+    handlePassword = (e) => {
         this.setState({
             password: e.target.value
         })
     }
 
-    handleConfirmPassword(e) {
+    handleConfirmPassword = (e) => {
         this.setState({
             confirmPassword: e.target.value
         })
     }
 
-    async handleRegister() {
+    handleRegister = async () => {
 
         // Check if inputs are not properly filled in
         if(!this.state.dodNumber || !this.state.password) {
@@ -101,14 +93,13 @@ export default class Register extends React.Component<Props, any> {
     }
 
     componentDidMount() {
-        console.log(document.cookie)
     }
 
     render() {
         return(
             <div className='Register'>
 
-                <Header />
+                <Header page={'Register'}/>
 
                 <div className='register-content-container'>
                     <div className='register-container-section'>

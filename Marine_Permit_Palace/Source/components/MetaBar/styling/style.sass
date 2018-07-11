@@ -17,22 +17,35 @@
   justify-content: flex-start
 
 #logo-container
-  opacity: 1
   height: auto
   width: 60%
   display: flex
   flex-direction: column
   align-items: center
   justify-content: center
-  padding: 0
-  // @media screen and (min-width: 1000px)
-  //   height: 5vh
+  margin-top: 1.2vh
+  margin-bottom: 1.2vh
 
 #logo
   width: 100%
   height: auto
 
+.metabar-button-abbr
+  position: relative
+  opacity: 1
+
 .metabar-link
+  width: 40%
+  padding: 15% 30% 15% 30%
+  opacity: 0.6
+  cursor: pointer
+  @media screen and (min-width: 1000px)
+    padding: 30% 30% 30% 30%
+
+#opacity-check
+  // opacity: 0.6
+
+#document-list-metabar-button
   width: 40%
   padding: 15% 30% 15% 30%
   opacity: 0.6
@@ -45,6 +58,34 @@
 
 .metabar-link-selected
   background-color: rgba(250, 250, 250, 0.1)
+  cursor: default !important
+
+#pending-document-notification
+  position: absolute
+  top: calc(15%)
+  right: calc(15%)
+  width: 3vh
+  height: auto
+  z-index: 10
+  cursor: pointer
+  @media screen and (max-width: 1000px)
+    right: 20%
+
+.metabar-triangle
+  width: 0
+  height: 0
+  border-left: solid 10px #3e3e3e
+  border-top: solid 10px transparent
+  border-bottom: solid 10px transparent
+  position: absolute
+  right: 0
+  top: calc((100% - 10px) / 2)
+  display: none
+  opacity: 0.5
+
+.metabar-triangle-selected
+  display: block !important
+  animation: translateTriangle 0.2s forwards
 
 .document-list-links-container
   width: 100%
@@ -56,7 +97,6 @@
   font-size: 1.1em
 
 .document-link
-  // color: rgb(220, 220, 220)
   text-decoration: none
   padding: 2.5% 0 2.5% 0
   width: 100%
@@ -65,3 +105,11 @@
 
 .document-link:hover
   background-color: rgba(0, 0, 0, 0.1)
+
+@keyframes translateTriangle
+  0%
+    opacity: 0.5
+    transform: translateX(5px)
+  100%
+    opacity: 1
+    transform: translateX(10px)

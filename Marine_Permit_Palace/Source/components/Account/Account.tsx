@@ -4,165 +4,175 @@ import { RouteComponentProps } from 'react-router'
 const s = require('./styling/style.sass')
 
 import Header from '../Header/Header'
+import TextInput from '../TextInput/TextInput'
 
-interface Props extends RouteComponentProps<any> {}
 export default class Account extends React.Component<any, any> {
 
   constructor(props) {
     super(props)
     this.state = {
       user: {
-        username: '',
-        rank: 'PVT',
-        first_name: 'TRISTAN',
-        last_name: 'ABER',
-        middle_name: 'JOLYON',
-        DOB: '1998 Nov 08',
-        home_of_record: '19211 JEFFERSON DAVIS HWY, TRIANGLE, VA 22172',
-        place_of_birth: 'TUN TAVERN, PA',
-        civ_license_state: 'KY',
-        class_of_vehicle: 'C',
-        civ_license_num: 'MARCORDET 434',
-        civ_issued_date: '11/8/1998',
-        civ_exp_date: '11/9/2018',
-        medical_cert_req: '*MED CERT REQUIRED',
-        wears_glasses: false,
-        organization: 'MARCOR DET FLW, MTIC',
-        age: 27,
-        sex: 'M',
-        height: 66,
-        weight: '140',
-        hair_color: 'BLN',
-        eye_color: 'BLU',
-        authorization: 1,
+        personalInfo: {
+          first_name: 'TRISTAN',
+          last_name: 'ABER',
+          middle_name: 'JOLYON',
+          DOB: '1998 Nov 08',
+          home_of_record: '19211 JEFFERSON DAVIS HWY, TRIANGLE, VA 22172',
+          place_of_birth: 'TUN TAVERN, PA',
+          age: 27,
+          sex: 'M',
+          height: 66,
+          weight: '140',
+          hair_color: 'BLN',
+          eye_color: 'BLU',
+          wears_glasses: false,
+        },
+        accountInfo: {
+          dod_id: '',
+          rank: 'PVT',
+          civ_license_state: 'KY',
+          class_of_vehicle: 'C',
+          civ_license_num: 'MARCORDET 434',
+          civ_issued_date: '11/8/1998',
+          civ_exp_date: '11/9/2018',
+          medical_cert_req: '*MED CERT REQUIRED',
+          organization: 'MARCOR DET FLW, MTIC',
+          authorization: 1,
+        },
+        additionalInfo: {
+
+        }
       },
-      currentView: ''
+      currentView: '',
+      personalInfoArray: [],
+      accountInfoArray: [],
+      additionalInfoArray: [],
+      error: false,
+      'personal-tab': false,
+      'account-tab': false,
+      'additional-tab': false
     }
 
-    this.getCurrentUser = this.getCurrentUser.bind(this)
   }
 
-  getAccountInformationView() {
-    let currentView = (
-      <div className='account-page-view' id='account-information-view'>
-        <div className='account-content-column'>
-          <div className='account-info-line-item'><strong>DOD Number:</strong> {this.state.user.username}</div>
-          <div className='account-info-line-item'><strong>Rank:</strong> {this.state.user.rank}</div>
-          <div className='account-info-line-item'><strong>Organization:</strong> {this.state.user.organization}</div>
-          <div className='account-info-line-item'><strong>Class of Vehicle:</strong> {this.state.user.class_of_vehicle}</div>
+  generateInfo = (userArray: Array<any> , displayArrayName: String) => {
+
+    let elementArray = []
+
+    for(let item in userArray) {
+
+      let itemDescription = item
+      
+      //Replacing _ with ' '
+      while(itemDescription.includes('_')) {
+        itemDescription = itemDescription.replace('_', ' ')
+      }
+
+      //Capitalizing the first word
+      itemDescription = itemDescription.charAt(0).toUpperCase() + itemDescription.slice(1)
+
+
+      let component = (
+        <div key={item} className='account-content-line'>
+          <div className='account-info-description'>{itemDescription}:</div>
+          <TextInput position='block' width={'auto'} border={'solid 1px rgb(0, 0, 0, 0.1)'} height={null} left={null} top={null} value={userArray[item]} onChange={(e) => this.handleInputChange(e, item, 'personalInfo')}/>
         </div>
-        <div className='account-content-column'>
-          <div className='account-info-line-item'><strong>Authorization Level:</strong> {this.state.user.authorization}</div>
-            <div className='account-info-line-item'><strong>Medical Certification:</strong> {this.state.user.medical_cert_req}</div>
-            <div className='account-info-line-item'><strong>Civilian Issued Date:</strong> {this.state.user.civ_issued_date}</div>
-            <div className='account-info-line-item'><strong>Civilian Expiration Date:</strong> {this.state.user.civ_exp_date}</div>
-        </div>
-      </div>
-    )
+      )
+
+      
+      elementArray.push(component)
+    }
 
     this.setState({
-      currentView: currentView
+      [`${displayArrayName}`]: elementArray
     })
+
   }
 
-  getPersonalInformationView() {
-    let currentView = (
-      <div className='account-page-view' id='personal-information-view'>
-          <div className='account-content-column'>
-            <div className='account-info-line-item'><strong>First Name:</strong> {this.state.user.first_name}</div>
-            <div className='account-info-line-item'><strong>Middle Name:</strong> {this.state.user.middle_name}</div>
-            <div className='account-info-line-item'><strong>Last Name:</strong> {this.state.user.last_name}</div>
-            <div className='account-info-line-item'><strong>Sex:</strong> {this.state.user.sex}</div>
-            <div className='account-info-line-item'><strong>Age:</strong> {this.state.user.age}</div>
-            <div className='account-info-line-item'><strong>Wears Glasses:</strong> {this.state.user.wears_glasses}</div>
-          </div>
-          <div className='account-content-column'>
-            <div className='account-info-line-item'><strong>Height:</strong> {this.state.user.height}</div>            
-            <div className='account-info-line-item'><strong>Weight:</strong> {this.state.user.weight}</div>
-            <div className='account-info-line-item'><strong>Hair Color:</strong> {this.state.user.hair_color}</div>
-            <div className='account-info-line-item'><strong>Eye Color:</strong> {this.state.user.eye_color}</div>
-            <div className='account-info-line-item'></div>
-          </div>
-      </div>
-    )
+  handleInputChange = (e, id, array) => {
 
-    this.setState({
-      currentView: currentView
-    })
-  }
-
-  getCivilianInformationView() {
-    let currentView = (
-      <div className='account-page-view' id='civilian-information-view'>
-        <div className='account-content-column'>
-            <div className='account-info-line-item'><strong>Home Address:</strong> {this.state.user.home_of_record}</div>
-            <div className='account-info-line-item'><strong>Date of Birth:</strong> {this.state.user.DOB}</div>
-            <div className='account-info-line-item'><strong>Place of Birth:</strong> {this.state.user.place_of_birth}</div>
-        </div>
-        <div className='account-content-column'>
-            <div className='account-info-line-item'><strong>Civilian Licence Number:</strong> {this.state.user.civ_license_num}</div>
-            <div className='account-info-line-item'><strong>State of Licence:</strong> {this.state.user.civ_license_state}</div>
-        </div>
-      </div>
-    )
-
-    this.setState({
-      currentView: currentView
-    })
-  }
-
-  async getCurrentUser() {
-
-    let user = await this.props.getCurrentUser()
+    let user = this.state.user
+    user[array][id] = e.target.value
 
     this.setState({
       user: user
-    }, () => {
-      
     })
 
   }
 
-  handleTabPress(e, content) {
+  handleAccountTabPress = (e, tab, title, list, arrow) => {
 
-    let tabs = e.target.parentNode.children
-
-    for(let tab of tabs) {
-      if(tab.classList.contains('account-tab-selected')) {
-        tab.classList.remove('account-tab-selected')
-      }
+    //Making sure code is executed only when selecting tab/title
+    if(!(e.target.id == tab || e.target.id == title || e.target.id == arrow)) {
+      return 
     }
 
-    e.target.classList.add('account-tab-selected')
+    if(this.state[tab]) {
+      document.getElementById(tab).classList.remove('account-tab-open')
+      document.getElementById(title).classList.remove('account-tab-title-open')
+      document.getElementById(list).classList.remove('account-content-list-open')
+      document.getElementById(arrow).classList.remove('account-tab-title-arrow-open')
 
-    if(content == 'Account') {
-      this.getAccountInformationView()
-    }
-    if(content == 'Personal') {
-      this.getPersonalInformationView()
-    }
-    if(content == 'Civilian') {
-      this.getCivilianInformationView()
+      this.setState({
+        [`${tab}`]: false
+      })
+    } 
+    
+    else {
+      document.getElementById(tab).classList.add('account-tab-open')
+      document.getElementById(title).classList.add('account-tab-title-open')
+      document.getElementById(list).classList.add('account-content-list-open')
+      document.getElementById(arrow).classList.add('account-tab-title-arrow-open')
+
+      this.setState({
+        [`${tab}`]: true
+      })
     }
 
   }
 
+  componentWillMount() {
+    this.generateInfo(this.state.user.personalInfo, 'personalInfoArray')
+    this.generateInfo(this.state.user.accountInfo, 'accountInfoArray')
+    this.generateInfo(this.state.user.additionalInfo, 'additionalInfoArray')
+  }
+
   async componentDidMount() {
-    let awaitUser= await this.getCurrentUser()
-    this.getAccountInformationView()
   }
 
   render() {
 
     return(
       <div id='Account'>
-        <div id='account-content-container'>
-          <div id='account-tabs-container'>
-            <div id='account-info-tab' className='account-tab account-tab-selected' onClick={(e) => {this.handleTabPress(e, 'Account')}}>Account Information</div>
-            <div id='personal-info-tab' className='account-tab' onClick={(e) => {this.handleTabPress(e, 'Personal')}}>Personal Information</div>
-            <div id='civilian-info-tab' className='account-tab' onClick={(e) => {this.handleTabPress(e, 'Civilian')}}>Civilian Information</div>
+        <div className='documents-header'>Account Information</div>
+        <div id='main-account-content-container'>
+          <div id='personal-tab' className='account-tab' onClick={(e) => this.handleAccountTabPress(e, 'personal-tab', 'personal-tab-title', 'personal-tab-list', 'personal-tab-arrow')}>
+            <div id='personal-tab-title' className='account-tab-title'>
+              Personal Information
+              <img id='personal-tab-arrow' className='account-tab-title-arrow' src="/images/down-arrow-1.png" alt=""/>
+            </div>
+            <div id='personal-tab-list' className='account-content-list'>
+              {this.state.personalInfoArray}
+            </div>
           </div>
-          {this.state.currentView}
+          <div id='account-tab' className='account-tab' onClick={(e) => this.handleAccountTabPress(e, 'account-tab', 'account-tab-title', 'account-tab-list', 'account-tab-arrow')}>
+            <div id='account-tab-title' className='account-tab-title'>
+              Account Information
+              <img id='account-tab-arrow' className='account-tab-title-arrow' src="/images/down-arrow-1.png" alt=""/>
+            </div>
+            <div id='account-tab-list' className='account-content-list'>
+              {this.state.accountInfoArray}
+            </div>
+          </div>
+          <div id='additional-tab' className='account-tab' onClick={(e) => this.handleAccountTabPress(e, 'additional-tab', 'additional-tab-title', 'additional-tab-list', 'additional-tab-arrow')}>
+            <div id='additional-tab-title' className='account-tab-title'>
+              Additional Information
+              <img id='additional-tab-arrow' className='account-tab-title-arrow' src="/images/down-arrow-1.png" alt=""/>
+            </div>
+            <div id='additional-tab-list' className='account-content-list'>
+              {this.state.additionalInfoArray}
+            </div>
+          </div>
         </div>
       </div>
     )

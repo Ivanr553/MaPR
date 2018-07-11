@@ -1,7 +1,6 @@
 import * as React from 'react'
 import PDF from 'react-pdf-js'
 import * as $ from 'jquery'
-import { setTimeout } from 'timers';
 
 const s = require('./styling/style.sass')
 
@@ -28,8 +27,6 @@ export default class DocumentView extends React.Component<any, any> {
 
     async populatePage() {
 
-        console.log(this.props.document_id)
-
         if(this.props.document_id === '') {
             this.setState({
                 noDocument: true
@@ -42,8 +39,6 @@ export default class DocumentView extends React.Component<any, any> {
         }
         
         let documentObject = await $.get(`/DocumentSave/GetDocumentMeta?document_id=${this.props.document_id}`)
-
-        console.log(documentObject)
 
         let documentFields = []
 
@@ -135,8 +130,6 @@ export default class DocumentView extends React.Component<any, any> {
             submitted_file_id: submitted_file_id
         }
 
-        console.log(saveFile)
-
         let saveResult
 
         try {
@@ -150,6 +143,8 @@ export default class DocumentView extends React.Component<any, any> {
                 dataType: 'json',
                 data: JSON.stringify(saveFile)
             })
+
+            console.log(saveResult)
 
             if(saveResult && saveResult.status_code < 201) {
                 // document.getElementById('save-button').style.backgroundColor = 'rgb(131, 198, 125)'
@@ -170,13 +165,17 @@ export default class DocumentView extends React.Component<any, any> {
 
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.populatePage()
+    }
+
+    componentWillUnmount() {
+
     }
 
     render() {
         let document_id = '../../dist/documents/NAVMC10694.pdf'
-        let noDocumentWarning
+        let noDocumentWarning = <div></div>
 
         if(this.state.noDocument) {
             noDocumentWarning = (

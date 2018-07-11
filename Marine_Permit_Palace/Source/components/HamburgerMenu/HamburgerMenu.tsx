@@ -77,9 +77,15 @@ class HamburgerMenu extends React.Component<Props, any> {
                 <div onClick={(e) => {this.toggleHamburgerMenu('open')}} id='hamburger-menu-container' className='hamburger-menu-element'>
                     <img className='hamburger-menu-element' id='hamburger-icon' src={this.props.hamburgerSource} alt=""/>
                     <div id='hamburger-menu' style={{animation: 'hide-hamburger-menu 0.75s forwards'}}>
-                        <div className='hamburger-menu-item'>Account</div>
-                        <div className='hamburger-menu-item'>Help</div>
-                        <div className='hamburger-menu-item'>Log Out</div>
+                        <div className='hamburger-menu-item'>
+                            Account
+                        </div>
+                        <div className='hamburger-menu-item'>
+                            Help
+                        </div>
+                        <div className='hamburger-menu-item'>
+                            Log Out
+                        </div>
                     </div>
                 </div>
             )
@@ -91,9 +97,15 @@ class HamburgerMenu extends React.Component<Props, any> {
                 <div onClick={(e) => {this.toggleHamburgerMenu('closed')}} id='hamburger-menu-container' className='hamburger-menu-element'>
                     <img className='hamburger-menu-element' id='hamburger-icon' src={this.props.hamburgerSource} alt=""/>
                     <div id='hamburger-menu' className='hamburger-menu-element' style={{animation: 'show-hamburger-menu 1.5s forwards'}}>
-                        <div className='hamburger-menu-item hamburger-menu-element' id='account-hamburger-menu-item' onClick={this.handleAccountPress}>Account</div>
-                        <div className='hamburger-menu-item hamburger-menu-element' id='settings-hamburger-menu-item'>Help</div>
-                        <div className='hamburger-menu-item hamburger-menu-element' id='log-out-hamburger-menu-item' onClick={this.logOff}>Log Out</div>
+                        <div className='hamburger-menu-item hamburger-menu-element' id='account-hamburger-menu-item' onClick={this.handleAccountPress}>
+                            Account
+                        </div>
+                        <div className='hamburger-menu-item hamburger-menu-element' id='settings-hamburger-menu-item'>
+                            Help
+                        </div>
+                        <div className='hamburger-menu-item hamburger-menu-element' id='log-out-hamburger-menu-item' onClick={this.logOff}>
+                            Log Out
+                        </div>
                     </div>
                 </div>
             )

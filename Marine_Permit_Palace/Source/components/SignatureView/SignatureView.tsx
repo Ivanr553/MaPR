@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
-import { setTimeout } from 'timers';
 
 const s = require('./styling/style.sass')
 
@@ -148,6 +147,14 @@ export default class SignatureView extends React.Component<any, any> {
     componentDidMount() {
         this.setCanvasDimensions()
         window.addEventListener('resize', this.setCanvasDimensions)
+    }
+
+    componentWillUnmount() {
+        clearTimeout( setTimeout(() => {
+            this.setState({
+                savingIconId: ''
+            })
+        }, 1000))
     }
 
     render() {

@@ -27,7 +27,6 @@ class Header extends React.Component {
     logOff() {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield $.get('/Account/Logout');
-            console.log(response);
             if (!response) {
                 alert('There was an error with your request');
             }
@@ -46,7 +45,6 @@ class Header extends React.Component {
                 return;
             }
             let user = yield this.props.getCurrentUser();
-            console.log('header user:', user);
             if (user.username) {
                 this.setState({
                     username: user.username
@@ -55,13 +53,12 @@ class Header extends React.Component {
         });
     }
     //Hamburger Menu
-    handleHamburgerMenuPress() {
+    handleHamburgerMenuPress(e) {
         if (!this.state.hamburgerMenuShow) {
-            // animation: show-hamburger-menu 1.25s forwards
-            let hamburgerMenu = React.createElement("div", { id: 'hamburger-menu', style: { animation: 'show-hamburger-menu 1.5s forwards' } },
-                React.createElement("div", { className: 'hamburger-menu-item' }, "Account"),
-                React.createElement("div", { className: 'hamburger-menu-item' }, "Settings"),
-                React.createElement("div", { className: 'hamburger-menu-item' }, "Log Out"));
+            let hamburgerMenu = React.createElement("div", { className: 'hamburger-menu-element', id: 'hamburger-menu', style: { animation: 'show-hamburger-menu 1.5s forwards' } },
+                React.createElement("div", { className: 'hamburger-menu-item hamburger-menu-element', id: 'account-hamburger-menu-item' }, "Account"),
+                React.createElement("div", { className: 'hamburger-menu-item hamburger-menu-element', id: 'settings-hamburger-menu-item' }, "Settings"),
+                React.createElement("div", { className: 'hamburger-menu-item hamburger-menu-element', id: 'log-out-hamburger-menu-item' }, "Log Out"));
             this.setState({
                 hamburgerMenu: hamburgerMenu,
                 hamburgerMenuShow: true
@@ -82,30 +79,33 @@ class Header extends React.Component {
         this.getCurrentUser();
     }
     render() {
+        //Header state if user is NOT logged in
         let accountInnerHtml;
         let accountLink = '/Register';
-        let registerTab = (React.createElement("div", { className: 'header-tab register-tab' },
-            React.createElement(react_router_dom_1.Link, { className: 'Link header-link', to: { pathname: '/A/App/Register' } }, " Register ")));
-        let logInTab = (React.createElement("div", { className: 'header-tab log-in-tab' },
-            React.createElement(react_router_dom_1.Link, { className: 'Link header-link', to: { pathname: '/A/App/' } }, " Log In ")));
+        let registerTab = (React.createElement(react_router_dom_1.Link, { className: 'Link header-tab register-tab', to: { pathname: '/A/App/Register' } }, "Register"));
+        let logInTab = (React.createElement(react_router_dom_1.Link, { className: 'Link header-tab log-in-tab', to: { pathname: '/A/App/' } }, "Log In"));
         let homeTab = React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/' } },
             React.createElement("img", { src: '/images/MAPR_logo_edit.png', id: 'header-logo' }));
         let logOff;
         let fullHeader = 'show-full-header';
+        //Header state if user IS logged in
         if (this.state.username != '') {
-            accountLink = '/Account';
-            registerTab = React.createElement("div", null);
-            logInTab =
-                React.createElement("div", { onClick: this.handleHamburgerMenuPress, className: 'header-tab log-in-tab', id: 'hamburger-menu-container' },
-                    React.createElement("img", { id: 'hamburger-icon', src: "/images/hamburger-menu.png", alt: "" }),
-                    this.state.hamburgerMenu);
-            homeTab =
-                React.createElement(react_router_dom_1.Link, { className: 'Link home-header-link', to: { pathname: '/A/App/Home' } },
-                    React.createElement("img", { src: '/images/MAPR_logo_edit.png', id: 'header-logo' }));
-            homeTab = React.createElement("div", null);
-            logOff =
-                React.createElement("div", { className: 'header-tab log-in-tab', onClick: this.logOff },
-                    React.createElement("img", { id: 'logoff-icon', src: "/images/logoff.png", alt: "" }));
+            // accountLink = '/Account'
+            // registerTab = <div></div>
+            // logInTab = <div></div>
+            //     // <div onClick={(e) => {this.handleHamburgerMenuPress(e)}} className='header-tab log-in-tab' id='hamburger-menu-container'>
+            //     //     <img id='hamburger-icon' src="/images/hamburger-menu.png" alt=""/>
+            //     //     {this.state.hamburgerMenu}
+            //     // </div>
+            // homeTab =
+            //     <Link className='Link home-header-link' to={{pathname: '/A/App/Home'}}>
+            //         <img src='/images/MAPR_logo_edit.png' id='header-logo' />
+            //     </Link>
+            // homeTab = <div></div>
+            // logOff = 
+            //     <div className='header-tab log-in-tab' onClick={this.logOff}>
+            //         <img id='logoff-icon' src="/images/logoff.png" alt=""/>
+            //     </div>
             fullHeader = '';
         }
         return (React.createElement("div", { id: 'HomeHeader', className: fullHeader },

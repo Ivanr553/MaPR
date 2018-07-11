@@ -83,7 +83,7 @@ export default class DocumentView extends React.Component<any, any> {
             }
             else if(currentForm.field_type === 'Signature') {
                 let newForm = 
-                    <canvas key={form} className='document-signature-canvas' style={{position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`, backgroundColor: 'red'}}>
+                    <canvas key={form} className='document-signature-canvas' style={{position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`, backgroundColor: 'yellow'}}>
                     </canvas>
 
                 documentFields.push(newForm)
@@ -153,7 +153,7 @@ export default class DocumentView extends React.Component<any, any> {
         let saveResult
 
         try {
-
+            //switch to success 
             saveResult = await $.ajax({
                 method: 'POST',
                 headers: {
@@ -188,31 +188,58 @@ export default class DocumentView extends React.Component<any, any> {
     }
 
     render() {
-        let document_id = '../../dist/documents/NAVMC10694.pdf'
-        let noDocumentWarning
 
-        if(this.state.noDocument) {
-            noDocumentWarning = (
-                <div id='document-view-no-document-warning'>
-                    There is no document selected
-                </div>
-            )
-        }
+        //$.ajax({
+        //    method: 'POST',
+        //    headers: {
+        //        'Content-Type': 'application/json; charset=UTF-8'
+        //    },
+        //    url: `/DocumentSave/SaveFile`,
+        //    dataType: 'json',
+        //    data: JSON.stringify(saveFile)
+        //})
 
-        return(
-            <div className='DocumentView'>
-                {noDocumentWarning}
-                {/* <div id='document-view-header'>
+
+        $.get('/DocumentManager/GetFlatDocument?document_id=' + this.props.document_id, function (data) {
+            let document_data = data.file;
+            console.log(document_data);
+
+            let PDFSrc = 'data:application/pdf;base64, ' + document_data;
+
+            return (
+                <div className='DocumentView'>
+                    {/*{noDocumentWarning}*/};
+                    {/* <div id='document-view-header'> 
                     <input placeholder='Document Name' onChange={(e) => {this.handleDocumentNameChange(e)}} id='document-name-input' type="text"/>
                     <div id='save-button' onClick={() => {this.saveFile(this.state.submitted_file_id)}}>Save File</div>
                 </div> */}
-                <PDF className='pdf-image' file={document_id} >
-                </PDF>
-                <div id='document-form-div'>
-                    {this.state.documentFields}
+                    <PDF className='pdf-image' file={PDFSrc} >
+                    </PDF>
+                    <div id='document-form-div'>
+                        {this.state.documentFields}
+                    </div>
                 </div>
+            )
+        });
+        //let noDocumentWarning;
+
+        //if (this.state.noDocument) {
+        //    noDocumentWarning = (
+        //        <div id='document-view-no-document-warning'>
+        //            There is no document selected
+        //            </div>
+        //    )
+        //}
+        //return (
+        //    <h1>Document Could not be loaded</h1>
+        //    { noDocumentWarning }
+        //    )
+        return (
+            <div> 
+                <h1>Document Could not be loaded</h1>
             </div>
         )
+       
     }
 
 }

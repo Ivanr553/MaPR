@@ -8,7 +8,7 @@ class Footer extends React.Component {
         this.state = {};
     }
     render() {
-        return (React.createElement("div", { id: 'Footer' }, "Marin Permit Repository 2018"));
+        return (React.createElement("div", { id: 'Footer' }, "Marine Permit Repository 2018"));
     }
 }
 exports.default = Footer;

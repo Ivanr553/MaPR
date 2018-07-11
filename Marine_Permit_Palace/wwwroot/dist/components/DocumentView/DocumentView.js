@@ -22,40 +22,32 @@ class DocumentView extends React.Component {
             url: '',
             documentObject: {},
             documentName: 'document',
-            submitted_file_id: ''
+            submitted_file_id: '',
+            noDocument: false
         };
-    }
-    getDocument() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                let documentList = yield $.get('/DocumentSave/GetAllDocuments');
-                let pdfID = documentList[0].idDocument;
-                let pdfURL = `/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`;
-                this.setState({
-                    url: pdfURL
-                });
-            }
-            catch (err) {
-                console.log('Error:', err);
-            }
-        });
     }
     populatePage() {
         return __awaiter(this, void 0, void 0, function* () {
-            let documentList = yield $.get('/DocumentSave/GetAllDocuments');
-            let document_id = documentList[0].idDocument;
-            let pdf = yield $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${document_id}`);
-            let documentObject = yield $.get(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`);
+            console.log(this.props.document_id);
+            if (this.props.document_id === '') {
+                this.setState({
+                    noDocument: true
+                });
+                return;
+            }
+            else {
+                this.setState({
+                    noDocument: false
+                });
+            }
+            let documentObject = yield $.get(`/DocumentSave/GetDocumentMeta?document_id=${this.props.document_id}`);
             console.log(documentObject);
             let documentFields = [];
-            //Document Variables
-            //Width: 0.9*90vw
-            //Height: auto
             let pdfWidth = documentObject.document_size.right;
             let pdfHeight = documentObject.document_size.height;
             let pdfRatio = pdfHeight / pdfWidth;
-            let webWidth = 0.9 * 90; //in vw
-            let webHeigth = webWidth * pdfRatio; // in vw
+            let webWidth = 612; //in px
+            let webHeigth = 792; // in px
             for (let form in documentObject.document_meta) {
                 let currentForm = documentObject.document_meta[form];
                 let name = currentForm.field_name;
@@ -68,17 +60,17 @@ class DocumentView extends React.Component {
                 let width = (currentForm.field_position.position.width * webWidth) / pdfWidth;
                 if (currentForm.field_type === 'Checkbox') {
                     currentForm.value = false;
-                    let newForm = React.createElement("div", { key: form, className: 'form-wrapper', style: { position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw` } },
+                    let newForm = React.createElement("div", { key: form, className: 'form-wrapper', style: { position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px` } },
                         React.createElement("input", { id: form, className: 'document-checkbox', style: {}, type: "checkbox", onChange: (e) => { this.handleFormEdit(e, form); } }));
                     documentFields.push(newForm);
                 }
                 else if (currentForm.field_type === 'Text') {
                     let newForm = React.createElement("div", { key: form, className: 'form-wrapper' },
-                        React.createElement("input", { id: form, style: { position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw` }, className: 'document-input', defaultValue: currentForm.value, type: "text", onChange: (e) => { this.handleFormEdit(e, form); } }));
+                        React.createElement("input", { id: form, style: { position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px` }, className: 'document-input', defaultValue: currentForm.value, type: "text", onChange: (e) => { this.handleFormEdit(e, form); } }));
                     documentFields.push(newForm);
                 }
                 else if (currentForm.field_type === 'Signature') {
-                    let newForm = React.createElement("canvas", { key: form, className: 'document-signature-canvas', style: { position: 'absolute', left: `${left}vw`, top: `${top}vw`, width: `${width}vw`, height: `${height}vw`, backgroundColor: 'red' } });
+                    let newForm = React.createElement("canvas", { key: form, className: 'document-signature-canvas', style: { position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`, backgroundColor: 'yellow' } });
                     documentFields.push(newForm);
                 }
                 delete currentForm.field_position;
@@ -86,7 +78,7 @@ class DocumentView extends React.Component {
             this.setState({
                 documentFields: documentFields,
                 documentObject: documentObject,
-                document_id: document_id
+                document_id: this.props.document_id
             }, () => {
                 this.saveFile(null);
             });
@@ -133,6 +125,7 @@ class DocumentView extends React.Component {
             console.log(saveFile);
             let saveResult;
             try {
+                //switch to success 
                 saveResult = yield $.ajax({
                     method: 'POST',
                     headers: {
@@ -160,16 +153,18 @@ class DocumentView extends React.Component {
         });
     }
     componentDidMount() {
-        this.getDocument();
         this.populatePage();
     }
     render() {
-        let file = '../../dist/documents/NAVMC10694.pdf';
+        let document_data = $.get('/DocumentManager/GetFlatDocument?document_id=' + this.props.document_id);
+        console.log(document_data);
+        let noDocumentWarning;
+        if (this.state.noDocument) {
+            noDocumentWarning = (React.createElement("div", { id: 'document-view-no-document-warning' }, "There is no document selected"));
+        }
         return (React.createElement("div", { className: 'DocumentView' },
-            React.createElement("div", { id: 'document-view-header' },
-                React.createElement("input", { placeholder: 'Document Name', onChange: (e) => { this.handleDocumentNameChange(e); }, id: 'document-name-input', type: "text" }),
-                React.createElement("div", { id: 'save-button', onClick: () => { this.saveFile(this.state.submitted_file_id); } }, "Save File")),
-            React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: file }),
+            noDocumentWarning,
+            React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: document_data.file }),
             React.createElement("div", { id: 'document-form-div' }, this.state.documentFields)));
     }
 }

@@ -48,63 +48,24 @@ class MetaBar extends React.Component {
     //Will get the documents from the back end, for now is just using a hardcoded object
     getDocuments() {
         return __awaiter(this, void 0, void 0, function* () {
-            let result = {
-                documents: [
-                    {
-                        id: '23456',
-                        title: 'NAVMC',
-                        created_by: 'Officer',
-                        action_required: 'Fill Out',
-                        status: 'pending',
-                        file: 'NAVMC10694.pdf'
-                    },
-                    {
-                        id: '23456',
-                        title: 'NAVMC',
-                        created_by: 'Officer',
-                        action_required: 'Fill Out',
-                        status: 'pending',
-                        file: 'NAVMC10694.pdf'
-                    },
-                    {
-                        id: '23456',
-                        title: 'NAVMC',
-                        created_by: 'Officer',
-                        action_required: 'Fill Out',
-                        status: 'pending',
-                        file: 'NAVMC10694.pdf'
-                    },
-                    {
-                        id: '23456',
-                        title: 'NAVMC',
-                        created_by: 'Officer',
-                        action_required: 'Fill Out',
-                        status: 'pending',
-                        file: 'NAVMC10694.pdf'
-                    }
-                ]
-            };
             try {
                 let documentList = yield $.get('/DocumentSave/GetAllDocuments');
-                console.log(documentList);
-                let pdfID = documentList[0].idDocument;
-                let returnPDF = yield $.get(`/DocumentSave/GetNewAutoPopulatedFile?document_id=${pdfID}`);
+                this.setState({
+                    documentResults: documentList
+                }, () => {
+                    this.populateDocumentLinks();
+                });
             }
             catch (e) {
                 console.log(e);
             }
-            this.setState({
-                documentResults: result.documents
-            }, () => {
-                this.populateDocumentLinks();
-            });
         });
     }
     populateDocumentLinks() {
         let documents = this.state.documentResults.slice();
         let documentLinks = [];
         for (let i = 0; i < documents.length; i++) {
-            let documentLink = React.createElement("div", { className: 'document-link', id: documents[i].file, key: i, "data-params": { id: documents[i].id, document: documents[i] }, onClick: (e) => { this.handleLinkPress(e); } }, documents[i].title);
+            let documentLink = React.createElement("div", { className: 'document-link', id: documents[i].idDocument, key: i, "data-params": { id: documents[i].id, document: documents[i] }, onClick: (e) => { this.handleLinkPress(e); } }, documents[i].name);
             documentLinks.push(documentLink);
         }
         this.setState({
@@ -115,12 +76,12 @@ class MetaBar extends React.Component {
     }
     handleLinkPress(e) {
         return __awaiter(this, void 0, void 0, function* () {
-            let file = e.target.id;
+            let document_id = e.target.id;
             let setFile = yield this.setState({
-                file: file
+                document_id: document_id
             });
             let setCurrentView = yield this.setState({
-                currentView: React.createElement(DocumentView_1.default, { file: this.state.file })
+                currentView: React.createElement(DocumentView_1.default, { document_id: this.state.document_id })
             });
             let getCurrentView = yield this.props.getCurrentView(this.state.currentView);
         });
@@ -131,12 +92,12 @@ class MetaBar extends React.Component {
             while (!target.classList.contains('viewable-document')) {
                 target = target.parentNode;
             }
-            let file = target.id;
+            let document_id = target.id;
             let setFile = yield this.setState({
-                file: file
+                document_id: document_id
             });
             let setCurrentView = yield this.setState({
-                currentView: React.createElement(DocumentView_1.default, { file: this.state.file })
+                currentView: React.createElement(DocumentView_1.default, { document_id: this.state.document_id })
             });
             let getCurrentView = yield this.props.getCurrentView(this.state.currentView);
         });
@@ -198,10 +159,14 @@ class MetaBar extends React.Component {
         return (React.createElement("div", { id: 'MetaBar' },
             React.createElement("div", { id: 'logo-container' },
                 React.createElement("img", { id: 'logo', src: '/images/MAPR_logo_edit.png' })),
-            React.createElement("img", { className: 'metabar-link', src: '/images/doc_icon.png', onClick: this.handleDocumentListPress }),
-            React.createElement("img", { className: 'metabar-link', src: '/images/new_document-white.png', onClick: this.handleNewDocumentPress }),
-            React.createElement("img", { className: 'metabar-link', src: '/images/upload-document.png', onClick: this.handleUploadDocumentPress }),
-            React.createElement("img", { className: 'metabar-link', src: '/images/settings.png', onClick: this.handleSettingsPress })));
+            React.createElement("abbr", { title: 'Pending Documents' },
+                React.createElement("img", { className: 'metabar-link', src: '/images/doc_icon.png', onClick: this.handleDocumentListPress })),
+            React.createElement("abbr", { title: 'Create New Document' },
+                React.createElement("img", { className: 'metabar-link', src: '/images/new_document-white.png', onClick: this.handleNewDocumentPress })),
+            React.createElement("abbr", { title: 'Upload Document' },
+                React.createElement("img", { className: 'metabar-link', src: '/images/upload-document.png', onClick: this.handleUploadDocumentPress })),
+            React.createElement("abbr", { title: 'Account Page' },
+                React.createElement("img", { className: 'metabar-link', src: '/images/settings.png', onClick: this.handleSettingsPress }))));
     }
 }
 exports.default = MetaBar;

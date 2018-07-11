@@ -102,10 +102,9 @@ export default class Account extends React.Component<any, any> {
 
   handleAccountTabPress = (e, tab, title, list, arrow) => {
 
-    if(e.target.id == tab || e.target.id == title || e.target.id == arrow) {
-
-    } else {
-      return
+    //Making sure code is executed only when selecting tab/title
+    if(!(e.target.id == tab || e.target.id == title || e.target.id == arrow)) {
+      return 
     }
 
     if(this.state[tab]) {

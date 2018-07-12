@@ -61,6 +61,7 @@ class SelectDocument extends React.Component<Props, any> {
             document_id: target.id
         }, () => {
             this.giveDocumentId()
+            this.giveSelectDocumentComplete()
         })
     }
 

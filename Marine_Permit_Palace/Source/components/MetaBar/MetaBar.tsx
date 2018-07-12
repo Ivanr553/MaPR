@@ -123,7 +123,7 @@ export default class MetaBar extends React.Component<any, any> {
         })
 
         let setCurrentView = await this.setState({
-            currentView: <DocumentView document_id={this.state.document_id} />
+            currentView: <DocumentView document_id={this.state.document_id} view={'PendingDocuments'}/>
         })
 
         let getCurrentView = await this.props.getCurrentView(this.state.currentView)
@@ -145,7 +145,7 @@ export default class MetaBar extends React.Component<any, any> {
 
 
         let setCurrentView = await this.setState({
-            currentView: <DocumentView document_id={this.state.document_id} />
+            currentView: <DocumentView document_id={this.state.document_id} view={'PendingDocuments'} />
         })
 
         let getCurrentView = await this.props.getCurrentView(this.state.currentView)

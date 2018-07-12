@@ -6,12 +6,16 @@ const s = require('./styling/style.sass')
 
 
 interface Props {
+    id: string,
     width: number,
     height: number,
     left: number,
     top: number,
     checked: boolean,
-    onChange: any
+    onChange: any,
+    view: 'PendingDocuments' | 'DocumentPreview',
+    userList?: Array<any>,
+    previewOnClickHandler?: any
 }
 
 export default class CheckboxInput extends React.Component<Props, any> {
@@ -42,6 +46,7 @@ export default class CheckboxInput extends React.Component<Props, any> {
     }
 
     componentDidMount() {
+
     }
 
     render() {
@@ -52,11 +57,22 @@ export default class CheckboxInput extends React.Component<Props, any> {
             checkmark = 'X'
         }
 
-        return(
-            <div id='CheckboxInput' style={this.state.style} onClick={(e) => this.props.onChange(e)}>
-                {checkmark}
-            </div>
-        )
+        if(this.props.view === 'DocumentPreview') {
+            
+            return(
+                <div id={this.props.id} className='CheckboxInput' style={this.state.style} onClick={(e) => this.props.previewOnClickHandler(e)}>
+                </div>
+            )
+        }
+
+        if(this.props.view === 'PendingDocuments') {
+
+            return(
+                <div id={this.props.id} className='CheckboxInput' style={this.state.style} onClick={(e) => this.props.onChange(e)}>
+                    {checkmark}
+                </div>
+            )
+        }
     }
 
 }

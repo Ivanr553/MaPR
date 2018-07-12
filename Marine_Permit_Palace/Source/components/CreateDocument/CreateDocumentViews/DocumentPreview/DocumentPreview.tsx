@@ -9,6 +9,7 @@ interface Props {
     getDocumentName(documentName: String): void,
     getDocumentPreviewComplete(documentPreviewComplete: boolean): void
 }
+
  
 class DocumentPreview extends React.Component<Props, any> {
 
@@ -20,7 +21,11 @@ class DocumentPreview extends React.Component<Props, any> {
 
     }
 
-    handleDocumentNameChange(e) {
+    previewOnClickHandler = (e) => {
+        console.log(e.target)
+    }
+
+    handleDocumentNameChange = (e) => {
 
         let documentName = this.state.documentName
 
@@ -35,19 +40,15 @@ class DocumentPreview extends React.Component<Props, any> {
 
     //Sidebar Functions
     hideSidebar() {
-
         let sidebar = document.getElementById('document-view-sidebar')
         sidebar.classList.add('hide-sidebar')
         sidebar.classList.remove('show-sidebar')
-
     }
 
     showSidebar() {
-
         let sidebar = document.getElementById('document-view-sidebar')
         sidebar.classList.add('show-sidebar')
         sidebar.classList.remove('hide-sidebar')
-
     }
 
     getDocumentId = () => {
@@ -69,14 +70,12 @@ class DocumentPreview extends React.Component<Props, any> {
             <div id='DocumentPreview'>
                 <div id='document-view-container'>
                     <div id='document-view-header'>
-                        <input placeholder='Document Name'
-                        onChange={(e) => {this.handleDocumentNameChange(e)}}
-                        id='document-name-input' type="text"/>
-                        <div id='save-button' 
-                        // onClick={() => {this.saveFile(this.state.submitted_file_id)}}
-                        >Save File</div>
+                        <input placeholder='Document Name' onChange={(e) => {this.handleDocumentNameChange(e)}} id='document-name-input' type="text"/>
+                        <div id='save-button'>
+                            Save File
+                        </div>
                     </div>
-                    <DocumentView document_id={this.state.document_id}/>
+                    <DocumentView document_id={this.state.document_id} view={'DocumentPreview'} previewOnClickHandler={this.previewOnClickHandler}/>
                 </div>
                 <div id='show-sidebar-icon-container' onClick={this.showSidebar}>
                     <img id='show-sidebar-icon' src="/images/left-arrow-1.png" alt=""/>
@@ -85,7 +84,7 @@ class DocumentPreview extends React.Component<Props, any> {
                     <div id='close-sidebar-icon' onClick={this.hideSidebar}>x</div>
                     <div className='documents-header'>Selected Users</div>
                     <div id='added-users-container-preview' className='added-users-container'>
-                        {this.state.userList}
+                        {this.props.userList}
                     </div>
                 </div>
             </div>

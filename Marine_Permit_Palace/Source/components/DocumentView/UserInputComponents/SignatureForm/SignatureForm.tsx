@@ -6,10 +6,14 @@ const s = require('./styling/style.sass')
 
 
 interface Props {
+    id: string,
     width: number,
     height: number,
     left: number,
-    top: number
+    top: number,
+    view: 'PendingDocuments' | 'DocumentPreview',
+    userList?: Array<any>,
+    previewOnClickHandler?: any
 }
 
 export default class SignatureForm extends React.Component<Props, any> {
@@ -18,7 +22,8 @@ export default class SignatureForm extends React.Component<Props, any> {
         super(props)
         this.state = {
             style: {},
-            signatureContent: 'Click to Sign'
+            signatureContent: 'Click to Sign',
+            assignedSignatureContent: 'Click to Assign Signature'
         }
     }
 
@@ -60,11 +65,24 @@ export default class SignatureForm extends React.Component<Props, any> {
 
     render() {
 
-        return(
-            <div id='SignatureForm' style={this.state.style} onClick={this.sign}>
-                {this.state.signatureContent}
-            </div>
-        )
+        if(this.props.view === 'DocumentPreview') {
+
+            return (
+                <div id={this.props.id} className='SignatureForm' style={this.state.style} onClick={(e) => this.props.previewOnClickHandler(e)}>
+                    {this.state.assignedSignatureContent}
+                </div> 
+            )
+        }
+        if(this.props.view === 'PendingDocuments') {
+
+            return(
+                <div className='SignatureForm' style={this.state.style} onClick={this.sign}>
+                    {this.state.signatureContent}
+                </div>
+            )
+        }
+
+
     }
 
 }

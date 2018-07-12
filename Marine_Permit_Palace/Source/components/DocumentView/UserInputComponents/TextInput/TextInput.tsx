@@ -6,6 +6,7 @@ const s = require('./styling/style.sass')
 
 
 interface Props {
+    id: string,
     position: string,
     border: string,
     width: any,
@@ -13,7 +14,10 @@ interface Props {
     left: number,
     top: number,
     value: any,
-    onChange: any
+    onChange: any,
+    view: 'PendingDocuments' | 'DocumentPreview',
+    userList?: Array<any>,
+    previewOnClickHandler?: any
 }
 
 export default class TextInput extends React.Component<Props, any> {
@@ -52,9 +56,19 @@ export default class TextInput extends React.Component<Props, any> {
 
     render() {
 
-        return(
-            <textarea id='TextInput' style={this.state.style} defaultValue={this.props.value} onChange={this.props.onChange} />
-        )
+        if(this.props.view === 'DocumentPreview') {
+            
+            return(
+                <textarea readOnly id={this.props.id} className='TextInput preview-TextInput' style={this.state.style} defaultValue={this.props.value} onClick={this.props.previewOnClickHandler} />
+            )
+        }
+
+        if(this.props.view === 'PendingDocuments') {
+
+            return(
+                <textarea id={this.props.id} className='TextInput TextInputRemoveOutline' style={this.state.style} defaultValue={this.props.value} onChange={this.props.onChange} />
+            )
+        }
     }
 
 }

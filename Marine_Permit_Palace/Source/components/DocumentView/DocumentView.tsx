@@ -4,11 +4,17 @@ import * as $ from 'jquery'
 
 const s = require('./styling/style.sass')
 
-import SignatureForm from '../SignatureForm/SignatureForm'
-import CheckboxInput from '../CheckboxInput/CheckboxInput'
-import TextInput from '../TextInput/TextInput'
+import SignatureForm from './UserInputComponents/SignatureForm/SignatureForm'
+import CheckboxInput from './UserInputComponents/CheckboxInput/CheckboxInput'
+import TextInput from './UserInputComponents/TextInput/TextInput'
 
-export default class DocumentView extends React.Component<any, any> {
+interface Props {
+    document_id: string,
+    view: 'PendingDocuments' | 'DocumentPreview',
+    previewOnClickHandler?: any
+}
+
+export default class DocumentView extends React.Component<Props, any> {
 
     constructor(props) {
         super(props)
@@ -20,12 +26,76 @@ export default class DocumentView extends React.Component<any, any> {
             documentObject: {},
             documentName: 'document',
             submitted_file_id: '',
-            noDocument: false
+            noDocument: false,
+            mounted: null
         }
+       
+    }
+    
+    //Code excerpt to allow for promises to be cancelled
+    makeCancelable = async (promise: Promise<any>) => {
+        let hasCanceled_ = false;
+      
+        const wrappedPromise = new Promise((resolve, reject) => {
+          promise.then((val) =>
+            hasCanceled_ ? reject({isCanceled: true}) : resolve(val)
+          );
+          promise.catch((error) =>
+            hasCanceled_ ? reject({isCanceled: true}) : reject(error)
+          );
+        });
+      
+        return {
+          promise: wrappedPromise,
+          cancel() {
+            hasCanceled_ = true;
+          },
+        };
+      };
+
+    getDocument = async (document_id: string) => {
+
+      
+        let promise = $.get(`/DocumentSave/GetDocumentMeta?document_id=${this.props.document_id}`)
+        
+        let getDocumentResponse = await this.makeCancelable(promise)
+
+        this.setState({
+            getDocumentResponse: getDocumentResponse
+        })
+
+        return getDocumentResponse
 
     }
 
-    async populatePage() {
+    saveFileResponse = async (saveFile) => {
+
+        try {
+
+            let saveResult = $.ajax({
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json; charset=UTF-8'
+                },
+                url: `/DocumentSave/SaveFile`,
+                dataType: 'json',
+                data: JSON.stringify(saveFile)
+            })
+
+            let saveFileResponse = await this.makeCancelable(saveResult)
+
+            this.setState({
+                saveFileResponse: saveFileResponse
+            })
+
+            return saveFileResponse
+
+        } catch(e) {
+            console.log('Error saving:', e)
+        }
+    }
+
+    populatePage = async () =>  {
 
         if(this.props.document_id === '') {
             this.setState({
@@ -37,8 +107,16 @@ export default class DocumentView extends React.Component<any, any> {
                 noDocument: false
             })
         }
-        
-        let documentObject = await $.get(`/DocumentSave/GetDocumentMeta?document_id=${this.props.document_id}`)
+      
+        let promise = await this.getDocument(this.props.document_id)
+
+        interface documentObjectInterface {
+            document_size,
+            document_meta,
+            result,
+            status_code
+        }
+        let documentObject: documentObjectInterface = await promise.promise as documentObjectInterface
 
         let documentFields = []
 
@@ -64,20 +142,20 @@ export default class DocumentView extends React.Component<any, any> {
 
                 currentForm.value = false
 
-                let newForm = <CheckboxInput  key={form} width={width} height={height} top={top} left={left} checked={currentForm.value} onChange={(e) => {this.handleFormEdit(e, form)}} />
+                let newForm = <CheckboxInput key={form} id={form} width={width} height={height} top={top} left={left} checked={currentForm.value} onChange={(e) => {this.handleFormEdit(e, form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
 
                 documentFields.push(newForm)
             }
             else if(currentForm.field_type === 'Text') {
                 let newForm = 
                     <div key={form} className='form-wrapper'>
-                        <TextInput key={form} position={'absolute'} border={'none'} width={width} height={height} top={top} left={left} value={currentForm.value} onChange={(e) => {this.handleFormEdit(e, form)}} />
+                        <TextInput key={form} id={form} position={'absolute'} border={'none'} width={width} height={height} top={top} left={left} value={currentForm.value} onChange={(e) => {this.handleFormEdit(e, form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
                     </div>
 
                 documentFields.push(newForm)
             }
             else if(currentForm.field_type === 'Signature') {
-                let newForm = <SignatureForm key={form} width={width} height={height} top={top} left={left} />
+                let newForm = <SignatureForm key={form} id={form} width={width} height={height} top={top} left={left} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler}/>
 
                 documentFields.push(newForm)
             }
@@ -91,7 +169,7 @@ export default class DocumentView extends React.Component<any, any> {
             documentObject: documentObject,
             document_id: this.props.document_id
         }, () => {
-            this.saveFile(null)
+            this.saveFile()
         })
 
     }
@@ -115,47 +193,27 @@ export default class DocumentView extends React.Component<any, any> {
         this.setState({
             documentObject: documentObject
         }, () => {
-            this.saveFile(this.state.submitted_file_id)
+            this.saveFile()
         })
     }
 
-    async saveFile(submitted_file_id) {
-
-        // document.getElementById('save-button').style.backgroundColor = 'lightblue'
+    async saveFile() {
         
         let saveFile = {
             document_meta: this.state.documentObject.document_meta,
             name: this.state.documentName,
             document_id: this.state.document_id,
-            submitted_file_id: submitted_file_id
+            submitted_file_id: this.state.submitted_file_id
         }
 
-        let saveResult
+        let promise = await this.saveFileResponse(saveFile)
 
-        try {
-
-            saveResult = await $.ajax({
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json; charset=UTF-8'
-                },
-                url: `/DocumentSave/SaveFile`,
-                dataType: 'json',
-                data: JSON.stringify(saveFile)
-            })
-
-            console.log(saveResult)
-
-            if(saveResult && saveResult.status_code < 201) {
-                // document.getElementById('save-button').style.backgroundColor = 'rgb(131, 198, 125)'
-            }
-
-        } catch(e) {
-            console.log('Error saving:', e)
-            // document.getElementById('save-button').style.backgroundColor = 'rgb(198, 125, 125)'
+        interface saveResultInterface {
+            reason: any
         }
+        let saveResult: saveResultInterface = await promise.promise as saveResultInterface
 
-        if(!submitted_file_id || submitted_file_id === null) {
+        if(!this.state.submitted_file_id || this.state.submitted_file_id === null) {
             this.setState({
                 submitted_file_id: saveResult.reason
             }, () => {
@@ -169,8 +227,13 @@ export default class DocumentView extends React.Component<any, any> {
         this.populatePage()
     }
 
-    componentWillUnmount() {
-
+    componentWillUnmount() { 
+        if(this.state.getDocumentResponse) {
+            this.state.getDocumentResponse.cancel()
+        }
+        if(this.state.saveFileResponse) {
+            this.state.saveFileResponse.cancel()
+        }
     }
 
     render() {

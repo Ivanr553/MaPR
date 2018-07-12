@@ -10,19 +10,16 @@ import SelectPermissions from './CreateDocumentViews/SelectPermissions/SelectPer
 import SelectDocument from './CreateDocumentViews/SelectDocument/SelectDocument';
 import DocumentPreview from './CreateDocumentViews/DocumentPreview/DocumentPreview';
 
+//Main Class
 export default class CreateDocument extends React.Component<any, any> {
 
     constructor(props) {
         super(props)
         this.state = {
-            documentResults: this.props.documentResults,
             currentView: '',
             view: '',
-            documentList: [],
             document_id: '',
             documentName: '',
-            nextButton: '',
-            readyForNext: false,
             userList: [],
             userObjects: []
         }

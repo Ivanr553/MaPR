@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router'
 const s = require('./styling/style.sass')
 
 import Header from '../Header/Header'
-import TextInput from '../TextInput/TextInput'
+import TextInput from '../DocumentView/UserInputComponents/TextInput/TextInput'
 
 export default class Account extends React.Component<any, any> {
 
@@ -75,7 +75,7 @@ export default class Account extends React.Component<any, any> {
       let component = (
         <div key={item} className='account-content-line'>
           <div className='account-info-description'>{itemDescription}:</div>
-          <TextInput position='block' width={'auto'} border={'solid 1px rgb(0, 0, 0, 0.1)'} height={null} left={null} top={null} value={userArray[item]} onChange={(e) => this.handleInputChange(e, item, 'personalInfo')}/>
+          <TextInput id={item} position='block' width={'auto'} border={'solid 1px rgb(0, 0, 0, 0.1)'} height={null} left={null} top={null} value={userArray[item]} onChange={(e) => this.handleInputChange(e, item, 'personalInfo')} view={'AccountPage'}/>
         </div>
       )
 

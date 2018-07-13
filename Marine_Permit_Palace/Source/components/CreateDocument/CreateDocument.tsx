@@ -4,11 +4,10 @@ import PDF from 'react-pdf-js'
 
 const s = require('./styling/style.sass')
 
-import DocumentList from '../DocumentList/DocumentList'
-import DocumentView from '../DocumentView/DocumentView'
 import SelectPermissions from './CreateDocumentViews/SelectPermissions/SelectPermissions';
 import SelectDocument from './CreateDocumentViews/SelectDocument/SelectDocument';
 import DocumentPreview from './CreateDocumentViews/DocumentPreview/DocumentPreview';
+import CreateDocumentNavButton from './CreateDocumentNavButton/CreateDocumentNavButton'
 
 //Main Class
 export default class CreateDocument extends React.Component<any, any> {
@@ -26,36 +25,53 @@ export default class CreateDocument extends React.Component<any, any> {
     }
 
     //Views
-    handleSelectDocumentView = () => {
+    handleSelectDocumentView = (): void => {
 
         let currentView = <SelectDocument documents={this.props.documentResults} getDocumentId={this.getDocumentId} getSelectDocumentComplete={this.getSelectDocumentComplete} />
         this.setState({
             currentView: currentView,
-            view: 'SelectDocument'
+            view: 'SelectDocument',
+            selectDocumentBoolean: true,
+            selectPermissionsBoolean: false,
+            documentPreviewBoolean: false
         })
     }
 
-    handleSelectPermissionsView = () => {
+    handleSelectPermissionsView = (): void => {
         let currentView = <SelectPermissions getUserList={this.getUserList} getSelectPermissionsComplete={this.getSelectPermissionsComplete} />
         this.setState({
             currentView: currentView,
-            view: 'SelectPermissions'
+            view: 'SelectPermissions',
+            selectDocumentBoolean: false,
+            selectPermissionsBoolean: true,
+            documentPreviewBoolean: false
         }, () => {
 
         })
     }
 
-    handleSelectPreviewView = () => {
+    handleSelectPreviewView = (): void => {
 
         let currentView = <DocumentPreview userList={this.state.userList} document_id={this.state.document_id} getDocumentName={this.getDocumentName} getDocumentPreviewComplete={this.getDocumentPreviewComplete}/>
         this.setState({
             currentView: currentView,
-            view: 'Preview'
+            view: 'Preview',
+            selectDocumentBoolean: false,
+            selectPermissionsBoolean: false,
+            documentPreviewBoolean: true
         })
 
     }
 
     //State Management Functions
+
+    disableDocumentPreview = () => {
+        if(this.state.selectDocumentComplete && this.state.selectPermissionsComplete) {
+            return false
+        } else {
+            return true
+        }
+    }
 
     getDocumentName = (documentName) => {
         this.setState({
@@ -95,6 +111,10 @@ export default class CreateDocument extends React.Component<any, any> {
         })
     }
 
+    componentDidUpdate() {
+        
+    }
+
     componentWillMount() {
         this.handleSelectDocumentView()
     }
@@ -104,15 +124,9 @@ export default class CreateDocument extends React.Component<any, any> {
         return(
             <div id='CreateDocument'>
                 <div id='create-document-nav-bar'>
-                    <div id='create-document-nav-bar-item-document' className='create-document-nav-bar-item' onClick={this.handleSelectDocumentView}>
-                        Select Document
-                    </div>
-                    <div className='create-document-nav-bar-item' onClick={this.handleSelectPermissionsView}>
-                        Create Permissions
-                    </div>
-                    <div className='create-document-nav-bar-item' onClick={this.handleSelectPreviewView}>
-                        Preview
-                    </div>
+                    <CreateDocumentNavButton complete={this.state.selectDocumentComplete} id={'create-document-nav-bar-item-document'} innerText={'Select Document'} onClickHandler={ this.handleSelectDocumentView} disable={false} selected={this.state.selectDocumentBoolean}/>
+                    <CreateDocumentNavButton complete={this.state.selectPermissionsComplete} id={'create-permissions-nav-bar-item-document'} innerText={'Create Permissions'} onClickHandler={this.handleSelectPermissionsView} disable={false} selected={this.state.selectPermissionsBoolean}/>
+                    <CreateDocumentNavButton complete={false} id={'document-preview-nav-bar-item-document'} innerText={'Preview'} onClickHandler={this.handleSelectPreviewView} disable={this.disableDocumentPreview()} selected={this.state.documentPreviewBoolean}/>
                 </div>
                 <div className='container'>
                     {this.state.currentView}

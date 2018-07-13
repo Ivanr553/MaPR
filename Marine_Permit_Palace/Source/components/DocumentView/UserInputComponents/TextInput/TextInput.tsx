@@ -15,7 +15,7 @@ interface Props {
     top: number,
     value: any,
     onChange: any,
-    view: 'PendingDocuments' | 'DocumentPreview',
+    view: 'PendingDocuments' | 'DocumentPreview' | 'AccountPage',
     userList?: Array<any>,
     previewOnClickHandler?: any
 }
@@ -63,7 +63,7 @@ export default class TextInput extends React.Component<Props, any> {
             )
         }
 
-        if(this.props.view === 'PendingDocuments') {
+        if(this.props.view === 'PendingDocuments' || this.props.view === 'AccountPage') {
 
             return(
                 <textarea id={this.props.id} className='TextInput TextInputRemoveOutline' style={this.state.style} defaultValue={this.props.value} onChange={this.props.onChange} />

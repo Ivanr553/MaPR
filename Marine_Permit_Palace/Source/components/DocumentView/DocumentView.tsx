@@ -117,6 +117,7 @@ export default class DocumentView extends React.Component<Props, any> {
             status_code
         }
         let documentObject: documentObjectInterface = await promise.promise as documentObjectInterface
+        console.log(documentObject)
 
         let documentFields = []
 

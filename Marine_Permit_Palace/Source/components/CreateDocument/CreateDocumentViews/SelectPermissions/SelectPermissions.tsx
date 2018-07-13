@@ -139,12 +139,21 @@ class SelectPermissions extends React.Component<any, any> {
     }
 
     //State Management
-    giveSelectPermissionsComplete = () => {
-        this.props.getSelectPermissionsComplete(true)
+    giveSelectPermissionsComplete = selectPermissionsComplete => {
+        this.props.getSelectPermissionsComplete(selectPermissionsComplete)
     }
 
     giveUserList = () => {
         this.props.getUserList(this.state.userList)
+        if(this.state.userList.length > 0) {
+            this.giveSelectPermissionsComplete(true)
+        }
+    }
+
+    componentDidUpdate() {
+        if(this.state.userList.length < 1) {
+            this.giveSelectPermissionsComplete(false)
+        }
     }
 
     render() {

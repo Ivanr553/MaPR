@@ -1,6 +1,8 @@
 import * as React from 'react';
 
 import DocumentView from '../../../DocumentView/DocumentView'
+import { EventHandler } from 'react';
+import DocumentPreviewSidebar from './DocumentPreviewSidebar';
 
 
 interface Props {
@@ -16,16 +18,27 @@ class DocumentPreview extends React.Component<Props, any> {
     constructor(props) {
         super(props)
         this.state = {
-            documentName: ''
+            documentName: String,
+            currentSelectedField: String
         }
 
     }
 
-    previewOnClickHandler = (e) => {
-        console.log(e.target)
+    previewOnClickHandler = (e): void => {
+
+        let id = e.target.id
+
+        //Clearing previously selected field
+        if(this.state.currentSelectedField != '') {
+            document.getElementById(this.state.currentSelectedField).classList.remove('selectedField')
+        }
+
+        document.getElementById(this.state.currentSelectedField).classList.add('selectedField')
+
+
     }
 
-    handleDocumentNameChange = (e) => {
+    handleDocumentNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
         let documentName = this.state.documentName
 
@@ -38,29 +51,32 @@ class DocumentPreview extends React.Component<Props, any> {
         })
     }
 
-    //Sidebar Functions
-    hideSidebar() {
-        let sidebar = document.getElementById('document-view-sidebar')
-        sidebar.classList.add('hide-sidebar')
-        sidebar.classList.remove('show-sidebar')
+    showSidebar = () => {
+       this.setState({
+           showSidebar: true
+       })
     }
 
-    showSidebar() {
-        let sidebar = document.getElementById('document-view-sidebar')
-        sidebar.classList.add('show-sidebar')
-        sidebar.classList.remove('hide-sidebar')
+    getHideSidebar = (showSidebar): void => {
+        this.setState({
+            showSidebar: showSidebar
+        })
     }
+ 
 
-    getDocumentId = () => {
+    //State management methods
+    getDocumentId = (): void => {
         this.setState({
             document_id: this.props.document_id
         });
     }
 
-    giveDocumentPreviewComplete = () => {
+    giveDocumentPreviewComplete = (): void => {
         this.props.getDocumentPreviewComplete(true)
     }
 
+
+    //React lifecycle methods
     componentWillMount() {
         this.getDocumentId()
     }
@@ -80,13 +96,7 @@ class DocumentPreview extends React.Component<Props, any> {
                 <div id='show-sidebar-icon-container' onClick={this.showSidebar}>
                     <img id='show-sidebar-icon' src="/images/left-arrow-1.png" alt=""/>
                 </div>
-                <div id='document-view-sidebar' className=''>
-                    <div id='close-sidebar-icon' onClick={this.hideSidebar}>x</div>
-                    <div className='documents-header'>Selected Users</div>
-                    <div id='added-users-container-preview' className='added-users-container'>
-                        {this.props.userList}
-                    </div>
-                </div>
+                <DocumentPreviewSidebar showSidebar={this.state.showSidebar} userList={this.state.userList} getHideSidebar={this.getHideSidebar} />
             </div>
         );
     }

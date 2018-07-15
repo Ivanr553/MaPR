@@ -25,7 +25,9 @@ export default class TextInput extends React.Component<Props, any> {
     constructor(props) {
         super(props)
         this.state = {
-            style: {}
+            style: {
+                
+            }
         }
     }
 

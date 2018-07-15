@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as $ from 'jquery'
 
 import DocumentView from '../../../DocumentView/DocumentView'
 import { EventHandler } from 'react';
@@ -7,10 +8,39 @@ import DocumentPreviewSidebar from './DocumentPreviewSidebar';
 
 interface Props {
     document_id: string,
-    userList: Array<any>,
+    userList: Array<{
+        name: string,
+        id: number,
+        assigned_to: null | number
+    }>,
     getDocumentName(documentName: String): void,
     getDocumentPreviewComplete(documentPreviewComplete: boolean): void,
-    documentPreviewBoolean: boolean
+    documentPreviewBoolean: boolean,
+    assignUserToField: (e: React.MouseEvent) => void,
+    deleteUser: (e: any) => void,
+    document_meta: Array<object>,
+    handleSelectedFieldId: (id: number) => void,
+    currentSelectedFieldId: number,
+    currentSelectedField: {
+        user: {
+            name: string,
+            id: number,
+            assigned_to: null | number
+        },
+        field_name: string
+    }
+}
+
+interface makeCancelableInterface {
+    promise: Promise<any>,
+    cancel(): () => void
+}
+
+interface documentResponse {
+    document_meta: Array<object>,
+    document_size: object,
+    result: string,
+    status_code: number
 }
 
  
@@ -20,7 +50,7 @@ class DocumentPreview extends React.Component<Props, any> {
         super(props)
         this.state = {
             documentName: String,
-            currentSelectedField: String,
+            currentSelectedField: '',
             userList: []
         }
 
@@ -34,6 +64,7 @@ class DocumentPreview extends React.Component<Props, any> {
             } 
 
             return style
+
         } else {
             let style = {
                 display: 'block'
@@ -48,12 +79,16 @@ class DocumentPreview extends React.Component<Props, any> {
         let id = e.target.id
 
         //Clearing previously selected field
-        if(this.state.currentSelectedField != '') {
-            document.getElementById(this.state.currentSelectedField).classList.remove('selectedField')
+        if(this.props.currentSelectedField !== undefined) {
+            document.getElementById(this.props.document_meta.indexOf(this.props.currentSelectedField).toString()).classList.remove('selectedField')
         }
 
-        document.getElementById(this.state.currentSelectedField).classList.add('selectedField')
+        document.getElementById(id).classList.add('selectedField')
 
+        let currentSelectedFieldValue = (this.props.document_meta as any)[id].assigned_to
+        console.log(currentSelectedFieldValue)
+
+        this.props.handleSelectedFieldId(id)
 
     }
 
@@ -90,17 +125,21 @@ class DocumentPreview extends React.Component<Props, any> {
         })
     }
 
-
     giveDocumentPreviewComplete = (): void => {
         this.props.getDocumentPreviewComplete(true)
     }
 
 
     //React lifecycle methods
-
     componentDidMount() {
         this.handleShow()
         this.getDocumentId()
+    }
+
+    componentWillMount() {
+        if(this.state.getDocumentResponse) {
+            this.state.getDocumentResponse.cancel()
+        }
     }
 
     render() {
@@ -118,7 +157,7 @@ class DocumentPreview extends React.Component<Props, any> {
                 <div id='show-sidebar-icon-container' onClick={this.showSidebar}>
                     <img id='show-sidebar-icon' src="/images/left-arrow-1.png" alt=""/>
                 </div>
-                <DocumentPreviewSidebar showSidebar={this.state.showSidebar} userList={this.props.userList} getHideSidebar={this.getHideSidebar} />
+                <DocumentPreviewSidebar currentSelectedField={this.props.currentSelectedField} showSidebar={this.state.showSidebar} deleteUser={this.props.deleteUser} assignUserToField={this.props.assignUserToField} userList={this.props.userList} getHideSidebar={this.getHideSidebar} />
             </div>
         );
     }

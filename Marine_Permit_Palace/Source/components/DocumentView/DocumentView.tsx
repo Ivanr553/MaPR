@@ -116,7 +116,6 @@ export default class DocumentView extends React.Component<Props, any> {
             status_code
         }
         let documentObject: documentObjectInterface = await promise.promise as documentObjectInterface
-        console.log(documentObject)
 
         let documentFields = []
 
@@ -197,7 +196,7 @@ export default class DocumentView extends React.Component<Props, any> {
         })
     }
 
-    async saveFile() {
+    saveFile = async () => {
         
         let saveFile = {
             document_meta: this.state.documentObject.document_meta,
@@ -216,8 +215,6 @@ export default class DocumentView extends React.Component<Props, any> {
         if(!this.state.submitted_file_id || this.state.submitted_file_id === null) {
             this.setState({
                 submitted_file_id: saveResult.reason
-            }, () => {
-                console.log(this.state.submitted_file_id)
             })
         }
 

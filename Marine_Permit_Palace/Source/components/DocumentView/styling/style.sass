@@ -69,7 +69,8 @@
 //UserInput Styling
 
 .selectedField
-  border: solid 1px green !important
+  // border: solid 3px green !important
+  animation: focus-user-input 0.3s forwards
 
 
 //Animations
@@ -121,4 +122,8 @@
   100%
     background-color: rgba(50, 50, 50, 0.8)
 
-        
+@keyframes focus-user-input
+  0%
+    border: solid 1px rgba(78, 196, 85, 0)
+  100%
+    border: solid 1px rgba(78, 196, 85, 1)    

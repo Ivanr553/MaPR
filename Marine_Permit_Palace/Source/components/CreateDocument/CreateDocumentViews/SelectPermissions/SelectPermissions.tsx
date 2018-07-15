@@ -1,13 +1,19 @@
 import * as React from 'react';
 import AddedUser from './AddedUser';
+import AddedUserList from './AddedUserList'
 import * as $ from 'jquery'
 
 interface Props {
     getSelectPermissionsComplete(selectPermissionsComplete: boolean): void,
     addUser: () => void,
-    userObjects: Array<any>,
-    userList: Array<JSX.Element>,
-    selectPermissionsBoolean: boolean
+    userList: Array<{
+        id: number,
+        name: string,
+        assigned_to: null | number
+    }>,
+    selectPermissionsBoolean: boolean,
+    assignUserToField: (e: React.MouseEvent) => void,
+    deleteUser: (e: React.MouseEvent) => void
 }
 
 class SelectPermissions extends React.Component<Props, any> {
@@ -57,7 +63,7 @@ class SelectPermissions extends React.Component<Props, any> {
 
             let result = await $.get(`/Account/FindUsers?search=${query}`)
 
-            //No users yet, will jsut use fake ones for now  
+            //No users yet, will just use fake ones for now  
 
             let userArray = ['user1', 'user2', 'user3']
             
@@ -86,7 +92,7 @@ class SelectPermissions extends React.Component<Props, any> {
 
         for(let i = 0; i < userArray.length; i++) {
             let userSearchResult = (
-                <li className='user-search-result' onClick={this.props.addUser}>
+                <li key={i} className='user-search-result' onClick={this.props.addUser}>
                     {userArray[i]}
                 </li>
             )
@@ -115,7 +121,6 @@ class SelectPermissions extends React.Component<Props, any> {
     }
 
     render() {
-
         return (
             <div id='SelectPermissions' style={this.handleShow()}>
                 <div id='select-users-header' className='documents-header'>Select Users</div>
@@ -127,9 +132,7 @@ class SelectPermissions extends React.Component<Props, any> {
                             {this.state.userSearchResults}
                         </div>
                         <div id='added-users-title'>Selected Users</div>
-                        <div className='added-users-container'>
-                            {this.props.userList}
-                        </div> 
+                        <AddedUserList userList={this.props.userList} assignUserToField={this.props.assignUserToField} deleteUser={this.props.deleteUser} isInSidebar={false} />
                     </div>
                 </div>
             </div>

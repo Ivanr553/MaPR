@@ -1,4 +1,706 @@
 /******/ (function(modules) { // webpackBootstrap
+/******/ 	function hotDisposeChunk(chunkId) {
+/******/ 		delete installedChunks[chunkId];
+/******/ 	}
+/******/ 	var parentHotUpdateCallback = window["webpackHotUpdate"];
+/******/ 	window["webpackHotUpdate"] = // eslint-disable-next-line no-unused-vars
+/******/ 	function webpackHotUpdateCallback(chunkId, moreModules) {
+/******/ 		hotAddUpdateChunk(chunkId, moreModules);
+/******/ 		if (parentHotUpdateCallback) parentHotUpdateCallback(chunkId, moreModules);
+/******/ 	} ;
+/******/
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	function hotDownloadUpdateChunk(chunkId) {
+/******/ 		var head = document.getElementsByTagName("head")[0];
+/******/ 		var script = document.createElement("script");
+/******/ 		script.charset = "utf-8";
+/******/ 		script.src = __webpack_require__.p + "" + chunkId + "." + hotCurrentHash + ".hot-update.js";
+/******/ 		;
+/******/ 		head.appendChild(script);
+/******/ 	}
+/******/
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	function hotDownloadManifest(requestTimeout) {
+/******/ 		requestTimeout = requestTimeout || 10000;
+/******/ 		return new Promise(function(resolve, reject) {
+/******/ 			if (typeof XMLHttpRequest === "undefined") {
+/******/ 				return reject(new Error("No browser support"));
+/******/ 			}
+/******/ 			try {
+/******/ 				var request = new XMLHttpRequest();
+/******/ 				var requestPath = __webpack_require__.p + "" + hotCurrentHash + ".hot-update.json";
+/******/ 				request.open("GET", requestPath, true);
+/******/ 				request.timeout = requestTimeout;
+/******/ 				request.send(null);
+/******/ 			} catch (err) {
+/******/ 				return reject(err);
+/******/ 			}
+/******/ 			request.onreadystatechange = function() {
+/******/ 				if (request.readyState !== 4) return;
+/******/ 				if (request.status === 0) {
+/******/ 					// timeout
+/******/ 					reject(
+/******/ 						new Error("Manifest request to " + requestPath + " timed out.")
+/******/ 					);
+/******/ 				} else if (request.status === 404) {
+/******/ 					// no update available
+/******/ 					resolve();
+/******/ 				} else if (request.status !== 200 && request.status !== 304) {
+/******/ 					// other failure
+/******/ 					reject(new Error("Manifest request to " + requestPath + " failed."));
+/******/ 				} else {
+/******/ 					// success
+/******/ 					try {
+/******/ 						var update = JSON.parse(request.responseText);
+/******/ 					} catch (e) {
+/******/ 						reject(e);
+/******/ 						return;
+/******/ 					}
+/******/ 					resolve(update);
+/******/ 				}
+/******/ 			};
+/******/ 		});
+/******/ 	}
+/******/
+/******/ 	var hotApplyOnUpdate = true;
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	var hotCurrentHash = "cdec357979678c2a8fd7";
+/******/ 	var hotRequestTimeout = 10000;
+/******/ 	var hotCurrentModuleData = {};
+/******/ 	var hotCurrentChildModule;
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	var hotCurrentParents = [];
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	var hotCurrentParentsTemp = [];
+/******/
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	function hotCreateRequire(moduleId) {
+/******/ 		var me = installedModules[moduleId];
+/******/ 		if (!me) return __webpack_require__;
+/******/ 		var fn = function(request) {
+/******/ 			if (me.hot.active) {
+/******/ 				if (installedModules[request]) {
+/******/ 					if (installedModules[request].parents.indexOf(moduleId) === -1) {
+/******/ 						installedModules[request].parents.push(moduleId);
+/******/ 					}
+/******/ 				} else {
+/******/ 					hotCurrentParents = [moduleId];
+/******/ 					hotCurrentChildModule = request;
+/******/ 				}
+/******/ 				if (me.children.indexOf(request) === -1) {
+/******/ 					me.children.push(request);
+/******/ 				}
+/******/ 			} else {
+/******/ 				console.warn(
+/******/ 					"[HMR] unexpected require(" +
+/******/ 						request +
+/******/ 						") from disposed module " +
+/******/ 						moduleId
+/******/ 				);
+/******/ 				hotCurrentParents = [];
+/******/ 			}
+/******/ 			return __webpack_require__(request);
+/******/ 		};
+/******/ 		var ObjectFactory = function ObjectFactory(name) {
+/******/ 			return {
+/******/ 				configurable: true,
+/******/ 				enumerable: true,
+/******/ 				get: function() {
+/******/ 					return __webpack_require__[name];
+/******/ 				},
+/******/ 				set: function(value) {
+/******/ 					__webpack_require__[name] = value;
+/******/ 				}
+/******/ 			};
+/******/ 		};
+/******/ 		for (var name in __webpack_require__) {
+/******/ 			if (
+/******/ 				Object.prototype.hasOwnProperty.call(__webpack_require__, name) &&
+/******/ 				name !== "e" &&
+/******/ 				name !== "t"
+/******/ 			) {
+/******/ 				Object.defineProperty(fn, name, ObjectFactory(name));
+/******/ 			}
+/******/ 		}
+/******/ 		fn.e = function(chunkId) {
+/******/ 			if (hotStatus === "ready") hotSetStatus("prepare");
+/******/ 			hotChunksLoading++;
+/******/ 			return __webpack_require__.e(chunkId).then(finishChunkLoading, function(err) {
+/******/ 				finishChunkLoading();
+/******/ 				throw err;
+/******/ 			});
+/******/
+/******/ 			function finishChunkLoading() {
+/******/ 				hotChunksLoading--;
+/******/ 				if (hotStatus === "prepare") {
+/******/ 					if (!hotWaitingFilesMap[chunkId]) {
+/******/ 						hotEnsureUpdateChunk(chunkId);
+/******/ 					}
+/******/ 					if (hotChunksLoading === 0 && hotWaitingFiles === 0) {
+/******/ 						hotUpdateDownloaded();
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 		fn.t = function(value, mode) {
+/******/ 			if (mode & 1) value = fn(value);
+/******/ 			return __webpack_require__.t(value, mode & ~1);
+/******/ 		};
+/******/ 		return fn;
+/******/ 	}
+/******/
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	function hotCreateModule(moduleId) {
+/******/ 		var hot = {
+/******/ 			// private stuff
+/******/ 			_acceptedDependencies: {},
+/******/ 			_declinedDependencies: {},
+/******/ 			_selfAccepted: false,
+/******/ 			_selfDeclined: false,
+/******/ 			_disposeHandlers: [],
+/******/ 			_main: hotCurrentChildModule !== moduleId,
+/******/
+/******/ 			// Module API
+/******/ 			active: true,
+/******/ 			accept: function(dep, callback) {
+/******/ 				if (typeof dep === "undefined") hot._selfAccepted = true;
+/******/ 				else if (typeof dep === "function") hot._selfAccepted = dep;
+/******/ 				else if (typeof dep === "object")
+/******/ 					for (var i = 0; i < dep.length; i++)
+/******/ 						hot._acceptedDependencies[dep[i]] = callback || function() {};
+/******/ 				else hot._acceptedDependencies[dep] = callback || function() {};
+/******/ 			},
+/******/ 			decline: function(dep) {
+/******/ 				if (typeof dep === "undefined") hot._selfDeclined = true;
+/******/ 				else if (typeof dep === "object")
+/******/ 					for (var i = 0; i < dep.length; i++)
+/******/ 						hot._declinedDependencies[dep[i]] = true;
+/******/ 				else hot._declinedDependencies[dep] = true;
+/******/ 			},
+/******/ 			dispose: function(callback) {
+/******/ 				hot._disposeHandlers.push(callback);
+/******/ 			},
+/******/ 			addDisposeHandler: function(callback) {
+/******/ 				hot._disposeHandlers.push(callback);
+/******/ 			},
+/******/ 			removeDisposeHandler: function(callback) {
+/******/ 				var idx = hot._disposeHandlers.indexOf(callback);
+/******/ 				if (idx >= 0) hot._disposeHandlers.splice(idx, 1);
+/******/ 			},
+/******/
+/******/ 			// Management API
+/******/ 			check: hotCheck,
+/******/ 			apply: hotApply,
+/******/ 			status: function(l) {
+/******/ 				if (!l) return hotStatus;
+/******/ 				hotStatusHandlers.push(l);
+/******/ 			},
+/******/ 			addStatusHandler: function(l) {
+/******/ 				hotStatusHandlers.push(l);
+/******/ 			},
+/******/ 			removeStatusHandler: function(l) {
+/******/ 				var idx = hotStatusHandlers.indexOf(l);
+/******/ 				if (idx >= 0) hotStatusHandlers.splice(idx, 1);
+/******/ 			},
+/******/
+/******/ 			//inherit from previous dispose call
+/******/ 			data: hotCurrentModuleData[moduleId]
+/******/ 		};
+/******/ 		hotCurrentChildModule = undefined;
+/******/ 		return hot;
+/******/ 	}
+/******/
+/******/ 	var hotStatusHandlers = [];
+/******/ 	var hotStatus = "idle";
+/******/
+/******/ 	function hotSetStatus(newStatus) {
+/******/ 		hotStatus = newStatus;
+/******/ 		for (var i = 0; i < hotStatusHandlers.length; i++)
+/******/ 			hotStatusHandlers[i].call(null, newStatus);
+/******/ 	}
+/******/
+/******/ 	// while downloading
+/******/ 	var hotWaitingFiles = 0;
+/******/ 	var hotChunksLoading = 0;
+/******/ 	var hotWaitingFilesMap = {};
+/******/ 	var hotRequestedFilesMap = {};
+/******/ 	var hotAvailableFilesMap = {};
+/******/ 	var hotDeferred;
+/******/
+/******/ 	// The update info
+/******/ 	var hotUpdate, hotUpdateNewHash;
+/******/
+/******/ 	function toModuleId(id) {
+/******/ 		var isNumber = +id + "" === id;
+/******/ 		return isNumber ? +id : id;
+/******/ 	}
+/******/
+/******/ 	function hotCheck(apply) {
+/******/ 		if (hotStatus !== "idle") {
+/******/ 			throw new Error("check() is only allowed in idle status");
+/******/ 		}
+/******/ 		hotApplyOnUpdate = apply;
+/******/ 		hotSetStatus("check");
+/******/ 		return hotDownloadManifest(hotRequestTimeout).then(function(update) {
+/******/ 			if (!update) {
+/******/ 				hotSetStatus("idle");
+/******/ 				return null;
+/******/ 			}
+/******/ 			hotRequestedFilesMap = {};
+/******/ 			hotWaitingFilesMap = {};
+/******/ 			hotAvailableFilesMap = update.c;
+/******/ 			hotUpdateNewHash = update.h;
+/******/
+/******/ 			hotSetStatus("prepare");
+/******/ 			var promise = new Promise(function(resolve, reject) {
+/******/ 				hotDeferred = {
+/******/ 					resolve: resolve,
+/******/ 					reject: reject
+/******/ 				};
+/******/ 			});
+/******/ 			hotUpdate = {};
+/******/ 			var chunkId = "main-client";
+/******/ 			// eslint-disable-next-line no-lone-blocks
+/******/ 			{
+/******/ 				/*globals chunkId */
+/******/ 				hotEnsureUpdateChunk(chunkId);
+/******/ 			}
+/******/ 			if (
+/******/ 				hotStatus === "prepare" &&
+/******/ 				hotChunksLoading === 0 &&
+/******/ 				hotWaitingFiles === 0
+/******/ 			) {
+/******/ 				hotUpdateDownloaded();
+/******/ 			}
+/******/ 			return promise;
+/******/ 		});
+/******/ 	}
+/******/
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	function hotAddUpdateChunk(chunkId, moreModules) {
+/******/ 		if (!hotAvailableFilesMap[chunkId] || !hotRequestedFilesMap[chunkId])
+/******/ 			return;
+/******/ 		hotRequestedFilesMap[chunkId] = false;
+/******/ 		for (var moduleId in moreModules) {
+/******/ 			if (Object.prototype.hasOwnProperty.call(moreModules, moduleId)) {
+/******/ 				hotUpdate[moduleId] = moreModules[moduleId];
+/******/ 			}
+/******/ 		}
+/******/ 		if (--hotWaitingFiles === 0 && hotChunksLoading === 0) {
+/******/ 			hotUpdateDownloaded();
+/******/ 		}
+/******/ 	}
+/******/
+/******/ 	function hotEnsureUpdateChunk(chunkId) {
+/******/ 		if (!hotAvailableFilesMap[chunkId]) {
+/******/ 			hotWaitingFilesMap[chunkId] = true;
+/******/ 		} else {
+/******/ 			hotRequestedFilesMap[chunkId] = true;
+/******/ 			hotWaitingFiles++;
+/******/ 			hotDownloadUpdateChunk(chunkId);
+/******/ 		}
+/******/ 	}
+/******/
+/******/ 	function hotUpdateDownloaded() {
+/******/ 		hotSetStatus("ready");
+/******/ 		var deferred = hotDeferred;
+/******/ 		hotDeferred = null;
+/******/ 		if (!deferred) return;
+/******/ 		if (hotApplyOnUpdate) {
+/******/ 			// Wrap deferred object in Promise to mark it as a well-handled Promise to
+/******/ 			// avoid triggering uncaught exception warning in Chrome.
+/******/ 			// See https://bugs.chromium.org/p/chromium/issues/detail?id=465666
+/******/ 			Promise.resolve()
+/******/ 				.then(function() {
+/******/ 					return hotApply(hotApplyOnUpdate);
+/******/ 				})
+/******/ 				.then(
+/******/ 					function(result) {
+/******/ 						deferred.resolve(result);
+/******/ 					},
+/******/ 					function(err) {
+/******/ 						deferred.reject(err);
+/******/ 					}
+/******/ 				);
+/******/ 		} else {
+/******/ 			var outdatedModules = [];
+/******/ 			for (var id in hotUpdate) {
+/******/ 				if (Object.prototype.hasOwnProperty.call(hotUpdate, id)) {
+/******/ 					outdatedModules.push(toModuleId(id));
+/******/ 				}
+/******/ 			}
+/******/ 			deferred.resolve(outdatedModules);
+/******/ 		}
+/******/ 	}
+/******/
+/******/ 	function hotApply(options) {
+/******/ 		if (hotStatus !== "ready")
+/******/ 			throw new Error("apply() is only allowed in ready status");
+/******/ 		options = options || {};
+/******/
+/******/ 		var cb;
+/******/ 		var i;
+/******/ 		var j;
+/******/ 		var module;
+/******/ 		var moduleId;
+/******/
+/******/ 		function getAffectedStuff(updateModuleId) {
+/******/ 			var outdatedModules = [updateModuleId];
+/******/ 			var outdatedDependencies = {};
+/******/
+/******/ 			var queue = outdatedModules.slice().map(function(id) {
+/******/ 				return {
+/******/ 					chain: [id],
+/******/ 					id: id
+/******/ 				};
+/******/ 			});
+/******/ 			while (queue.length > 0) {
+/******/ 				var queueItem = queue.pop();
+/******/ 				var moduleId = queueItem.id;
+/******/ 				var chain = queueItem.chain;
+/******/ 				module = installedModules[moduleId];
+/******/ 				if (!module || module.hot._selfAccepted) continue;
+/******/ 				if (module.hot._selfDeclined) {
+/******/ 					return {
+/******/ 						type: "self-declined",
+/******/ 						chain: chain,
+/******/ 						moduleId: moduleId
+/******/ 					};
+/******/ 				}
+/******/ 				if (module.hot._main) {
+/******/ 					return {
+/******/ 						type: "unaccepted",
+/******/ 						chain: chain,
+/******/ 						moduleId: moduleId
+/******/ 					};
+/******/ 				}
+/******/ 				for (var i = 0; i < module.parents.length; i++) {
+/******/ 					var parentId = module.parents[i];
+/******/ 					var parent = installedModules[parentId];
+/******/ 					if (!parent) continue;
+/******/ 					if (parent.hot._declinedDependencies[moduleId]) {
+/******/ 						return {
+/******/ 							type: "declined",
+/******/ 							chain: chain.concat([parentId]),
+/******/ 							moduleId: moduleId,
+/******/ 							parentId: parentId
+/******/ 						};
+/******/ 					}
+/******/ 					if (outdatedModules.indexOf(parentId) !== -1) continue;
+/******/ 					if (parent.hot._acceptedDependencies[moduleId]) {
+/******/ 						if (!outdatedDependencies[parentId])
+/******/ 							outdatedDependencies[parentId] = [];
+/******/ 						addAllToSet(outdatedDependencies[parentId], [moduleId]);
+/******/ 						continue;
+/******/ 					}
+/******/ 					delete outdatedDependencies[parentId];
+/******/ 					outdatedModules.push(parentId);
+/******/ 					queue.push({
+/******/ 						chain: chain.concat([parentId]),
+/******/ 						id: parentId
+/******/ 					});
+/******/ 				}
+/******/ 			}
+/******/
+/******/ 			return {
+/******/ 				type: "accepted",
+/******/ 				moduleId: updateModuleId,
+/******/ 				outdatedModules: outdatedModules,
+/******/ 				outdatedDependencies: outdatedDependencies
+/******/ 			};
+/******/ 		}
+/******/
+/******/ 		function addAllToSet(a, b) {
+/******/ 			for (var i = 0; i < b.length; i++) {
+/******/ 				var item = b[i];
+/******/ 				if (a.indexOf(item) === -1) a.push(item);
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// at begin all updates modules are outdated
+/******/ 		// the "outdated" status can propagate to parents if they don't accept the children
+/******/ 		var outdatedDependencies = {};
+/******/ 		var outdatedModules = [];
+/******/ 		var appliedUpdate = {};
+/******/
+/******/ 		var warnUnexpectedRequire = function warnUnexpectedRequire() {
+/******/ 			console.warn(
+/******/ 				"[HMR] unexpected require(" + result.moduleId + ") to disposed module"
+/******/ 			);
+/******/ 		};
+/******/
+/******/ 		for (var id in hotUpdate) {
+/******/ 			if (Object.prototype.hasOwnProperty.call(hotUpdate, id)) {
+/******/ 				moduleId = toModuleId(id);
+/******/ 				/** @type {TODO} */
+/******/ 				var result;
+/******/ 				if (hotUpdate[id]) {
+/******/ 					result = getAffectedStuff(moduleId);
+/******/ 				} else {
+/******/ 					result = {
+/******/ 						type: "disposed",
+/******/ 						moduleId: id
+/******/ 					};
+/******/ 				}
+/******/ 				/** @type {Error|false} */
+/******/ 				var abortError = false;
+/******/ 				var doApply = false;
+/******/ 				var doDispose = false;
+/******/ 				var chainInfo = "";
+/******/ 				if (result.chain) {
+/******/ 					chainInfo = "\nUpdate propagation: " + result.chain.join(" -> ");
+/******/ 				}
+/******/ 				switch (result.type) {
+/******/ 					case "self-declined":
+/******/ 						if (options.onDeclined) options.onDeclined(result);
+/******/ 						if (!options.ignoreDeclined)
+/******/ 							abortError = new Error(
+/******/ 								"Aborted because of self decline: " +
+/******/ 									result.moduleId +
+/******/ 									chainInfo
+/******/ 							);
+/******/ 						break;
+/******/ 					case "declined":
+/******/ 						if (options.onDeclined) options.onDeclined(result);
+/******/ 						if (!options.ignoreDeclined)
+/******/ 							abortError = new Error(
+/******/ 								"Aborted because of declined dependency: " +
+/******/ 									result.moduleId +
+/******/ 									" in " +
+/******/ 									result.parentId +
+/******/ 									chainInfo
+/******/ 							);
+/******/ 						break;
+/******/ 					case "unaccepted":
+/******/ 						if (options.onUnaccepted) options.onUnaccepted(result);
+/******/ 						if (!options.ignoreUnaccepted)
+/******/ 							abortError = new Error(
+/******/ 								"Aborted because " + moduleId + " is not accepted" + chainInfo
+/******/ 							);
+/******/ 						break;
+/******/ 					case "accepted":
+/******/ 						if (options.onAccepted) options.onAccepted(result);
+/******/ 						doApply = true;
+/******/ 						break;
+/******/ 					case "disposed":
+/******/ 						if (options.onDisposed) options.onDisposed(result);
+/******/ 						doDispose = true;
+/******/ 						break;
+/******/ 					default:
+/******/ 						throw new Error("Unexception type " + result.type);
+/******/ 				}
+/******/ 				if (abortError) {
+/******/ 					hotSetStatus("abort");
+/******/ 					return Promise.reject(abortError);
+/******/ 				}
+/******/ 				if (doApply) {
+/******/ 					appliedUpdate[moduleId] = hotUpdate[moduleId];
+/******/ 					addAllToSet(outdatedModules, result.outdatedModules);
+/******/ 					for (moduleId in result.outdatedDependencies) {
+/******/ 						if (
+/******/ 							Object.prototype.hasOwnProperty.call(
+/******/ 								result.outdatedDependencies,
+/******/ 								moduleId
+/******/ 							)
+/******/ 						) {
+/******/ 							if (!outdatedDependencies[moduleId])
+/******/ 								outdatedDependencies[moduleId] = [];
+/******/ 							addAllToSet(
+/******/ 								outdatedDependencies[moduleId],
+/******/ 								result.outdatedDependencies[moduleId]
+/******/ 							);
+/******/ 						}
+/******/ 					}
+/******/ 				}
+/******/ 				if (doDispose) {
+/******/ 					addAllToSet(outdatedModules, [result.moduleId]);
+/******/ 					appliedUpdate[moduleId] = warnUnexpectedRequire;
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// Store self accepted outdated modules to require them later by the module system
+/******/ 		var outdatedSelfAcceptedModules = [];
+/******/ 		for (i = 0; i < outdatedModules.length; i++) {
+/******/ 			moduleId = outdatedModules[i];
+/******/ 			if (
+/******/ 				installedModules[moduleId] &&
+/******/ 				installedModules[moduleId].hot._selfAccepted
+/******/ 			)
+/******/ 				outdatedSelfAcceptedModules.push({
+/******/ 					module: moduleId,
+/******/ 					errorHandler: installedModules[moduleId].hot._selfAccepted
+/******/ 				});
+/******/ 		}
+/******/
+/******/ 		// Now in "dispose" phase
+/******/ 		hotSetStatus("dispose");
+/******/ 		Object.keys(hotAvailableFilesMap).forEach(function(chunkId) {
+/******/ 			if (hotAvailableFilesMap[chunkId] === false) {
+/******/ 				hotDisposeChunk(chunkId);
+/******/ 			}
+/******/ 		});
+/******/
+/******/ 		var idx;
+/******/ 		var queue = outdatedModules.slice();
+/******/ 		while (queue.length > 0) {
+/******/ 			moduleId = queue.pop();
+/******/ 			module = installedModules[moduleId];
+/******/ 			if (!module) continue;
+/******/
+/******/ 			var data = {};
+/******/
+/******/ 			// Call dispose handlers
+/******/ 			var disposeHandlers = module.hot._disposeHandlers;
+/******/ 			for (j = 0; j < disposeHandlers.length; j++) {
+/******/ 				cb = disposeHandlers[j];
+/******/ 				cb(data);
+/******/ 			}
+/******/ 			hotCurrentModuleData[moduleId] = data;
+/******/
+/******/ 			// disable module (this disables requires from this module)
+/******/ 			module.hot.active = false;
+/******/
+/******/ 			// remove module from cache
+/******/ 			delete installedModules[moduleId];
+/******/
+/******/ 			// when disposing there is no need to call dispose handler
+/******/ 			delete outdatedDependencies[moduleId];
+/******/
+/******/ 			// remove "parents" references from all children
+/******/ 			for (j = 0; j < module.children.length; j++) {
+/******/ 				var child = installedModules[module.children[j]];
+/******/ 				if (!child) continue;
+/******/ 				idx = child.parents.indexOf(moduleId);
+/******/ 				if (idx >= 0) {
+/******/ 					child.parents.splice(idx, 1);
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// remove outdated dependency from module children
+/******/ 		var dependency;
+/******/ 		var moduleOutdatedDependencies;
+/******/ 		for (moduleId in outdatedDependencies) {
+/******/ 			if (
+/******/ 				Object.prototype.hasOwnProperty.call(outdatedDependencies, moduleId)
+/******/ 			) {
+/******/ 				module = installedModules[moduleId];
+/******/ 				if (module) {
+/******/ 					moduleOutdatedDependencies = outdatedDependencies[moduleId];
+/******/ 					for (j = 0; j < moduleOutdatedDependencies.length; j++) {
+/******/ 						dependency = moduleOutdatedDependencies[j];
+/******/ 						idx = module.children.indexOf(dependency);
+/******/ 						if (idx >= 0) module.children.splice(idx, 1);
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// Not in "apply" phase
+/******/ 		hotSetStatus("apply");
+/******/
+/******/ 		hotCurrentHash = hotUpdateNewHash;
+/******/
+/******/ 		// insert new code
+/******/ 		for (moduleId in appliedUpdate) {
+/******/ 			if (Object.prototype.hasOwnProperty.call(appliedUpdate, moduleId)) {
+/******/ 				modules[moduleId] = appliedUpdate[moduleId];
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// call accept handlers
+/******/ 		var error = null;
+/******/ 		for (moduleId in outdatedDependencies) {
+/******/ 			if (
+/******/ 				Object.prototype.hasOwnProperty.call(outdatedDependencies, moduleId)
+/******/ 			) {
+/******/ 				module = installedModules[moduleId];
+/******/ 				if (module) {
+/******/ 					moduleOutdatedDependencies = outdatedDependencies[moduleId];
+/******/ 					var callbacks = [];
+/******/ 					for (i = 0; i < moduleOutdatedDependencies.length; i++) {
+/******/ 						dependency = moduleOutdatedDependencies[i];
+/******/ 						cb = module.hot._acceptedDependencies[dependency];
+/******/ 						if (cb) {
+/******/ 							if (callbacks.indexOf(cb) !== -1) continue;
+/******/ 							callbacks.push(cb);
+/******/ 						}
+/******/ 					}
+/******/ 					for (i = 0; i < callbacks.length; i++) {
+/******/ 						cb = callbacks[i];
+/******/ 						try {
+/******/ 							cb(moduleOutdatedDependencies);
+/******/ 						} catch (err) {
+/******/ 							if (options.onErrored) {
+/******/ 								options.onErrored({
+/******/ 									type: "accept-errored",
+/******/ 									moduleId: moduleId,
+/******/ 									dependencyId: moduleOutdatedDependencies[i],
+/******/ 									error: err
+/******/ 								});
+/******/ 							}
+/******/ 							if (!options.ignoreErrored) {
+/******/ 								if (!error) error = err;
+/******/ 							}
+/******/ 						}
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// Load self accepted modules
+/******/ 		for (i = 0; i < outdatedSelfAcceptedModules.length; i++) {
+/******/ 			var item = outdatedSelfAcceptedModules[i];
+/******/ 			moduleId = item.module;
+/******/ 			hotCurrentParents = [moduleId];
+/******/ 			try {
+/******/ 				__webpack_require__(moduleId);
+/******/ 			} catch (err) {
+/******/ 				if (typeof item.errorHandler === "function") {
+/******/ 					try {
+/******/ 						item.errorHandler(err);
+/******/ 					} catch (err2) {
+/******/ 						if (options.onErrored) {
+/******/ 							options.onErrored({
+/******/ 								type: "self-accept-error-handler-errored",
+/******/ 								moduleId: moduleId,
+/******/ 								error: err2,
+/******/ 								originalError: err
+/******/ 							});
+/******/ 						}
+/******/ 						if (!options.ignoreErrored) {
+/******/ 							if (!error) error = err2;
+/******/ 						}
+/******/ 						if (!error) error = err;
+/******/ 					}
+/******/ 				} else {
+/******/ 					if (options.onErrored) {
+/******/ 						options.onErrored({
+/******/ 							type: "self-accept-errored",
+/******/ 							moduleId: moduleId,
+/******/ 							error: err
+/******/ 						});
+/******/ 					}
+/******/ 					if (!options.ignoreErrored) {
+/******/ 						if (!error) error = err;
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// handle errors in accept handlers and self accepted module load
+/******/ 		if (error) {
+/******/ 			hotSetStatus("fail");
+/******/ 			return Promise.reject(error);
+/******/ 		}
+/******/
+/******/ 		hotSetStatus("idle");
+/******/ 		return new Promise(function(resolve) {
+/******/ 			resolve(outdatedModules);
+/******/ 		});
+/******/ 	}
+/******/
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -13,11 +715,14 @@
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
-/******/ 			exports: {}
+/******/ 			exports: {},
+/******/ 			hot: hotCreateModule(moduleId),
+/******/ 			parents: (hotCurrentParentsTemp = hotCurrentParents, hotCurrentParents = [], hotCurrentParentsTemp),
+/******/ 			children: []
 /******/ 		};
 /******/
 /******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, hotCreateRequire(moduleId));
 /******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
@@ -79,9 +784,12 @@
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
+/******/ 	// __webpack_hash__
+/******/ 	__webpack_require__.h = function() { return hotCurrentHash; };
+/******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./Source/App.tsx");
+/******/ 	return hotCreateRequire("./Source/App.tsx")(__webpack_require__.s = "./Source/App.tsx");
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -94,7 +802,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst ReactDOM = __webpack_require__(/*! react-dom */ \"./node_modules/react-dom/index.js\");\nconst react_router_dom_1 = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\nconst Home_1 = __webpack_require__(/*! ./components/Home/Home */ \"./Source/components/Home/Home.tsx\");\nconst Account_1 = __webpack_require__(/*! ./components/Account/Account */ \"./Source/components/Account/Account.tsx\");\nconst Register_1 = __webpack_require__(/*! ./components/Register/Register */ \"./Source/components/Register/Register.tsx\");\nconst Login_1 = __webpack_require__(/*! ./components/Login/Login */ \"./Source/components/Login/Login.tsx\");\nconst DocumentView_1 = __webpack_require__(/*! ./components/DocumentView/DocumentView */ \"./Source/components/DocumentView/DocumentView.tsx\");\nconst s = __webpack_require__(/*! ./style.sass */ \"./Source/style.sass\");\nclass App extends React.Component {\n    render() {\n        if (false) {}\n        return (React.createElement(\"div\", { id: 'App' },\n            React.createElement(react_router_dom_1.BrowserRouter, null,\n                React.createElement(react_router_dom_1.Switch, null,\n                    React.createElement(react_router_dom_1.Route, { path: '/A/App', exact: true, component: Login_1.default }),\n                    React.createElement(react_router_dom_1.Route, { path: '/A/App/Account', exact: true, component: Account_1.default }),\n                    React.createElement(react_router_dom_1.Route, { path: '/A/App/Register', exact: true, component: Register_1.default }),\n                    React.createElement(react_router_dom_1.Route, { path: '/A/App/Home', exact: true, component: Home_1.default }),\n                    React.createElement(react_router_dom_1.Route, { path: '/A/App/DocumentView', exact: true, component: DocumentView_1.default })))));\n    }\n}\nexports.default = App;\nReactDOM.render(React.createElement(App, null), document.getElementById('react-app'));\n\n\n//# sourceURL=webpack:///./Source/App.tsx?");
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst ReactDOM = __webpack_require__(/*! react-dom */ \"./node_modules/react-dom/index.js\");\nconst react_router_dom_1 = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\nconst Home_1 = __webpack_require__(/*! ./components/Home/Home */ \"./Source/components/Home/Home.tsx\");\nconst Account_1 = __webpack_require__(/*! ./components/Account/Account */ \"./Source/components/Account/Account.tsx\");\nconst Register_1 = __webpack_require__(/*! ./components/Register/Register */ \"./Source/components/Register/Register.tsx\");\nconst Login_1 = __webpack_require__(/*! ./components/Login/Login */ \"./Source/components/Login/Login.tsx\");\nconst DocumentView_1 = __webpack_require__(/*! ./components/DocumentView/DocumentView */ \"./Source/components/DocumentView/DocumentView.tsx\");\nconst s = __webpack_require__(/*! ./style.sass */ \"./Source/style.sass\");\nclass App extends React.Component {\n    render() {\n        if (true) {\n            module['hot'].accept();\n        }\n        return (React.createElement(\"div\", { id: 'App' },\n            React.createElement(react_router_dom_1.BrowserRouter, null,\n                React.createElement(react_router_dom_1.Switch, null,\n                    React.createElement(react_router_dom_1.Route, { path: '/A/App', exact: true, component: Login_1.default }),\n                    React.createElement(react_router_dom_1.Route, { path: '/A/App/Account', exact: true, component: Account_1.default }),\n                    React.createElement(react_router_dom_1.Route, { path: '/A/App/Register', exact: true, component: Register_1.default }),\n                    React.createElement(react_router_dom_1.Route, { path: '/A/App/Home', exact: true, component: Home_1.default }),\n                    React.createElement(react_router_dom_1.Route, { path: '/A/App/DocumentView', exact: true, component: DocumentView_1.default })))));\n    }\n}\nexports.default = App;\nReactDOM.render(React.createElement(App, null), document.getElementById('react-app'));\n\n\n//# sourceURL=webpack:///./Source/App.tsx?");
 
 /***/ }),
 
@@ -117,7 +825,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst 
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/About/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/About/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/About/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/About/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/About/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/About/styling/style.sass?");
 
 /***/ }),
 
@@ -140,7 +848,7 @@ eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _argument
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Account/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/Account/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Account/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Account/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Account/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/Account/styling/style.sass?");
 
 /***/ }),
 
@@ -152,7 +860,7 @@ eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-load
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst s = __webpack_require__(/*! ./styling/style.sass */ \"./Source/components/CreateDocument/styling/style.sass\");\nconst SelectPermissions_1 = __webpack_require__(/*! ./CreateDocumentViews/SelectPermissions/SelectPermissions */ \"./Source/components/CreateDocument/CreateDocumentViews/SelectPermissions/SelectPermissions.tsx\");\nconst SelectDocument_1 = __webpack_require__(/*! ./CreateDocumentViews/SelectDocument/SelectDocument */ \"./Source/components/CreateDocument/CreateDocumentViews/SelectDocument/SelectDocument.tsx\");\nconst DocumentPreview_1 = __webpack_require__(/*! ./CreateDocumentViews/DocumentPreview/DocumentPreview */ \"./Source/components/CreateDocument/CreateDocumentViews/DocumentPreview/DocumentPreview.tsx\");\nconst CreateDocumentNavButton_1 = __webpack_require__(/*! ./CreateDocumentNavButton/CreateDocumentNavButton */ \"./Source/components/CreateDocument/CreateDocumentNavButton/CreateDocumentNavButton.tsx\");\nconst AddedUser_1 = __webpack_require__(/*! ./CreateDocumentViews/SelectPermissions/AddedUser */ \"./Source/components/CreateDocument/CreateDocumentViews/SelectPermissions/AddedUser.tsx\");\n//Main Class\nclass CreateDocument extends React.Component {\n    constructor(props) {\n        super(props);\n        //Views\n        this.handleSelectDocumentView = () => {\n            this.setState({\n                selectDocumentBoolean: true,\n                selectPermissionsBoolean: false,\n                documentPreviewBoolean: false\n            });\n        };\n        this.handleSelectPermissionsView = () => {\n            this.setState({\n                selectDocumentBoolean: false,\n                selectPermissionsBoolean: true,\n                documentPreviewBoolean: false\n            });\n        };\n        this.handleSelectPreviewView = () => {\n            this.setState({\n                selectDocumentBoolean: false,\n                selectPermissionsBoolean: false,\n                documentPreviewBoolean: true\n            });\n        };\n        //State Management Functions\n        //UserList Management\n        this.addUser = () => {\n            let userList;\n            let userObjects;\n            userList = this.state.userList;\n            userObjects = this.state.userObjects;\n            let user = {\n                name: `Example User ${Math.random()}`,\n                id: Math.random()\n            };\n            userObjects.push(user);\n            let addedUser = React.createElement(AddedUser_1.default, { user: user, onClickHandler: this.deleteUser, componentThis: this });\n            userList.push(addedUser);\n            let input = document.getElementById('user-search-bar');\n            input.value = '';\n            this.setState({\n                userList: userList,\n                userObjects: userObjects\n            }, () => {\n                if (this.state.userList.length > 0) {\n                    this.setState({\n                        selectPermissionsComplete: true\n                    });\n                }\n            });\n        };\n        this.deleteUser = (e) => {\n            let id = e.target.parentNode.id;\n            let userList = this.state.userList;\n            let userObjects = this.state.userObjects;\n            userList.forEach(element => {\n                if (element.props.user.id == id) {\n                    userList.splice(userList.indexOf(element), 1);\n                }\n            });\n            userObjects.forEach(user => {\n                if (user.id === parseFloat(id)) {\n                    userObjects.splice(userObjects.indexOf(user), 1);\n                }\n            });\n            this.setState({\n                userList: userList,\n                userObjects: userObjects\n            }, () => {\n                if (this.state.userList.length < 1) {\n                    this.setState({\n                        selectPermissionsComplete: false\n                    });\n                }\n            });\n        };\n        this.disableDocumentPreview = () => {\n            if (this.state.selectDocumentComplete && this.state.selectPermissionsComplete) {\n                return false;\n            }\n            else {\n                return true;\n            }\n        };\n        this.getDocumentName = (documentName) => {\n            this.setState({\n                documentName: documentName\n            });\n        };\n        this.getDocumentId = (document_id) => {\n            this.setState({\n                document_id: document_id\n            }, () => {\n                console.log(this.state.document_id);\n            });\n        };\n        this.giveDocumentId = () => {\n            return this.state.document_id;\n        };\n        this.getSelectDocumentComplete = (selectDocumentComplete) => {\n            this.setState({\n                selectDocumentComplete: selectDocumentComplete\n            });\n        };\n        this.getSelectPermissionsComplete = (selectPermissionsComplete) => {\n            this.setState({\n                selectPermissionsComplete: selectPermissionsComplete\n            });\n        };\n        this.getDocumentPreviewComplete = (documentPreviewComplete) => {\n            this.setState({\n                documentPreviewComplete: documentPreviewComplete\n            });\n        };\n        this.state = {\n            currentView: '',\n            view: '',\n            document_id: '',\n            documentName: '',\n            userList: [],\n            userObjects: [],\n            selectDocumentShow: true,\n            documentPreviewShow: false,\n            selectPermissionsBoolean: false\n        };\n    }\n    componentDidUpdate() {\n    }\n    componentWillMount() {\n        this.handleSelectDocumentView();\n    }\n    render() {\n        if (this.state.selectDocumentBoolean) {\n            return (React.createElement(\"div\", { id: 'CreateDocument' },\n                React.createElement(\"div\", { id: 'create-document-nav-bar' },\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectDocumentComplete, id: 'create-document-nav-bar-item-document', innerText: 'Select Document', onClickHandler: this.handleSelectDocumentView, disable: false, selected: this.state.selectDocumentBoolean }),\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectPermissionsComplete, id: 'create-permissions-nav-bar-item-document', innerText: 'Create Permissions', onClickHandler: this.handleSelectPermissionsView, disable: false, selected: this.state.selectPermissionsBoolean }),\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: false, id: 'document-preview-nav-bar-item-document', innerText: 'Preview', onClickHandler: this.handleSelectPreviewView, disable: this.disableDocumentPreview(), selected: this.state.documentPreviewBoolean })),\n                React.createElement(\"div\", { className: 'container' },\n                    React.createElement(SelectDocument_1.default, { selectDocumentBoolean: this.state.selectDocumentBoolean, documents: this.props.documentResults, getDocumentId: this.getDocumentId, getSelectDocumentComplete: this.getSelectDocumentComplete }))));\n        }\n        if (this.state.selectPermissionsBoolean) {\n            return (React.createElement(\"div\", { id: 'CreateDocument' },\n                React.createElement(\"div\", { id: 'create-document-nav-bar' },\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectDocumentComplete, id: 'create-document-nav-bar-item-document', innerText: 'Select Document', onClickHandler: this.handleSelectDocumentView, disable: false, selected: this.state.selectDocumentBoolean }),\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectPermissionsComplete, id: 'create-permissions-nav-bar-item-document', innerText: 'Create Permissions', onClickHandler: this.handleSelectPermissionsView, disable: false, selected: this.state.selectPermissionsBoolean }),\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: false, id: 'document-preview-nav-bar-item-document', innerText: 'Preview', onClickHandler: this.handleSelectPreviewView, disable: this.disableDocumentPreview(), selected: this.state.documentPreviewBoolean })),\n                React.createElement(\"div\", { className: 'container' },\n                    React.createElement(SelectPermissions_1.default, { selectPermissionsBoolean: this.state.selectPermissionsBoolean, addUser: this.addUser, userObjects: this.state.userObjects, userList: this.state.userList, getSelectPermissionsComplete: this.getSelectPermissionsComplete }))));\n        }\n        if (this.state.documentPreviewBoolean) {\n            return (React.createElement(\"div\", { id: 'CreateDocument' },\n                React.createElement(\"div\", { id: 'create-document-nav-bar' },\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectDocumentComplete, id: 'create-document-nav-bar-item-document', innerText: 'Select Document', onClickHandler: this.handleSelectDocumentView, disable: false, selected: this.state.selectDocumentBoolean }),\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectPermissionsComplete, id: 'create-permissions-nav-bar-item-document', innerText: 'Create Permissions', onClickHandler: this.handleSelectPermissionsView, disable: false, selected: this.state.selectPermissionsBoolean }),\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: false, id: 'document-preview-nav-bar-item-document', innerText: 'Preview', onClickHandler: this.handleSelectPreviewView, disable: this.disableDocumentPreview(), selected: this.state.documentPreviewBoolean })),\n                React.createElement(\"div\", { className: 'container' },\n                    React.createElement(DocumentPreview_1.default, { documentPreviewBoolean: this.state.documentPreviewBoolean, userList: this.state.userList, document_id: this.state.document_id, getDocumentName: this.getDocumentName, getDocumentPreviewComplete: this.getDocumentPreviewComplete }))));\n        }\n        // return(\n        //     <div id='CreateDocument'>\n        //         <div id='create-document-nav-bar'>\n        //             <CreateDocumentNavButton complete={this.state.selectDocumentComplete} id={'create-document-nav-bar-item-document'} innerText={'Select Document'} onClickHandler={ this.handleSelectDocumentView} disable={false} selected={this.state.selectDocumentBoolean}/>\n        //             <CreateDocumentNavButton complete={this.state.selectPermissionsComplete} id={'create-permissions-nav-bar-item-document'} innerText={'Create Permissions'} onClickHandler={this.handleSelectPermissionsView} disable={false} selected={this.state.selectPermissionsBoolean}/>\n        //             <CreateDocumentNavButton complete={false} id={'document-preview-nav-bar-item-document'} innerText={'Preview'} onClickHandler={this.handleSelectPreviewView} disable={this.disableDocumentPreview()} selected={this.state.documentPreviewBoolean}/>\n        //         </div>\n        //         <div className='container'>\n        //             <SelectDocument selectDocumentBoolean={this.state.selectDocumentBoolean} documents={this.props.documentResults} getDocumentId={this.getDocumentId} getSelectDocumentComplete={this.getSelectDocumentComplete} />\n        //             <SelectPermissions selectPermissionsBoolean={this.state.selectPermissionsBoolean} addUser={this.addUser} userObjects={this.state.userObjects} userList={this.state.userList} getSelectPermissionsComplete={this.getSelectPermissionsComplete} />\n        //             <DocumentPreview documentPreviewBoolean={this.state.documentPreviewBoolean} userList={this.state.userList} document_id={this.giveDocumentId()} getDocumentName={this.getDocumentName} getDocumentPreviewComplete={this.getDocumentPreviewComplete}/>\n        //         </div>\n        //     </div>\n        // )\n    }\n}\nexports.default = CreateDocument;\n\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/CreateDocument.tsx?");
+eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst $ = __webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\");\nconst s = __webpack_require__(/*! ./styling/style.sass */ \"./Source/components/CreateDocument/styling/style.sass\");\nconst SelectPermissions_1 = __webpack_require__(/*! ./CreateDocumentViews/SelectPermissions/SelectPermissions */ \"./Source/components/CreateDocument/CreateDocumentViews/SelectPermissions/SelectPermissions.tsx\");\nconst SelectDocument_1 = __webpack_require__(/*! ./CreateDocumentViews/SelectDocument/SelectDocument */ \"./Source/components/CreateDocument/CreateDocumentViews/SelectDocument/SelectDocument.tsx\");\nconst DocumentPreview_1 = __webpack_require__(/*! ./CreateDocumentViews/DocumentPreview/DocumentPreview */ \"./Source/components/CreateDocument/CreateDocumentViews/DocumentPreview/DocumentPreview.tsx\");\nconst CreateDocumentNavButton_1 = __webpack_require__(/*! ./CreateDocumentNavButton/CreateDocumentNavButton */ \"./Source/components/CreateDocument/CreateDocumentNavButton/CreateDocumentNavButton.tsx\");\n//Main Class\nclass CreateDocument extends React.Component {\n    constructor(props) {\n        super(props);\n        //Views\n        this.handleSelectDocumentView = () => {\n            this.setState({\n                selectDocumentBoolean: true,\n                selectPermissionsBoolean: false,\n                documentPreviewBoolean: false\n            });\n        };\n        this.handleSelectPermissionsView = () => {\n            this.setState({\n                selectDocumentBoolean: false,\n                selectPermissionsBoolean: true,\n                documentPreviewBoolean: false\n            });\n        };\n        this.handleSelectPreviewView = () => {\n            this.setState({\n                selectDocumentBoolean: false,\n                selectPermissionsBoolean: false,\n                documentPreviewBoolean: true\n            });\n        };\n        //State Management Functions\n        //UserList Management\n        this.addUser = () => {\n            let userList;\n            userList = this.state.userList;\n            let user = {\n                name: `Example User ${Math.random()}`,\n                id: Math.random(),\n                assigned_to: null\n            };\n            userList.push(user);\n            let input = document.getElementById('user-search-bar');\n            input.value = '';\n            this.setState({\n                userList: userList\n            }, () => {\n                if (this.state.userList.length > 0) {\n                    this.setState({\n                        selectPermissionsComplete: true\n                    });\n                }\n            });\n        };\n        this.deleteUser = (e) => {\n            let id = e.target.parentNode.id;\n            let userList = this.state.userList;\n            let assignedField;\n            userList.forEach(user => {\n                if (user.id.toString() === id.toString()) {\n                    assignedField = user.assigned_to;\n                    userList.splice(userList.indexOf(user), 1);\n                }\n            });\n            this.removeAssignedUser(assignedField);\n            this.setState({\n                userList: userList\n            }, () => {\n                if (this.state.userList.length < 1) {\n                    this.setState({\n                        selectPermissionsComplete: false\n                    });\n                }\n            });\n        };\n        this.removeAssignedUser = (assignedField) => {\n            let document_meta = this.state.document_meta;\n            document_meta[assignedField].assigned_to = null;\n            this.setState({\n                document_meta: document_meta\n            });\n        };\n        this.assignUserToField = (e) => {\n            if (this.state.currentSelectedFieldId === undefined) {\n                alert('Select field before assigning user');\n                return;\n            }\n            let id = e.target.id;\n            let userList = this.state.userList;\n            let document_meta = this.state.document_meta;\n            let user = userList.filter(user => user.id.toString() === id.toString())[0];\n            user.assigned_to = this.state.currentSelectedFieldId;\n            document_meta[this.state.currentSelectedFieldId].assigned_to = user;\n            this.setState({\n                userList: userList,\n                document_meta: document_meta\n            });\n        };\n        this.handleSelectedFieldId = (currentSelectedFieldId) => {\n            this.setState({\n                currentSelectedFieldId: currentSelectedFieldId\n            }, () => {\n                console.log('currentSelectedField:', this.state.currentSelectedFieldId);\n            });\n        };\n        //Code excerpt to allow for promises to be cancelled\n        this.makeCancelable = (promise) => __awaiter(this, void 0, void 0, function* () {\n            let hasCanceled_ = false;\n            const wrappedPromise = new Promise((resolve, reject) => {\n                promise.then((val) => hasCanceled_ ? reject({ isCanceled: true }) : resolve(val));\n                promise.catch((error) => hasCanceled_ ? reject({ isCanceled: true }) : reject(error));\n            });\n            return {\n                promise: wrappedPromise,\n                cancel() {\n                    hasCanceled_ = true;\n                },\n            };\n        });\n        this.getDocument = () => __awaiter(this, void 0, void 0, function* () {\n            let promise = $.get(`/DocumentSave/GetDocumentMeta?document_id=${this.state.document_id}`);\n            let getDocumentResponse = yield this.makeCancelable(promise);\n            this.setState({\n                getDocumentResponse: getDocumentResponse\n            });\n            return getDocumentResponse;\n        });\n        this.getDocumentMeta = () => __awaiter(this, void 0, void 0, function* () {\n            let promise = yield this.getDocument();\n            let documentResponse = yield promise.promise;\n            let document_meta = documentResponse.document_meta;\n            this.setState({\n                document_meta: document_meta\n            }, () => {\n                console.log(this.state.document_meta);\n            });\n        });\n        //State Management\n        this.disableDocumentPreview = () => {\n            if (this.state.selectDocumentComplete && this.state.selectPermissionsComplete) {\n                return false;\n            }\n            else {\n                return true;\n            }\n        };\n        this.getDocumentName = (documentName) => {\n            this.setState({\n                documentName: documentName\n            });\n        };\n        this.getDocumentId = (document_id) => {\n            this.setState({\n                document_id: document_id\n            }, () => {\n                this.getDocumentMeta();\n            });\n        };\n        this.giveDocumentId = () => {\n            return this.state.document_id;\n        };\n        this.getSelectDocumentComplete = (selectDocumentComplete) => {\n            this.setState({\n                selectDocumentComplete: selectDocumentComplete\n            });\n        };\n        this.getSelectPermissionsComplete = (selectPermissionsComplete) => {\n            this.setState({\n                selectPermissionsComplete: selectPermissionsComplete\n            });\n        };\n        this.getDocumentPreviewComplete = (documentPreviewComplete) => {\n            this.setState({\n                documentPreviewComplete: documentPreviewComplete\n            });\n        };\n        this.state = {\n            currentView: '',\n            view: '',\n            document_id: '',\n            documentName: '',\n            userList: [],\n            selectDocumentShow: true,\n            documentPreviewShow: false,\n            selectPermissionsBoolean: false,\n            document_meta: Array\n        };\n    }\n    componentDidUpdate() {\n    }\n    componentWillMount() {\n        this.handleSelectDocumentView();\n    }\n    render() {\n        if (this.state.selectDocumentBoolean) {\n            return (React.createElement(\"div\", { id: 'CreateDocument' },\n                React.createElement(\"div\", { id: 'create-document-nav-bar' },\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectDocumentComplete, id: 'create-document-nav-bar-item-document', innerText: 'Select Document', onClickHandler: this.handleSelectDocumentView, disable: false, selected: this.state.selectDocumentBoolean }),\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectPermissionsComplete, id: 'create-permissions-nav-bar-item-document', innerText: 'Create Permissions', onClickHandler: this.handleSelectPermissionsView, disable: false, selected: this.state.selectPermissionsBoolean }),\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: false, id: 'document-preview-nav-bar-item-document', innerText: 'Preview', onClickHandler: this.handleSelectPreviewView, disable: this.disableDocumentPreview(), selected: this.state.documentPreviewBoolean })),\n                React.createElement(\"div\", { className: 'container' },\n                    React.createElement(SelectDocument_1.default, { selectDocumentBoolean: this.state.selectDocumentBoolean, documents: this.props.documentResults, getDocumentId: this.getDocumentId, getSelectDocumentComplete: this.getSelectDocumentComplete }))));\n        }\n        if (this.state.selectPermissionsBoolean) {\n            return (React.createElement(\"div\", { id: 'CreateDocument' },\n                React.createElement(\"div\", { id: 'create-document-nav-bar' },\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectDocumentComplete, id: 'create-document-nav-bar-item-document', innerText: 'Select Document', onClickHandler: this.handleSelectDocumentView, disable: false, selected: this.state.selectDocumentBoolean }),\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectPermissionsComplete, id: 'create-permissions-nav-bar-item-document', innerText: 'Create Permissions', onClickHandler: this.handleSelectPermissionsView, disable: false, selected: this.state.selectPermissionsBoolean }),\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: false, id: 'document-preview-nav-bar-item-document', innerText: 'Preview', onClickHandler: this.handleSelectPreviewView, disable: this.disableDocumentPreview(), selected: this.state.documentPreviewBoolean })),\n                React.createElement(\"div\", { className: 'container' },\n                    React.createElement(SelectPermissions_1.default, { assignUserToField: this.assignUserToField, selectPermissionsBoolean: this.state.selectPermissionsBoolean, addUser: this.addUser, deleteUser: this.deleteUser, userList: this.state.userList, getSelectPermissionsComplete: this.getSelectPermissionsComplete }))));\n        }\n        if (this.state.documentPreviewBoolean) {\n            return (React.createElement(\"div\", { id: 'CreateDocument' },\n                React.createElement(\"div\", { id: 'create-document-nav-bar' },\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectDocumentComplete, id: 'create-document-nav-bar-item-document', innerText: 'Select Document', onClickHandler: this.handleSelectDocumentView, disable: false, selected: this.state.selectDocumentBoolean }),\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectPermissionsComplete, id: 'create-permissions-nav-bar-item-document', innerText: 'Create Permissions', onClickHandler: this.handleSelectPermissionsView, disable: false, selected: this.state.selectPermissionsBoolean }),\n                    React.createElement(CreateDocumentNavButton_1.default, { complete: false, id: 'document-preview-nav-bar-item-document', innerText: 'Preview', onClickHandler: this.handleSelectPreviewView, disable: this.disableDocumentPreview(), selected: this.state.documentPreviewBoolean })),\n                React.createElement(\"div\", { className: 'container' },\n                    React.createElement(DocumentPreview_1.default, { currentSelectedField: this.state.document_meta[this.state.currentSelectedFieldId], handleSelectedFieldId: this.handleSelectedFieldId, currentSelectedFieldId: this.state.currentSelectedFieldId, deleteUser: this.deleteUser, assignUserToField: this.assignUserToField, documentPreviewBoolean: this.state.documentPreviewBoolean, userList: this.state.userList, document_id: this.state.document_id, document_meta: this.state.document_meta, getDocumentName: this.getDocumentName, getDocumentPreviewComplete: this.getDocumentPreviewComplete }))));\n        }\n    }\n}\nexports.default = CreateDocument;\n\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/CreateDocument.tsx?");
 
 /***/ }),
 
@@ -176,7 +884,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst 
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst DocumentView_1 = __webpack_require__(/*! ../../../DocumentView/DocumentView */ \"./Source/components/DocumentView/DocumentView.tsx\");\nconst DocumentPreviewSidebar_1 = __webpack_require__(/*! ./DocumentPreviewSidebar */ \"./Source/components/CreateDocument/CreateDocumentViews/DocumentPreview/DocumentPreviewSidebar.tsx\");\nclass DocumentPreview extends React.Component {\n    constructor(props) {\n        super(props);\n        this.handleShow = () => {\n            if (!this.props.documentPreviewBoolean) {\n                let style = {\n                    display: 'none'\n                };\n                return style;\n            }\n            else {\n                let style = {\n                    display: 'block'\n                };\n                return style;\n            }\n        };\n        this.previewOnClickHandler = (e) => {\n            let id = e.target.id;\n            //Clearing previously selected field\n            if (this.state.currentSelectedField != '') {\n                document.getElementById(this.state.currentSelectedField).classList.remove('selectedField');\n            }\n            document.getElementById(this.state.currentSelectedField).classList.add('selectedField');\n        };\n        this.handleDocumentNameChange = (e) => {\n            let documentName = this.state.documentName;\n            documentName = e.target.value;\n            this.setState({\n                documentName: documentName\n            }, () => {\n                this.props.getDocumentName(this.state.documentName);\n            });\n        };\n        this.showSidebar = () => {\n            this.setState({\n                showSidebar: true\n            });\n        };\n        this.getHideSidebar = (showSidebar) => {\n            this.setState({\n                showSidebar: showSidebar\n            });\n        };\n        //State management methods\n        this.getDocumentId = () => {\n            this.setState({\n                document_id: this.props.document_id\n            });\n        };\n        this.giveDocumentPreviewComplete = () => {\n            this.props.getDocumentPreviewComplete(true);\n        };\n        this.state = {\n            documentName: String,\n            currentSelectedField: String,\n            userList: []\n        };\n    }\n    //React lifecycle methods\n    componentDidMount() {\n        this.handleShow();\n        this.getDocumentId();\n    }\n    render() {\n        return (React.createElement(\"div\", { id: 'DocumentPreview', style: this.handleShow() },\n            React.createElement(\"div\", { id: 'document-view-container' },\n                React.createElement(\"div\", { id: 'document-view-header' },\n                    React.createElement(\"input\", { placeholder: 'Document Name', onChange: (e) => { this.handleDocumentNameChange(e); }, id: 'document-name-input', type: \"text\" }),\n                    React.createElement(\"div\", { id: 'save-button' }, \"Save File\")),\n                React.createElement(DocumentView_1.default, { document_id: this.props.document_id, view: 'DocumentPreview', previewOnClickHandler: this.previewOnClickHandler })),\n            React.createElement(\"div\", { id: 'show-sidebar-icon-container', onClick: this.showSidebar },\n                React.createElement(\"img\", { id: 'show-sidebar-icon', src: \"/images/left-arrow-1.png\", alt: \"\" })),\n            React.createElement(DocumentPreviewSidebar_1.default, { showSidebar: this.state.showSidebar, userList: this.props.userList, getHideSidebar: this.getHideSidebar })));\n    }\n}\nexports.default = DocumentPreview;\n\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/CreateDocumentViews/DocumentPreview/DocumentPreview.tsx?");
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst DocumentView_1 = __webpack_require__(/*! ../../../DocumentView/DocumentView */ \"./Source/components/DocumentView/DocumentView.tsx\");\nconst DocumentPreviewSidebar_1 = __webpack_require__(/*! ./DocumentPreviewSidebar */ \"./Source/components/CreateDocument/CreateDocumentViews/DocumentPreview/DocumentPreviewSidebar.tsx\");\nclass DocumentPreview extends React.Component {\n    constructor(props) {\n        super(props);\n        this.handleShow = () => {\n            if (!this.props.documentPreviewBoolean) {\n                let style = {\n                    display: 'none'\n                };\n                return style;\n            }\n            else {\n                let style = {\n                    display: 'block'\n                };\n                return style;\n            }\n        };\n        this.previewOnClickHandler = (e) => {\n            let id = e.target.id;\n            //Clearing previously selected field\n            if (this.props.currentSelectedField !== undefined) {\n                document.getElementById(this.props.document_meta.indexOf(this.props.currentSelectedField).toString()).classList.remove('selectedField');\n            }\n            document.getElementById(id).classList.add('selectedField');\n            let currentSelectedFieldValue = this.props.document_meta[id].assigned_to;\n            console.log(currentSelectedFieldValue);\n            this.props.handleSelectedFieldId(id);\n        };\n        this.handleDocumentNameChange = (e) => {\n            let documentName = this.state.documentName;\n            documentName = e.target.value;\n            this.setState({\n                documentName: documentName\n            }, () => {\n                this.props.getDocumentName(this.state.documentName);\n            });\n        };\n        this.showSidebar = () => {\n            this.setState({\n                showSidebar: true\n            });\n        };\n        this.getHideSidebar = (showSidebar) => {\n            this.setState({\n                showSidebar: showSidebar\n            });\n        };\n        //State management methods\n        this.getDocumentId = () => {\n            this.setState({\n                document_id: this.props.document_id\n            });\n        };\n        this.giveDocumentPreviewComplete = () => {\n            this.props.getDocumentPreviewComplete(true);\n        };\n        this.state = {\n            documentName: String,\n            currentSelectedField: '',\n            userList: []\n        };\n    }\n    //React lifecycle methods\n    componentDidMount() {\n        this.handleShow();\n        this.getDocumentId();\n    }\n    componentWillMount() {\n        if (this.state.getDocumentResponse) {\n            this.state.getDocumentResponse.cancel();\n        }\n    }\n    render() {\n        return (React.createElement(\"div\", { id: 'DocumentPreview', style: this.handleShow() },\n            React.createElement(\"div\", { id: 'document-view-container' },\n                React.createElement(\"div\", { id: 'document-view-header' },\n                    React.createElement(\"input\", { placeholder: 'Document Name', onChange: (e) => { this.handleDocumentNameChange(e); }, id: 'document-name-input', type: \"text\" }),\n                    React.createElement(\"div\", { id: 'save-button' }, \"Save File\")),\n                React.createElement(DocumentView_1.default, { document_id: this.props.document_id, view: 'DocumentPreview', previewOnClickHandler: this.previewOnClickHandler })),\n            React.createElement(\"div\", { id: 'show-sidebar-icon-container', onClick: this.showSidebar },\n                React.createElement(\"img\", { id: 'show-sidebar-icon', src: \"/images/left-arrow-1.png\", alt: \"\" })),\n            React.createElement(DocumentPreviewSidebar_1.default, { currentSelectedField: this.props.currentSelectedField, showSidebar: this.state.showSidebar, deleteUser: this.props.deleteUser, assignUserToField: this.props.assignUserToField, userList: this.props.userList, getHideSidebar: this.getHideSidebar })));\n    }\n}\nexports.default = DocumentPreview;\n\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/CreateDocumentViews/DocumentPreview/DocumentPreview.tsx?");
 
 /***/ }),
 
@@ -188,7 +896,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst 
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nclass DocumentPreviewSidebar extends React.Component {\n    constructor(props) {\n        super(props);\n        //Sidebar Functions\n        this.hideSidebar = () => {\n            let sidebar = document.getElementById('document-view-sidebar');\n            sidebar.classList.add('hide-sidebar');\n            sidebar.classList.remove('show-sidebar');\n            this.giveHideSidebar();\n        };\n        this.showSidebar = () => {\n            let sidebar = document.getElementById('document-view-sidebar');\n            sidebar.classList.add('show-sidebar');\n            sidebar.classList.remove('hide-sidebar');\n        };\n        this.giveHideSidebar = () => {\n            this.props.getHideSidebar(false);\n        };\n        this.state = {};\n    }\n    componentDidUpdate() {\n        if (this.props.showSidebar) {\n            this.showSidebar();\n        }\n    }\n    render() {\n        return (React.createElement(\"div\", { id: 'document-view-sidebar', className: '' },\n            React.createElement(\"div\", { id: 'close-sidebar-icon', onClick: this.hideSidebar }, \"x\"),\n            React.createElement(\"div\", { className: 'documents-header' }, \"Selected Field\"),\n            React.createElement(\"div\", null, \" Show field here\"),\n            React.createElement(\"div\", { className: 'documents-header' }, \"User List\"),\n            React.createElement(\"div\", { id: 'added-users-container-preview', className: 'added-users-container' }, this.props.userList)));\n    }\n}\nexports.default = DocumentPreviewSidebar;\n\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/CreateDocumentViews/DocumentPreview/DocumentPreviewSidebar.tsx?");
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst AddedUserList_1 = __webpack_require__(/*! ../SelectPermissions/AddedUserList */ \"./Source/components/CreateDocument/CreateDocumentViews/SelectPermissions/AddedUserList.tsx\");\nclass DocumentPreviewSidebar extends React.Component {\n    constructor(props) {\n        super(props);\n        this.showSelectedField = () => {\n            if (this.props.currentSelectedField === undefined) {\n                return;\n            }\n            else {\n                return this.props.currentSelectedField.field_name;\n            }\n        };\n        //Sidebar Functions\n        this.hideSidebar = () => {\n            let sidebar = document.getElementById('document-view-sidebar');\n            sidebar.classList.add('hide-sidebar');\n            sidebar.classList.remove('show-sidebar');\n            this.giveHideSidebar();\n        };\n        this.showSidebar = () => {\n            let sidebar = document.getElementById('document-view-sidebar');\n            sidebar.classList.add('show-sidebar');\n            sidebar.classList.remove('hide-sidebar');\n        };\n        this.giveHideSidebar = () => {\n            this.props.getHideSidebar(false);\n        };\n        this.state = {};\n    }\n    componentDidUpdate() {\n        if (this.props.showSidebar) {\n            this.showSidebar();\n        }\n    }\n    render() {\n        return (React.createElement(\"div\", { id: 'document-view-sidebar', className: '' },\n            React.createElement(\"div\", { id: 'close-sidebar-icon', onClick: this.hideSidebar }, \"x\"),\n            React.createElement(\"div\", { className: 'preview-documents-header' }, \"Selected Field\"),\n            React.createElement(\"div\", { className: 'selected-field-display-container' },\n                \"Currently Selected Field: \",\n                this.showSelectedField()),\n            React.createElement(\"div\", { className: 'preview-documents-header' }, \"User List\"),\n            React.createElement(\"div\", { id: 'added-users-container-preview' },\n                React.createElement(AddedUserList_1.default, { userList: this.props.userList, assignUserToField: this.props.assignUserToField, deleteUser: this.props.deleteUser, isInSidebar: true }))));\n    }\n}\nexports.default = DocumentPreviewSidebar;\n\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/CreateDocumentViews/DocumentPreview/DocumentPreviewSidebar.tsx?");
 
 /***/ }),
 
@@ -212,7 +920,19 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst 
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nclass AddedUser extends React.Component {\n    componentDidMount() {\n    }\n    render() {\n        return (React.createElement(\"div\", { key: this.props.user.id.toString(), className: 'added-user', id: this.props.user.id.toString() },\n            this.props.user.name,\n            React.createElement(\"div\", { className: 'added-user-delete-icon', onClick: (e) => { this.props.onClickHandler(e, this.props.componentThis); } }, \"x\")));\n    }\n}\nexports.default = AddedUser;\n\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/CreateDocumentViews/SelectPermissions/AddedUser.tsx?");
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nclass AddedUser extends React.Component {\n    constructor() {\n        super(...arguments);\n        this.getStyle = () => {\n            if (this.props.isInSidebar) {\n                let style = {\n                    cursor: 'pointer',\n                    backgroundColor: this.props.user.assigned_to !== null ? 'grey' : ''\n                };\n                return style;\n            }\n            if (!this.props.isInSidebar) {\n                let style = {\n                    backgroundColor: this.props.user.assigned_to !== null ? 'grey' : ''\n                };\n                return style;\n            }\n        };\n    }\n    componentDidMount() {\n    }\n    render() {\n        if (this.props.isInSidebar) {\n            return (React.createElement(\"div\", { style: this.getStyle(), className: 'added-user', id: this.props.user.id.toString(), onClick: (e) => this.props.assignUserToField(e) }, this.props.user.name));\n        }\n        if (!this.props.isInSidebar) {\n            return (React.createElement(\"div\", { style: this.getStyle(), className: 'added-user', id: this.props.user.id.toString() },\n                this.props.user.name,\n                React.createElement(\"div\", { className: 'added-user-delete-icon', onClick: (e) => { this.props.deleteUser(e); } }, \"x\")));\n        }\n    }\n}\nexports.default = AddedUser;\n\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/CreateDocumentViews/SelectPermissions/AddedUser.tsx?");
+
+/***/ }),
+
+/***/ "./Source/components/CreateDocument/CreateDocumentViews/SelectPermissions/AddedUserList.tsx":
+/*!**************************************************************************************************!*\
+  !*** ./Source/components/CreateDocument/CreateDocumentViews/SelectPermissions/AddedUserList.tsx ***!
+  \**************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst AddedUser_1 = __webpack_require__(/*! ./AddedUser */ \"./Source/components/CreateDocument/CreateDocumentViews/SelectPermissions/AddedUser.tsx\");\nclass AddedUserList extends React.Component {\n    renderAddedUsers() {\n        let userList = this.props.userList;\n        let userElementList = [];\n        userList.forEach(user => {\n            userElementList.push(React.createElement(AddedUser_1.default, { key: Math.random(), user: user, assignUserToField: e => this.props.assignUserToField(e), deleteUser: this.props.deleteUser, isInSidebar: this.props.isInSidebar }));\n        });\n        return userElementList;\n    }\n    render() {\n        return (React.createElement(\"div\", { className: 'AddedUserList added-users-container' }, this.renderAddedUsers()));\n    }\n}\nexports.default = AddedUserList;\n\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/CreateDocumentViews/SelectPermissions/AddedUserList.tsx?");
 
 /***/ }),
 
@@ -224,7 +944,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst 
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst $ = __webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\");\nclass SelectPermissions extends React.Component {\n    constructor(props) {\n        super(props);\n        this.handleShow = () => {\n            if (!this.props.selectPermissionsBoolean) {\n                let style = {\n                    display: 'none'\n                };\n                return style;\n            }\n            else {\n                let style = {\n                    display: 'block'\n                };\n                return style;\n            }\n        };\n        // showUserList = (): Array<JSX.Element> => {\n        //     return this.props.userList\n        // }\n        //Finding and displaying added users\n        this.handleFindUser = (e) => __awaiter(this, void 0, void 0, function* () {\n            let query = e.target.value;\n            if (query === '') {\n                this.clearUsersFromSearch();\n                return;\n            }\n            try {\n                let result = yield $.get(`/Account/FindUsers?search=${query}`);\n                //No users yet, will jsut use fake ones for now  \n                let userArray = ['user1', 'user2', 'user3'];\n                this.displayUsersFromSearch(userArray);\n            }\n            catch (e) {\n                console.log(e);\n            }\n        });\n        this.clearUsersFromSearch = () => {\n            setTimeout(() => {\n                this.setState({\n                    userSearchResults: ''\n                });\n            }, 150);\n        };\n        this.displayUsersFromSearch = (userArray) => {\n            let userSearchResultsArray = [];\n            for (let i = 0; i < userArray.length; i++) {\n                let userSearchResult = (React.createElement(\"li\", { className: 'user-search-result', onClick: this.props.addUser }, userArray[i]));\n                userSearchResultsArray.push(userSearchResult);\n            }\n            let userSearchResults = (React.createElement(\"ul\", { id: 'user-search-results-list' }, userSearchResultsArray));\n            this.setState({\n                userSearchResults: userSearchResults\n            });\n        };\n        //State Management\n        this.giveSelectPermissionsComplete = selectPermissionsComplete => {\n            this.props.getSelectPermissionsComplete(selectPermissionsComplete);\n        };\n        this.state = {\n            userObjects: [],\n            userList: []\n        };\n    }\n    componentDidMount() {\n        this.handleShow();\n    }\n    render() {\n        return (React.createElement(\"div\", { id: 'SelectPermissions', style: this.handleShow() },\n            React.createElement(\"div\", { id: 'select-users-header', className: 'documents-header' }, \"Select Users\"),\n            React.createElement(\"div\", { className: 'document-list-container' },\n                React.createElement(\"div\", { id: 'user-search-main-container' },\n                    React.createElement(\"div\", { id: 'user-search-bar-container' },\n                        React.createElement(\"div\", { id: 'search-bar-magnifying-glass' }),\n                        React.createElement(\"input\", { onBlur: this.clearUsersFromSearch, onFocus: (e) => { this.handleFindUser(e); }, onChange: (e) => { this.handleFindUser(e); }, id: 'user-search-bar', placeholder: 'Find Users', type: \"text\" }),\n                        this.state.userSearchResults),\n                    React.createElement(\"div\", { id: 'added-users-title' }, \"Selected Users\"),\n                    React.createElement(\"div\", { className: 'added-users-container' }, this.props.userList)))));\n    }\n}\nexports.default = SelectPermissions;\n\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/CreateDocumentViews/SelectPermissions/SelectPermissions.tsx?");
+eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst AddedUserList_1 = __webpack_require__(/*! ./AddedUserList */ \"./Source/components/CreateDocument/CreateDocumentViews/SelectPermissions/AddedUserList.tsx\");\nconst $ = __webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\");\nclass SelectPermissions extends React.Component {\n    constructor(props) {\n        super(props);\n        this.handleShow = () => {\n            if (!this.props.selectPermissionsBoolean) {\n                let style = {\n                    display: 'none'\n                };\n                return style;\n            }\n            else {\n                let style = {\n                    display: 'block'\n                };\n                return style;\n            }\n        };\n        // showUserList = (): Array<JSX.Element> => {\n        //     return this.props.userList\n        // }\n        //Finding and displaying added users\n        this.handleFindUser = (e) => __awaiter(this, void 0, void 0, function* () {\n            let query = e.target.value;\n            if (query === '') {\n                this.clearUsersFromSearch();\n                return;\n            }\n            try {\n                let result = yield $.get(`/Account/FindUsers?search=${query}`);\n                //No users yet, will just use fake ones for now  \n                let userArray = ['user1', 'user2', 'user3'];\n                this.displayUsersFromSearch(userArray);\n            }\n            catch (e) {\n                console.log(e);\n            }\n        });\n        this.clearUsersFromSearch = () => {\n            setTimeout(() => {\n                this.setState({\n                    userSearchResults: ''\n                });\n            }, 150);\n        };\n        this.displayUsersFromSearch = (userArray) => {\n            let userSearchResultsArray = [];\n            for (let i = 0; i < userArray.length; i++) {\n                let userSearchResult = (React.createElement(\"li\", { key: i, className: 'user-search-result', onClick: this.props.addUser }, userArray[i]));\n                userSearchResultsArray.push(userSearchResult);\n            }\n            let userSearchResults = (React.createElement(\"ul\", { id: 'user-search-results-list' }, userSearchResultsArray));\n            this.setState({\n                userSearchResults: userSearchResults\n            });\n        };\n        //State Management\n        this.giveSelectPermissionsComplete = selectPermissionsComplete => {\n            this.props.getSelectPermissionsComplete(selectPermissionsComplete);\n        };\n        this.state = {\n            userObjects: [],\n            userList: []\n        };\n    }\n    componentDidMount() {\n        this.handleShow();\n    }\n    render() {\n        return (React.createElement(\"div\", { id: 'SelectPermissions', style: this.handleShow() },\n            React.createElement(\"div\", { id: 'select-users-header', className: 'documents-header' }, \"Select Users\"),\n            React.createElement(\"div\", { className: 'document-list-container' },\n                React.createElement(\"div\", { id: 'user-search-main-container' },\n                    React.createElement(\"div\", { id: 'user-search-bar-container' },\n                        React.createElement(\"div\", { id: 'search-bar-magnifying-glass' }),\n                        React.createElement(\"input\", { onBlur: this.clearUsersFromSearch, onFocus: (e) => { this.handleFindUser(e); }, onChange: (e) => { this.handleFindUser(e); }, id: 'user-search-bar', placeholder: 'Find Users', type: \"text\" }),\n                        this.state.userSearchResults),\n                    React.createElement(\"div\", { id: 'added-users-title' }, \"Selected Users\"),\n                    React.createElement(AddedUserList_1.default, { userList: this.props.userList, assignUserToField: this.props.assignUserToField, deleteUser: this.props.deleteUser, isInSidebar: false })))));\n    }\n}\nexports.default = SelectPermissions;\n\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/CreateDocumentViews/SelectPermissions/SelectPermissions.tsx?");
 
 /***/ }),
 
@@ -235,7 +955,7 @@ eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _argument
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/CreateDocument/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/CreateDocument/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/CreateDocument/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/CreateDocument/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/styling/style.sass?");
 
 /***/ }),
 
@@ -258,7 +978,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst 
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentList/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/DocumentList/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentList/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentList/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentList/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/DocumentList/styling/style.sass?");
 
 /***/ }),
 
@@ -270,7 +990,7 @@ eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-load
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst react_pdf_js_1 = __webpack_require__(/*! react-pdf-js */ \"./node_modules/react-pdf-js/lib/index.js\");\nconst $ = __webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\");\nconst s = __webpack_require__(/*! ./styling/style.sass */ \"./Source/components/DocumentView/styling/style.sass\");\nconst SignatureForm_1 = __webpack_require__(/*! ./UserInputComponents/SignatureForm/SignatureForm */ \"./Source/components/DocumentView/UserInputComponents/SignatureForm/SignatureForm.tsx\");\nconst CheckboxInput_1 = __webpack_require__(/*! ./UserInputComponents/CheckboxInput/CheckboxInput */ \"./Source/components/DocumentView/UserInputComponents/CheckboxInput/CheckboxInput.tsx\");\nconst TextInput_1 = __webpack_require__(/*! ./UserInputComponents/TextInput/TextInput */ \"./Source/components/DocumentView/UserInputComponents/TextInput/TextInput.tsx\");\nclass DocumentView extends React.Component {\n    constructor(props) {\n        super(props);\n        //Code excerpt to allow for promises to be cancelled\n        this.makeCancelable = (promise) => __awaiter(this, void 0, void 0, function* () {\n            let hasCanceled_ = false;\n            const wrappedPromise = new Promise((resolve, reject) => {\n                promise.then((val) => hasCanceled_ ? reject({ isCanceled: true }) : resolve(val));\n                promise.catch((error) => hasCanceled_ ? reject({ isCanceled: true }) : reject(error));\n            });\n            return {\n                promise: wrappedPromise,\n                cancel() {\n                    hasCanceled_ = true;\n                },\n            };\n        });\n        this.getDocument = () => __awaiter(this, void 0, void 0, function* () {\n            let promise = $.get(`/DocumentSave/GetDocumentMeta?document_id=${this.props.document_id}`);\n            let getDocumentResponse = yield this.makeCancelable(promise);\n            this.setState({\n                getDocumentResponse: getDocumentResponse\n            });\n            return getDocumentResponse;\n        });\n        this.saveFileResponse = (saveFile) => __awaiter(this, void 0, void 0, function* () {\n            try {\n                let saveResult = $.ajax({\n                    method: 'POST',\n                    headers: {\n                        'Content-Type': 'application/json; charset=UTF-8'\n                    },\n                    url: `/DocumentSave/SaveFile`,\n                    dataType: 'json',\n                    data: JSON.stringify(saveFile)\n                });\n                let saveFileResponse = yield this.makeCancelable(saveResult);\n                this.setState({\n                    saveFileResponse: saveFileResponse\n                });\n                return saveFileResponse;\n            }\n            catch (e) {\n                console.log('Error saving:', e);\n            }\n        });\n        this.populatePage = () => __awaiter(this, void 0, void 0, function* () {\n            if (this.props.document_id === '') {\n                this.setState({\n                    noDocument: true\n                });\n                return;\n            }\n            else {\n                this.setState({\n                    noDocument: false\n                });\n            }\n            let promise = yield this.getDocument();\n            let documentObject = yield promise.promise;\n            console.log(documentObject);\n            let documentFields = [];\n            let pdfWidth = documentObject.document_size.right;\n            let pdfHeight = documentObject.document_size.height;\n            let pdfRatio = pdfHeight / pdfWidth;\n            let webWidth = 612; //in px\n            let webHeigth = 792; // in px\n            for (let form in documentObject.document_meta) {\n                let currentForm = documentObject.document_meta[form];\n                let name = currentForm.field_name;\n                while (name.indexOf('_') > -1) {\n                    name = name.replace('_', ' ');\n                }\n                let left = ((currentForm.field_position.position.left) * webWidth) / pdfWidth;\n                let top = ((pdfHeight - currentForm.field_position.position.top) * webHeigth) / pdfHeight;\n                let height = (currentForm.field_position.position.height * webHeigth) / pdfHeight;\n                let width = (currentForm.field_position.position.width * webWidth) / pdfWidth;\n                if (currentForm.field_type === 'Checkbox') {\n                    currentForm.value = false;\n                    let newForm = React.createElement(CheckboxInput_1.default, { key: form, id: form, width: width, height: height, top: top, left: left, checked: currentForm.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });\n                    documentFields.push(newForm);\n                }\n                else if (currentForm.field_type === 'Text') {\n                    let newForm = React.createElement(\"div\", { key: form, className: 'form-wrapper' },\n                        React.createElement(TextInput_1.default, { key: form, id: form, position: 'absolute', border: 'none', width: width, height: height, top: top, left: left, value: currentForm.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler }));\n                    documentFields.push(newForm);\n                }\n                else if (currentForm.field_type === 'Signature') {\n                    let newForm = React.createElement(SignatureForm_1.default, { key: form, id: form, width: width, height: height, top: top, left: left, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });\n                    documentFields.push(newForm);\n                }\n                delete currentForm.field_position;\n            }\n            this.setState({\n                documentFields: documentFields,\n                documentObject: documentObject,\n                document_id: this.props.document_id\n            }, () => {\n                this.saveFile();\n            });\n        });\n        this.state = {\n            numPages: 1,\n            pageNumber: 1,\n            document: [],\n            url: '',\n            documentObject: {},\n            documentName: 'document',\n            submitted_file_id: '',\n            noDocument: false,\n            mounted: null\n        };\n    }\n    handleFormEdit(e, id) {\n        return __awaiter(this, void 0, void 0, function* () {\n            let documentObject = Object.assign({}, this.state.documentObject);\n            let currentForm = documentObject.document_meta[id];\n            if (e.target.className === 'document-checkbox') {\n                if (currentForm.value != true) {\n                    currentForm.value = true;\n                }\n                else {\n                    currentForm.value = false;\n                }\n            }\n            else {\n                currentForm.value = e.target.value;\n            }\n            this.setState({\n                documentObject: documentObject\n            }, () => {\n                this.saveFile();\n            });\n        });\n    }\n    saveFile() {\n        return __awaiter(this, void 0, void 0, function* () {\n            let saveFile = {\n                document_meta: this.state.documentObject.document_meta,\n                name: this.state.documentName,\n                document_id: this.state.document_id,\n                submitted_file_id: this.state.submitted_file_id\n            };\n            let promise = yield this.saveFileResponse(saveFile);\n            let saveResult = yield promise.promise;\n            if (!this.state.submitted_file_id || this.state.submitted_file_id === null) {\n                this.setState({\n                    submitted_file_id: saveResult.reason\n                }, () => {\n                    console.log(this.state.submitted_file_id);\n                });\n            }\n        });\n    }\n    componentDidMount() {\n        this.getDocument();\n        this.populatePage();\n    }\n    componentWillUnmount() {\n        if (this.state.getDocumentResponse) {\n            this.state.getDocumentResponse.cancel();\n        }\n        if (this.state.saveFileResponse) {\n            this.state.saveFileResponse.cancel();\n        }\n    }\n    render() {\n        let document_id = '../../dist/documents/NAVMC10694.pdf';\n        let noDocumentWarning = React.createElement(\"div\", null);\n        if (this.state.noDocument) {\n            noDocumentWarning = (React.createElement(\"div\", { id: 'document-view-no-document-warning' }, \"There is no document selected\"));\n        }\n        return (React.createElement(\"div\", { className: 'DocumentView' },\n            noDocumentWarning,\n            React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: document_id }),\n            React.createElement(\"div\", { id: 'document-form-div' }, this.state.documentFields)));\n    }\n}\nexports.default = DocumentView;\n\n\n//# sourceURL=webpack:///./Source/components/DocumentView/DocumentView.tsx?");
+eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst react_pdf_js_1 = __webpack_require__(/*! react-pdf-js */ \"./node_modules/react-pdf-js/lib/index.js\");\nconst $ = __webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\");\nconst s = __webpack_require__(/*! ./styling/style.sass */ \"./Source/components/DocumentView/styling/style.sass\");\nconst SignatureForm_1 = __webpack_require__(/*! ./UserInputComponents/SignatureForm/SignatureForm */ \"./Source/components/DocumentView/UserInputComponents/SignatureForm/SignatureForm.tsx\");\nconst CheckboxInput_1 = __webpack_require__(/*! ./UserInputComponents/CheckboxInput/CheckboxInput */ \"./Source/components/DocumentView/UserInputComponents/CheckboxInput/CheckboxInput.tsx\");\nconst TextInput_1 = __webpack_require__(/*! ./UserInputComponents/TextInput/TextInput */ \"./Source/components/DocumentView/UserInputComponents/TextInput/TextInput.tsx\");\nclass DocumentView extends React.Component {\n    constructor(props) {\n        super(props);\n        //Code excerpt to allow for promises to be cancelled\n        this.makeCancelable = (promise) => __awaiter(this, void 0, void 0, function* () {\n            let hasCanceled_ = false;\n            const wrappedPromise = new Promise((resolve, reject) => {\n                promise.then((val) => hasCanceled_ ? reject({ isCanceled: true }) : resolve(val));\n                promise.catch((error) => hasCanceled_ ? reject({ isCanceled: true }) : reject(error));\n            });\n            return {\n                promise: wrappedPromise,\n                cancel() {\n                    hasCanceled_ = true;\n                },\n            };\n        });\n        this.getDocument = () => __awaiter(this, void 0, void 0, function* () {\n            let promise = $.get(`/DocumentSave/GetDocumentMeta?document_id=${this.props.document_id}`);\n            let getDocumentResponse = yield this.makeCancelable(promise);\n            this.setState({\n                getDocumentResponse: getDocumentResponse\n            });\n            return getDocumentResponse;\n        });\n        this.saveFileResponse = (saveFile) => __awaiter(this, void 0, void 0, function* () {\n            try {\n                let saveResult = $.ajax({\n                    method: 'POST',\n                    headers: {\n                        'Content-Type': 'application/json; charset=UTF-8'\n                    },\n                    url: `/DocumentSave/SaveFile`,\n                    dataType: 'json',\n                    data: JSON.stringify(saveFile)\n                });\n                let saveFileResponse = yield this.makeCancelable(saveResult);\n                this.setState({\n                    saveFileResponse: saveFileResponse\n                });\n                return saveFileResponse;\n            }\n            catch (e) {\n                console.log('Error saving:', e);\n            }\n        });\n        this.populatePage = () => __awaiter(this, void 0, void 0, function* () {\n            if (this.props.document_id === '') {\n                this.setState({\n                    noDocument: true\n                });\n                return;\n            }\n            else {\n                this.setState({\n                    noDocument: false\n                });\n            }\n            let promise = yield this.getDocument();\n            let documentObject = yield promise.promise;\n            let documentFields = [];\n            let pdfWidth = documentObject.document_size.right;\n            let pdfHeight = documentObject.document_size.height;\n            let pdfRatio = pdfHeight / pdfWidth;\n            let webWidth = 612; //in px\n            let webHeigth = 792; // in px\n            for (let form in documentObject.document_meta) {\n                let currentForm = documentObject.document_meta[form];\n                let name = currentForm.field_name;\n                while (name.indexOf('_') > -1) {\n                    name = name.replace('_', ' ');\n                }\n                let left = ((currentForm.field_position.position.left) * webWidth) / pdfWidth;\n                let top = ((pdfHeight - currentForm.field_position.position.top) * webHeigth) / pdfHeight;\n                let height = (currentForm.field_position.position.height * webHeigth) / pdfHeight;\n                let width = (currentForm.field_position.position.width * webWidth) / pdfWidth;\n                if (currentForm.field_type === 'Checkbox') {\n                    currentForm.value = false;\n                    let newForm = React.createElement(CheckboxInput_1.default, { key: form, id: form, width: width, height: height, top: top, left: left, checked: currentForm.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });\n                    documentFields.push(newForm);\n                }\n                else if (currentForm.field_type === 'Text') {\n                    let newForm = React.createElement(\"div\", { key: form, className: 'form-wrapper' },\n                        React.createElement(TextInput_1.default, { key: form, id: form, position: 'absolute', border: 'none', width: width, height: height, top: top, left: left, value: currentForm.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler }));\n                    documentFields.push(newForm);\n                }\n                else if (currentForm.field_type === 'Signature') {\n                    let newForm = React.createElement(SignatureForm_1.default, { key: form, id: form, width: width, height: height, top: top, left: left, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });\n                    documentFields.push(newForm);\n                }\n                delete currentForm.field_position;\n            }\n            this.setState({\n                documentFields: documentFields,\n                documentObject: documentObject,\n                document_id: this.props.document_id\n            }, () => {\n                this.saveFile();\n            });\n        });\n        this.saveFile = () => __awaiter(this, void 0, void 0, function* () {\n            let saveFile = {\n                document_meta: this.state.documentObject.document_meta,\n                name: this.state.documentName,\n                document_id: this.state.document_id,\n                submitted_file_id: this.state.submitted_file_id\n            };\n            let promise = yield this.saveFileResponse(saveFile);\n            let saveResult = yield promise.promise;\n            if (!this.state.submitted_file_id || this.state.submitted_file_id === null) {\n                this.setState({\n                    submitted_file_id: saveResult.reason\n                });\n            }\n        });\n        this.state = {\n            numPages: 1,\n            pageNumber: 1,\n            document: [],\n            url: '',\n            documentObject: {},\n            documentName: 'document',\n            submitted_file_id: '',\n            noDocument: false,\n            mounted: null\n        };\n    }\n    handleFormEdit(e, id) {\n        return __awaiter(this, void 0, void 0, function* () {\n            let documentObject = Object.assign({}, this.state.documentObject);\n            let currentForm = documentObject.document_meta[id];\n            if (e.target.className === 'document-checkbox') {\n                if (currentForm.value != true) {\n                    currentForm.value = true;\n                }\n                else {\n                    currentForm.value = false;\n                }\n            }\n            else {\n                currentForm.value = e.target.value;\n            }\n            this.setState({\n                documentObject: documentObject\n            }, () => {\n                this.saveFile();\n            });\n        });\n    }\n    componentDidMount() {\n        this.getDocument();\n        this.populatePage();\n    }\n    componentWillUnmount() {\n        if (this.state.getDocumentResponse) {\n            this.state.getDocumentResponse.cancel();\n        }\n        if (this.state.saveFileResponse) {\n            this.state.saveFileResponse.cancel();\n        }\n    }\n    render() {\n        let document_id = '../../dist/documents/NAVMC10694.pdf';\n        let noDocumentWarning = React.createElement(\"div\", null);\n        if (this.state.noDocument) {\n            noDocumentWarning = (React.createElement(\"div\", { id: 'document-view-no-document-warning' }, \"There is no document selected\"));\n        }\n        return (React.createElement(\"div\", { className: 'DocumentView' },\n            noDocumentWarning,\n            React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: document_id }),\n            React.createElement(\"div\", { id: 'document-form-div' }, this.state.documentFields)));\n    }\n}\nexports.default = DocumentView;\n\n\n//# sourceURL=webpack:///./Source/components/DocumentView/DocumentView.tsx?");
 
 /***/ }),
 
@@ -293,7 +1013,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst 
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../../../node_modules/css-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/UserInputComponents/CheckboxInput/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/DocumentView/UserInputComponents/CheckboxInput/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../../../node_modules/css-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/UserInputComponents/CheckboxInput/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../../../node_modules/css-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/UserInputComponents/CheckboxInput/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../../../node_modules/css-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/UserInputComponents/CheckboxInput/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/DocumentView/UserInputComponents/CheckboxInput/styling/style.sass?");
 
 /***/ }),
 
@@ -316,7 +1036,7 @@ eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _argument
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../../../node_modules/css-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/UserInputComponents/SignatureForm/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/DocumentView/UserInputComponents/SignatureForm/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../../../node_modules/css-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/UserInputComponents/SignatureForm/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../../../node_modules/css-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/UserInputComponents/SignatureForm/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../../../node_modules/css-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/UserInputComponents/SignatureForm/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/DocumentView/UserInputComponents/SignatureForm/styling/style.sass?");
 
 /***/ }),
 
@@ -328,7 +1048,7 @@ eval("\nvar content = __webpack_require__(/*! !../../../../../../node_modules/cs
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst s = __webpack_require__(/*! ./styling/style.sass */ \"./Source/components/DocumentView/UserInputComponents/TextInput/styling/style.sass\");\nclass TextInput extends React.Component {\n    constructor(props) {\n        super(props);\n        //Getting style from props\n        this.setStyle = () => {\n            let style = this.state.style;\n            style.position = this.props.position;\n            style.border = this.props.border;\n            style.width = this.props.width + 'px';\n            style.height = this.props.height + 'px';\n            style.top = this.props.top + 'px';\n            style.left = this.props.left + 'px';\n            this.setState({\n                style: style\n            });\n        };\n        this.state = {\n            style: {}\n        };\n    }\n    //React lifecycle methods\n    componentWillMount() {\n        this.setStyle();\n    }\n    componentDidMount() {\n    }\n    render() {\n        if (this.props.view === 'DocumentPreview') {\n            return (React.createElement(\"textarea\", { readOnly: true, id: this.props.id, className: 'TextInput preview-TextInput', style: this.state.style, defaultValue: this.props.value, onClick: this.props.previewOnClickHandler }));\n        }\n        if (this.props.view === 'PendingDocuments' || this.props.view === 'AccountPage') {\n            return (React.createElement(\"textarea\", { id: this.props.id, className: 'TextInput TextInputRemoveOutline', style: this.state.style, defaultValue: this.props.value, onChange: this.props.onChange }));\n        }\n    }\n}\nexports.default = TextInput;\n\n\n//# sourceURL=webpack:///./Source/components/DocumentView/UserInputComponents/TextInput/TextInput.tsx?");
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\nconst s = __webpack_require__(/*! ./styling/style.sass */ \"./Source/components/DocumentView/UserInputComponents/TextInput/styling/style.sass\");\nclass TextInput extends React.Component {\n    constructor(props) {\n        super(props);\n        //Getting style from props\n        this.setStyle = () => {\n            let style = this.state.style;\n            style.position = this.props.position;\n            style.border = this.props.border;\n            style.width = this.props.width + 'px';\n            style.height = this.props.height + 'px';\n            style.top = this.props.top + 'px';\n            style.left = this.props.left + 'px';\n            this.setState({\n                style: style\n            });\n        };\n        this.state = {\n            style: {}\n        };\n    }\n    //React lifecycle methods\n    componentWillMount() {\n        this.setStyle();\n    }\n    componentDidMount() {\n    }\n    render() {\n        if (this.props.view === 'DocumentPreview') {\n            return (React.createElement(\"textarea\", { readOnly: true, id: this.props.id, className: 'TextInput preview-TextInput', style: this.state.style, defaultValue: this.props.value, onClick: this.props.previewOnClickHandler }));\n        }\n        if (this.props.view === 'PendingDocuments' || this.props.view === 'AccountPage') {\n            return (React.createElement(\"textarea\", { id: this.props.id, className: 'TextInput', style: this.state.style, defaultValue: this.props.value, onChange: this.props.onChange }));\n        }\n    }\n}\nexports.default = TextInput;\n\n\n//# sourceURL=webpack:///./Source/components/DocumentView/UserInputComponents/TextInput/TextInput.tsx?");
 
 /***/ }),
 
@@ -339,7 +1059,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst 
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../../../node_modules/css-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/UserInputComponents/TextInput/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/DocumentView/UserInputComponents/TextInput/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../../../node_modules/css-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/UserInputComponents/TextInput/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../../../node_modules/css-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/UserInputComponents/TextInput/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../../../node_modules/css-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/UserInputComponents/TextInput/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/DocumentView/UserInputComponents/TextInput/styling/style.sass?");
 
 /***/ }),
 
@@ -350,7 +1070,7 @@ eval("\nvar content = __webpack_require__(/*! !../../../../../../node_modules/cs
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/DocumentView/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/DocumentView/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/DocumentView/styling/style.sass?");
 
 /***/ }),
 
@@ -373,7 +1093,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst 
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Footer/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/Footer/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Footer/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Footer/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Footer/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/Footer/styling/style.sass?");
 
 /***/ }),
 
@@ -396,7 +1116,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst 
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/HamburgerMenu/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/HamburgerMenu/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/HamburgerMenu/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/HamburgerMenu/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/HamburgerMenu/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/HamburgerMenu/styling/style.sass?");
 
 /***/ }),
 
@@ -419,7 +1139,7 @@ eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _argument
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Header/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/Header/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Header/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Header/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Header/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/Header/styling/style.sass?");
 
 /***/ }),
 
@@ -442,7 +1162,7 @@ eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _argument
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Home/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/Home/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Home/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Home/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Home/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/Home/styling/style.sass?");
 
 /***/ }),
 
@@ -465,7 +1185,7 @@ eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _argument
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Login/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/Login/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Login/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Login/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Login/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/Login/styling/style.sass?");
 
 /***/ }),
 
@@ -488,7 +1208,7 @@ eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _argument
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/MetaBar/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/MetaBar/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/MetaBar/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/MetaBar/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/MetaBar/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/MetaBar/styling/style.sass?");
 
 /***/ }),
 
@@ -511,7 +1231,7 @@ eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _argument
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Register/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/Register/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Register/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Register/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/Register/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/Register/styling/style.sass?");
 
 /***/ }),
 
@@ -534,7 +1254,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst 
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/SignatureView/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/SignatureView/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/SignatureView/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/SignatureView/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/SignatureView/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/SignatureView/styling/style.sass?");
 
 /***/ }),
 
@@ -557,7 +1277,7 @@ eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _argument
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/UploadDocument/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/components/UploadDocument/styling/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/UploadDocument/styling/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/UploadDocument/styling/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/components/UploadDocument/styling/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/components/UploadDocument/styling/style.sass?");
 
 /***/ }),
 
@@ -568,7 +1288,7 @@ eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-load
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../node_modules/css-loader!../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./Source/style.sass?");
+eval("\nvar content = __webpack_require__(/*! !../node_modules/css-loader!../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/style.sass\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../node_modules/css-loader!../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/style.sass\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../node_modules/css-loader!../node_modules/sass-loader/lib/loader.js!./style.sass */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./Source/style.sass\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./Source/style.sass?");
 
 /***/ }),
 
@@ -1908,7 +2628,7 @@ eval("exports = module.exports = __webpack_require__(/*! ../../../../node_module
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ \"./node_modules/css-loader/lib/css-base.js\")(false);\n// imports\n\n\n// module\nexports.push([module.i, \"body {\\n  font-family: sans-serif;\\n  padding: 0;\\n  margin: 0;\\n  font-size: 0.5vw; }\\n  @media screen and (max-width: 1000px) {\\n    body {\\n      font-size: 1vw; } }\\n\\n.Link {\\n  text-decoration: none; }\\n\\ninput::-webkit-outer-spin-button,\\ninput::-webkit-inner-spin-button {\\n  display: none;\\n  -webkit-appearance: none;\\n  margin: 0; }\\n\\ninput {\\n  border: none;\\n  border-radius: 1px; }\\n\\n.documents-header {\\n  font-size: 2.5em;\\n  color: black;\\n  padding: 2.5vh 0 2.5vh 0;\\n  margin: 2.5vh 2vw 0vh 3vw !important;\\n  cursor: default;\\n  color: black;\\n  font-weight: bold; }\\n\\n@keyframes fade-in {\\n  0% {\\n    opacity: 0.2; }\\n  100% {\\n    opacity: 1; } }\\n\\n#CreateDocument {\\n  width: 100%;\\n  height: 100vh; }\\n\\n#create-document-nav-bar {\\n  width: 100%;\\n  height: 7.5vh;\\n  background-color: #4b4b4b;\\n  display: flex;\\n  flex-direction: row;\\n  align-items: flex-start;\\n  justify-content: flex-start; }\\n\\n.create-document-nav-bar-item {\\n  width: auto;\\n  height: 100%;\\n  padding: 0% 2% 0% 2%;\\n  font-size: 2em;\\n  color: white;\\n  cursor: pointer;\\n  display: flex;\\n  align-items: center;\\n  border-right: solid 1px rgba(255, 255, 255, 0.4); }\\n\\n.create-document-nav-bar-item:hover {\\n  background-color: #323232; }\\n\\n#create-document-nav-bar-item-document {\\n  border-left: solid 1px rgba(255, 255, 255, 0.4); }\\n\\n.container {\\n  width: 100%;\\n  height: 92.5%;\\n  overflow: hidden;\\n  position: relative; }\\n\\n#user-search-main-container {\\n  width: calc(100% - 2vw - 4px);\\n  margin-left: 1vw;\\n  padding-left: 1vw;\\n  background-color: white;\\n  border: solid 2px lightgrey;\\n  display: flex;\\n  flex-direction: column;\\n  align-items: flex-start;\\n  justify-content: flex-start;\\n  overflow: auto; }\\n\\n#user-search-bar-container {\\n  margin-top: 2.5vh;\\n  position: relative; }\\n\\n#user-search-bar {\\n  font-size: 2.5em;\\n  border: solid 1px grey;\\n  border-radius: 1px;\\n  text-indent: 1vw;\\n  padding: 0.5vh 0 0.5vh 0; }\\n\\n#user-search-bar-magnifying-glass {\\n  height: 100%;\\n  width: auto;\\n  background-color: black; }\\n\\n#user-search-results-list {\\n  width: 100%;\\n  height: auto;\\n  position: absolute;\\n  top: 80%;\\n  left: 0;\\n  z-index: 600;\\n  background-color: white;\\n  list-style-type: none;\\n  padding-left: 0; }\\n\\n.user-search-result {\\n  width: calc(100% - 1vw);\\n  height: auto;\\n  font-size: 2em;\\n  cursor: pointer;\\n  margin-bottom: 0.5vh;\\n  padding: 1vh 0 1vh 1vw; }\\n\\n.user-search-result:hover {\\n  background-color: #c8c8c8; }\\n\\n#added-users-title {\\n  margin-top: 5vh;\\n  margin-bottom: 1vh;\\n  font-size: 2.25em;\\n  width: 100%;\\n  text-indent: 1%; }\\n\\n.added-users-container {\\n  width: 50%;\\n  height: 40%;\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: flex-start;\\n  padding-top: 0.5%;\\n  border: solid 1px grey;\\n  background-color: #e6e6e6;\\n  position: relative;\\n  overflow: auto;\\n  margin-bottom: 1%; }\\n\\n.added-user {\\n  width: 99%;\\n  font-size: 2.25em;\\n  background-color: white;\\n  cursor: default;\\n  border: solid 1px grey;\\n  margin-bottom: 0.5%;\\n  padding: 0.3em 0 0.3em 0;\\n  text-indent: 1%;\\n  display: grid;\\n  grid-template-columns: 9fr 1fr;\\n  justify-content: center;\\n  align-items: center; }\\n\\n.added-user-delete-icon {\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: center;\\n  font-size: 2em;\\n  color: #ff8e84;\\n  cursor: pointer; }\\n\\n.added-user-delete-icon:hover {\\n  color: #ff6b5e; }\\n\\n.create-document-button {\\n  position: absolute;\\n  font-size: 1.5em;\\n  padding: 0.25em 0.75em 0.25em 0.75em;\\n  background-color: lightgrey; }\\n\\n#document-view-container {\\n  width: 100%;\\n  height: auto;\\n  overflow: hidden; }\\n\\ninput:focus {\\n  outline: none; }\\n\\n#document-view-header {\\n  width: 100%;\\n  height: 10vh;\\n  right: 0;\\n  display: flex;\\n  flex-direction: row;\\n  align-items: center;\\n  justify-content: center;\\n  position: absolute;\\n  top: 0vh;\\n  z-index: 400;\\n  background-color: rgba(50, 50, 50, 0.8); }\\n\\n#save-button {\\n  width: auto;\\n  padding: 1%;\\n  font-size: 1.5em;\\n  z-index: 500;\\n  background-color: lightblue;\\n  border: solid 1px #969696;\\n  cursor: pointer;\\n  border-radius: 3px;\\n  opacity: 0.5;\\n  position: absolute;\\n  right: 15vw; }\\n\\n#document-view-no-document-warning {\\n  position: sticky;\\n  top: 30vh;\\n  width: auto;\\n  height: auto;\\n  padding: 1vh 1vw 1vh 1vw;\\n  background-color: lightgrey;\\n  z-index: 600;\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: center;\\n  text-align: center;\\n  font-size: 3em;\\n  border: solid 1px grey;\\n  font-weight: bold; }\\n\\n#document-name-input {\\n  font-size: 1.75em;\\n  padding: 1%;\\n  background-color: #e6e6e6;\\n  min-width: 40%;\\n  font-weight: bold;\\n  text-align: center; }\\n\\n#document-view-sidebar {\\n  width: 20vw;\\n  height: 100%;\\n  position: absolute;\\n  right: -20vw;\\n  top: 0;\\n  background-color: #c8c8c8;\\n  border-left: solid 2px grey;\\n  z-index: 600;\\n  box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.1); }\\n\\n#show-sidebar-icon-container {\\n  position: absolute;\\n  right: 2vw;\\n  top: 12vh;\\n  background-color: #afafaf;\\n  border-radius: 5px;\\n  z-index: 500;\\n  cursor: pointer;\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: center;\\n  padding: 1vw 1.5vw 1vw 1.5vw;\\n  animation: shrink 0.3s forwards; }\\n\\n#show-sidebar-icon-container:hover {\\n  animation: grow 0.3s forwards; }\\n\\n#show-sidebar-icon {\\n  width: auto;\\n  height: 35px; }\\n\\n.show-sidebar {\\n  animation: show-sidebar 0.5s forwards; }\\n\\n.hide-sidebar {\\n  animation: hide-sidebar 0.5s forwards; }\\n\\n#close-sidebar-icon {\\n  font-size: 4em;\\n  color: grey;\\n  font-weight: bold;\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: center;\\n  position: absolute;\\n  top: 1vh;\\n  right: 1vw;\\n  z-index: 600;\\n  cursor: pointer; }\\n\\n#close-sidebar-icon:hover {\\n  color: black; }\\n\\n#added-users-container-preview {\\n  width: calc(98% - 4px);\\n  margin-left: calc(2% - 2px); }\\n\\n@keyframes show-sidebar {\\n  0% {\\n    right: -20vw; }\\n  100% {\\n    right: 0; } }\\n\\n@keyframes hide-sidebar {\\n  0% {\\n    right: 0; }\\n  100% {\\n    right: -20vw; } }\\n\\n@keyframes grow {\\n  0% {\\n    transform: scale(1); }\\n  100% {\\n    transform: scale(1.05); } }\\n\\n@keyframes shrink {\\n  0% {\\n    transform: scale(1.05); }\\n  100% {\\n    transform: scale(1); } }\\n\\n@keyframes hide {\\n  0% {\\n    opacity: 1; }\\n  100% {\\n    opacity: 0; } }\\n\\n@keyframes show {\\n  0% {\\n    opacity: 0; }\\n  100% {\\n    opacity: 1; } }\\n\", \"\"]);\n\n// exports\n\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/styling/style.sass?./node_modules/css-loader!./node_modules/sass-loader/lib/loader.js");
+eval("exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ \"./node_modules/css-loader/lib/css-base.js\")(false);\n// imports\n\n\n// module\nexports.push([module.i, \"body {\\n  font-family: sans-serif;\\n  padding: 0;\\n  margin: 0;\\n  font-size: 0.5vw; }\\n  @media screen and (max-width: 1000px) {\\n    body {\\n      font-size: 1vw; } }\\n\\n.Link {\\n  text-decoration: none; }\\n\\ninput::-webkit-outer-spin-button,\\ninput::-webkit-inner-spin-button {\\n  display: none;\\n  -webkit-appearance: none;\\n  margin: 0; }\\n\\ninput {\\n  border: none;\\n  border-radius: 1px; }\\n\\n.documents-header {\\n  font-size: 2.5em;\\n  color: black;\\n  padding: 2.5vh 0 2.5vh 0;\\n  margin: 2.5vh 2vw 0vh 3vw !important;\\n  cursor: default;\\n  color: black;\\n  font-weight: bold; }\\n\\n@keyframes fade-in {\\n  0% {\\n    opacity: 0.2; }\\n  100% {\\n    opacity: 1; } }\\n\\n#CreateDocument {\\n  width: 100%;\\n  height: 100vh; }\\n\\n#create-document-nav-bar {\\n  width: 100%;\\n  height: 7.5vh;\\n  background-color: #4b4b4b;\\n  display: flex;\\n  flex-direction: row;\\n  align-items: flex-start;\\n  justify-content: flex-start; }\\n\\n.create-document-nav-bar-item {\\n  width: auto;\\n  height: 100%;\\n  padding: 0% 2% 0% 2%;\\n  font-size: 2em;\\n  color: white;\\n  cursor: pointer;\\n  display: flex;\\n  align-items: center;\\n  border-right: solid 1px rgba(255, 255, 255, 0.4); }\\n\\n.create-document-nav-bar-item:hover {\\n  background-color: #323232; }\\n\\n#create-document-nav-bar-item-document {\\n  border-left: solid 1px rgba(255, 255, 255, 0.4); }\\n\\n.container {\\n  width: 100%;\\n  height: 92.5%;\\n  overflow: hidden;\\n  position: relative; }\\n\\n#user-search-main-container {\\n  width: calc(100% - 2vw - 4px);\\n  margin-left: 1vw;\\n  padding-left: 1vw;\\n  background-color: white;\\n  border: solid 2px lightgrey;\\n  display: flex;\\n  flex-direction: column;\\n  align-items: flex-start;\\n  justify-content: flex-start;\\n  overflow: auto; }\\n\\n#user-search-bar-container {\\n  margin-top: 2.5vh;\\n  position: relative; }\\n\\n#user-search-bar {\\n  font-size: 2.5em;\\n  border: solid 1px grey;\\n  border-radius: 1px;\\n  text-indent: 1vw;\\n  padding: 0.5vh 0 0.5vh 0; }\\n\\n#user-search-bar-magnifying-glass {\\n  height: 100%;\\n  width: auto;\\n  background-color: black; }\\n\\n#user-search-results-list {\\n  width: 100%;\\n  height: auto;\\n  position: absolute;\\n  top: 80%;\\n  left: 0;\\n  z-index: 600;\\n  background-color: white;\\n  list-style-type: none;\\n  padding-left: 0; }\\n\\n.user-search-result {\\n  width: calc(100% - 1vw);\\n  height: auto;\\n  font-size: 2em;\\n  cursor: pointer;\\n  margin-bottom: 0.5vh;\\n  padding: 1vh 0 1vh 1vw; }\\n\\n.user-search-result:hover {\\n  background-color: #c8c8c8; }\\n\\n#added-users-title {\\n  margin-top: 5vh;\\n  margin-bottom: 1vh;\\n  font-size: 2.25em;\\n  width: 100%;\\n  text-indent: 1%; }\\n\\n.added-users-container {\\n  width: auto;\\n  min-width: 50%;\\n  height: auto;\\n  min-height: 40%;\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: flex-start;\\n  padding-top: 0.5%;\\n  border: solid 1px grey;\\n  background-color: #e6e6e6;\\n  position: relative;\\n  overflow: auto;\\n  margin-bottom: 1%; }\\n\\n.added-user {\\n  width: 99%;\\n  font-size: 2.25em;\\n  background-color: white;\\n  cursor: default;\\n  border: solid 1px grey;\\n  margin-bottom: 0.5%;\\n  padding: 0.3em 0 0.3em 0;\\n  text-indent: 1%;\\n  display: grid;\\n  grid-template-columns: 9fr 1fr;\\n  justify-content: center;\\n  align-items: center; }\\n\\n.added-user-delete-icon {\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: center;\\n  font-size: 2em;\\n  color: #ff8e84;\\n  cursor: pointer; }\\n\\n.added-user-delete-icon:hover {\\n  color: #ff6b5e; }\\n\\n.create-document-button {\\n  position: absolute;\\n  font-size: 1.5em;\\n  padding: 0.25em 0.75em 0.25em 0.75em;\\n  background-color: lightgrey; }\\n\\n#document-view-container {\\n  width: 100%;\\n  height: auto;\\n  overflow: hidden; }\\n\\ninput:focus {\\n  outline: none; }\\n\\n#document-view-header {\\n  width: 100%;\\n  height: 10vh;\\n  right: 0;\\n  display: flex;\\n  flex-direction: row;\\n  align-items: center;\\n  justify-content: center;\\n  position: absolute;\\n  top: 0vh;\\n  z-index: 400;\\n  background-color: rgba(50, 50, 50, 0.8); }\\n\\n#save-button {\\n  width: auto;\\n  padding: 1%;\\n  font-size: 1.5em;\\n  z-index: 500;\\n  background-color: lightblue;\\n  border: solid 1px #969696;\\n  cursor: pointer;\\n  border-radius: 3px;\\n  opacity: 0.5;\\n  position: absolute;\\n  right: 15vw; }\\n\\n#document-view-no-document-warning {\\n  position: sticky;\\n  top: 30vh;\\n  width: auto;\\n  height: auto;\\n  padding: 1vh 1vw 1vh 1vw;\\n  background-color: lightgrey;\\n  z-index: 600;\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: center;\\n  text-align: center;\\n  font-size: 3em;\\n  border: solid 1px grey;\\n  font-weight: bold; }\\n\\n#document-name-input {\\n  font-size: 1.75em;\\n  padding: 1%;\\n  background-color: #e6e6e6;\\n  min-width: 40%;\\n  font-weight: bold;\\n  text-align: center; }\\n\\n#document-view-sidebar {\\n  width: 20vw;\\n  height: 100%;\\n  position: absolute;\\n  right: -20vw;\\n  top: 0;\\n  background-color: #e6e6e6;\\n  border-left: solid 2px grey;\\n  z-index: 600;\\n  box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.1); }\\n\\n.selected-field-display-container {\\n  width: calc(85% - 2px);\\n  margin-left: 7.5%;\\n  height: auto;\\n  border: solid 1px grey;\\n  display: flex;\\n  flex-direction: column;\\n  align-items: flex-start;\\n  justify-content: center;\\n  font-size: 1.5em;\\n  background-color: #c8c8c8; }\\n\\n#show-sidebar-icon-container {\\n  position: absolute;\\n  right: 2vw;\\n  top: 12vh;\\n  background-color: #afafaf;\\n  border-radius: 5px;\\n  z-index: 500;\\n  cursor: pointer;\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: center;\\n  padding: 1vw 1.5vw 1vw 1.5vw;\\n  animation: shrink 0.3s forwards; }\\n\\n#show-sidebar-icon-container:hover {\\n  animation: grow 0.3s forwards; }\\n\\n#show-sidebar-icon {\\n  width: auto;\\n  height: 35px; }\\n\\n.show-sidebar {\\n  animation: show-sidebar 0.5s forwards; }\\n\\n.hide-sidebar {\\n  animation: hide-sidebar 0.5s forwards; }\\n\\n#close-sidebar-icon {\\n  font-size: 4em;\\n  color: grey;\\n  font-weight: bold;\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: center;\\n  position: absolute;\\n  top: 1vh;\\n  right: 1vw;\\n  z-index: 600;\\n  cursor: pointer; }\\n\\n#close-sidebar-icon:hover {\\n  color: black; }\\n\\n#added-users-container-preview {\\n  width: calc(85% - 4px);\\n  margin-left: 7.5%; }\\n\\n.preview-documents-header {\\n  color: black;\\n  font-size: 2.5em;\\n  padding: 2.5vh 0 2.5vh 0;\\n  font-weight: bold;\\n  cursor: default;\\n  margin-left: 1vw; }\\n\\n@keyframes show-sidebar {\\n  0% {\\n    right: -20vw; }\\n  100% {\\n    right: 0; } }\\n\\n@keyframes hide-sidebar {\\n  0% {\\n    right: 0; }\\n  100% {\\n    right: -20vw; } }\\n\\n@keyframes grow {\\n  0% {\\n    transform: scale(1); }\\n  100% {\\n    transform: scale(1.05); } }\\n\\n@keyframes shrink {\\n  0% {\\n    transform: scale(1.05); }\\n  100% {\\n    transform: scale(1); } }\\n\\n@keyframes hide {\\n  0% {\\n    opacity: 1; }\\n  100% {\\n    opacity: 0; } }\\n\\n@keyframes show {\\n  0% {\\n    opacity: 0; }\\n  100% {\\n    opacity: 1; } }\\n\", \"\"]);\n\n// exports\n\n\n//# sourceURL=webpack:///./Source/components/CreateDocument/styling/style.sass?./node_modules/css-loader!./node_modules/sass-loader/lib/loader.js");
 
 /***/ }),
 
@@ -1952,7 +2672,7 @@ eval("exports = module.exports = __webpack_require__(/*! ../../../../../../node_
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(/*! ../../../../../../node_modules/css-loader/lib/css-base.js */ \"./node_modules/css-loader/lib/css-base.js\")(false);\n// imports\n\n\n// module\nexports.push([module.i, \"body {\\n  font-family: sans-serif;\\n  padding: 0;\\n  margin: 0;\\n  font-size: 0.5vw; }\\n  @media screen and (max-width: 1000px) {\\n    body {\\n      font-size: 1vw; } }\\n\\n.Link {\\n  text-decoration: none; }\\n\\ninput::-webkit-outer-spin-button,\\ninput::-webkit-inner-spin-button {\\n  display: none;\\n  -webkit-appearance: none;\\n  margin: 0; }\\n\\ninput {\\n  border: none;\\n  border-radius: 1px; }\\n\\n.documents-header {\\n  font-size: 2.5em;\\n  color: black;\\n  padding: 2.5vh 0 2.5vh 0;\\n  margin: 2.5vh 2vw 0vh 3vw !important;\\n  cursor: default;\\n  color: black;\\n  font-weight: bold; }\\n\\n@keyframes fade-in {\\n  0% {\\n    opacity: 0.2; }\\n  100% {\\n    opacity: 1; } }\\n\\n.TextInput {\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: center;\\n  font-size: 1.75em;\\n  background-color: rgba(0, 0, 0, 0);\\n  word-break: break-word !important;\\n  resize: none; }\\n\\n.TextInputRemoveOutline:focus {\\n  outline: none; }\\n\\n.preview-TextInput {\\n  cursor: pointer !important; }\\n\", \"\"]);\n\n// exports\n\n\n//# sourceURL=webpack:///./Source/components/DocumentView/UserInputComponents/TextInput/styling/style.sass?./node_modules/css-loader!./node_modules/sass-loader/lib/loader.js");
+eval("exports = module.exports = __webpack_require__(/*! ../../../../../../node_modules/css-loader/lib/css-base.js */ \"./node_modules/css-loader/lib/css-base.js\")(false);\n// imports\n\n\n// module\nexports.push([module.i, \"body {\\n  font-family: sans-serif;\\n  padding: 0;\\n  margin: 0;\\n  font-size: 0.5vw; }\\n  @media screen and (max-width: 1000px) {\\n    body {\\n      font-size: 1vw; } }\\n\\n.Link {\\n  text-decoration: none; }\\n\\ninput::-webkit-outer-spin-button,\\ninput::-webkit-inner-spin-button {\\n  display: none;\\n  -webkit-appearance: none;\\n  margin: 0; }\\n\\ninput {\\n  border: none;\\n  border-radius: 1px; }\\n\\n.documents-header {\\n  font-size: 2.5em;\\n  color: black;\\n  padding: 2.5vh 0 2.5vh 0;\\n  margin: 2.5vh 2vw 0vh 3vw !important;\\n  cursor: default;\\n  color: black;\\n  font-weight: bold; }\\n\\n@keyframes fade-in {\\n  0% {\\n    opacity: 0.2; }\\n  100% {\\n    opacity: 1; } }\\n\\n.TextInput {\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: center;\\n  font-size: 1.75em;\\n  background-color: rgba(0, 0, 0, 0);\\n  word-break: break-word !important;\\n  resize: none; }\\n\\n.TextInput:focus {\\n  outline: none; }\\n\\n.preview-TextInput {\\n  cursor: pointer !important; }\\n\", \"\"]);\n\n// exports\n\n\n//# sourceURL=webpack:///./Source/components/DocumentView/UserInputComponents/TextInput/styling/style.sass?./node_modules/css-loader!./node_modules/sass-loader/lib/loader.js");
 
 /***/ }),
 
@@ -1963,7 +2683,7 @@ eval("exports = module.exports = __webpack_require__(/*! ../../../../../../node_
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ \"./node_modules/css-loader/lib/css-base.js\")(false);\n// imports\n\n\n// module\nexports.push([module.i, \".DocumentView {\\n  width: 100%;\\n  height: 100%;\\n  overflow: auto;\\n  position: relative;\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: flex-start; }\\n\\n.pdf-image {\\n  position: absolute;\\n  left: calc((100% - 612px) / 2);\\n  top: 12.5vh;\\n  width: 612px !important;\\n  height: 792px !important;\\n  margin-bottom: 6vh; }\\n\\n#document-form-div {\\n  position: relative;\\n  width: 612px;\\n  height: 712px !important;\\n  top: 12.5vh;\\n  left: 0; }\\n\\n.document-checkbox {\\n  width: 100% !important;\\n  height: 100% !important;\\n  background-color: lightgrey !important;\\n  border: none;\\n  margin: 0; }\\n\\n.document-form {\\n  overflow: auto; }\\n\\n.input-form-name {\\n  font-size: 1.3em;\\n  text-indent: -5px; }\\n\\n.document-input {\\n  background-color: lightgrey;\\n  border: none; }\\n\\n.document-input:focus {\\n  outline: none; }\\n\\n.document-signature-canvas {\\n  position: relative; }\\n\\n.canvas-button {\\n  position: absolute;\\n  font-size: 1em;\\n  padding: 0.5% 1% 0.5% 1%;\\n  background-color: lightblue;\\n  cursor: pointer;\\n  border: solid 1px #8bb2e5;\\n  height: auto; }\\n\\n.document {\\n  background-color: white;\\n  width: 595px;\\n  max-width: 70%;\\n  height: 842px;\\n  margin-top: 50px;\\n  margin-bottom: 50px;\\n  margin-left: calc((100vw - 15vw - 595px)/2);\\n  float: left; }\\n\\n.selectedField {\\n  border: solid 1px green !important; }\\n\\n@keyframes fade-in-header {\\n  0% {\\n    background-color: rgba(0, 0, 0, 0); }\\n  100% {\\n    background-color: rgba(50, 50, 50, 0.8); } }\\n\\n@keyframes fade-out-header {\\n  0% {\\n    background-color: rgba(50, 50, 50, 0.8); }\\n  100% {\\n    background-color: rgba(0, 0, 0, 0); } }\\n\\n@keyframes fade-in-save-button {\\n  0% {\\n    opacity: 0.5; }\\n  100% {\\n    opacity: 1; } }\\n\\n@keyframes fade-out-save-button {\\n  0% {\\n    opacity: 1; }\\n  100% {\\n    opacity: 0.5; } }\\n\\n@keyframes fade-in-name-input {\\n  0% {\\n    opacity: 0; }\\n  100% {\\n    opacity: 1; } }\\n\\n@keyframes fade-out-name-input {\\n  0% {\\n    opacity: 1; }\\n  100% {\\n    opacity: 0; } }\\n\\n@keyframes name-input-selected {\\n  0% {\\n    opacity: 1; }\\n  100% {\\n    opacity: 1; } }\\n\\n@keyframes header-selected {\\n  0% {\\n    background-color: rgba(50, 50, 50, 0.8); }\\n  100% {\\n    background-color: rgba(50, 50, 50, 0.8); } }\\n\", \"\"]);\n\n// exports\n\n\n//# sourceURL=webpack:///./Source/components/DocumentView/styling/style.sass?./node_modules/css-loader!./node_modules/sass-loader/lib/loader.js");
+eval("exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ \"./node_modules/css-loader/lib/css-base.js\")(false);\n// imports\n\n\n// module\nexports.push([module.i, \".DocumentView {\\n  width: 100%;\\n  height: 100%;\\n  overflow: auto;\\n  position: relative;\\n  display: flex;\\n  flex-direction: column;\\n  align-items: center;\\n  justify-content: flex-start; }\\n\\n.pdf-image {\\n  position: absolute;\\n  left: calc((100% - 612px) / 2);\\n  top: 12.5vh;\\n  width: 612px !important;\\n  height: 792px !important;\\n  margin-bottom: 6vh; }\\n\\n#document-form-div {\\n  position: relative;\\n  width: 612px;\\n  height: 712px !important;\\n  top: 12.5vh;\\n  left: 0; }\\n\\n.document-checkbox {\\n  width: 100% !important;\\n  height: 100% !important;\\n  background-color: lightgrey !important;\\n  border: none;\\n  margin: 0; }\\n\\n.document-form {\\n  overflow: auto; }\\n\\n.input-form-name {\\n  font-size: 1.3em;\\n  text-indent: -5px; }\\n\\n.document-input {\\n  background-color: lightgrey;\\n  border: none; }\\n\\n.document-input:focus {\\n  outline: none; }\\n\\n.document-signature-canvas {\\n  position: relative; }\\n\\n.canvas-button {\\n  position: absolute;\\n  font-size: 1em;\\n  padding: 0.5% 1% 0.5% 1%;\\n  background-color: lightblue;\\n  cursor: pointer;\\n  border: solid 1px #8bb2e5;\\n  height: auto; }\\n\\n.document {\\n  background-color: white;\\n  width: 595px;\\n  max-width: 70%;\\n  height: 842px;\\n  margin-top: 50px;\\n  margin-bottom: 50px;\\n  margin-left: calc((100vw - 15vw - 595px)/2);\\n  float: left; }\\n\\n.selectedField {\\n  animation: focus-user-input 0.3s forwards; }\\n\\n@keyframes fade-in-header {\\n  0% {\\n    background-color: rgba(0, 0, 0, 0); }\\n  100% {\\n    background-color: rgba(50, 50, 50, 0.8); } }\\n\\n@keyframes fade-out-header {\\n  0% {\\n    background-color: rgba(50, 50, 50, 0.8); }\\n  100% {\\n    background-color: rgba(0, 0, 0, 0); } }\\n\\n@keyframes fade-in-save-button {\\n  0% {\\n    opacity: 0.5; }\\n  100% {\\n    opacity: 1; } }\\n\\n@keyframes fade-out-save-button {\\n  0% {\\n    opacity: 1; }\\n  100% {\\n    opacity: 0.5; } }\\n\\n@keyframes fade-in-name-input {\\n  0% {\\n    opacity: 0; }\\n  100% {\\n    opacity: 1; } }\\n\\n@keyframes fade-out-name-input {\\n  0% {\\n    opacity: 1; }\\n  100% {\\n    opacity: 0; } }\\n\\n@keyframes name-input-selected {\\n  0% {\\n    opacity: 1; }\\n  100% {\\n    opacity: 1; } }\\n\\n@keyframes header-selected {\\n  0% {\\n    background-color: rgba(50, 50, 50, 0.8); }\\n  100% {\\n    background-color: rgba(50, 50, 50, 0.8); } }\\n\\n@keyframes focus-user-input {\\n  0% {\\n    border: solid 1px rgba(78, 196, 85, 0); }\\n  100% {\\n    border: solid 1px #4ec455; } }\\n\", \"\"]);\n\n// exports\n\n\n//# sourceURL=webpack:///./Source/components/DocumentView/styling/style.sass?./node_modules/css-loader!./node_modules/sass-loader/lib/loader.js");
 
 /***/ }),
 

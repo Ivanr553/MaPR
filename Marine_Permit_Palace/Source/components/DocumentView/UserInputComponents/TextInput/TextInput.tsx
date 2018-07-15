@@ -68,7 +68,7 @@ export default class TextInput extends React.Component<Props, any> {
         if(this.props.view === 'PendingDocuments' || this.props.view === 'AccountPage') {
 
             return(
-                <textarea id={this.props.id} className='TextInput TextInputRemoveOutline' style={this.state.style} defaultValue={this.props.value} onChange={this.props.onChange} />
+                <textarea id={this.props.id} className='TextInput' style={this.state.style} defaultValue={this.props.value} onChange={this.props.onChange} />
             )
         }
     }

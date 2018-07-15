@@ -1,9 +1,23 @@
 import * as React from 'react';
+import AddedUserList from '../SelectPermissions/AddedUserList';
 
 interface Props {
-    userList: Array<any>,
     showSidebar: boolean,
-    getHideSidebar: (boolean) => void
+    getHideSidebar: (boolean) => void,
+    currentSelectedField: {
+        user: {
+            name: string,
+            id: number
+        },
+        field_name: string
+    },
+    assignUserToField: (e: React.MouseEvent) => void,
+    deleteUser: (e: React.MouseEvent) => void,
+    userList: Array<{
+        name: string,
+        id: number,
+        assigned_to: null | number
+    }>
 }
 
 class DocumentPreviewSidebar extends React.Component<Props, any> {
@@ -13,6 +27,15 @@ class DocumentPreviewSidebar extends React.Component<Props, any> {
         this.state = {
 
         }
+    }
+
+    showSelectedField = () => {
+        if(this.props.currentSelectedField === undefined) {
+            return
+        }
+         else {
+            return this.props.currentSelectedField.field_name
+         }
     }
 
     //Sidebar Functions
@@ -43,11 +66,13 @@ class DocumentPreviewSidebar extends React.Component<Props, any> {
         return (
             <div id='document-view-sidebar' className=''>
                     <div id='close-sidebar-icon' onClick={this.hideSidebar}>x</div>
-                    <div className='documents-header'>Selected Field</div>
-                    <div> Show field here</div>
-                    <div className='documents-header'>User List</div>
-                    <div id='added-users-container-preview' className='added-users-container'>
-                        {this.props.userList}
+                    <div className='preview-documents-header'>Selected Field</div>
+                    <div className='selected-field-display-container'> 
+                        Currently Selected Field: {this.showSelectedField()}
+                    </div>
+                    <div className='preview-documents-header'>User List</div>
+                    <div id='added-users-container-preview'>
+                        <AddedUserList userList={this.props.userList} assignUserToField={this.props.assignUserToField} deleteUser={this.props.deleteUser} isInSidebar={true} />
                     </div>
                 </div>
         );

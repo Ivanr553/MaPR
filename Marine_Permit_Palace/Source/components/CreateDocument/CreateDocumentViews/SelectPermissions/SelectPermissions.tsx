@@ -55,9 +55,9 @@ class SelectPermissions extends React.Component<Props, any> {
 
         try {
 
-            let result = await $.get(`FindUsers?search=${query}`)
+            let result = await $.get(`/Account/FindUsers?search=${query}`)
 
-            console.log(result)
+            //No users yet, will jsut use fake ones for now  
 
             let userArray = ['user1', 'user2', 'user3']
             

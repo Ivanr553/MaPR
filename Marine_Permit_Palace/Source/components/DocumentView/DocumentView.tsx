@@ -11,7 +11,7 @@ import TextInput from './UserInputComponents/TextInput/TextInput'
 interface Props {
     document_id: string,
     view: 'PendingDocuments' | 'DocumentPreview',
-    previewOnClickHandler?: any
+    previewOnClickHandler?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export default class DocumentView extends React.Component<Props, any> {

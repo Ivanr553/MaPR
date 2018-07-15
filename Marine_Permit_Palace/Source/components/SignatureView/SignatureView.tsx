@@ -59,11 +59,11 @@ export default class SignatureView extends React.Component<any, any> {
 
         let bounds = canvas.getBoundingClientRect()
 
-        let prevX = this.state.prevX || e.screenX - bounds.left
-        let prevY = this.state.prevX || e.screenY - bounds.top
+        let prevX = this.state.prevX || e.pageX - bounds.left
+        let prevY = this.state.prevX || e.pageY - bounds.top
 
-        let x = e.screenX - bounds.left
-        let y = e.screenY - bounds.bottom + (canvas.height/2)
+        let x = e.pageX - bounds.left
+        let y = e.pageY - bounds.bottom + (canvas.height)
 
 
         context.fillStyle = 'rgb(0, 0, 0)';
@@ -85,19 +85,32 @@ export default class SignatureView extends React.Component<any, any> {
         this.startSave()
 
         let canvas: HTMLCanvasElement = document.getElementById('signature-canvas') as HTMLCanvasElement
-        let source = canvas.toDataURL('image/png')
+        let source = canvas.toDataURL()
 
         let testImage = new Image()
         testImage.src = source
 
-        document.body.appendChild(testImage)
+        /** 
+        
+        needs to be sent to backend to save signature png
+        
+        
+        */
 
         this.setState({
             canvasEdited: false
         }, () => {
-            setTimeout(() => {
-                this.completeSave()
-            }, 1000)
+
+            let completeSaveTimeout = (
+                setTimeout(() => {
+                    this.completeSave()
+                }, 1000)
+            )
+
+            this.setState({
+                completeSaveTimeout: completeSaveTimeout
+            })
+
         })
     }
 
@@ -132,11 +145,19 @@ export default class SignatureView extends React.Component<any, any> {
             savingIconSource: '/images/check-green.png',
             savingIconId: 'saving-icon-complete'
         }, () => {
-            setTimeout(() => {
-                this.setState({
-                    savingIconId: ''
-                })
-            }, 1000)
+
+            let clearSavingIcon = (
+                setTimeout(() => {
+                    this.setState({
+                        savingIconId: ''
+                    })
+                }, 1000)
+            )
+
+            this.setState({
+                clearSavingIcon: clearSavingIcon
+            })
+
         })
     }
 
@@ -150,11 +171,8 @@ export default class SignatureView extends React.Component<any, any> {
     }
 
     componentWillUnmount() {
-        clearTimeout( setTimeout(() => {
-            this.setState({
-                savingIconId: ''
-            })
-        }, 1000))
+        clearTimeout(this.state.completeSaveTimeout)
+        clearTimeout(this.state.clearSavingIcon)
     }
 
     render() {

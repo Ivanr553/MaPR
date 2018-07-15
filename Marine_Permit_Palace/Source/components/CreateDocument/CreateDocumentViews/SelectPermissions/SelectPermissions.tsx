@@ -1,11 +1,16 @@
 import * as React from 'react';
+import AddedUser from './AddedUser';
+import * as $ from 'jquery'
 
 interface Props {
-    getUserList(userList: Array<any>): void,
-    getSelectPermissionsComplete(selectPermissionsComplete: boolean): void
+    getSelectPermissionsComplete(selectPermissionsComplete: boolean): void,
+    addUser: () => void,
+    userObjects: Array<any>,
+    userList: Array<JSX.Element>,
+    selectPermissionsBoolean: boolean
 }
 
-class SelectPermissions extends React.Component<any, any> {
+class SelectPermissions extends React.Component<Props, any> {
 
     constructor(props) {
         super(props)
@@ -14,6 +19,29 @@ class SelectPermissions extends React.Component<any, any> {
             userList: []
         }
     }
+
+    handleShow = () => {
+
+        if(!this.props.selectPermissionsBoolean) {
+            let style = {
+                display: 'none'
+            } 
+
+            return style
+        } else {
+            let style = {
+                display: 'block'
+            } 
+
+           return style
+        }
+    }
+
+    // showUserList = (): Array<JSX.Element> => {
+
+    //     return this.props.userList
+
+    // }
 
 
     //Finding and displaying added users
@@ -27,9 +55,9 @@ class SelectPermissions extends React.Component<any, any> {
 
         try {
 
-            // let result = $.ajax({
+            let result = await $.get(`FindUsers?search=${query}`)
 
-            // })
+            console.log(result)
 
             let userArray = ['user1', 'user2', 'user3']
             
@@ -58,7 +86,7 @@ class SelectPermissions extends React.Component<any, any> {
 
         for(let i = 0; i < userArray.length; i++) {
             let userSearchResult = (
-                <li className='user-search-result' onClick={this.addUser}>
+                <li className='user-search-result' onClick={this.props.addUser}>
                     {userArray[i]}
                 </li>
             )
@@ -77,88 +105,19 @@ class SelectPermissions extends React.Component<any, any> {
 
     }
 
-
-    addUser = () => {
-
-        let userObjects = this.state.userObjects.slice()
-        let userList = this.state.userList.slice() 
-
-        let user = {
-            name: 'Example User',
-            id: Math.random()
-        }
-
-        userObjects.push(user)
-
-        let addedUser = 
-            <div className='added-user' id={user.id.toString()}>
-                {user.name}
-                <div className='added-user-delete-icon' onClick={(e) => {this.deleteUser(e)}}>x</div>
-            </div>
-
-        userList.push(addedUser)
-
-        let input = document.getElementById('user-search-bar') as HTMLInputElement
-        input.value = ''
-
-        this.setState({
-            userList: userList,
-            userObjects: userObjects
-        }, () => {
-            this.giveUserList()
-        })
-
-    }
-
-    deleteUser = (e) => {
-
-        let id = e.target.parentNode.id
-        let userList = this.state.userList.slice()
-        let userObjects = this.state.userObjects.slice()
-
-
-        userList.forEach(element => {
-            if(element.props.id === id) {
-                userList.pop(element)
-            }
-        })
-
-        userObjects.forEach(user => {
-            if(user.id === parseFloat(id)) {
-                userObjects.pop(user)
-            }
-        })
-
-        this.setState({
-            userList: userList,
-            userObjects: userObjects
-        }, () => {
-            this.giveUserList()
-        })
-
-    }
-
     //State Management
     giveSelectPermissionsComplete = selectPermissionsComplete => {
         this.props.getSelectPermissionsComplete(selectPermissionsComplete)
     }
 
-    giveUserList = () => {
-        this.props.getUserList(this.state.userList)
-        if(this.state.userList.length > 0) {
-            this.giveSelectPermissionsComplete(true)
-        }
-    }
-
-    componentDidUpdate() {
-        if(this.state.userList.length < 1) {
-            this.giveSelectPermissionsComplete(false)
-        }
+    componentDidMount() {
+        this.handleShow()
     }
 
     render() {
+
         return (
-            <div id='SelectPermissions'>
+            <div id='SelectPermissions' style={this.handleShow()}>
                 <div id='select-users-header' className='documents-header'>Select Users</div>
                 <div className='document-list-container'>
                     <div id='user-search-main-container'>
@@ -169,7 +128,7 @@ class SelectPermissions extends React.Component<any, any> {
                         </div>
                         <div id='added-users-title'>Selected Users</div>
                         <div className='added-users-container'>
-                            {this.state.userList}
+                            {this.props.userList}
                         </div> 
                     </div>
                 </div>

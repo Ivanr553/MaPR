@@ -3,7 +3,8 @@ import * as React from 'react';
 interface Props {
     documents: Array<any>,
     getDocumentId(document_id: string): void,
-    getSelectDocumentComplete(selectDocumentComplete: boolean): void
+    getSelectDocumentComplete(selectDocumentComplete: boolean): void,
+    selectDocumentBoolean: boolean
 
 }
 
@@ -13,6 +14,24 @@ class SelectDocument extends React.Component<Props, any> {
         super(props)
         this.state = {
 
+        }
+    }
+
+    handleShow = () => {
+        if(!this.props.selectDocumentBoolean) {
+            let style = {
+                display: 'none'
+            } 
+
+            return style
+
+        } else {
+            let style = {
+                display: 'block'
+            } 
+
+            return style
+        
         }
     }
 
@@ -80,9 +99,13 @@ class SelectDocument extends React.Component<Props, any> {
         this.getDocumentList(this.props.documents)
     }
 
+    componentDidMount() {
+        this.handleShow()
+    }
+ 
     render() {
         return (
-            <div id='SelectDocument'>
+            <div id='SelectDocument' style={this.handleShow()}>
                 <div className='documents-header'>Select Template Document</div>
                 <div className='document-list-container'>
                     {this.state.documentList}

@@ -9,7 +9,8 @@ interface Props {
     document_id: string,
     userList: Array<any>,
     getDocumentName(documentName: String): void,
-    getDocumentPreviewComplete(documentPreviewComplete: boolean): void
+    getDocumentPreviewComplete(documentPreviewComplete: boolean): void,
+    documentPreviewBoolean: boolean
 }
 
  
@@ -19,9 +20,27 @@ class DocumentPreview extends React.Component<Props, any> {
         super(props)
         this.state = {
             documentName: String,
-            currentSelectedField: String
+            currentSelectedField: String,
+            userList: []
         }
 
+    }
+
+    handleShow = () => {
+
+        if(!this.props.documentPreviewBoolean) {
+            let style = {
+                display: 'none'
+            } 
+
+            return style
+        } else {
+            let style = {
+                display: 'block'
+            } 
+
+           return style
+        }
     }
 
     previewOnClickHandler = (e): void => {
@@ -68,8 +87,9 @@ class DocumentPreview extends React.Component<Props, any> {
     getDocumentId = (): void => {
         this.setState({
             document_id: this.props.document_id
-        });
+        })
     }
+
 
     giveDocumentPreviewComplete = (): void => {
         this.props.getDocumentPreviewComplete(true)
@@ -77,13 +97,15 @@ class DocumentPreview extends React.Component<Props, any> {
 
 
     //React lifecycle methods
-    componentWillMount() {
+
+    componentDidMount() {
+        this.handleShow()
         this.getDocumentId()
     }
 
     render() {
         return (
-            <div id='DocumentPreview'>
+            <div id='DocumentPreview' style={this.handleShow()}>
                 <div id='document-view-container'>
                     <div id='document-view-header'>
                         <input placeholder='Document Name' onChange={(e) => {this.handleDocumentNameChange(e)}} id='document-name-input' type="text"/>
@@ -91,12 +113,12 @@ class DocumentPreview extends React.Component<Props, any> {
                             Save File
                         </div>
                     </div>
-                    <DocumentView document_id={this.state.document_id} view={'DocumentPreview'} previewOnClickHandler={this.previewOnClickHandler}/>
+                    <DocumentView document_id={this.props.document_id} view={'DocumentPreview'} previewOnClickHandler={this.previewOnClickHandler}/>
                 </div>
                 <div id='show-sidebar-icon-container' onClick={this.showSidebar}>
                     <img id='show-sidebar-icon' src="/images/left-arrow-1.png" alt=""/>
                 </div>
-                <DocumentPreviewSidebar showSidebar={this.state.showSidebar} userList={this.state.userList} getHideSidebar={this.getHideSidebar} />
+                <DocumentPreviewSidebar showSidebar={this.state.showSidebar} userList={this.props.userList} getHideSidebar={this.getHideSidebar} />
             </div>
         );
     }

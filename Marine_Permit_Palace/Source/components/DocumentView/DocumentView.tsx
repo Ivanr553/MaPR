@@ -53,8 +53,7 @@ export default class DocumentView extends React.Component<Props, any> {
         };
       };
 
-    getDocument = async (document_id: string) => {
-
+    getDocument = async () => {
       
         let promise = $.get(`/DocumentSave/GetDocumentMeta?document_id=${this.props.document_id}`)
         
@@ -108,7 +107,7 @@ export default class DocumentView extends React.Component<Props, any> {
             })
         }
       
-        let promise = await this.getDocument(this.props.document_id)
+        let promise = await this.getDocument()
 
         interface documentObjectInterface {
             document_size,
@@ -224,7 +223,8 @@ export default class DocumentView extends React.Component<Props, any> {
 
     }
 
-    componentWillMount() {
+    componentDidMount() {
+        this.getDocument()
         this.populatePage()
     }
 

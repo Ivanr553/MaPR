@@ -16,36 +16,26 @@ const Footer_1 = require("../Footer/Footer");
 class Login extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            user: {
-                dod_id: '',
-                password: '',
-                remember_me: true
+        this.handleUsername = (e) => {
+            let user = this.state.user;
+            user.dod_id = e.target.value;
+            this.setState({
+                user: user
+            });
+        };
+        this.handlePassword = (e) => {
+            let user = this.state.user;
+            user.password = e.target.value;
+            this.setState({
+                user: user
+            });
+        };
+        this.handleSubmit = (e) => {
+            if (e.key === 'Enter') {
+                this.handleLogin();
             }
         };
-        this.handleLogin = this.handleLogin.bind(this);
-    }
-    handleUsername(e) {
-        let user = this.state.user;
-        user.dod_id = e.target.value;
-        this.setState({
-            user: user
-        });
-    }
-    handlePassword(e) {
-        let user = this.state.user;
-        user.password = e.target.value;
-        this.setState({
-            user: user
-        });
-    }
-    handleSubmit(e) {
-        if (e.key === 'Enter') {
-            this.handleLogin();
-        }
-    }
-    handleLogin() {
-        return __awaiter(this, void 0, void 0, function* () {
+        this.handleLogin = () => __awaiter(this, void 0, void 0, function* () {
             try {
                 let user = this.state.user;
                 let loginAttempt = yield $.ajax({
@@ -77,12 +67,19 @@ class Login extends React.Component {
                 console.log(e);
             }
         });
+        this.state = {
+            user: {
+                dod_id: '',
+                password: '',
+                remember_me: true
+            }
+        };
     }
     componentDidMount() {
     }
     render() {
         return (React.createElement("div", { className: 'Login' },
-            React.createElement(Header_1.default, null),
+            React.createElement(Header_1.default, { page: 'Login' }),
             React.createElement("div", { className: 'login-content-container' },
                 React.createElement("div", { className: 'login-container-section' },
                     React.createElement("div", { className: 'login-title' }, "Log In"),

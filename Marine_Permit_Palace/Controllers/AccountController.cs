@@ -26,11 +26,13 @@ namespace Marine_Permit_Palace.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
         private readonly IStoredTokenService _StoredToken;
+        private readonly IUserService _UserService;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
+            IUserService ius,
             IStoredTokenService ists,
             ILogger<AccountController> logger)
         {
@@ -38,6 +40,7 @@ namespace Marine_Permit_Palace.Controllers
             _signInManager = signInManager;
             _StoredToken = ists;
             _emailSender = emailSender;
+            _UserService = ius;
             _logger = logger;
         }
 
@@ -55,6 +58,14 @@ namespace Marine_Permit_Palace.Controllers
         //    ViewData["ReturnUrl"] = returnUrl;
         //    return View();
         //}
+
+
+        [HttpGet]
+        public JsonResult FindUsers(string search)
+        {
+            //Users can search by a name or DoD ID
+            return Json(_UserService.FindUsers(search));
+        }
 
         [HttpPost]
         [AllowAnonymous]

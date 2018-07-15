@@ -25,10 +25,12 @@ namespace Marine_Permit_Palace.Controllers
         private readonly IDocumentCheckBoxFieldService _DocumentCheckBoxService;
         private readonly IDocumentFormFieldService _DocumentFormFieldService;
         private readonly IDocumentSignatureDataService _DocumentSignatureService;
+        private readonly IDocumentAssigneeIntermediateService _DocumentAsigneeService;
         private UserManager<ApplicationUser> _UserManager { get; }
         public DocumentSaveController(IDocumentService ids,
             IDocumentCheckBoxFieldService idcbs,
             IDocumentFormFieldService idffs,
+            IDocumentAssigneeIntermediateService idas,
             IDocumentSignatureDataService idss,
             UserManager<ApplicationUser> um,
             ISubmittedDocumentService isds)
@@ -36,6 +38,7 @@ namespace Marine_Permit_Palace.Controllers
             _DocumentSerivce = ids;
             _UserManager = um;
             _DocumentSignatureService = idss;
+            _DocumentAsigneeService = idas;
             _DocumentFormFieldService = idffs;
             _SubmittedDocumentService = isds;
             _DocumentCheckBoxService = idcbs;
@@ -124,6 +127,55 @@ namespace Marine_Permit_Palace.Controllers
             public string field_type { get; set; }
             public bool is_disabled { get; set; }
             public string disabled_message { get; set; }
+            //The dod id
+            public string assigned_to { get; set; }
+        }
+
+
+        [HttpGet]
+        public JsonResult GetAssignedUsers(string submitted_document_id)
+        {
+            Guid sd_id;
+            if(Guid.TryParse(submitted_document_id, out sd_id))
+            {
+                var AssignedUserList = _DocumentAsigneeService.GetByDocument(sd_id)
+                    .Select(e => new
+                    {
+                        dod_id = e.Assignee.DodIdNumber.ToString(),
+                        first_name = e.Assignee.FirstName,
+                        last_name = e.Assignee.LastName,
+                        rank = e.Assignee.Rank,
+                        is_allowed_approve = e.IsAllowedApprove,
+                        is_allowed_assign = e.IsAllowedAssignFields,
+                        is_allowed_edit = e.IsAllowedEdit,
+                        is_allowed_submit = e.IsAllowedSubmit
+                    })
+                    .ToList();
+                if(AssignedUserList.Count > 0)
+                {
+                    return Json(AssignedUserList);
+                }
+                else
+                {
+                    return Json(new Result()
+                    {
+                        reason = "No Assigned Users were found.",
+                        result = "Failure",
+                        status_code = 404
+                    });
+                }
+                    
+            }
+            else
+            {
+                return Json(new Result()
+                {
+                    reason = "Submitted Document ID was in an invalid format.",
+                    result = "Failure",
+                    status_code = 406
+                });
+            }
+            
         }
 
         public async Task<JsonResult> GetDocumentMeta(string document_id) // Save the 

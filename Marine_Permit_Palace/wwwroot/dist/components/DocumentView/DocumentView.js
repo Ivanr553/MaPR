@@ -12,23 +12,56 @@ const React = require("react");
 const react_pdf_js_1 = require("react-pdf-js");
 const $ = require("jquery");
 const s = require('./styling/style.sass');
+const SignatureForm_1 = require("./UserInputComponents/SignatureForm/SignatureForm");
+const CheckboxInput_1 = require("./UserInputComponents/CheckboxInput/CheckboxInput");
+const TextInput_1 = require("./UserInputComponents/TextInput/TextInput");
 class DocumentView extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            numPages: 1,
-            pageNumber: 1,
-            document: [],
-            url: '',
-            documentObject: {},
-            documentName: 'document',
-            submitted_file_id: '',
-            noDocument: false
-        };
-    }
-    populatePage() {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log(this.props.document_id);
+        //Code excerpt to allow for promises to be cancelled
+        this.makeCancelable = (promise) => __awaiter(this, void 0, void 0, function* () {
+            let hasCanceled_ = false;
+            const wrappedPromise = new Promise((resolve, reject) => {
+                promise.then((val) => hasCanceled_ ? reject({ isCanceled: true }) : resolve(val));
+                promise.catch((error) => hasCanceled_ ? reject({ isCanceled: true }) : reject(error));
+            });
+            return {
+                promise: wrappedPromise,
+                cancel() {
+                    hasCanceled_ = true;
+                },
+            };
+        });
+        this.getDocument = (document_id) => __awaiter(this, void 0, void 0, function* () {
+            let promise = $.get(`/DocumentSave/GetDocumentMeta?document_id=${this.props.document_id}`);
+            let getDocumentResponse = yield this.makeCancelable(promise);
+            this.setState({
+                getDocumentResponse: getDocumentResponse
+            });
+            return getDocumentResponse;
+        });
+        this.saveFileResponse = (saveFile) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                let saveResult = $.ajax({
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8'
+                    },
+                    url: `/DocumentSave/SaveFile`,
+                    dataType: 'json',
+                    data: JSON.stringify(saveFile)
+                });
+                let saveFileResponse = yield this.makeCancelable(saveResult);
+                this.setState({
+                    saveFileResponse: saveFileResponse
+                });
+                return saveFileResponse;
+            }
+            catch (e) {
+                console.log('Error saving:', e);
+            }
+        });
+        this.populatePage = () => __awaiter(this, void 0, void 0, function* () {
             if (this.props.document_id === '') {
                 this.setState({
                     noDocument: true
@@ -40,7 +73,8 @@ class DocumentView extends React.Component {
                     noDocument: false
                 });
             }
-            let documentObject = yield $.get(`/DocumentSave/GetDocumentMeta?document_id=${this.props.document_id}`);
+            let promise = yield this.getDocument(this.props.document_id);
+            let documentObject = yield promise.promise;
             console.log(documentObject);
             let documentFields = [];
             let pdfWidth = documentObject.document_size.right;
@@ -60,17 +94,16 @@ class DocumentView extends React.Component {
                 let width = (currentForm.field_position.position.width * webWidth) / pdfWidth;
                 if (currentForm.field_type === 'Checkbox') {
                     currentForm.value = false;
-                    let newForm = React.createElement("div", { key: form, className: 'form-wrapper', style: { position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px` } },
-                        React.createElement("input", { id: form, className: 'document-checkbox', style: {}, type: "checkbox", onChange: (e) => { this.handleFormEdit(e, form); } }));
+                    let newForm = React.createElement(CheckboxInput_1.default, { key: form, id: form, width: width, height: height, top: top, left: left, checked: currentForm.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });
                     documentFields.push(newForm);
                 }
                 else if (currentForm.field_type === 'Text') {
                     let newForm = React.createElement("div", { key: form, className: 'form-wrapper' },
-                        React.createElement("input", { id: form, style: { position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px` }, className: 'document-input', defaultValue: currentForm.value, type: "text", onChange: (e) => { this.handleFormEdit(e, form); } }));
+                        React.createElement(TextInput_1.default, { key: form, id: form, position: 'absolute', border: 'none', width: width, height: height, top: top, left: left, value: currentForm.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler }));
                     documentFields.push(newForm);
                 }
                 else if (currentForm.field_type === 'Signature') {
-                    let newForm = React.createElement("canvas", { key: form, className: 'document-signature-canvas', style: { position: 'absolute', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`, backgroundColor: 'yellow' } });
+                    let newForm = React.createElement(SignatureForm_1.default, { key: form, id: form, width: width, height: height, top: top, left: left, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });
                     documentFields.push(newForm);
                 }
                 delete currentForm.field_position;
@@ -80,16 +113,20 @@ class DocumentView extends React.Component {
                 documentObject: documentObject,
                 document_id: this.props.document_id
             }, () => {
-                this.saveFile(null);
+                this.saveFile();
             });
         });
-    }
-    handleDocumentNameChange(e) {
-        let documentName = this.state.documentName;
-        documentName = e.target.value;
-        this.setState({
-            documentName: documentName
-        });
+        this.state = {
+            numPages: 1,
+            pageNumber: 1,
+            document: [],
+            url: '',
+            documentObject: {},
+            documentName: 'document',
+            submitted_file_id: '',
+            noDocument: false,
+            mounted: null
+        };
     }
     handleFormEdit(e, id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -109,41 +146,21 @@ class DocumentView extends React.Component {
             this.setState({
                 documentObject: documentObject
             }, () => {
-                this.saveFile(this.state.submitted_file_id);
+                this.saveFile();
             });
         });
     }
-    saveFile(submitted_file_id) {
+    saveFile() {
         return __awaiter(this, void 0, void 0, function* () {
-            document.getElementById('save-button').style.backgroundColor = 'lightblue';
             let saveFile = {
                 document_meta: this.state.documentObject.document_meta,
                 name: this.state.documentName,
                 document_id: this.state.document_id,
-                submitted_file_id: submitted_file_id
+                submitted_file_id: this.state.submitted_file_id
             };
-            console.log(saveFile);
-            let saveResult;
-            try {
-                //switch to success 
-                saveResult = yield $.ajax({
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json; charset=UTF-8'
-                    },
-                    url: `/DocumentSave/SaveFile`,
-                    dataType: 'json',
-                    data: JSON.stringify(saveFile)
-                });
-                if (saveResult && saveResult.status_code < 201) {
-                    document.getElementById('save-button').style.backgroundColor = 'rgb(131, 198, 125)';
-                }
-            }
-            catch (e) {
-                console.log('Error saving:', e);
-                document.getElementById('save-button').style.backgroundColor = 'rgb(198, 125, 125)';
-            }
-            if (!submitted_file_id || submitted_file_id === null) {
+            let promise = yield this.saveFileResponse(saveFile);
+            let saveResult = yield promise.promise;
+            if (!this.state.submitted_file_id || this.state.submitted_file_id === null) {
                 this.setState({
                     submitted_file_id: saveResult.reason
                 }, () => {
@@ -152,19 +169,26 @@ class DocumentView extends React.Component {
             }
         });
     }
-    componentDidMount() {
+    componentWillMount() {
         this.populatePage();
     }
+    componentWillUnmount() {
+        if (this.state.getDocumentResponse) {
+            this.state.getDocumentResponse.cancel();
+        }
+        if (this.state.saveFileResponse) {
+            this.state.saveFileResponse.cancel();
+        }
+    }
     render() {
-        let document_data = $.get('/DocumentManager/GetFlatDocument?document_id=' + this.props.document_id);
-        console.log(document_data);
-        let noDocumentWarning;
+        let document_id = '../../dist/documents/NAVMC10694.pdf';
+        let noDocumentWarning = React.createElement("div", null);
         if (this.state.noDocument) {
             noDocumentWarning = (React.createElement("div", { id: 'document-view-no-document-warning' }, "There is no document selected"));
         }
         return (React.createElement("div", { className: 'DocumentView' },
             noDocumentWarning,
-            React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: document_data.file }),
+            React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: document_id }),
             React.createElement("div", { id: 'document-form-div' }, this.state.documentFields)));
     }
 }

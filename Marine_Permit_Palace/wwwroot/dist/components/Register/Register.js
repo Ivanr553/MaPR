@@ -16,41 +16,27 @@ const Footer_1 = require("../Footer/Footer");
 class Register extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            dodNumber: '',
-            password: '',
-            confirmPassword: '',
-            email: ''
+        this.handleUsername = (e) => {
+            this.setState({
+                dodNumber: e.target.value
+            });
         };
-        this.handleConfirmPassword = this.handleConfirmPassword.bind(this);
-        this.handleEmail = this.handleEmail.bind(this);
-        this.handlePassword = this.handlePassword.bind(this);
-        this.handleRegister = this.handleRegister.bind(this);
-        this.handleUsername = this.handleUsername.bind(this);
-        // this.handleConfirmPassword = this.handleConfirmPassword.bind(this)
-    }
-    handleUsername(e) {
-        this.setState({
-            dodNumber: e.target.value
-        });
-    }
-    handleEmail(e) {
-        this.setState({
-            email: e.target.value
-        });
-    }
-    handlePassword(e) {
-        this.setState({
-            password: e.target.value
-        });
-    }
-    handleConfirmPassword(e) {
-        this.setState({
-            confirmPassword: e.target.value
-        });
-    }
-    handleRegister() {
-        return __awaiter(this, void 0, void 0, function* () {
+        this.handleEmail = (e) => {
+            this.setState({
+                email: e.target.value
+            });
+        };
+        this.handlePassword = (e) => {
+            this.setState({
+                password: e.target.value
+            });
+        };
+        this.handleConfirmPassword = (e) => {
+            this.setState({
+                confirmPassword: e.target.value
+            });
+        };
+        this.handleRegister = () => __awaiter(this, void 0, void 0, function* () {
             // Check if inputs are not properly filled in
             if (!this.state.dodNumber || !this.state.password) {
                 alert('Fill in all fields');
@@ -90,13 +76,18 @@ class Register extends React.Component {
                 console.log(e);
             }
         });
+        this.state = {
+            dodNumber: '',
+            password: '',
+            confirmPassword: '',
+            email: ''
+        };
     }
     componentDidMount() {
-        console.log(document.cookie);
     }
     render() {
         return (React.createElement("div", { className: 'Register' },
-            React.createElement(Header_1.default, null),
+            React.createElement(Header_1.default, { page: 'Register' }),
             React.createElement("div", { className: 'register-content-container' },
                 React.createElement("div", { className: 'register-container-section' },
                     React.createElement("div", { className: 'register-title' }, "Register"),

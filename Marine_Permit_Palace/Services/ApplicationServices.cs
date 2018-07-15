@@ -20,6 +20,23 @@ namespace Marine_Permit_Palace.Services
         List<SubmittedDocument> GetAllAssigedToUser(string UserId, bool RequiresAttentionOnly = false);
     }
 
+    public interface IDatabaseService
+    {
+        int SaveChanges();
+    }
+    public class DatabaseService : IDatabaseService
+    {
+        ApplicationDbContext _context;
+        public DatabaseService(ApplicationDbContext ctx)
+        {
+            _context = ctx;
+        }
+        public int SaveChanges()
+        {
+            return _context.SaveChanges();
+        }
+    }
+
     public interface IDocumentFormFieldService : IDataRowPropertiesInterface<DocumentFormField>
     {
         bool SaveAllFormFields(List<DocumentFormField> Fields);
@@ -267,6 +284,7 @@ namespace Marine_Permit_Palace.Services
         {
             return _context.DocumentAssigneeIntermediate
                 .Include(e => e.ActiveDocument)
+                .Include(e => e.Assignee)
                 .Where(e => e.IsActive && e.IdActiveDocumentId == SubmittedDocumentId)
                 .ToList();
         }
@@ -275,6 +293,7 @@ namespace Marine_Permit_Palace.Services
         {
             return _context.DocumentAssigneeIntermediate
                 .Include(e => e.ActiveDocument)
+                .Include(e => e.Assignee)
                 .Where(e => e.IsActive && e.IdAssigneeId == UserId)
                 .ToList();
         }

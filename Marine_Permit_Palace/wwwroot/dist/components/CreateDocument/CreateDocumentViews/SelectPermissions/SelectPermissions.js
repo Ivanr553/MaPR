@@ -90,16 +90,24 @@ class SelectPermissions extends React.Component {
             });
         };
         //State Management
-        this.giveSelectPermissionsComplete = () => {
-            this.props.getSelectPermissionsComplete(true);
+        this.giveSelectPermissionsComplete = selectPermissionsComplete => {
+            this.props.getSelectPermissionsComplete(selectPermissionsComplete);
         };
         this.giveUserList = () => {
             this.props.getUserList(this.state.userList);
+            if (this.state.userList.length > 0) {
+                this.giveSelectPermissionsComplete(true);
+            }
         };
         this.state = {
             userObjects: [],
             userList: []
         };
+    }
+    componentDidUpdate() {
+        if (this.state.userList.length < 1) {
+            this.giveSelectPermissionsComplete(false);
+        }
     }
     render() {
         return (React.createElement("div", { id: 'SelectPermissions' },

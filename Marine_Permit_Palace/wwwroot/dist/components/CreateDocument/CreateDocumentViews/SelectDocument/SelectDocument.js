@@ -35,6 +35,7 @@ class SelectDocument extends React.Component {
                 document_id: target.id
             }, () => {
                 this.giveDocumentId();
+                this.giveSelectDocumentComplete();
             });
         };
         //State Management

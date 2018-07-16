@@ -5,14 +5,12 @@ import DocumentView from '../../../DocumentView/DocumentView'
 import { EventHandler } from 'react';
 import DocumentPreviewSidebar from './DocumentPreviewSidebar';
 
+import {user, currentSelectedField} from '../../CreateDocumentValidation'
+
 
 interface Props {
     document_id: string,
-    userList: Array<{
-        name: string,
-        id: number,
-        assigned_to: null | number
-    }>,
+    userList: Array<user>,
     getDocumentName(documentName: String): void,
     getDocumentPreviewComplete(documentPreviewComplete: boolean): void,
     documentPreviewBoolean: boolean,
@@ -21,19 +19,7 @@ interface Props {
     document_meta: Array<object>,
     handleSelectedFieldId: (id: number) => void,
     currentSelectedFieldId: number,
-    currentSelectedField: {
-        user: {
-            name: string,
-            id: number,
-            assigned_to: null | number
-        },
-        field_name: string
-    }
-}
-
-interface makeCancelableInterface {
-    promise: Promise<any>,
-    cancel(): () => void
+    currentSelectedField:currentSelectedField
 }
 
 interface documentResponse {
@@ -89,6 +75,7 @@ class DocumentPreview extends React.Component<Props, any> {
         console.log(currentSelectedFieldValue)
 
         this.props.handleSelectedFieldId(id)
+        this.showSidebar()
 
     }
 
@@ -137,9 +124,7 @@ class DocumentPreview extends React.Component<Props, any> {
     }
 
     componentWillMount() {
-        if(this.state.getDocumentResponse) {
-            this.state.getDocumentResponse.cancel()
-        }
+        
     }
 
     render() {
@@ -157,7 +142,7 @@ class DocumentPreview extends React.Component<Props, any> {
                 <div id='show-sidebar-icon-container' onClick={this.showSidebar}>
                     <img id='show-sidebar-icon' src="/images/left-arrow-1.png" alt=""/>
                 </div>
-                <DocumentPreviewSidebar currentSelectedField={this.props.currentSelectedField} showSidebar={this.state.showSidebar} deleteUser={this.props.deleteUser} assignUserToField={this.props.assignUserToField} userList={this.props.userList} getHideSidebar={this.getHideSidebar} />
+                <DocumentPreviewSidebar currentSelectedFieldId={this.props.currentSelectedFieldId} currentSelectedField={this.props.currentSelectedField} showSidebar={this.state.showSidebar} deleteUser={this.props.deleteUser} assignUserToField={this.props.assignUserToField} userList={this.props.userList} getHideSidebar={this.getHideSidebar} />
             </div>
         );
     }

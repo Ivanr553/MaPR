@@ -10,13 +10,9 @@ import DocumentPreview from './CreateDocumentViews/DocumentPreview/DocumentPrevi
 import CreateDocumentNavButton from './CreateDocumentNavButton/CreateDocumentNavButton'
 import AddedUser from './CreateDocumentViews/SelectPermissions/AddedUser'
 
-
-interface documentResponse {
-    document_meta: Array<object>,
-    document_size: object,
-    result: string,
-    status_code: number
-}
+//Modules
+import { documentResponse } from '../../AppValidation'
+import {getDocumentPromise} from '../../services/services'
 
 //Main Class
 export default class CreateDocument extends React.Component<any, any> {
@@ -130,20 +126,22 @@ export default class CreateDocument extends React.Component<any, any> {
         })
     }
 
-    assignUserToField = (e: React.MouseEvent) => {
-
-        if(this.state.currentSelectedFieldId === undefined) {
-            alert('Select field before assigning user')
-            return
-        }        
+    assignUserToField = (e: React.MouseEvent) => {       
 
         let id = (e.target as HTMLDivElement).id
         let userList = this.state.userList
         let document_meta = this.state.document_meta
 
         let user = userList.filter(user => user.id.toString() === id.toString())[0]
-        user.assigned_to = this.state.currentSelectedFieldId
+        if(user.assigned_to === null) {
+            user.assigned_to = []
+        }
 
+        if(!this.assignUserToFieldChecks(id)) {
+            return
+        }
+
+        user.assigned_to.push(this.state.currentSelectedFieldId)
         document_meta[this.state.currentSelectedFieldId].assigned_to = user
 
         this.setState({
@@ -153,60 +151,47 @@ export default class CreateDocument extends React.Component<any, any> {
 
     }
 
-    handleSelectedFieldId = (currentSelectedFieldId: number) => {
-        this.setState({
-            currentSelectedFieldId: currentSelectedFieldId
-        }, () => {
-            console.log('currentSelectedField:', this.state.currentSelectedFieldId)
-        })
+    assignUserToFieldChecks = (id: string): boolean =>  {
+
+        let userList = this.state.userList
+        let document_meta = this.state.document_meta
+
+        let user = userList.filter(user => user.id.toString() === id.toString())[0]
+
+        if(this.state.currentSelectedFieldId === undefined) {
+            alert('Select field before assigning user')
+            return false
+        } 
+
+        //Checking if user has already been assigned this field
+        if(user.assigned_to.indexOf(this.state.currentSelectedFieldId) >= 0) {
+            return false
+        }
+
+        //Checking if a user has already been assigned to a field
+        if(document_meta[this.state.currentSelectedFieldId].assigned_to !== null) {
+            return false
+        }
+
+        return true
 
     }
 
-    //Code excerpt to allow for promises to be cancelled
-    makeCancelable = async (promise: Promise<any>) => {
-        let hasCanceled_ = false;
-        
-        const wrappedPromise = new Promise((resolve, reject) => {
-            promise.then((val) =>
-            hasCanceled_ ? reject({isCanceled: true}) : resolve(val)
-            );
-            promise.catch((error) =>
-            hasCanceled_ ? reject({isCanceled: true}) : reject(error)
-            );
-        });
-        
-        return {
-            promise: wrappedPromise,
-            cancel() {
-            hasCanceled_ = true;
-            },
-        };
-        };
-
-    getDocument = async () => {
-        
-        let promise = $.get(`/DocumentSave/GetDocumentMeta?document_id=${this.state.document_id}`)
-        
-        let getDocumentResponse = await this.makeCancelable(promise)
-
+    handleSelectedFieldId = (currentSelectedFieldId: number) => {
         this.setState({
-            getDocumentResponse: getDocumentResponse
+            currentSelectedFieldId: currentSelectedFieldId
         })
-
-        return getDocumentResponse
 
     }
 
     getDocumentMeta = async () => {
 
-        let promise = await this.getDocument()
+        let promise = await getDocumentPromise(this.state.document_id)
         let documentResponse: documentResponse  = await promise.promise as documentResponse
         let document_meta = documentResponse.document_meta
 
         this.setState({
             document_meta: document_meta
-        }, () => {
-            console.log(this.state.document_meta)
         })
 
     }
@@ -271,15 +256,15 @@ export default class CreateDocument extends React.Component<any, any> {
 
             return (
                 <div id='CreateDocument'>
-                <div id='create-document-nav-bar'>
-                    <CreateDocumentNavButton complete={this.state.selectDocumentComplete} id={'create-document-nav-bar-item-document'} innerText={'Select Document'} onClickHandler={ this.handleSelectDocumentView} disable={false} selected={this.state.selectDocumentBoolean}/>
-                    <CreateDocumentNavButton complete={this.state.selectPermissionsComplete} id={'create-permissions-nav-bar-item-document'} innerText={'Create Permissions'} onClickHandler={this.handleSelectPermissionsView} disable={false} selected={this.state.selectPermissionsBoolean}/>
-                    <CreateDocumentNavButton complete={false} id={'document-preview-nav-bar-item-document'} innerText={'Preview'} onClickHandler={this.handleSelectPreviewView} disable={this.disableDocumentPreview()} selected={this.state.documentPreviewBoolean}/>
+                    <div id='create-document-nav-bar'>
+                        <CreateDocumentNavButton complete={this.state.selectDocumentComplete} id={'create-document-nav-bar-item-document'} innerText={'Select Document'} onClickHandler={ this.handleSelectDocumentView} disable={false} selected={this.state.selectDocumentBoolean}/>
+                        <CreateDocumentNavButton complete={this.state.selectPermissionsComplete} id={'create-permissions-nav-bar-item-document'} innerText={'Create Permissions'} onClickHandler={this.handleSelectPermissionsView} disable={false} selected={this.state.selectPermissionsBoolean}/>
+                        <CreateDocumentNavButton complete={false} id={'document-preview-nav-bar-item-document'} innerText={'Preview'} onClickHandler={this.handleSelectPreviewView} disable={this.disableDocumentPreview()} selected={this.state.documentPreviewBoolean}/>
+                    </div>
+                    <div className='container'>
+                        <SelectDocument selectDocumentBoolean={this.state.selectDocumentBoolean} documents={this.props.documentResults} getDocumentId={this.getDocumentId} getSelectDocumentComplete={this.getSelectDocumentComplete} />
+                    </div>
                 </div>
-                <div className='container'>
-                    <SelectDocument selectDocumentBoolean={this.state.selectDocumentBoolean} documents={this.props.documentResults} getDocumentId={this.getDocumentId} getSelectDocumentComplete={this.getSelectDocumentComplete} />
-                </div>
-            </div>
             )
 
         }
@@ -287,15 +272,15 @@ export default class CreateDocument extends React.Component<any, any> {
 
             return (
                 <div id='CreateDocument'>
-                <div id='create-document-nav-bar'>
-                    <CreateDocumentNavButton complete={this.state.selectDocumentComplete} id={'create-document-nav-bar-item-document'} innerText={'Select Document'} onClickHandler={ this.handleSelectDocumentView} disable={false} selected={this.state.selectDocumentBoolean}/>
-                    <CreateDocumentNavButton complete={this.state.selectPermissionsComplete} id={'create-permissions-nav-bar-item-document'} innerText={'Create Permissions'} onClickHandler={this.handleSelectPermissionsView} disable={false} selected={this.state.selectPermissionsBoolean}/>
-                    <CreateDocumentNavButton complete={false} id={'document-preview-nav-bar-item-document'} innerText={'Preview'} onClickHandler={this.handleSelectPreviewView} disable={this.disableDocumentPreview()} selected={this.state.documentPreviewBoolean}/>
+                    <div id='create-document-nav-bar'>
+                        <CreateDocumentNavButton complete={this.state.selectDocumentComplete} id={'create-document-nav-bar-item-document'} innerText={'Select Document'} onClickHandler={ this.handleSelectDocumentView} disable={false} selected={this.state.selectDocumentBoolean}/>
+                        <CreateDocumentNavButton complete={this.state.selectPermissionsComplete} id={'create-permissions-nav-bar-item-document'} innerText={'Create Permissions'} onClickHandler={this.handleSelectPermissionsView} disable={false} selected={this.state.selectPermissionsBoolean}/>
+                        <CreateDocumentNavButton complete={false} id={'document-preview-nav-bar-item-document'} innerText={'Preview'} onClickHandler={this.handleSelectPreviewView} disable={this.disableDocumentPreview()} selected={this.state.documentPreviewBoolean}/>
+                    </div>
+                    <div className='container'>
+                        <SelectPermissions currentSelectedFieldId={this.state.currentSelectedFieldId} assignUserToField={this.assignUserToField} selectPermissionsBoolean={this.state.selectPermissionsBoolean} addUser={this.addUser} deleteUser={this.deleteUser} userList={this.state.userList} getSelectPermissionsComplete={this.getSelectPermissionsComplete} />
+                    </div>
                 </div>
-                <div className='container'>
-                    <SelectPermissions assignUserToField={this.assignUserToField} selectPermissionsBoolean={this.state.selectPermissionsBoolean} addUser={this.addUser} deleteUser={this.deleteUser} userList={this.state.userList} getSelectPermissionsComplete={this.getSelectPermissionsComplete} />
-                </div>
-            </div>
             )
 
         }
@@ -303,15 +288,15 @@ export default class CreateDocument extends React.Component<any, any> {
 
             return (
                 <div id='CreateDocument'>
-                <div id='create-document-nav-bar'>
-                    <CreateDocumentNavButton complete={this.state.selectDocumentComplete} id={'create-document-nav-bar-item-document'} innerText={'Select Document'} onClickHandler={ this.handleSelectDocumentView} disable={false} selected={this.state.selectDocumentBoolean}/>
-                    <CreateDocumentNavButton complete={this.state.selectPermissionsComplete} id={'create-permissions-nav-bar-item-document'} innerText={'Create Permissions'} onClickHandler={this.handleSelectPermissionsView} disable={false} selected={this.state.selectPermissionsBoolean}/>
-                    <CreateDocumentNavButton complete={false} id={'document-preview-nav-bar-item-document'} innerText={'Preview'} onClickHandler={this.handleSelectPreviewView} disable={this.disableDocumentPreview()} selected={this.state.documentPreviewBoolean}/>
+                    <div id='create-document-nav-bar'>
+                        <CreateDocumentNavButton complete={this.state.selectDocumentComplete} id={'create-document-nav-bar-item-document'} innerText={'Select Document'} onClickHandler={ this.handleSelectDocumentView} disable={false} selected={this.state.selectDocumentBoolean}/>
+                        <CreateDocumentNavButton complete={this.state.selectPermissionsComplete} id={'create-permissions-nav-bar-item-document'} innerText={'Create Permissions'} onClickHandler={this.handleSelectPermissionsView} disable={false} selected={this.state.selectPermissionsBoolean}/>
+                        <CreateDocumentNavButton complete={false} id={'document-preview-nav-bar-item-document'} innerText={'Preview'} onClickHandler={this.handleSelectPreviewView} disable={this.disableDocumentPreview()} selected={this.state.documentPreviewBoolean}/>
+                    </div>
+                    <div className='container'>
+                        <DocumentPreview currentSelectedField={this.state.document_meta[this.state.currentSelectedFieldId]} handleSelectedFieldId={this.handleSelectedFieldId} currentSelectedFieldId={this.state.currentSelectedFieldId} deleteUser={this.deleteUser} assignUserToField={this.assignUserToField} documentPreviewBoolean={this.state.documentPreviewBoolean} userList={this.state.userList} document_id={this.state.document_id} document_meta={this.state.document_meta} getDocumentName={this.getDocumentName} getDocumentPreviewComplete={this.getDocumentPreviewComplete}/>
+                    </div>
                 </div>
-                <div className='container'>
-                    <DocumentPreview currentSelectedField={this.state.document_meta[this.state.currentSelectedFieldId]} handleSelectedFieldId={this.handleSelectedFieldId} currentSelectedFieldId={this.state.currentSelectedFieldId} deleteUser={this.deleteUser} assignUserToField={this.assignUserToField} documentPreviewBoolean={this.state.documentPreviewBoolean} userList={this.state.userList} document_id={this.state.document_id} document_meta={this.state.document_meta} getDocumentName={this.getDocumentName} getDocumentPreviewComplete={this.getDocumentPreviewComplete}/>
-                </div>
-            </div>
             )
 
         }

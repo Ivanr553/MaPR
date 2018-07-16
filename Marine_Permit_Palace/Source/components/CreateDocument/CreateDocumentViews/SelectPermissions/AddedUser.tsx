@@ -1,14 +1,14 @@
 import * as React from 'react';
 
+import {user} from '../../CreateDocumentValidation'
+
 interface Props {
-    user: {
-        id: number,
-        name: string,
-        assigned_to: null | number
-    },
+    user: user,
+    currentSelectedFieldId: number,
     assignUserToField: (e: React.MouseEvent) => void,
     deleteUser: (e: React.MouseEvent) => void,
-    isInSidebar: boolean
+    isInSidebar: boolean,
+    fieldAssigned: boolean
 }
 
 
@@ -16,11 +16,17 @@ class AddedUser extends React.Component<Props, any> {
 
     getStyle = () => {
 
+        console.log('receiving:', this.props.fieldAssigned)
+
         if(this.props.isInSidebar) {
             
             let style = {
-                cursor: 'pointer',
-                backgroundColor: this.props.user.assigned_to !== null ? 'grey' : ''
+                cursor: 
+                    ((this.props.user.assigned_to !== null && this.props.user.assigned_to.indexOf(this.props.currentSelectedFieldId) >= 0) || this.props.fieldAssigned) 
+                        ? 'default' : 'pointer',
+                backgroundColor: 
+                    (this.props.user.assigned_to !== null && this.props.user.assigned_to.indexOf(this.props.currentSelectedFieldId) >= 0) 
+                        ? 'lightgrey' : ''
             }
 
             return style
@@ -28,7 +34,9 @@ class AddedUser extends React.Component<Props, any> {
         if(!this.props.isInSidebar) {
 
             let style = {
-                backgroundColor: this.props.user.assigned_to !== null ? 'grey' : ''
+                backgroundColor: 
+                    (this.props.user.assigned_to !== null && this.props.user.assigned_to.indexOf(this.props.currentSelectedFieldId) >= 0) 
+                        ? 'lightgrey' : ''
             }
 
             return style

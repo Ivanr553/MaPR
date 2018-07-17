@@ -23,19 +23,30 @@ class DocumentPreviewSidebar extends React.Component<Props, any> {
         }
     }
 
+
+    cleanUpFieldName = (field_name: string): string => {
+        while(field_name.indexOf('_') > -1) {
+            field_name = field_name.replace('_', ' ')
+        }
+        return field_name.charAt(0).toUpperCase() + field_name.slice(1)
+    }
+
     showSelectedField = () => {
         if(this.props.currentSelectedField === undefined) {
             return
         }
          else {
+
+            let field_name: string = this.cleanUpFieldName(this.props.currentSelectedField.field_name)
+
             return (
                 <div>
-                    <div className='selected-field-content'>
-                        <div className='selected-field-name'>
-                            {this.props.currentSelectedField.field_name}
-                        </div>
-                        <div className='selected-field-assigned-user'>
-                            {this.props.currentSelectedField.assigned_to !== null ? this.props.currentSelectedField.assigned_to.name : null}
+                    <div className='preview-documents-header'>{field_name}</div>
+                    <div className='selected-field-display-container'> 
+                        <div className='selected-field-content'>
+                            <div className='selected-field-assigned-user'>
+                                {this.props.currentSelectedField.assigned_to !== null ? this.props.currentSelectedField.assigned_to.name : null}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -71,14 +82,9 @@ class DocumentPreviewSidebar extends React.Component<Props, any> {
         return (
             <div id='document-view-sidebar' className=''>
                     <div id='close-sidebar-icon' onClick={this.hideSidebar}>x</div>
-                    <div className='preview-documents-header'>Selected Field</div>
-                    <div className='selected-field-display-container'> 
-                        {this.showSelectedField()}
-                    </div>
+                    {this.showSelectedField()}
                     <div className='preview-documents-header'>User List</div>
-                    <div id='added-users-container-preview'>
-                        <AddedUserList currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} assignUserToField={this.props.assignUserToField} deleteUser={this.props.deleteUser} isInSidebar={true} />
-                    </div>
+                    <AddedUserList className='added-users-container-preview' currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} assignUserToField={this.props.assignUserToField} deleteUser={this.props.deleteUser} isInSidebar={true} />
                 </div>
         );
     }

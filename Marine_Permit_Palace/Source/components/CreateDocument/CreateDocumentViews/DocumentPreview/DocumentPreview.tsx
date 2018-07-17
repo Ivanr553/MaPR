@@ -19,14 +19,7 @@ interface Props {
     document_meta: Array<object>,
     handleSelectedFieldId: (id: number) => void,
     currentSelectedFieldId: number,
-    currentSelectedField:currentSelectedField
-}
-
-interface documentResponse {
-    document_meta: Array<object>,
-    document_size: object,
-    result: string,
-    status_code: number
+    currentSelectedField: currentSelectedField
 }
 
  

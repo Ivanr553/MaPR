@@ -5,6 +5,8 @@ import * as $ from 'jquery'
 
 import {user} from '../../CreateDocumentValidation'
 
+const s = require('./styling/style.sass')
+
 interface Props {
     getSelectPermissionsComplete(selectPermissionsComplete: boolean): void,
     addUser: () => void,
@@ -125,7 +127,7 @@ class SelectPermissions extends React.Component<Props, any> {
                             {this.state.userSearchResults}
                         </div>
                         <div id='added-users-title'>Selected Users</div>
-                        <AddedUserList currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} assignUserToField={this.props.assignUserToField} deleteUser={this.props.deleteUser} isInSidebar={false} />
+                        <AddedUserList className='added-users-container' currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} assignUserToField={this.props.assignUserToField} deleteUser={this.props.deleteUser} isInSidebar={false} />
                     </div>
                 </div>
             </div>

@@ -40,9 +40,6 @@ module.exports = {
             }
         ]
     },
-    plugins: [
-        new webpack.HotModuleReplacementPlugin()
-    ],
     resolve: {
         extensions: [".tsx", ".ts", ".js"]
     },

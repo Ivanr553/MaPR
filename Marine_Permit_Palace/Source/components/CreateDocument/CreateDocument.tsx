@@ -11,7 +11,8 @@ import CreateDocumentNavButton from './CreateDocumentNavButton/CreateDocumentNav
 import AddedUser from './CreateDocumentViews/SelectPermissions/AddedUser'
 
 //Modules
-import { documentResponse } from '../../AppValidation'
+import {user} from './CreateDocumentValidation'
+import {documentResponse, document_meta_field} from '../../AppValidation'
 import {getDocumentPromise} from '../../services/services'
 
 //Main Class
@@ -67,13 +68,18 @@ export default class CreateDocument extends React.Component<any, any> {
 
         userList = this.state.userList
 
-        let user = {
-            name: `Example User ${Math.random()}`,
-            id: Math.random(),
-            assigned_to: null
+
+
+        //Creating multiple users for testing
+        for(let i = 0; i < 3; i++) {
+            let user: user = {
+                name: `Example User ${Math.random()}`,
+                dod_id: Math.random(),
+                assigned_to: null
+            }
+            userList.push(user)
         }
 
-        userList.push(user)
 
         let input = document.getElementById('user-search-bar') as HTMLInputElement
         input.value = ''
@@ -92,12 +98,12 @@ export default class CreateDocument extends React.Component<any, any> {
 
     deleteUser = (e) => {
 
-        let id = e.target.parentNode.id
+        let elementId = e.target.parentNode.id
         let userList = this.state.userList        
-        let assignedField
+        let assignedField: null | [number]
 
-        userList.forEach(user => {     
-            if(user.id.toString() === id.toString()) {
+        userList.forEach(user => {    
+            if(user.dod_id.toString() === elementId.toString()) {
                 assignedField = user.assigned_to
                 userList.splice(userList.indexOf(user), 1)
             }
@@ -117,9 +123,13 @@ export default class CreateDocument extends React.Component<any, any> {
 
     }
 
-    removeAssignedUser = (assignedField: number) => {
-        let document_meta = this.state.document_meta
-        document_meta[assignedField].assigned_to = null
+    removeAssignedUser = (assignedField: [number] | null) => {
+        let document_meta: Array<document_meta_field> = this.state.document_meta
+        if(assignedField !== null && assignedField.length > 0) {
+            assignedField.forEach(field => {
+                document_meta[field].assigned_to = null
+            })
+        }
 
         this.setState({
             document_meta: document_meta
@@ -128,16 +138,16 @@ export default class CreateDocument extends React.Component<any, any> {
 
     assignUserToField = (e: React.MouseEvent) => {       
 
-        let id = (e.target as HTMLDivElement).id
+        let elementId = (e.target as HTMLDivElement).id
         let userList = this.state.userList
         let document_meta = this.state.document_meta
 
-        let user = userList.filter(user => user.id.toString() === id.toString())[0]
+        let user = userList.filter(user => user.dod_id.toString() === elementId.toString())[0]
         if(user.assigned_to === null) {
             user.assigned_to = []
         }
 
-        if(!this.assignUserToFieldChecks(id)) {
+        if(!this.assignUserToFieldChecks(elementId)) {
             return
         }
 
@@ -151,12 +161,12 @@ export default class CreateDocument extends React.Component<any, any> {
 
     }
 
-    assignUserToFieldChecks = (id: string): boolean =>  {
+    assignUserToFieldChecks = (dod_id: string): boolean =>  {
 
         let userList = this.state.userList
         let document_meta = this.state.document_meta
 
-        let user = userList.filter(user => user.id.toString() === id.toString())[0]
+        let user = userList.filter(user => user.dod_id.toString() === dod_id.toString())[0]
 
         if(this.state.currentSelectedFieldId === undefined) {
             alert('Select field before assigning user')

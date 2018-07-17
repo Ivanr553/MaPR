@@ -36,118 +36,11 @@
     overflow: hidden
     position: relative
 
-#select-users-header
-
-#user-search-main-container
-    width: calc(100% - 2vw - 4px)
-    margin-left: 1vw
-    padding-left: 1vw
-    background-color: white
-    border: solid 2px lightgrey
-    display: flex
-    flex-direction: column
-    align-items: flex-start
-    justify-content: flex-start
-    overflow: auto
-
-#user-search-bar-container
-    margin-top: 2.5vh
-    position: relative
-
-#user-search-bar
-    font-size: 2.5em
-    border: solid 1px grey
-    border-radius: 1px
-    text-indent: 1vw
-    padding: 0.5vh 0 0.5vh 0
-
-#user-search-bar-magnifying-glass
-    height: 100%
-    width: auto
-    background-color: black
-
-#user-search-results-list
-    width: 100%
-    height: auto
-    position: absolute
-    top: 80%
-    left: 0
-    z-index: 600
-    background-color: white
-    list-style-type: none
-    padding-left: 0
-
-.user-search-result
-    width: calc(100% - 1vw)
-    height: auto
-    font-size: 2em
-    cursor: pointer
-    margin-bottom: 0.5vh
-    padding: 1vh 0 1vh 1vw
-
-.user-search-result:hover
-    background-color: rgb(200, 200, 200)
-
-#added-users-title
-    margin-top: 5vh
-    margin-bottom: 1vh
-    font-size: 2.25em
-    width: 100%
-    text-indent: 1%
-
-.added-users-container
-    width: auto
-    min-width: 50%
-    height: auto
-    min-height: 40%
-    display: flex
-    flex-direction: column
-    align-items: center
-    justify-content: flex-start
-    padding-top: 0.5%
-    border: solid 1px grey
-    background-color: rgb(230, 230, 230)
-    position: relative
-    overflow: auto
-    margin-bottom: 1%
-
-.added-user    
-    width: 99%
-    font-size: 2.25em
-    background-color: white
-    cursor: default
-    border: solid 1px grey
-    margin-bottom: 0.5%
-    padding: 0.3em 0 0.3em 0
-    text-indent: 1%
-    display: grid
-    grid-template-columns: 9fr 1fr
-    justify-content: center
-    align-items: center
-
-.added-user-delete-icon
-    display: flex
-    flex-direction: column
-    align-items: center
-    justify-content: center
-    font-size: 2em
-    color: rgb(255, 142, 132)
-    cursor: pointer
-
-.added-user-delete-icon:hover
-    color: rgb(255, 107, 94)
-
-.create-document-button
-    position: absolute
-    font-size: 1.5em
-    padding: 0.25em 0.75em 0.25em 0.75em
-    background-color: lightgrey
 
 #document-view-container
     width: 100%
     height: auto
     overflow: hidden
-
 
 input:focus
   outline: none
@@ -210,6 +103,7 @@ input:focus
     right: -20vw
     top: 0
     background-color: rgb(230, 230, 230)
+    background-color: white
     border-left: solid 2px grey
     z-index: 600
     box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.1)
@@ -271,15 +165,16 @@ input:focus
 #close-sidebar-icon:hover
     color: black
 
-#added-users-container-preview
-    width: calc(85% - 4px)
-    margin-left: 7.5%
+.added-users-container-preview
+    width: 100%
+    overflow: auto
+    max-height: 75%
 
 .preview-documents-header
     color: black
     font-size: 2.5em
     padding: 2.5vh 0 2.5vh 0
-    font-weight: bold
+    font-weight: 400
     cursor: default
     margin-left: 1vw
 

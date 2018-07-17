@@ -16,8 +16,6 @@ class AddedUser extends React.Component<Props, any> {
 
     getStyle = () => {
 
-        console.log('receiving:', this.props.fieldAssigned)
-
         if(this.props.isInSidebar) {
             
             let style = {
@@ -44,13 +42,14 @@ class AddedUser extends React.Component<Props, any> {
     }
 
     componentDidMount() {
+        
     }
 
     render() {
 
         if(this.props.isInSidebar) {
             return (
-                <div style={this.getStyle()} className='added-user' id={this.props.user.id.toString()} onClick={(e) => this.props.assignUserToField(e)}>
+                <div style={this.getStyle()} className='added-user' id={this.props.user.dod_id.toString()} onClick={(e) => this.props.assignUserToField(e)}>
                 {this.props.user.name}
             </div>
             )
@@ -58,7 +57,7 @@ class AddedUser extends React.Component<Props, any> {
 
         if(!this.props.isInSidebar) {
             return (
-                <div style={this.getStyle()} className='added-user' id={this.props.user.id.toString()}>
+                <div style={this.getStyle()} className='added-user' id={this.props.user.dod_id.toString()}>
                     {this.props.user.name}
                     <div className='added-user-delete-icon' onClick={(e) => {this.props.deleteUser(e)}}>x</div>
                 </div>

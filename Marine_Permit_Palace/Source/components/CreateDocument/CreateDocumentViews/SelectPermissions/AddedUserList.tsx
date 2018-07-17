@@ -8,7 +8,8 @@ interface AddedUserListProps {
     assignUserToField: (e: React.MouseEvent) => void,
     deleteUser: (e: React.MouseEvent) => void,
     isInSidebar: boolean,
-    currentSelectedFieldId: number
+    currentSelectedFieldId: number,
+    className: string
 }
 
 class AddedUserList extends React.Component<AddedUserListProps, any> {
@@ -59,7 +60,7 @@ class AddedUserList extends React.Component<AddedUserListProps, any> {
 
     render() {
         return (
-            <div className='AddedUserList added-users-container'>
+            <div className={this.props.className}>
                 {this.renderAddedUsers()}
             </div>
         );

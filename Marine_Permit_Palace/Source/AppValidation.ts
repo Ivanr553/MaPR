@@ -1,4 +1,5 @@
 
+
 interface CancellablePromise {
     promise: Promise<any>,
     cancel(): void
@@ -15,7 +16,10 @@ interface document_meta_field {
             height: number,
             width: number
         }
-    }
+    },
+    assigned_to: any,
+    isDisabled: boolean,
+    disabled_message: string
 }
 
 interface documentResponse {

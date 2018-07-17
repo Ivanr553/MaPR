@@ -1,7 +1,7 @@
 
 
 interface user {
-    id: number,
+    dod_id: number,
     name: string,
     assigned_to: null | [number]
 }

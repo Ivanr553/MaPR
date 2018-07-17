@@ -38,10 +38,10 @@ class SignatureView extends React.Component {
             let canvas = document.getElementById('signature-canvas');
             let context = canvas.getContext('2d');
             let bounds = canvas.getBoundingClientRect();
-            let prevX = this.state.prevX || e.screenX - bounds.left;
-            let prevY = this.state.prevX || e.screenY - bounds.top;
-            let x = e.screenX - bounds.left;
-            let y = e.screenY - bounds.bottom + (canvas.height / 2);
+            let prevX = this.state.prevX || e.pageX - bounds.left;
+            let prevY = this.state.prevX || e.pageY - bounds.top;
+            let x = e.pageX - bounds.left;
+            let y = e.pageY - bounds.bottom + (canvas.height);
             context.fillStyle = 'rgb(0, 0, 0)';
             context.beginPath();
             context.moveTo(this.state.prevX, this.state.prevY);
@@ -56,16 +56,24 @@ class SignatureView extends React.Component {
         this.printCanvas = () => {
             this.startSave();
             let canvas = document.getElementById('signature-canvas');
-            let source = canvas.toDataURL('image/png');
+            let source = canvas.toDataURL();
             let testImage = new Image();
             testImage.src = source;
-            document.body.appendChild(testImage);
+            /**
+            
+            needs to be sent to backend to save signature png
+            
+            
+            */
             this.setState({
                 canvasEdited: false
             }, () => {
-                setTimeout(() => {
+                let completeSaveTimeout = (setTimeout(() => {
                     this.completeSave();
-                }, 1000);
+                }, 1000));
+                this.setState({
+                    completeSaveTimeout: completeSaveTimeout
+                });
             });
         };
         this.setCanvasDimensions = () => {
@@ -95,11 +103,14 @@ class SignatureView extends React.Component {
                 savingIconSource: '/images/check-green.png',
                 savingIconId: 'saving-icon-complete'
             }, () => {
-                setTimeout(() => {
+                let clearSavingIcon = (setTimeout(() => {
                     this.setState({
                         savingIconId: ''
                     });
-                }, 1000);
+                }, 1000));
+                this.setState({
+                    clearSavingIcon: clearSavingIcon
+                });
             });
         };
         this.state = {
@@ -121,11 +132,8 @@ class SignatureView extends React.Component {
         window.addEventListener('resize', this.setCanvasDimensions);
     }
     componentWillUnmount() {
-        clearTimeout(setTimeout(() => {
-            this.setState({
-                savingIconId: ''
-            });
-        }, 1000));
+        clearTimeout(this.state.completeSaveTimeout);
+        clearTimeout(this.state.clearSavingIcon);
     }
     render() {
         return (React.createElement("div", { id: 'Signature' },

@@ -61,6 +61,7 @@ namespace Marine_Permit_Palace.Controllers
 
 
         [HttpGet]
+        [AllowAnonymous]
         public JsonResult FindUsers(string search)
         {
             //Users can search by a name or DoD ID

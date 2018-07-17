@@ -33,7 +33,7 @@ class TextInput extends React.Component {
             return (React.createElement("textarea", { readOnly: true, id: this.props.id, className: 'TextInput preview-TextInput', style: this.state.style, defaultValue: this.props.value, onClick: this.props.previewOnClickHandler }));
         }
         if (this.props.view === 'PendingDocuments' || this.props.view === 'AccountPage') {
-            return (React.createElement("textarea", { id: this.props.id, className: 'TextInput TextInputRemoveOutline', style: this.state.style, defaultValue: this.props.value, onChange: this.props.onChange }));
+            return (React.createElement("textarea", { id: this.props.id, className: 'TextInput', style: this.state.style, defaultValue: this.props.value, onChange: this.props.onChange }));
         }
     }
 }

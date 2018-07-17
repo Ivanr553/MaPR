@@ -36,10 +36,11 @@ namespace Marine_Permit_Palace.Services
             {
                 //Search using the DoD id
                 return _context.Users
-                    .Where(e => e.DodIdNumber.ToString().Contains(dod_id.ToString()))
+                    .Where(e => e.UserName.ToString().Contains(dod_id.ToString()))
                     .Take(20)
                     .Select(e => new UserData
-                    { dod_id = e.DodIdNumber.ToString(),
+                    {
+                        dod_id = e.UserName.ToString(),
                         first_name = e.FirstName,
                         last_name = e.LastName,
                         rank = e.Rank
@@ -53,7 +54,7 @@ namespace Marine_Permit_Palace.Services
                     .Take(20)
                     .Select(e => new UserData
                     {
-                        dod_id = e.DodIdNumber.ToString(),
+                        dod_id = e.UserName.ToString(),
                         first_name = e.FirstName,
                         last_name = e.LastName,
                         rank = e.Rank

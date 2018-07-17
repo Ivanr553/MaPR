@@ -10,103 +10,86 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const react_pdf_js_1 = require("react-pdf-js");
-const $ = require("jquery");
 const s = require('./styling/style.sass');
 const SignatureForm_1 = require("./UserInputComponents/SignatureForm/SignatureForm");
 const CheckboxInput_1 = require("./UserInputComponents/CheckboxInput/CheckboxInput");
 const TextInput_1 = require("./UserInputComponents/TextInput/TextInput");
+const services_1 = require("../../services/services");
 class DocumentView extends React.Component {
     constructor(props) {
         super(props);
-        //Code excerpt to allow for promises to be cancelled
-        this.makeCancelable = (promise) => __awaiter(this, void 0, void 0, function* () {
-            let hasCanceled_ = false;
-            const wrappedPromise = new Promise((resolve, reject) => {
-                promise.then((val) => hasCanceled_ ? reject({ isCanceled: true }) : resolve(val));
-                promise.catch((error) => hasCanceled_ ? reject({ isCanceled: true }) : reject(error));
-            });
-            return {
-                promise: wrappedPromise,
-                cancel() {
-                    hasCanceled_ = true;
-                },
-            };
-        });
-        this.getDocument = (document_id) => __awaiter(this, void 0, void 0, function* () {
-            let promise = $.get(`/DocumentSave/GetDocumentMeta?document_id=${this.props.document_id}`);
-            let getDocumentResponse = yield this.makeCancelable(promise);
-            this.setState({
-                getDocumentResponse: getDocumentResponse
-            });
-            return getDocumentResponse;
-        });
-        this.saveFileResponse = (saveFile) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                let saveResult = $.ajax({
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json; charset=UTF-8'
-                    },
-                    url: `/DocumentSave/SaveFile`,
-                    dataType: 'json',
-                    data: JSON.stringify(saveFile)
-                });
-                let saveFileResponse = yield this.makeCancelable(saveResult);
-                this.setState({
-                    saveFileResponse: saveFileResponse
-                });
-                return saveFileResponse;
-            }
-            catch (e) {
-                console.log('Error saving:', e);
-            }
-        });
-        this.populatePage = () => __awaiter(this, void 0, void 0, function* () {
+        this.checkForDocument = () => {
             if (this.props.document_id === '') {
                 this.setState({
                     noDocument: true
                 });
-                return;
+                return false;
             }
             else {
                 this.setState({
                     noDocument: false
                 });
+                return true;
             }
-            let promise = yield this.getDocument(this.props.document_id);
-            let documentObject = yield promise.promise;
-            console.log(documentObject);
-            let documentFields = [];
+        };
+        this.getDocumentSize = (documentObject, fieldLeft, fieldTop, fieldHeight, fieldWidth) => {
             let pdfWidth = documentObject.document_size.right;
             let pdfHeight = documentObject.document_size.height;
-            let pdfRatio = pdfHeight / pdfWidth;
             let webWidth = 612; //in px
-            let webHeigth = 792; // in px
+            let webHeight = 792; // in px
+            let measurements = {
+                pdfHeight: pdfHeight,
+                pdfWidth: pdfWidth,
+                webHeight: webHeight,
+                webWidth: webWidth
+            };
+            let left = ((fieldLeft) * measurements.webWidth) / measurements.pdfWidth;
+            let top = ((measurements.pdfHeight - fieldTop) * measurements.webHeight) / measurements.pdfHeight;
+            let height = (fieldHeight * measurements.webHeight) / measurements.pdfHeight;
+            let width = (fieldWidth * measurements.webWidth) / measurements.pdfWidth;
+            return {
+                left: left,
+                top: top,
+                height: height,
+                width: width
+            };
+        };
+        this.cleanUpFieldName = (name) => {
+            while (name.indexOf('_') > -1) {
+                name = name.replace('_', ' ');
+            }
+            return name;
+        };
+        this.populatePage = () => __awaiter(this, void 0, void 0, function* () {
+            if (!this.checkForDocument()) {
+                return;
+            }
+            let documentPromise = services_1.getDocumentPromise(this.props.document_id);
+            this.setState({
+                documentPromise: yield documentPromise
+            });
+            let response = yield documentPromise;
+            let documentObject = yield response.promise;
+            let documentFields = [];
             for (let form in documentObject.document_meta) {
-                let currentForm = documentObject.document_meta[form];
-                let name = currentForm.field_name;
-                while (name.indexOf('_') > -1) {
-                    name = name.replace('_', ' ');
-                }
-                let left = ((currentForm.field_position.position.left) * webWidth) / pdfWidth;
-                let top = ((pdfHeight - currentForm.field_position.position.top) * webHeigth) / pdfHeight;
-                let height = (currentForm.field_position.position.height * webHeigth) / pdfHeight;
-                let width = (currentForm.field_position.position.width * webWidth) / pdfWidth;
-                if (currentForm.field_type === 'Checkbox') {
-                    currentForm.value = false;
-                    let newForm = React.createElement(CheckboxInput_1.default, { key: form, id: form, width: width, height: height, top: top, left: left, checked: currentForm.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });
+                let document_meta_field = documentObject.document_meta[form];
+                let name = this.cleanUpFieldName(document_meta_field.field_name);
+                let dimensions = this.getDocumentSize(documentObject, document_meta_field.field_position.position.left, document_meta_field.field_position.position.top, document_meta_field.field_position.position.height, document_meta_field.field_position.position.width);
+                if (document_meta_field.field_type === 'Checkbox') {
+                    document_meta_field.value = false;
+                    let newForm = React.createElement(CheckboxInput_1.default, { key: form, id: form, width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, checked: document_meta_field.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });
                     documentFields.push(newForm);
                 }
-                else if (currentForm.field_type === 'Text') {
+                else if (document_meta_field.field_type === 'Text') {
                     let newForm = React.createElement("div", { key: form, className: 'form-wrapper' },
-                        React.createElement(TextInput_1.default, { key: form, id: form, position: 'absolute', border: 'none', width: width, height: height, top: top, left: left, value: currentForm.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler }));
+                        React.createElement(TextInput_1.default, { key: form, id: form, position: 'absolute', border: 'none', width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, value: document_meta_field.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler }));
                     documentFields.push(newForm);
                 }
-                else if (currentForm.field_type === 'Signature') {
-                    let newForm = React.createElement(SignatureForm_1.default, { key: form, id: form, width: width, height: height, top: top, left: left, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });
+                else if (document_meta_field.field_type === 'Signature') {
+                    let newForm = React.createElement(SignatureForm_1.default, { key: form, id: form, width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });
                     documentFields.push(newForm);
                 }
-                delete currentForm.field_position;
+                delete document_meta_field.field_position;
             }
             this.setState({
                 documentFields: documentFields,
@@ -116,32 +99,45 @@ class DocumentView extends React.Component {
                 this.saveFile();
             });
         });
+        this.saveFile = () => __awaiter(this, void 0, void 0, function* () {
+            let saveFile = {
+                document_meta: this.state.documentObject.document_meta,
+                name: (this.state.name !== '' ? this.state.name : 'New Document'),
+                document_id: this.state.document_id,
+                submitted_file_id: this.state.submitted_file_id
+            };
+            let saveFilePromise = services_1.getSaveFilePromise(saveFile);
+            this.setState({
+                saveFilePromise: yield saveFilePromise
+            });
+            let response = yield saveFilePromise;
+            let saveResult = yield response.promise;
+            if (!this.state.submitted_file_id || this.state.submitted_file_id === null) {
+                this.setState({
+                    submitted_file_id: saveResult.reason
+                });
+            }
+        });
         this.state = {
-            numPages: 1,
-            pageNumber: 1,
-            document: [],
-            url: '',
             documentObject: {},
-            documentName: 'document',
             submitted_file_id: '',
-            noDocument: false,
-            mounted: null
+            noDocument: false
         };
     }
     handleFormEdit(e, id) {
         return __awaiter(this, void 0, void 0, function* () {
             let documentObject = Object.assign({}, this.state.documentObject);
-            let currentForm = documentObject.document_meta[id];
+            let document_meta_field = documentObject.document_meta[id];
             if (e.target.className === 'document-checkbox') {
-                if (currentForm.value != true) {
-                    currentForm.value = true;
+                if (document_meta_field.value != true) {
+                    document_meta_field.value = true;
                 }
                 else {
-                    currentForm.value = false;
+                    document_meta_field.value = false;
                 }
             }
             else {
-                currentForm.value = e.target.value;
+                document_meta_field.value = e.target.value;
             }
             this.setState({
                 documentObject: documentObject
@@ -150,34 +146,16 @@ class DocumentView extends React.Component {
             });
         });
     }
-    saveFile() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let saveFile = {
-                document_meta: this.state.documentObject.document_meta,
-                name: this.state.documentName,
-                document_id: this.state.document_id,
-                submitted_file_id: this.state.submitted_file_id
-            };
-            let promise = yield this.saveFileResponse(saveFile);
-            let saveResult = yield promise.promise;
-            if (!this.state.submitted_file_id || this.state.submitted_file_id === null) {
-                this.setState({
-                    submitted_file_id: saveResult.reason
-                }, () => {
-                    console.log(this.state.submitted_file_id);
-                });
-            }
-        });
-    }
-    componentWillMount() {
+    componentDidMount() {
+        services_1.getDocumentPromise(this.props.document_id);
         this.populatePage();
     }
     componentWillUnmount() {
-        if (this.state.getDocumentResponse) {
-            this.state.getDocumentResponse.cancel();
+        if (this.state.documentPromise) {
+            this.state.documentPromise.cancel();
         }
-        if (this.state.saveFileResponse) {
-            this.state.saveFileResponse.cancel();
+        if (this.state.saveFilePromise) {
+            this.state.saveFilePromise.cancel();
         }
     }
     render() {

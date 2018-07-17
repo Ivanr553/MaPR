@@ -4,6 +4,20 @@ const React = require("react");
 class SelectDocument extends React.Component {
     constructor(props) {
         super(props);
+        this.handleShow = () => {
+            if (!this.props.selectDocumentBoolean) {
+                let style = {
+                    display: 'none'
+                };
+                return style;
+            }
+            else {
+                let style = {
+                    display: 'block'
+                };
+                return style;
+            }
+        };
         this.getDocumentList = (documents) => {
             let documentList = [];
             for (let i = 0; i < documents.length; i++) {
@@ -51,8 +65,11 @@ class SelectDocument extends React.Component {
     componentWillMount() {
         this.getDocumentList(this.props.documents);
     }
+    componentDidMount() {
+        this.handleShow();
+    }
     render() {
-        return (React.createElement("div", { id: 'SelectDocument' },
+        return (React.createElement("div", { id: 'SelectDocument', style: this.handleShow() },
             React.createElement("div", { className: 'documents-header' }, "Select Template Document"),
             React.createElement("div", { className: 'document-list-container' }, this.state.documentList)));
     }

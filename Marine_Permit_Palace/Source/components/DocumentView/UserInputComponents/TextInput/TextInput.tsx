@@ -34,25 +34,18 @@ export default class TextInput extends React.Component<Props, any> {
     //NEEDS TO BE FIXED
 
     //Getting style from props
-    setStyle = () => {
+    getStyle = () => {
 
-        let style = this.state.style
+        let style = {
+            position: this.props.position as any,
+            border: this.props.border,
+            width: `${this.props.width}px`,
+            height: `${this.props.height}px`,
+            top: `${this.props.top}px`,
+            left: `${this.props.left}px`,
+        }
 
-        style.position = this.props.position
-        style.border = this.props.border
-        style.width = this.props.width + 'px'
-        style.height = this.props.height + 'px'
-        style.top = this.props.top + 'px'
-        style.left = this.props.left + 'px'
-
-        this.setState({
-            style: style
-        })
-    }
-
-    //React lifecycle methods
-    componentDidMount() {
-        this.setStyle()
+        return style
     }
 
     render() {
@@ -60,14 +53,14 @@ export default class TextInput extends React.Component<Props, any> {
         if(this.props.view === 'DocumentPreview') {
             
             return(
-                <textarea readOnly id={this.props.id} className='TextInput preview-TextInput' style={this.state.style} defaultValue={this.props.value} onClick={this.props.previewOnClickHandler} />
+                <textarea readOnly id={this.props.id} className='TextInput preview-TextInput' style={this.getStyle()} defaultValue={this.props.value} onClick={this.props.previewOnClickHandler} />
             )
         }
 
         if(this.props.view === 'PendingDocuments' || this.props.view === 'AccountPage') {
 
             return(
-                <textarea id={this.props.id} className='TextInput' style={this.state.style} defaultValue={this.props.value} onChange={this.props.onChange} />
+                <textarea id={this.props.id} className='TextInput' style={this.getStyle()} defaultValue={this.props.value} onChange={this.props.onChange} />
             )
         }
     }

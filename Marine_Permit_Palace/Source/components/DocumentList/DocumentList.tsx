@@ -21,7 +21,7 @@ export default class DocumentList extends React.Component<Props, any> {
         this.state = {
             documentList: []
         }
-        console.log('called')
+
     }
 
     //Creates list in state of objects to be rendered

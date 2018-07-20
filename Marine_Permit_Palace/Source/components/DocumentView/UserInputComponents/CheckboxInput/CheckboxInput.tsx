@@ -27,23 +27,16 @@ export default class CheckboxInput extends React.Component<Props, any> {
         }
     }
 
-    setStyle = () => {
+    getStyle = () => {
 
-        let style = this.state.style
+        let style = {
+            width: `${this.props.width}px`,
+            height: `${this.props.height}px`,
+            top: `${this.props.top}px`,
+            left: `${this.props.left}px`,
+        }
 
-        style.width = this.props.width + 'px'
-        style.height = this.props.height + 'px'
-        style.top = this.props.top + 'px'
-        style.left = this.props.left + 'px'
-
-        this.setState({
-            style: style
-        })
-    }
-
-    componentDidMount() {
-        this.setStyle()
-
+        return style
     }
 
     render() {
@@ -57,7 +50,7 @@ export default class CheckboxInput extends React.Component<Props, any> {
         if(this.props.view === 'DocumentPreview') {
             
             return(
-                <div id={this.props.id} className='CheckboxInput' style={this.state.style} onClick={(e) => this.props.previewOnClickHandler(e)}>
+                <div id={this.props.id} className='CheckboxInput' style={this.getStyle()} onClick={(e) => this.props.previewOnClickHandler(e)}>
                 </div>
             )
         }

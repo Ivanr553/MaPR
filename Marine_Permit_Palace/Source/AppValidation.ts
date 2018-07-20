@@ -5,6 +5,11 @@ interface CancellablePromise {
     cancel(): void
 }
 
+interface document {
+    idDocument: string,
+    name: string
+}
+
 interface document_meta_field {
     field_name: string,
     field_type: string,
@@ -34,6 +39,13 @@ interface documentResponse {
     status_code: number
 }
 
+interface databaseUser {
+    dod_id: string,
+    first_name: string,
+    last_name: string,
+    rank: string | null
+}
+
 interface documentDimensions {
     left: number,
     top: number,
@@ -47,4 +59,4 @@ interface saveResultInterface {
     status_code: number
 }
 
-export {CancellablePromise, documentResponse, document_meta_field, saveResultInterface, documentDimensions}
+export {CancellablePromise, document, documentResponse, document_meta_field, saveResultInterface, databaseUser, documentDimensions}

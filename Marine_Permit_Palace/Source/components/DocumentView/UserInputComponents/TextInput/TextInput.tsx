@@ -31,6 +31,8 @@ export default class TextInput extends React.Component<Props, any> {
         }
     }
 
+    //NEEDS TO BE FIXED
+
     //Getting style from props
     setStyle = () => {
 
@@ -49,11 +51,8 @@ export default class TextInput extends React.Component<Props, any> {
     }
 
     //React lifecycle methods
-    componentWillMount() {
-        this.setStyle()
-    }
-
     componentDidMount() {
+        this.setStyle()
     }
 
     render() {

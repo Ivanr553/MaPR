@@ -55,12 +55,8 @@ export default class SignatureForm extends React.Component<Props, any> {
     }
 
     //React lifecycle methods
-    componentWillMount() {
-        this.setStyle()
-    }
-
     componentDidMount() {
-
+        this.setStyle()
     }
 
     render() {

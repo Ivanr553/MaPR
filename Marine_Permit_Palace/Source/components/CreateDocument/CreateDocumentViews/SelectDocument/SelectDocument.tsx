@@ -1,10 +1,16 @@
 import * as React from 'react';
 
+import DocumentItem from '../../../DocumentList/DocumentItem/DocumentItem';
+import DocumentList from '../../../DocumentList/DocumentList'
+
+import {document} from '../../../../AppValidation'
+
 interface Props {
-    documents: Array<any>,
+    documents: Array<document>,
     getDocumentId(document_id: string): void,
     getSelectDocumentComplete(selectDocumentComplete: boolean): void,
-    selectDocumentBoolean: boolean
+    selectDocumentBoolean: boolean,
+    document_id: string
 
 }
 
@@ -35,45 +41,27 @@ class SelectDocument extends React.Component<Props, any> {
         }
     }
 
-    getDocumentList = (documents) => {
-        let documentList = []
+    getDocumentList = (documents: Array<document>) => {
 
-        for(let i = 0; i < documents.length; i++) {
-
-            let document_id = '/dist/documents/' + documents[i].document_id
-
-            let newDocument = 
-                <div key={i} className='viewable-document' id={documents[i].idDocument} onClick={(e) => {this.selectDocument(e)}}>
-                    <div className='viewable-document-field' id='first-field'>{(i+1) + '.'}</div>
-                    <div className='viewable-document-field'>{documents[i].name}</div>
-                </div>
-
-            documentList.push(newDocument)
+        return (
+            documents.map(
+                (document) => {
+                    return (
+                    <DocumentItem key={Math.random()} document={document} selectDocument={this.selectDocument} selectedDocument={this.props.document_id}/>
+                )
             }
-
-        this.setState({
-            documentList: documentList
-        })
+            )
+        )
     }
 
     selectDocument = (e) => {
+        
         let target = e.target
 
-        while (!target.classList.contains('viewable-document')) {
+        while (!target.classList.contains('document-item')) {
             target = target.parentNode
         }
-
         let parent = target.parentNode
-
-        for(let i = 0; i < parent.children.length; i++) {
-            if(parent.children[i].className === 'viewable-document') {
-                parent.children[i].style.border = 'solid 2px rgba(0, 0, 0, 0)'
-            }
-        }
-
-        if(target.classList.contains('viewable-document')) {
-            target.style.border = 'solid 2px rgba(38, 107, 168, 0.7)'
-        }
 
 
         this.setState({
@@ -95,10 +83,6 @@ class SelectDocument extends React.Component<Props, any> {
 
 
     //React Lifecycle
-    componentWillMount() {
-        this.getDocumentList(this.props.documents)
-    }
-
     componentDidMount() {
         this.handleShow()
     }
@@ -107,9 +91,7 @@ class SelectDocument extends React.Component<Props, any> {
         return (
             <div id='SelectDocument' style={this.handleShow()}>
                 <div className='documents-header'>Select Template Document</div>
-                <div className='document-list-container'>
-                    {this.state.documentList}
-                </div>
+                <DocumentList documents={this.props.documents} selectDocument={this.selectDocument}document_id={this.props.document_id} />
             </div>
         );
     }

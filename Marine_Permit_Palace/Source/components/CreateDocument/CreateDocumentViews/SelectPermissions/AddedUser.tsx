@@ -6,6 +6,7 @@ interface Props {
     user: user,
     currentSelectedFieldId: number,
     assignUserToField: (e: React.MouseEvent) => void,
+    removeAssignedUser: (user: user, removeOptions: null | number) => void,
     deleteUser: (e: React.MouseEvent) => void,
     isInSidebar: boolean,
     fieldAssigned: boolean
@@ -41,24 +42,30 @@ class AddedUser extends React.Component<Props, any> {
         }
     }
 
-    componentDidMount() {
-        
-    }
-
     render() {
 
         if(this.props.isInSidebar) {
             return (
-                <div style={this.getStyle()} className='added-user' id={this.props.user.dod_id.toString()} onClick={(e) => this.props.assignUserToField(e)}>
-                {this.props.user.name}
-            </div>
+                <div style={this.getStyle()} className='added-user' id={this.props.user.dod_id.toString()}>
+                    <div onClick={(e) => this.props.assignUserToField(e)}>
+                        {this.props.user.dod_id}
+                    </div>
+                    <div onClick={(e) => this.props.assignUserToField(e)}>
+                        {this.props.user.name}
+                    </div>
+                </div>
             )
         }
 
         if(!this.props.isInSidebar) {
             return (
                 <div style={this.getStyle()} className='added-user' id={this.props.user.dod_id.toString()}>
-                    {this.props.user.name}
+                    <div>
+                        {this.props.user.dod_id}
+                    </div>
+                    <div>
+                        {this.props.user.name !== null ? this.props.user.name : ' '}
+                    </div>
                     <div className='added-user-delete-icon' onClick={(e) => {this.props.deleteUser(e)}}>x</div>
                 </div>
             )

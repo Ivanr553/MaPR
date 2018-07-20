@@ -4,7 +4,7 @@ import * as $ from 'jquery'
 
 const s = require('./styling/style.sass')
 
-import DocumentList from '../DocumentList/DocumentList'
+import PendingDocuments from '../PendingDocumentsView/PendingDocumentsView'
 import DocumentView from '../DocumentView/DocumentView'
 import About from '../About/About'
 import CreateDocument from '../CreateDocument/CreateDocument'
@@ -19,7 +19,16 @@ export default class MetaBar extends React.Component<any, any> {
             user: {},
             currentView: '',
             documentResults: [],
-            currentDocuments: []
+            currentDocuments: [],
+            createDocumentState: {
+                document_id: '',
+                document_meta: Array,
+                documentName: '',
+                userList: [],
+                selectDocumentBoolean: true,
+                documentPreviewBoolean: false,
+                selectPermissionsBoolean: false
+            }
         }
         
     }
@@ -61,6 +70,12 @@ export default class MetaBar extends React.Component<any, any> {
           }, () => {
             this.props.getCurrentView(this.state.currentView)
           })
+    }
+
+    getCreateDocumentState = (createDocumentState: object): void => {
+        this.setState({
+            createDocumentState: createDocumentState
+        })
     }
 
     //==================== Handle Notifications ======================
@@ -133,7 +148,7 @@ export default class MetaBar extends React.Component<any, any> {
 
         let target = e.target
 
-        while (!target.classList.contains('viewable-document')) {
+        while (!target.classList.contains('document-item')) {
             target = target.parentNode
         }
 
@@ -173,7 +188,7 @@ export default class MetaBar extends React.Component<any, any> {
 
     handleNewDocumentPress = () => {
         this.setState({
-            currentView: <CreateDocument getCurrentView={this.getCurrentView} documentResults={this.state.documentResults} viewDocument={this.handleDocumentLinkPress} />
+            currentView: <CreateDocument createDocumentState={this.state.createDocumentState} getCreateDocumentState={this.getCreateDocumentState} getCurrentView={this.getCurrentView} documentResults={this.state.documentResults} viewDocument={this.handleDocumentLinkPress} />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
             this.handleMetabarSelectionStyling('create-document-metabar-button', 'create-document-metabar-triangle')
@@ -182,7 +197,7 @@ export default class MetaBar extends React.Component<any, any> {
 
     handleDocumentListPress = () => {
         this.setState({
-            currentView: <DocumentList documentResults={this.state.documentResults} viewDocument={this.handleDocumentLinkPress} />
+            currentView: <PendingDocuments selectDocument={this.handleDocumentLinkPress} documents={this.state.documentResults} document_id={this.state.document_id} />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
             this.handleMetabarSelectionStyling('document-list-metabar-button', 'document-list-metabar-triangle')

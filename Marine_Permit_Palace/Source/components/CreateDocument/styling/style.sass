@@ -109,16 +109,16 @@ input:focus
     box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.1)
 
 .selected-field-display-container
-    width: calc(85% - 2px)
-    margin-left: 7.5%
+    width: 100%
     height: auto
-    border: solid 1px grey
     display: flex
     flex-direction: column
     align-items: flex-start
     justify-content: center
-    font-size: 1.5em
-    background-color: rgb(200, 200, 200)
+
+.selected-field-display-container > *
+    cursor: pointer !important
+    
 
 #show-sidebar-icon-container
     position: absolute

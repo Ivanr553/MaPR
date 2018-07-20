@@ -4,17 +4,19 @@ import AddedUserList from './AddedUserList'
 import * as $ from 'jquery'
 
 import {user} from '../../CreateDocumentValidation'
+import {databaseUser} from '../../../../AppValidation'
 
 const s = require('./styling/style.sass')
 
 interface Props {
     getSelectPermissionsComplete(selectPermissionsComplete: boolean): void,
-    addUser: () => void,
+    addUser: (user: databaseUser) => void,
     userList: Array<user>,
     selectPermissionsBoolean: boolean,
-    assignUserToField: (e: React.MouseEvent) => void,
+    handleAddedUserPress: (e: React.MouseEvent) => void,
     deleteUser: (e: React.MouseEvent) => void,
-    currentSelectedFieldId: number
+    currentSelectedFieldId: number,
+    removeAssignedUser: (user: user, removeOptions: null | number) => void
 }
 
 class SelectPermissions extends React.Component<Props, any> {
@@ -56,11 +58,7 @@ class SelectPermissions extends React.Component<Props, any> {
 
         try {
 
-            let result = await $.get(`/Account/FindUsers?search=${query}`)
-
-            //No users yet, will just use fake ones for now  
-
-            let userArray = ['user1', 'user2', 'user3']
+            let userArray: Array<databaseUser> = await $.get(`/Account/FindUsers?search=${query}`)
             
             this.displayUsersFromSearch(userArray)
 
@@ -83,12 +81,15 @@ class SelectPermissions extends React.Component<Props, any> {
 
     displayUsersFromSearch = (userArray) => {
 
-        let userSearchResultsArray = []
+        let userSearchResultsArray: Array<JSX.Element> = []
 
         for(let i = 0; i < userArray.length; i++) {
+
+            let user: databaseUser = userArray[i]
+
             let userSearchResult = (
-                <li key={i} className='user-search-result' onClick={this.props.addUser}>
-                    {userArray[i]}
+                <li key={user.dod_id} className='user-search-result' onClick={() => this.props.addUser(user)}>
+                    {user.dod_id}, {user.first_name}
                 </li>
             )
             userSearchResultsArray.push(userSearchResult)
@@ -123,11 +124,11 @@ class SelectPermissions extends React.Component<Props, any> {
                     <div id='user-search-main-container'>
                         <div id='user-search-bar-container'>
                             <div id='search-bar-magnifying-glass'></div>
-                            <input onBlur={this.clearUsersFromSearch} onFocus={(e) => {this.handleFindUser(e)}} onChange={(e) => {this.handleFindUser(e)}} id='user-search-bar' placeholder='Find Users' type="text"/>
+                            <input autoComplete='off' onBlur={this.clearUsersFromSearch} onFocus={(e) => {this.handleFindUser(e)}} onChange={(e) => {this.handleFindUser(e)}} id='user-search-bar' placeholder='Find Users' type="text"/>
                             {this.state.userSearchResults}
                         </div>
                         <div id='added-users-title'>Selected Users</div>
-                        <AddedUserList className='added-users-container' currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} assignUserToField={this.props.assignUserToField} deleteUser={this.props.deleteUser} isInSidebar={false} />
+                        <AddedUserList handleAddedUserPress={this.props.handleAddedUserPress} removeAssignedUser={this.props.removeAssignedUser} className='added-users-container' currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} deleteUser={this.props.deleteUser} isInSidebar={false} />
                     </div>
                 </div>
             </div>

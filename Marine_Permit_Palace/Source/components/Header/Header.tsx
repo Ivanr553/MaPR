@@ -18,12 +18,6 @@ export default class Header extends React.Component<any, any> {
         
     }
 
-    componentWillMount() {
-        this.setState({
-            page: this.props.page
-        })
-    }
-
     logOff = async () => {
 
         let response = await $.get('/Account/Logout')
@@ -100,11 +94,11 @@ export default class Header extends React.Component<any, any> {
         let headerLink
         let fullHeader = 'show-full-header'
 
-        if(this.state.page === 'Home') {
+        if(this.props.page === 'Home') {
             fullHeader = ''
         }
 
-        if(this.state.page === 'Register') {
+        if(this.props.page === 'Register') {
             headerLink = (
                 <Link className='Link header-tab log-in-tab' to={{pathname: '/A/App/'}}>
                     Log In
@@ -112,7 +106,7 @@ export default class Header extends React.Component<any, any> {
             )
         }
 
-        if(this.state.page === 'Login') {
+        if(this.props.page === 'Login') {
             headerLink = (
                 <Link id='register-tab' className='Link header-tab register-tab' to={{pathname: '/A/App/Register'}}>
                     Register

@@ -2,57 +2,47 @@ import * as React from 'react'
 import { Link } from 'react-router-dom'
 import PDF from 'react-pdf-js'
 
+import {document} from '../../AppValidation'
+
+import DocumentItem from './DocumentItem/DocumentItem'
+
 const s = require('./styling/style.sass')
 
-export default class DocumentList extends React.Component<any, any> {
+interface Props {
+    selectDocument: (e) => void,
+    documents: Array<document>,
+    document_id: string
+}
+
+export default class DocumentList extends React.Component<Props, any> {
 
     constructor(props) {
         super(props)
         this.state = {
             documentList: []
         }
+        console.log('called')
     }
 
     //Creates list in state of objects to be rendered
-    renderDocuments() {
+    getDocumentList = (documents: Array<document>) => {
 
-        let documents = this.props.documentResults
-        let documentList = []
-
-        for(let i = 0; i < documents.length; i++) {
-
-            let file = '/dist/documents/' + documents[i].file
-
-            let newDocument = 
-                <div key={i} className='viewable-document' id={documents[i].idDocument} onClick={(e) => {this.props.viewDocument(e)}}>
-                    <div className='viewable-document-field' id='first-field'>{(i+1) + '.'}</div>
-                    <div className='viewable-document-field'>{documents[i].name}</div>
-                </div>
-
-            documentList.push(newDocument)
+        return (
+            documents.map(
+                (document) => {
+                    return (
+                    <DocumentItem key={Math.random()} document={document} selectDocument={this.props.selectDocument} selectedDocument={this.props.document_id}/>
+                )
             }
-
-        this.setState({
-            documentList: documentList
-        })
-
+            )
+        )
     }
 
-    componentWillMount() {
-        this.renderDocuments()
-    }
 
     render() {
         return(
-            <div className='DocumentList'>
-                <div className='documents-header'>Pending Documents</div>
-                <div className='document-list-container'>
-                    {/* <div id='document-search-bar-container'>
-                        <input placeholder=' ** Not Implemented **' id='document-search-bar' type="text"/>
-                        <button id='document-search-submit-button'>Search</button>
-                    </div> */}
-                    {this.state.documentList}
-                </div>
+            <div className='document-list-container'>
+                {this.getDocumentList(this.props.documents)}
             </div>
         )
     }

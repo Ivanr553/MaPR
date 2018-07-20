@@ -41,11 +41,8 @@ export default class CheckboxInput extends React.Component<Props, any> {
         })
     }
 
-    componentWillMount() {
-        this.setStyle()
-    }
-
     componentDidMount() {
+        this.setStyle()
 
     }
 

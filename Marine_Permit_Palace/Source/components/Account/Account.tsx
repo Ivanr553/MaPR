@@ -131,13 +131,10 @@ export default class Account extends React.Component<any, any> {
 
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.generateInfo(this.state.user.personalInfo, 'personalInfoArray')
     this.generateInfo(this.state.user.accountInfo, 'accountInfoArray')
     this.generateInfo(this.state.user.additionalInfo, 'additionalInfoArray')
-  }
-
-  async componentDidMount() {
   }
 
   render() {

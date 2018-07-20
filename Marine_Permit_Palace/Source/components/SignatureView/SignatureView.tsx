@@ -161,10 +161,6 @@ export default class SignatureView extends React.Component<any, any> {
         })
     }
 
-    componentWillMount() {
-        
-    }
-
     componentDidMount() {
         this.setCanvasDimensions()
         window.addEventListener('resize', this.setCanvasDimensions)

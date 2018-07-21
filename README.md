@@ -6,5 +6,5 @@ Create a prototype website application to create, edit, and manage permits creat
 
 # Tools and Frameworks
 * ASP.NET backend
-* Node.Js environment for front end
-* React and Typescript for Front End
+* Node.Js environment
+* React/Typescript website application framework

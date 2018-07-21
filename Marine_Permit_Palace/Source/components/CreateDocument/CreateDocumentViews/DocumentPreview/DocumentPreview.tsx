@@ -30,7 +30,7 @@ class DocumentPreview extends React.Component<Props, any> {
     constructor(props) {
         super(props)
         this.state = {
-            documentName: String,
+            documentName: '',
             currentSelectedField: '',
             userList: []
         }
@@ -112,9 +112,13 @@ class DocumentPreview extends React.Component<Props, any> {
 
         if(result.indexOf(false) >=0) {
             return false
-        } else {
-            return true
         }
+
+        if(this.state.documentName === '') {
+            return false
+        }
+
+        return true
         
     }
  
@@ -135,6 +139,7 @@ class DocumentPreview extends React.Component<Props, any> {
     componentDidMount() {
         this.handleShow()
         this.getDocumentId()
+        this.verifyDocumentCompletion()
     }
 
     render() {

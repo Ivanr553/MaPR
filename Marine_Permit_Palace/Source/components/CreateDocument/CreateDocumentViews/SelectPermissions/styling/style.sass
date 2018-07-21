@@ -1,10 +1,13 @@
 @import ../../../../../style
+
+#SelectPermissions
+    height: 100%
    
 #user-search-main-container
     width: calc(100% - 2vw - 4px)
+    height: auto
     margin-left: 1vw
     padding-left: 1vw
-    // border: solid 2px lightgrey
     display: flex
     flex-direction: column
     align-items: flex-start
@@ -22,11 +25,6 @@
     text-indent: 1vw
     padding: 0.75vh 0 0.75vh 0
     min-width: 15vw
-
-// #user-search-bar-magnifying-glass
-//     height: 100%
-//     width: auto
-//     background-color: black
 
 #user-search-results-list
     width: 100%
@@ -50,18 +48,29 @@
 .user-search-result:hover
     background-color: rgb(200, 200, 200)
 
+
+.added-users-components-grid
+    width: 100%
+    height: auto
+    display: grid
+    grid-template-columns: 1fr 1fr
+    grid-template-rows: auto 40vh
+    align-items: center
+    justify-content: center
+
+
 #added-users-title
     margin-top: 5vh
     margin-bottom: 1vh
     font-size: 2.25em
     width: 100%
     text-indent: 1%
+    grid-column: span 2
 
 .added-users-container
     width: auto
     min-width: 50%
-    max-height: 50%
-    min-height: 40%
+    height: 100%
     border: solid 1px rgb(200, 200, 200)
     background-color: white
     overflow: auto
@@ -93,3 +102,12 @@
 
 .added-user-delete-icon:hover
     color: rgb(255, 107, 94)
+
+.AddedUserPermissions
+    width: auto
+    min-width: 50%
+    max-height: 50%
+    min-height: 40%
+    border: solid 1px rgb(200, 200, 200)
+    background-color: white
+    overflow: auto

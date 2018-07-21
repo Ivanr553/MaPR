@@ -15,7 +15,7 @@ class CreateDocumentNavButton extends React.Component<Props, any> {
     constructor(props) {
         super(props)
         this.state = {
-
+            
         }
     }
 

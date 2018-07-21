@@ -127,8 +127,10 @@ class SelectPermissions extends React.Component<Props, any> {
                             <input autoComplete='off' onBlur={this.clearUsersFromSearch} onFocus={(e) => {this.handleFindUser(e)}} onChange={(e) => {this.handleFindUser(e)}} id='user-search-bar' placeholder='Find Users' type="text"/>
                             {this.state.userSearchResults}
                         </div>
-                        <div id='added-users-title'>Selected Users</div>
-                        <AddedUserList handleAddedUserPress={this.props.handleAddedUserPress} removeAssignedUser={this.props.removeAssignedUser} className='added-users-container' currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} deleteUser={this.props.deleteUser} isInSidebar={false} />
+                        <div className='added-users-components-grid'>
+                            <div id='added-users-title'>Selected Users</div>
+                            <AddedUserList handleAddedUserPress={this.props.handleAddedUserPress} removeAssignedUser={this.props.removeAssignedUser} className='added-users-container' currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} deleteUser={this.props.deleteUser} isInSidebar={false} />
+                        </div>
                     </div>
                 </div>
             </div>

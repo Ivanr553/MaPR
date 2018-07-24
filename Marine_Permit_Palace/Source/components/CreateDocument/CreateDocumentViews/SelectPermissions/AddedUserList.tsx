@@ -46,9 +46,11 @@ class AddedUserList extends React.Component<AddedUserListProps, any> {
         let userList = this.props.userList
         let userElementList = []
 
-        userList =  userList.filter(user => {
-            return user.assigned_to.indexOf(this.props.currentSelectedFieldId) < 0}
-        )
+        if(this.props.isInSidebar) {
+            userList = userList.filter(user => {
+                return user.assigned_to.indexOf(this.props.currentSelectedFieldId) < 0}
+            )
+        }
         
         userList.forEach( user => {
             userElementList.push(<AddedUser removeAssignedUser={this.props.removeAssignedUser} key={Math.random()} fieldAssigned={this.checkForAssignedField()} currentSelectedFieldId={this.props.currentSelectedFieldId} user={user} handleAddedUserPress={e => this.props.handleAddedUserPress(e)} deleteUser={this.props.deleteUser} isInSidebar={this.props.isInSidebar} />)

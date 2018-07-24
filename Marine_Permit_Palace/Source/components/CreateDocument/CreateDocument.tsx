@@ -14,6 +14,7 @@ import AddedUser from './CreateDocumentViews/SelectPermissions/AddedUser'
 import {user, createDocumentState} from './CreateDocumentValidation'
 import {documentResponse, document_meta_field, databaseUser} from '../../AppValidation'
 import {getDocumentPromise} from '../../services/services'
+import { stat } from 'fs';
 
 interface Props {
     createDocumentState: object,
@@ -120,8 +121,6 @@ export default class CreateDocument extends React.Component<Props, any> {
 
     }
 
-    //THIS IS NOT WORKING
-
     removeAssignedUser = (user: user, removeOption: null | number) => {
 
         let document_meta: Array<document_meta_field> = this.state.document_meta
@@ -149,15 +148,12 @@ export default class CreateDocument extends React.Component<Props, any> {
     handleAddedUserPress = (e: React.MouseEvent) => {
 
         let target = (e.target as HTMLElement)
-        // if(target.classList.contains('added-user-delete-icon')) {
-        //     return
-        // }
         while (target.id === '') {
             target = target.parentElement
         }
 
         let elementId = parseInt(target.id)
-        let userList = this.state.userList
+        let userList = this.state.userList.slice()
 
         let user = userList.filter(user => user.dod_id === elementId)[0]
         if(!this.assignUserToFieldChecks(elementId)) {
@@ -170,7 +166,7 @@ export default class CreateDocument extends React.Component<Props, any> {
 
     assignUserToField = (user: user) => { 
 
-        let userList = this.state.userList
+        let userList = this.state.userList.slice()
         let document_meta = this.state.document_meta
 
         user.assigned_to.push(parseInt(this.state.currentSelectedFieldId))
@@ -210,6 +206,21 @@ export default class CreateDocument extends React.Component<Props, any> {
 
         return true
         
+    }
+
+    handleToggleAssignedUser = (user: user) => {
+
+        if(user === this.state.assigned_user) {
+            this.setState({
+                assigned_user: null
+            })
+            return
+        }
+
+        this.setState({
+            assigned_user: user
+        })
+
     }
 
     handleSelectedFieldId = (currentSelectedFieldId: number) => {
@@ -319,7 +330,7 @@ export default class CreateDocument extends React.Component<Props, any> {
                         <CreateDocumentNavButton complete={false} id={'document-preview-nav-bar-item-document'} innerText={'Preview'} onClickHandler={this.handleSelectPreviewView} disable={this.disableDocumentPreview()} selected={this.state.documentPreviewBoolean}/>
                     </div>
                     <div className='container'>
-                        <SelectPermissions removeAssignedUser={this.removeAssignedUser} currentSelectedFieldId={this.state.currentSelectedFieldId} handleAddedUserPress={this.handleAddedUserPress} selectPermissionsBoolean={this.state.selectPermissionsBoolean} addUser={this.addUser} deleteUser={this.deleteUser} userList={this.state.userList} getSelectPermissionsComplete={this.getSelectPermissionsComplete} />
+                        <SelectPermissions assigned_user={this.state.assigned_user} handleToggleAssignedUser={this.handleToggleAssignedUser} removeAssignedUser={this.removeAssignedUser} currentSelectedFieldId={this.state.currentSelectedFieldId} handleAddedUserPress={this.handleAddedUserPress} selectPermissionsBoolean={this.state.selectPermissionsBoolean} addUser={this.addUser} deleteUser={this.deleteUser} userList={this.state.userList} getSelectPermissionsComplete={this.getSelectPermissionsComplete} />
                     </div>
                 </div>
             )
@@ -335,7 +346,7 @@ export default class CreateDocument extends React.Component<Props, any> {
                         <CreateDocumentNavButton complete={false} id={'document-preview-nav-bar-item-document'} innerText={'Preview'} onClickHandler={this.handleSelectPreviewView} disable={this.disableDocumentPreview()} selected={this.state.documentPreviewBoolean}/>
                     </div>
                     <div className='container'>
-                        <DocumentPreview removeAssignedUser={this.removeAssignedUser} currentSelectedField={this.state.document_meta[this.state.currentSelectedFieldId]} handleSelectedFieldId={this.handleSelectedFieldId} currentSelectedFieldId={this.state.currentSelectedFieldId} deleteUser={this.deleteUser} handleAddedUserPress={this.handleAddedUserPress} documentPreviewBoolean={this.state.documentPreviewBoolean} userList={this.state.userList} document_id={this.state.document_id} document_meta={this.state.document_meta} getDocumentName={this.getDocumentName} getDocumentPreviewComplete={this.getDocumentPreviewComplete}/>
+                        <DocumentPreview assigned_user={this.state.assigned_user} removeAssignedUser={this.removeAssignedUser} currentSelectedField={this.state.document_meta[this.state.currentSelectedFieldId]} handleSelectedFieldId={this.handleSelectedFieldId} currentSelectedFieldId={this.state.currentSelectedFieldId} deleteUser={this.deleteUser} handleAddedUserPress={this.handleAddedUserPress} documentPreviewBoolean={this.state.documentPreviewBoolean} userList={this.state.userList} document_id={this.state.document_id} document_meta={this.state.document_meta} getDocumentName={this.getDocumentName} getDocumentPreviewComplete={this.getDocumentPreviewComplete}/>
                     </div>
                 </div>
             )

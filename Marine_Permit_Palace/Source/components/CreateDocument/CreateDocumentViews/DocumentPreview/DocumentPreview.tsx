@@ -22,7 +22,8 @@ interface Props {
     handleSelectedFieldId: (id: number) => void,
     currentSelectedFieldId: number,
     currentSelectedField: currentSelectedField,
-    removeAssignedUser: (user: user, removeOption: null | number) => void
+    removeAssignedUser: (user: user, removeOption: null | number) => void,
+    assigned_user: user
 }
 
  
@@ -113,14 +114,17 @@ class DocumentPreview extends React.Component<Props, any> {
         })
 
         if(result.indexOf(false) >=0) {
+            console.log('fields unfinished')
             return false
         }
 
         if(this.state.documentName === '') {
+            console.log('document name invalid')
             return false
         }
 
-        if(this.state.assigned_to === '') {
+        if(this.props.assigned_user === null) {
+            console.log('no assigned user')
             return false
         }
 
@@ -128,7 +132,7 @@ class DocumentPreview extends React.Component<Props, any> {
         
     }
 
-    submitDocument = (): void => {
+    submitDocument = async () => {
 
         if(!this.verifyDocumentCompletion()) {
             console.log('document unfinished')
@@ -136,6 +140,29 @@ class DocumentPreview extends React.Component<Props, any> {
         }
 
         try {
+
+            let assignees = this.props.userList.map(user => {
+                delete user.name
+                delete user.assigned_to
+                return user
+            })
+
+            let assignedDocument = {
+                document_meta: [this.props.document_meta],
+                submitted_document_id: this.props.document_id.toString(),
+                assignees: assignees
+            }
+
+            console.log(assignedDocument)
+
+            let result = await $.ajax({
+                method: 'POST',
+                url: '/DocumentManager/AssignDocument',
+                body: JSON.stringify(assignedDocument),
+                contentType: 'application/json'
+            })
+
+            console.log(result)
 
         } catch(e) {
             throw Error(e)

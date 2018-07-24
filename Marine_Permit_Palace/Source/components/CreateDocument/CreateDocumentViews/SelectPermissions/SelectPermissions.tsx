@@ -17,7 +17,9 @@ interface Props {
     handleAddedUserPress: (e: React.MouseEvent) => void,
     deleteUser: (e: React.MouseEvent) => void,
     currentSelectedFieldId: number,
-    removeAssignedUser: (user: user, removeOptions: null | number) => void
+    removeAssignedUser: (user: user, removeOptions: null | number) => void,
+    assigned_user: user,
+    handleToggleAssignedUser: (user: user) => void
 }
 
 class SelectPermissions extends React.Component<Props, any> {
@@ -167,7 +169,7 @@ class SelectPermissions extends React.Component<Props, any> {
                         <div className='added-users-components-grid'>
                             <div id='added-users-title'>Selected Users</div>
                             <AddedUserList handleAddedUserPress={this.handleAddedUserPress} removeAssignedUser={this.props.removeAssignedUser} className='added-users-container' currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} deleteUser={this.props.deleteUser} isInSidebar={false} />
-                            <AddedUserPermissions user={this.state.selectedUser} handleSwitchToggle={this.handleSwitchToggle} />
+                            <AddedUserPermissions assigned_user={this.props.assigned_user} user={this.state.selectedUser} handleSwitchToggle={this.handleSwitchToggle} handleAssignedUserToggle={this.props.handleToggleAssignedUser} />
                         </div>
                     </div>
                 </div>

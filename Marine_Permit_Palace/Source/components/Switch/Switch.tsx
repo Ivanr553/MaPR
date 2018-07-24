@@ -1,14 +1,16 @@
 import * as React from 'react';
 
+import {user} from '../CreateDocument/CreateDocumentValidation'
 
 const s = require('./style.sass')
 
 interface Props {
     offInnerText: string,
     onInnerText: string,
-    handleSwitchToggle: (field: string) => void,
+    handleSwitchToggle: (field: string | user) => void,
     field: string,
-    initialToggle: boolean
+    initialToggle: boolean,
+    user?: user
 }
 
 class Switch extends React.Component<Props, any> {
@@ -72,7 +74,7 @@ class Switch extends React.Component<Props, any> {
         this.setState({
             toggle: !this.state.toggle
         }, () => {
-            this.props.handleSwitchToggle(this.props.field)
+            this.props.handleSwitchToggle(this.props.field ? this.props.field : this.props.user)
         })
     }
 

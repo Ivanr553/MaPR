@@ -10,6 +10,11 @@ interface Props {
 
 class AddedUserPermissions extends React.Component<Props, any> {
     render() {
+        
+        if(this.props.user === undefined) {
+            console.log('no user')
+            return <div className='AddedUserPermissions'></div>
+        }
 
         return (
             <div className='AddedUserPermissions'>

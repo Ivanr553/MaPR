@@ -26,7 +26,7 @@ class SelectPermissions extends React.Component<Props, any> {
         super(props)
         this.state =  {
             userSearchResults: '',
-            selectedUser: {} as user
+            selectedUser: undefined
         }
     }
 

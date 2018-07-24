@@ -5,6 +5,7 @@ import * as $ from 'jquery'
 
 import {user} from '../../CreateDocumentValidation'
 import {databaseUser} from '../../../../AppValidation'
+import AddedUserPermissions from './AddedUserPermissions';
 
 const s = require('./styling/style.sass')
 
@@ -24,8 +25,8 @@ class SelectPermissions extends React.Component<Props, any> {
     constructor(props) {
         super(props)
         this.state =  {
-            userObjects: [],
-            userList: []
+            userSearchResults: '',
+            selectedUser: {} as user
         }
     }
 
@@ -44,6 +45,42 @@ class SelectPermissions extends React.Component<Props, any> {
 
            return style
         }
+    }
+
+    handleAddedUserPress = (e) => {
+
+        let target = e.target
+
+        if(target.classList.contains('added-user-delete-icon')) {
+            return
+        }
+
+        while(target.id === '') {
+            target = target.parentNode
+        }
+
+        let id = parseInt(target.id)
+        
+        let user = this.props.userList.filter(user => {
+            return user.dod_id === id
+        })[0]
+
+        this.setState({
+            selectedUser: user
+        })
+
+    }
+
+    handleSwitchToggle = (field: string) => {
+
+        const selectedUser = this.state.selectedUser
+
+        selectedUser[field] = !selectedUser[field]
+
+        this.setState({
+            selectedUser: selectedUser
+        })
+
     }
 
 
@@ -129,7 +166,8 @@ class SelectPermissions extends React.Component<Props, any> {
                         </div>
                         <div className='added-users-components-grid'>
                             <div id='added-users-title'>Selected Users</div>
-                            <AddedUserList handleAddedUserPress={this.props.handleAddedUserPress} removeAssignedUser={this.props.removeAssignedUser} className='added-users-container' currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} deleteUser={this.props.deleteUser} isInSidebar={false} />
+                            <AddedUserList handleAddedUserPress={this.handleAddedUserPress} removeAssignedUser={this.props.removeAssignedUser} className='added-users-container' currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} deleteUser={this.props.deleteUser} isInSidebar={false} />
+                            <AddedUserPermissions user={this.state.selectedUser} handleSwitchToggle={this.handleSwitchToggle} />
                         </div>
                     </div>
                 </div>

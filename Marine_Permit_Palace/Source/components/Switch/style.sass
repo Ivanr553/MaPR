@@ -1,0 +1,78 @@
+
+
+.Switch
+    border-radius: 5px
+    width: auto
+    height: auto
+    display: inline-grid
+    grid-template-columns: auto auto
+    color: white
+    font-weight: 100
+
+.switch-item
+    font-size: 2em
+    text-align: center
+    padding: 0.25em 0.5em 0.25em 0.5em
+    cursor: pointer
+    border: solid 1px #0778bc
+
+.switch-item-right
+    border-top-right-radius: 5px
+    border-bottom-right-radius: 5px
+
+.switch-item-left
+    border-top-left-radius: 5px
+    border-bottom-left-radius: 5px
+
+
+@keyframes animateSelectedRight
+    0%
+        background-color: white
+        color: rgb(232, 83, 83)
+        border-color: rgb(232, 83, 83)
+    100%
+        background-color: #0778bc
+        color: white
+        border-color: #0778bc
+
+@keyframes animateDeselectedRight
+    0%
+        background-color: #0778bc
+        color: white
+        border-color: #0778bc
+    100%
+        background-color: white
+        color: rgb(232, 83, 83)
+        border-color: rgb(232, 83, 83)
+
+@keyframes animateSelectedLeft
+    0%
+        background-color: rgb(232, 83, 83)
+        color: white
+        border-color: rgb(232, 83, 83)
+    100%
+        background-color: white
+        color: #0778bc
+        border-color: #0778bc
+
+@keyframes animateDeselectedLeft
+    0%
+        background-color: white
+        color: #0778bc
+        border-color: #0778bc
+    100%
+        background-color: rgb(232, 83, 83)
+        color: white
+        border-color: rgb(232, 83, 83)
+
+@keyframes animateBorderToggleOn
+    0%
+        border-color: rgb(232, 83, 83)
+    100%
+        border-color: #0778bc
+
+@keyframes animateBorderToggleoOff
+    0%
+        border-color: #0778bc
+    100%
+        border-color: rgb(232, 83, 83)

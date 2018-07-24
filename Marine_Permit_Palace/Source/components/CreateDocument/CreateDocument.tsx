@@ -68,7 +68,11 @@ export default class CreateDocument extends React.Component<Props, any> {
         let newUser: user = {
             dod_id: parseInt(user.dod_id),
             name: user.first_name,
-            assigned_to: []
+            assigned_to: [],
+            is_allowed_approve: false,
+            is_allowed_edit: false,
+            is_allowed_submit: false,
+            is_allowed_assign: false
         }
 
         userList.push(newUser)

@@ -47,29 +47,26 @@ input:focus
 
 #document-view-header
   width: 100%
-  height: 10vh
+  height: 5vh
   right: 0
-  display: flex
-  flex-direction: row
-  align-items: center
-  justify-content: center
   position: absolute
   top: 0vh
   z-index: 400
   background-color: rgba(50, 50, 50, 0.8)
+  display: grid
+  grid-template-columns: 2fr 3fr 2fr
+  padding-top: 2.5vh
+  padding-bottom: 2.5vh
+  grid-column-gap: 2vw
 
-#save-button
-  width: auto
-  padding: 1%
-  font-size: 1.5em
-  z-index: 500
-  background-color: lightblue
-  border: solid 1px rgb(150, 150, 150)
-  cursor: pointer
-  border-radius: 3px
-  opacity: 0.5
-  position: absolute
-  right: 15vw
+#documents-view-header-button-container
+    width: 100%
+    height: 100%
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    
 
 #document-view-no-document-warning
   position: sticky

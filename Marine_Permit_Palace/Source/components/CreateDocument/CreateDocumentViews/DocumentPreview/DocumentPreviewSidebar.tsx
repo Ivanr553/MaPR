@@ -56,7 +56,7 @@ class DocumentPreviewSidebar extends React.Component<Props, any> {
     showSelectedFieldContent = () => {
 
         if(this.props.currentSelectedField.assigned_to !== null) {
-            return <AddedUser removeAssignedUser={this.props.removeAssignedUser} key={Math.random()} fieldAssigned={true} currentSelectedFieldId={this.props.currentSelectedFieldId} user={this.props.currentSelectedField.assigned_to} assignUserToField={e => this.props.handleAddedUserPress(e)} deleteUser={this.props.deleteUser} isInSidebar={true} />
+            return <AddedUser removeAssignedUser={this.props.removeAssignedUser} key={Math.random()} fieldAssigned={true} currentSelectedFieldId={this.props.currentSelectedFieldId} user={this.props.currentSelectedField.assigned_to} handleAddedUserPress={e => this.props.handleAddedUserPress(e)} deleteUser={this.props.deleteUser} isInSidebar={true} />
         } else {
             return null
         }

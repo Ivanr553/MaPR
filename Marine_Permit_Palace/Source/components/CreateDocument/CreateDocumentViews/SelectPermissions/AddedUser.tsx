@@ -5,7 +5,7 @@ import {user} from '../../CreateDocumentValidation'
 interface Props {
     user: user,
     currentSelectedFieldId: number,
-    assignUserToField: (e: React.MouseEvent) => void,
+    handleAddedUserPress: (e: React.MouseEvent) => void,
     removeAssignedUser: (user: user, removeOptions: null | number) => void,
     deleteUser: (e: React.MouseEvent) => void,
     isInSidebar: boolean,
@@ -47,10 +47,10 @@ class AddedUser extends React.Component<Props, any> {
         if(this.props.isInSidebar) {
             return (
                 <div style={this.getStyle()} className='added-user' id={this.props.user.dod_id.toString()}>
-                    <div onClick={(e) => this.props.assignUserToField(e)}>
+                    <div onClick={(e) => this.props.handleAddedUserPress(e)}>
                         {this.props.user.dod_id}
                     </div>
-                    <div onClick={(e) => this.props.assignUserToField(e)}>
+                    <div onClick={(e) => this.props.handleAddedUserPress(e)}>
                         {this.props.user.name}
                     </div>
                 </div>
@@ -59,7 +59,7 @@ class AddedUser extends React.Component<Props, any> {
 
         if(!this.props.isInSidebar) {
             return (
-                <div style={this.getStyle()} className='added-user' id={this.props.user.dod_id.toString()}>
+                <div style={this.getStyle()} className='added-user' id={this.props.user.dod_id.toString()} onClick={e => this.props.handleAddedUserPress(e)}>
                     <div>
                         {this.props.user.dod_id}
                     </div>

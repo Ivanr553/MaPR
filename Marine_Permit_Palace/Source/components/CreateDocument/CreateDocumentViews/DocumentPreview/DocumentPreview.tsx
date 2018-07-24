@@ -7,6 +7,7 @@ import DocumentPreviewSidebar from './DocumentPreviewSidebar';
 
 import {user, currentSelectedField} from '../../CreateDocumentValidation'
 import { document_meta_field } from '../../../../AppValidation';
+import Button from '../../../Button/Button';
 
 
 interface Props {
@@ -32,7 +33,8 @@ class DocumentPreview extends React.Component<Props, any> {
         this.state = {
             documentName: '',
             currentSelectedField: '',
-            userList: []
+            userList: [],
+            assigned_to: ''
         }
 
     }
@@ -118,8 +120,43 @@ class DocumentPreview extends React.Component<Props, any> {
             return false
         }
 
+        if(this.state.assigned_to === '') {
+            return false
+        }
+
         return true
         
+    }
+
+    submitDocument = (): void => {
+
+        if(!this.verifyDocumentCompletion()) {
+            console.log('document unfinished')
+            return
+        }
+
+        try {
+
+        } catch(e) {
+            throw Error(e)
+         }
+
+    }
+
+    renderDocumentSaveButton = () => {
+
+        if(!this.verifyDocumentCompletion()) {
+            return (
+                <Button innerText={'Submit'} color='rgb(226, 120, 120)' onClickHandler={this.submitDocument} />
+            )
+        }
+
+        if(this.verifyDocumentCompletion()) {
+            return (
+                <Button innerText={'Submit'} color='rgb(94, 163, 91)' onClickHandler={this.submitDocument} />
+            )
+        }
+
     }
  
 
@@ -139,18 +176,18 @@ class DocumentPreview extends React.Component<Props, any> {
     componentDidMount() {
         this.handleShow()
         this.getDocumentId()
-        this.verifyDocumentCompletion()
     }
 
-    render() {
+    render() {        
         return (
             <div id='DocumentPreview' style={this.handleShow()}>
                 <div id='document-view-container'>
                     <div id='document-view-header'>
-                        <input placeholder='Document Name' onChange={(e) => {this.handleDocumentNameChange(e)}} id='document-name-input' type="text"/>
-                        <div id='save-button'>
-                            Assign File
+                        <div id='documents-view-header-button-container'>
+                            {this.renderDocumentSaveButton()}
                         </div>
+                        <input placeholder='Document Name' onChange={(e) => {this.handleDocumentNameChange(e)}} id='document-name-input' type="text"/>
+                        <div></div>
                     </div>
                     <DocumentView document_id={this.props.document_id} view={'DocumentPreview'} previewOnClickHandler={this.previewOnClickHandler}/>
                 </div>

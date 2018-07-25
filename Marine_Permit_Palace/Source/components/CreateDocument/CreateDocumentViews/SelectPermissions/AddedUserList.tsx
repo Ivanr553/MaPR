@@ -10,7 +10,8 @@ interface AddedUserListProps {
     isInSidebar: boolean,
     currentSelectedFieldId: number,
     className: string,
-    removeAssignedUser: (user: user, removeOptions: null | number) => void
+    removeAssignedUser: (user: user, removeOptions: null | number) => void,
+    selectedUser?: user
 }
 
 class AddedUserList extends React.Component<AddedUserListProps, any> {
@@ -30,7 +31,8 @@ class AddedUserList extends React.Component<AddedUserListProps, any> {
         let result: boolean = false
 
         userList.forEach(user => {
-            if(user.assigned_to !== null) {
+            if(!!user.assigned_to) {
+                console.log(user.assigned_to)
                 if(user.assigned_to.indexOf(currentSelectedFieldId) >= 0) {
                     result = true
                 }
@@ -46,6 +48,8 @@ class AddedUserList extends React.Component<AddedUserListProps, any> {
         let userList = this.props.userList
         let userElementList = []
 
+        console.log(userList)
+
         if(this.props.isInSidebar) {
             userList = userList.filter(user => {
                 return user.assigned_to.indexOf(this.props.currentSelectedFieldId) < 0}
@@ -53,7 +57,7 @@ class AddedUserList extends React.Component<AddedUserListProps, any> {
         }
         
         userList.forEach( user => {
-            userElementList.push(<AddedUser removeAssignedUser={this.props.removeAssignedUser} key={Math.random()} fieldAssigned={this.checkForAssignedField()} currentSelectedFieldId={this.props.currentSelectedFieldId} user={user} handleAddedUserPress={e => this.props.handleAddedUserPress(e)} deleteUser={this.props.deleteUser} isInSidebar={this.props.isInSidebar} />)
+            userElementList.push(<AddedUser removeAssignedUser={this.props.removeAssignedUser} key={Math.random()} fieldAssigned={this.checkForAssignedField()} currentSelectedFieldId={this.props.currentSelectedFieldId} selectedUser={this.props.selectedUser} user={user} handleAddedUserPress={e => this.props.handleAddedUserPress(e)} deleteUser={this.props.deleteUser} isInSidebar={this.props.isInSidebar} />)
         })
 
         return userElementList

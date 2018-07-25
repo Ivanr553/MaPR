@@ -8,13 +8,14 @@ import SignatureForm from './UserInputComponents/SignatureForm/SignatureForm'
 import CheckboxInput from './UserInputComponents/CheckboxInput/CheckboxInput'
 import TextInput from './UserInputComponents/TextInput/TextInput'
 
-import {documentResponse, saveResultInterface, documentDimensions} from '../../AppValidation'
+import {documentResponse, saveResultInterface, documentDimensions, document_meta_field} from '../../AppValidation'
 import {getDocumentPromise, getSaveFilePromise} from '../../services/services'
 
 interface Props {
     document_id: string,
     view: 'PendingDocuments' | 'DocumentPreview',
-    previewOnClickHandler?: (e: React.ChangeEvent<HTMLInputElement>) => void
+    previewOnClickHandler?: (e: React.ChangeEvent<HTMLInputElement>) => void,
+    document_meta?: Array<document_meta_field> 
 }
 
 export default class DocumentView extends React.Component<Props, any> {
@@ -22,7 +23,7 @@ export default class DocumentView extends React.Component<Props, any> {
     constructor(props) {
         super(props)
         this.state ={
-            documentObject: {},
+            documentObject: undefined,
             submitted_file_id: '',
             noDocument: false
         }
@@ -90,12 +91,30 @@ export default class DocumentView extends React.Component<Props, any> {
         let response = await documentPromise
         let documentObject: documentResponse = await response.promise as documentResponse
 
+        this.setState({
+            documentObject: documentObject,
+            document_id: this.props.document_id
+        }, () => {
+            this.saveFile()
+        })
+
+    }
+
+    documentFields = () => {
+
+        let documentObject = this.state.documentObject
+        if(!!!this.state.documentObject) {
+            return
+        }
+        if(!!this.props.document_meta && !!documentObject) {
+            documentObject.document_meta = this.props.document_meta
+        }
+
         let documentFields = []
 
         for(let form in documentObject.document_meta) {
             
-            let document_meta_field = documentObject.document_meta[form]
-            let name = this.cleanUpFieldName(document_meta_field.field_name)
+            let document_meta_field: document_meta_field = documentObject.document_meta[form]
             let dimensions =   
                 this.getDocumentSize(
                     documentObject,
@@ -107,7 +126,9 @@ export default class DocumentView extends React.Component<Props, any> {
 
             if(document_meta_field.field_type === 'Checkbox') {
 
-                document_meta_field.value = false
+                if(document_meta_field.value === '') {
+                    document_meta_field.value = false
+                }
 
                 let newForm = <CheckboxInput key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} checked={document_meta_field.value} onChange={(e) => {this.handleFormEdit(e, form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
 
@@ -122,22 +143,14 @@ export default class DocumentView extends React.Component<Props, any> {
                 documentFields.push(newForm)
             }
             else if(document_meta_field.field_type === 'Signature') {
-                let newForm = <SignatureForm key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler}/>
+                let newForm = <SignatureForm key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} assigned_to={document_meta_field.assigned_to}/>
 
                 documentFields.push(newForm)
             }
 
-            delete document_meta_field.field_position
-
         }
 
-        this.setState({
-            documentFields: documentFields,
-            documentObject: documentObject,
-            document_id: this.props.document_id
-        }, () => {
-            this.saveFile()
-        })
+        return documentFields
 
     }
 
@@ -146,12 +159,8 @@ export default class DocumentView extends React.Component<Props, any> {
         let documentObject = Object.assign({}, this.state.documentObject)
         let document_meta_field = documentObject.document_meta[id]
 
-        if(e.target.className === 'document-checkbox'){
-            if(document_meta_field.value != true) {
-                document_meta_field.value = true
-            } else {
-                document_meta_field.value = false
-            }
+        if(e.target.className === 'CheckboxInput'){
+            document_meta_field.value = !document_meta_field.value
         } else {
             document_meta_field.value = e.target.value
         }
@@ -190,15 +199,23 @@ export default class DocumentView extends React.Component<Props, any> {
     }
 
     componentDidMount() {
-        getDocumentPromise(this.props.document_id)
-        this.populatePage()
+        if(!!!this.props.document_meta) {
+            getDocumentPromise(this.props.document_id)
+            this.populatePage()
+        } else {
+            this.setState({
+                document_meta: this.props.document_meta
+            }, () => {
+                this.populatePage()
+            })
+        }
     }
 
     componentWillUnmount() { 
-        if(this.state.documentPromise) {
+        if(!!this.state.documentPromise) {
             this.state.documentPromise.cancel()
         }
-        if(this.state.saveFilePromise) {
+        if(!!this.state.saveFilePromise) {
             this.state.saveFilePromise.cancel()
         }
     }
@@ -221,7 +238,7 @@ export default class DocumentView extends React.Component<Props, any> {
                 <PDF className='pdf-image' file={document_id} >
                 </PDF>
                 <div id='document-form-div'>
-                    {this.state.documentFields}
+                    {this.documentFields()}
                 </div>
             </div>
         )

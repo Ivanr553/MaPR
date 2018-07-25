@@ -9,7 +9,8 @@ interface Props {
     removeAssignedUser: (user: user, removeOptions: null | number) => void,
     deleteUser: (e: React.MouseEvent) => void,
     isInSidebar: boolean,
-    fieldAssigned: boolean
+    fieldAssigned: boolean,
+    selectedUser?: user
 }
 
 
@@ -21,10 +22,10 @@ class AddedUser extends React.Component<Props, any> {
             
             let style = {
                 cursor: 
-                    ((this.props.user.assigned_to !== null && this.props.user.assigned_to.indexOf(this.props.currentSelectedFieldId) >= 0) || this.props.fieldAssigned) 
+                    ((!!this.props.user.assigned_to && this.props.user.assigned_to.indexOf(this.props.currentSelectedFieldId) >= 0) || this.props.fieldAssigned) 
                         ? 'default' : 'pointer',
                 backgroundColor: 
-                    (this.props.user.assigned_to !== null && this.props.user.assigned_to.indexOf(this.props.currentSelectedFieldId) >= 0) 
+                    (!!this.props.user.assigned_to && this.props.user.assigned_to.indexOf(this.props.currentSelectedFieldId) >= 0) 
                         ? 'lightgrey' : ''
             }
 
@@ -32,10 +33,17 @@ class AddedUser extends React.Component<Props, any> {
         }
         if(!this.props.isInSidebar) {
 
+            let cursor = 'pointer'
+            let backgroundColor = ''
+
+            if(!!this.props.selectedUser) {
+                cursor = this.props.user === this.props.selectedUser ? 'default' : 'pointer'
+                backgroundColor = this.props.user === this.props.selectedUser ? 'lightgrey' : ''
+            }
+
             let style = {
-                backgroundColor: 
-                    (this.props.user.assigned_to !== null && this.props.user.assigned_to.indexOf(this.props.currentSelectedFieldId) >= 0) 
-                        ? 'lightgrey' : ''
+                backgroundColor: backgroundColor,
+                cursor: cursor
             }
 
             return style

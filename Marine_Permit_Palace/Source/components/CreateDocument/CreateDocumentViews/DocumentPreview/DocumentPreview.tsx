@@ -63,13 +63,13 @@ class DocumentPreview extends React.Component<Props, any> {
         let id = e.target.id
 
         //Clearing previously selected field
-        if(this.props.currentSelectedField !== undefined) {
+        if(!!this.props.currentSelectedField) {
             document.getElementById(this.props.document_meta.indexOf(this.props.currentSelectedField as any).toString()).classList.remove('selectedField')
         }
 
         document.getElementById(id).classList.add('selectedField')
 
-        let currentSelectedFieldValue = (this.props.document_meta as Array<document_meta_field>)[id].assigned_to
+        // let currentSelectedFieldValue = (this.props.document_meta as Array<document_meta_field>)[id].assigned_to
 
         this.props.handleSelectedFieldId(parseInt(id))
         this.showSidebar()
@@ -104,6 +104,7 @@ class DocumentPreview extends React.Component<Props, any> {
     verifyDocumentCompletion = () => {
 
         let document_meta = this.props.document_meta
+        console.log(this.props.userList)
 
         let signatureFields = document_meta.filter(field => field.field_type === 'Signature')
 
@@ -132,6 +133,8 @@ class DocumentPreview extends React.Component<Props, any> {
         
     }
 
+    // NOT WORKING //
+
     submitDocument = async () => {
 
         if(!this.verifyDocumentCompletion()) {
@@ -139,21 +142,34 @@ class DocumentPreview extends React.Component<Props, any> {
             return
         }
 
+        let userList = this.props.userList.slice()
+        let props_document_meta = this.props.document_meta
+
+
+        let assignees = []
+
+        userList.forEach(user => {
+            assignees.push(Object.assign({}, user))
+        })
+
         try {
 
-            let assignees = this.props.userList.map(user => {
+            assignees.map( user => {
                 delete user.name
                 delete user.assigned_to
                 return user
             })
 
+            let document_meta = props_document_meta.map(document_meta_field => {
+                delete document_meta_field.field_position
+                return document_meta_field
+            })
+
             let assignedDocument = {
-                document_meta: [this.props.document_meta],
+                document_meta: [document_meta],
                 submitted_document_id: this.props.document_id.toString(),
                 assignees: assignees
             }
-
-            console.log(assignedDocument)
 
             let result = await $.ajax({
                 method: 'POST',
@@ -216,7 +232,7 @@ class DocumentPreview extends React.Component<Props, any> {
                         <input placeholder='Document Name' onChange={(e) => {this.handleDocumentNameChange(e)}} id='document-name-input' type="text"/>
                         <div></div>
                     </div>
-                    <DocumentView document_id={this.props.document_id} view={'DocumentPreview'} previewOnClickHandler={this.previewOnClickHandler}/>
+                    <DocumentView document_id={this.props.document_id} document_meta={this.props.document_meta} view={'DocumentPreview'} previewOnClickHandler={this.previewOnClickHandler}/>
                 </div>
                 <div id='show-sidebar-icon-container' onClick={this.showSidebar}>
                     <img id='show-sidebar-icon' src="/images/left-arrow-1.png" alt=""/>

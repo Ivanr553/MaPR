@@ -64,7 +64,7 @@ export default class CreateDocument extends React.Component<Props, any> {
 
         let userList
 
-        userList = this.state.userList
+        userList = this.state.userList.slice()
 
         let newUser: user = {
             dod_id: parseInt(user.dod_id),
@@ -74,6 +74,10 @@ export default class CreateDocument extends React.Component<Props, any> {
             is_allowed_edit: false,
             is_allowed_submit: false,
             is_allowed_assign: false
+        }
+
+        if(!this.validateDuplicateUsers(newUser.dod_id)) {
+            return
         }
 
         userList.push(newUser)
@@ -90,6 +94,22 @@ export default class CreateDocument extends React.Component<Props, any> {
                 })
             }
         })
+
+    }
+
+    validateDuplicateUsers = (dod_id: number): boolean => {
+
+        let userList = this.state.userList.slice()
+
+        const verifyDuplicate = userList.map(user => {
+            return user.dod_id === dod_id
+        })
+
+        if(verifyDuplicate.indexOf(true) >= 0) {
+            return false
+        }
+
+        return true
 
     }
 

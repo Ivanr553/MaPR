@@ -34,6 +34,7 @@ export default class CheckboxInput extends React.Component<Props, any> {
             height: `${this.props.height}px`,
             top: `${this.props.top}px`,
             left: `${this.props.left}px`,
+            cursor: 'pointer'
         }
 
         return style
@@ -43,7 +44,7 @@ export default class CheckboxInput extends React.Component<Props, any> {
 
         let checkmark
 
-        if(this.state.checked) {
+        if(this.props.checked) {
             checkmark = 'X'
         }
 
@@ -58,7 +59,7 @@ export default class CheckboxInput extends React.Component<Props, any> {
         if(this.props.view === 'PendingDocuments') {
 
             return(
-                <div id={this.props.id} className='CheckboxInput' style={this.state.style} onClick={(e) => this.props.onChange(e)}>
+                <div id={this.props.id} className='CheckboxInput' style={this.getStyle()} onClick={(e) => this.props.onChange(e)}>
                     {checkmark}
                 </div>
             )

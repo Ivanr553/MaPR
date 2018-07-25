@@ -168,8 +168,8 @@ class SelectPermissions extends React.Component<Props, any> {
                         </div>
                         <div className='added-users-components-grid'>
                             <div id='added-users-title'>Selected Users</div>
-                            <AddedUserList handleAddedUserPress={this.handleAddedUserPress} removeAssignedUser={this.props.removeAssignedUser} className='added-users-container' currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} deleteUser={this.props.deleteUser} isInSidebar={false} />
-                            <AddedUserPermissions assigned_user={this.props.assigned_user} user={this.state.selectedUser} handleSwitchToggle={this.handleSwitchToggle} handleAssignedUserToggle={this.props.handleToggleAssignedUser} />
+                            <AddedUserList selectedUser={this.state.selectedUser} handleAddedUserPress={this.handleAddedUserPress} removeAssignedUser={this.props.removeAssignedUser} className='added-users-container' currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} deleteUser={this.props.deleteUser} isInSidebar={false} />
+                            <AddedUserPermissions assigned_user={this.props.assigned_user} selectedUser={this.state.selectedUser} handleSwitchToggle={this.handleSwitchToggle} handleAssignedUserToggle={this.props.handleToggleAssignedUser} />
                         </div>
                     </div>
                 </div>

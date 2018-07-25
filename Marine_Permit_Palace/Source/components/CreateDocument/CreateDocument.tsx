@@ -1,6 +1,4 @@
 import * as React from 'react'
-import * as $ from 'jquery'
-import PDF from 'react-pdf-js'
 
 const s = require('./styling/style.sass')
 
@@ -8,13 +6,11 @@ import SelectPermissions from './CreateDocumentViews/SelectPermissions/SelectPer
 import SelectDocument from './CreateDocumentViews/SelectDocument/SelectDocument';
 import DocumentPreview from './CreateDocumentViews/DocumentPreview/DocumentPreview';
 import CreateDocumentNavButton from './CreateDocumentNavButton/CreateDocumentNavButton'
-import AddedUser from './CreateDocumentViews/SelectPermissions/AddedUser'
 
 //Modules
 import {user, createDocumentState} from './CreateDocumentValidation'
 import {documentResponse, document_meta_field, databaseUser} from '../../AppValidation'
 import {getDocumentPromise} from '../../services/services'
-import { stat } from 'fs';
 
 interface Props {
     createDocumentState: object,
@@ -71,7 +67,7 @@ export default class CreateDocument extends React.Component<Props, any> {
             name: user.first_name,
             assigned_to: [],
             is_allowed_approve: false,
-            is_allowed_edit: false,
+            is_allowed_edit: true,
             is_allowed_submit: false,
             is_allowed_assign: false
         }

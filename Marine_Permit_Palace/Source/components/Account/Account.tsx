@@ -1,9 +1,7 @@
 import * as React from 'react'
-import { RouteComponentProps } from 'react-router'
 
 const s = require('./styling/style.sass')
 
-import Header from '../Header/Header'
 import TextInput from '../DocumentView/UserInputComponents/TextInput/TextInput'
 
 export default class Account extends React.Component<any, any> {
@@ -161,7 +159,7 @@ export default class Account extends React.Component<any, any> {
               {this.state.accountInfoArray}
             </div>
           </div>
-          <div id='additional-tab' className='account-tab' onClick={(e) => this.handleAccountTabPress(e, 'additional-tab', 'additional-tab-title', 'additional-tab-list', 'additional-tab-arrow')}>
+          {/* <div id='additional-tab' className='account-tab' onClick={(e) => this.handleAccountTabPress(e, 'additional-tab', 'additional-tab-title', 'additional-tab-list', 'additional-tab-arrow')}>
             <div id='additional-tab-title' className='account-tab-title'>
               Additional Information
               <img id='additional-tab-arrow' className='account-tab-title-arrow' src="/images/down-arrow-1.png" alt=""/>
@@ -169,7 +167,7 @@ export default class Account extends React.Component<any, any> {
             <div id='additional-tab-list' className='account-content-list'>
               {this.state.additionalInfoArray}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     )

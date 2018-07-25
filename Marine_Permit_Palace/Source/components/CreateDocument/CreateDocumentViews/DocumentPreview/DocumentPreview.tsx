@@ -143,11 +143,14 @@ class DocumentPreview extends React.Component<Props, any> {
         }
 
         let userList = this.props.userList.slice()
-        let props_document_meta = this.props.document_meta
 
+        let props_document_meta = []
+        this.props.document_meta.forEach(document_meta_field => {
+            delete document_meta_field.field_position
+            props_document_meta.push(Object.assign({}, document_meta_field))
+        })
 
         let assignees = []
-
         userList.forEach(user => {
             assignees.push(Object.assign({}, user))
         })
@@ -166,10 +169,12 @@ class DocumentPreview extends React.Component<Props, any> {
             })
 
             let assignedDocument = {
-                document_meta: [document_meta],
-                submitted_document_id: this.props.document_id.toString(),
+                document_meta: document_meta,
+                submitted_document_id: this.props.document_id,
                 assignees: assignees
             }
+
+            console.log(assignedDocument)
 
             let result = await $.ajax({
                 method: 'POST',

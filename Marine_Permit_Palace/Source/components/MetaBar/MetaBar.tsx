@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { Link } from 'react-router-dom'
 import * as $ from 'jquery'
 
 const s = require('./styling/style.sass')
@@ -84,6 +83,7 @@ export default class MetaBar extends React.Component<any, any> {
 
         try{
             let response = await $.get('/Notification')
+            console.log(response)
             let notificationCount = response.notification_count
             this.setState({
                 notificationCount: notificationCount

@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as $ from 'jquery'
 
 import DocumentView from '../../../DocumentView/DocumentView'
-import { EventHandler } from 'react';
 import DocumentPreviewSidebar from './DocumentPreviewSidebar';
 
 import {user, currentSelectedField} from '../../CreateDocumentValidation'
@@ -146,7 +145,6 @@ class DocumentPreview extends React.Component<Props, any> {
 
         let props_document_meta = []
         this.props.document_meta.forEach(document_meta_field => {
-            delete document_meta_field.field_position
             props_document_meta.push(Object.assign({}, document_meta_field))
         })
 
@@ -164,7 +162,7 @@ class DocumentPreview extends React.Component<Props, any> {
             })
 
             let document_meta = props_document_meta.map(document_meta_field => {
-                delete document_meta_field.field_position
+                document_meta_field.field_position = null
                 return document_meta_field
             })
 
@@ -174,13 +172,15 @@ class DocumentPreview extends React.Component<Props, any> {
                 assignees: assignees
             }
 
-            console.log(assignedDocument)
+            let body = JSON.stringify(assignedDocument)
+
+            console.log(body)
 
             let result = await $.ajax({
                 method: 'POST',
                 url: '/DocumentManager/AssignDocument',
-                body: JSON.stringify(assignedDocument),
-                contentType: 'application/json'
+                data: body,
+                dataType: 'application/json'
             })
 
             console.log(result)

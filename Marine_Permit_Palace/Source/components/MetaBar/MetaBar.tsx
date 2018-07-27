@@ -17,6 +17,7 @@ export default class MetaBar extends React.Component<any, any> {
         this.state = {
             currentView: '',
             documentResults: [],
+            pendingDocuments: [],
             currentDocuments: [],
             createDocumentState: {
                 document_id: '',
@@ -38,18 +39,42 @@ export default class MetaBar extends React.Component<any, any> {
 
         try {
 
-            let request = await fetch('/DocumentSave/GetAllDocuments', {credentials: "same-origin"})
+            let request = await fetch('/DocumentSave/GetAllTemplateDocuments', {credentials: "same-origin"})
             let documentList = await request.json()
 
             this.setState({
                 documentResults: documentList
-            }, () => {
-                this.populateDocumentLinks()
             })
 
         } catch(e) {
             throw new Error(e)
         }
+
+    }
+
+    getPendingDocuments = async () => {
+
+        let pendingDocuments =  await
+            fetch('/DocumentSave/GetSavedDocuments', {credentials: 'same-origin'})
+                .then(data => {
+                    return data.json()
+                        .then(data => {
+                            let responseArray = data.my_documents
+                            return responseArray.map(item => {
+                                return {
+                                    name: item.document_name,
+                                    idDocument: item.submitted_document_id
+                                }
+                            })
+                        })
+                })
+        
+    
+        this.setState({
+            pendingDocuments: pendingDocuments
+        }, () => {
+            this.handleDocumentListPress()
+        })
 
     }
 
@@ -95,28 +120,28 @@ export default class MetaBar extends React.Component<any, any> {
 
     //================= Populating Content on Page ==================
 
-    populateDocumentLinks = () => {
+    // populateDocumentLinks = () => {
 
-        let documents = this.state.documentResults.slice()
-        let documentLinks = []
+    //     let documents = this.state.documentResults.slice()
+    //     let documentLinks = []
 
-        for(let i = 0; i < documents.length; i++) {
+    //     for(let i = 0; i < documents.length; i++) {
 
-            let documentLink = 
-                <div className='document-link' id={documents[i].idDocument} key={i} data-params={{ id: documents[i].id, document: documents[i]}} onClick={(e) => {this.handleLinkPress(e)}}>
-                    {documents[i].name}
-                </div>
+    //         let documentLink = 
+    //             <div className='document-link' id={documents[i].idDocument} key={i} data-params={{ id: documents[i].id, document: documents[i]}} onClick={(e) => {this.handleLinkPress(e)}}>
+    //                 {documents[i].name}
+    //             </div>
 
-            documentLinks.push(documentLink)
-        }
+    //         documentLinks.push(documentLink)
+    //     }
 
-        this.setState({
-            documentLinks: documentLinks
-        }, () => {
-            this.handleDocumentListPress()
-        })
+    //     this.setState({
+    //         documentLinks: documentLinks
+    //     }, () => {
+    //         this.handleDocumentListPress()
+    //     })
 
-    }
+    // }
 
 
     //================== OnClick/Button Handlers =================
@@ -146,16 +171,16 @@ export default class MetaBar extends React.Component<any, any> {
 
         let document_id = target.id
 
-        let setFile = await this.setState({
+        this.setState({
             document_id: document_id
+        }, () => {
+            this.setState({
+                currentView: <DocumentView document_id={this.state.document_id} view={'PendingDocuments'} />
+            }, () => {
+                this.props.getCurrentView(this.state.currentView)
+            })
         })
 
-
-        let setCurrentView = await this.setState({
-            currentView: <DocumentView document_id={this.state.document_id} view={'PendingDocuments'} />
-        })
-
-        let getCurrentView = await this.props.getCurrentView(this.state.currentView)
     }
 
     handleMetabarSelectionStyling = (selectedMetabarView: string, selectedMetabarViewButton: string): void => {
@@ -189,7 +214,7 @@ export default class MetaBar extends React.Component<any, any> {
 
     handleDocumentListPress = () => {
         this.setState({
-            currentView: <PendingDocuments selectDocument={this.handleDocumentLinkPress} documents={this.state.documentResults} />
+            currentView: <PendingDocuments selectDocument={this.handleDocumentLinkPress} pendingDocuments={this.state.pendingDocuments} />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
             this.handleMetabarSelectionStyling('document-list-metabar-button', 'document-list-metabar-triangle')
@@ -230,6 +255,7 @@ export default class MetaBar extends React.Component<any, any> {
 
     componentDidMount() {
         this.getDocuments()
+        this.getPendingDocuments()
         this.getNotifications()
     }
 

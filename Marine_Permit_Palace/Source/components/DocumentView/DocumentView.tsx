@@ -9,6 +9,7 @@ import TextInput from './UserInputComponents/TextInput/TextInput'
 
 import {documentResponse, saveResultInterface, documentDimensions, document_meta_field} from '../../AppValidation'
 import {getDocumentPromise, getSaveFilePromise} from '../../services/services'
+import ToolBar from './ToolBar/ToolBar';
 
 interface Props {
     document_id: string,
@@ -83,6 +84,7 @@ export default class DocumentView extends React.Component<Props, any> {
         }
       
         let documentPromise = getDocumentPromise(this.props.document_id)
+        console.log(this.props.document_id)
         this.setState({
             documentPromise: await documentPromise
         })
@@ -90,6 +92,7 @@ export default class DocumentView extends React.Component<Props, any> {
         let request = await documentPromise
         let response = await request.promise 
         let documentObject: documentResponse = await response.json() as documentResponse
+        console.log(documentObject)
 
 
         this.setState({
@@ -253,6 +256,7 @@ export default class DocumentView extends React.Component<Props, any> {
                 <div id='document-form-div'>
                     {this.documentFields()}
                 </div>
+                <ToolBar />
             </div>
         )
     }

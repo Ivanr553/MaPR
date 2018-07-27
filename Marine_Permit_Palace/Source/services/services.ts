@@ -24,7 +24,7 @@ let makeCancelable = async (promise: Promise<any>) : Promise<CancellablePromise>
 
 let getDocumentPromise = async (document_id: string) => {
       
-    let promise = fetch(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`, {credentials: 'same-origin'})
+    let promise = fetch(`/DocumentSave/GetSubmittedDocumentMeta?submitted_document_id=${document_id}`, {credentials: 'same-origin'})
     
     let getDocumentResponse = await makeCancelable(promise)
 

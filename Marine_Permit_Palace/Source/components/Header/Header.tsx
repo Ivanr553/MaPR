@@ -69,13 +69,14 @@ export default class Header extends React.Component<any, any> {
             )
         }
 
-        if(location.pathname === '/A/App/') {
+        if(location.pathname === '/A/App' || location.pathname === '/A/App/') {
             headerLink = (
                 <Link id='register-tab' className='Link header-tab register-tab' to={{pathname: '/A/App/Register'}}>
                     Register
                 </Link>
             )
         }
+
 
         return(
             <div id='HomeHeader' className={fullHeader}>

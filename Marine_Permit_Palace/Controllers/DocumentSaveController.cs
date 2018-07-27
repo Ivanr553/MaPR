@@ -586,18 +586,14 @@ namespace Marine_Permit_Palace.Controllers
         [HttpPost]
         public JsonResult SaveFile([FromBody] SaveDocumentObject document)
         {
-            if (document != null && !string.IsNullOrEmpty(document.name) && !string.IsNullOrEmpty(document.document_id))
+            if (document != null && !string.IsNullOrEmpty(document.name) && !string.IsNullOrEmpty(document.submitted_file_id))
             {
-                Guid DocumentId;
-                if (!Guid.TryParse(document.document_id, out DocumentId))
+                Guid SubmittedDocId;
+                if (!Guid.TryParse(document.submitted_file_id, out SubmittedDocId))
                 {
                     return Json(new { result = "Failure", reason = "Incorrect GUID format" });
                 }
-                Marine_Permit_Palace.Models.Document RefDocument = _DocumentSerivce.Get(DocumentId);
-                if (RefDocument == null)
-                {
-                    return Json(new { result = "Failure", reason = "No Document with that ID exists" });
-                }
+               
                 var user = _UserManager.GetUserAsync(User).Result;
                 Guid sub_file_guid = Guid.Empty;
                 SubmittedDocument SubmittedDoc = null;
@@ -628,21 +624,16 @@ namespace Marine_Permit_Palace.Controllers
                 }
                 else
                 {
-                    SubmittedDoc = new SubmittedDocument()
-                    {
-                        Document = RefDocument,
-                        DocumentId = DocumentId,
-                        Name = document.name
-                    };
+                    return Json(new { result = "Failure", reason = "Incorrect GUID format", status_code = 400 });
                 }
-                if (sub_file_guid == Guid.Empty)
+                    
+                
+                Marine_Permit_Palace.Models.Document RefDocument = _DocumentSerivce.Get(SubmittedDoc.DocumentId);
+                if (RefDocument == null)
                 {
-                    SubmittedDoc = _SubmittedDocumentService.Add(SubmittedDoc);
+                    return Json(new { result = "Failure", reason = "No Document with that ID exists" });
                 }
-                else
-                {
-                    SubmittedDoc = _SubmittedDocumentService.Update(SubmittedDoc);
-                }
+
 
                 var AssignedUsers = _DocumentAsigneeService.GetByDocument(SubmittedDoc.IdSubmittedDocument);
 
@@ -724,7 +715,6 @@ namespace Marine_Permit_Palace.Controllers
                         SubmittedDoc.IsCompleted = true;
                         SubmittedDoc.DateCompletedUtc = DateTime.UtcNow;
                         SubmittedDoc.IsEditLocked = true;
-                        _SubmittedDocumentService.Update(SubmittedDoc);
                     }
                     else
                     {
@@ -736,7 +726,7 @@ namespace Marine_Permit_Palace.Controllers
                         });
                     }
                 }
-
+                SubmittedDoc = _SubmittedDocumentService.Update(SubmittedDoc);
                 return Json(new Result(){ result = "Success", reason = SubmittedDoc.IdSubmittedDocument.ToString()});
             }
 

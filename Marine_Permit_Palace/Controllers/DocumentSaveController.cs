@@ -145,7 +145,7 @@ namespace Marine_Permit_Palace.Controllers
                             else
                             {
                                 value = field_data.value;
-                                if (string.IsNullOrEmpty(field_data.user_assigned))
+                                if (!string.IsNullOrEmpty(field_data.user_assigned))
                                 {
                                     var OtherUser = await _UserManager.FindByIdAsync(field_data.user_assigned);
                                     if (OtherUser != null)

@@ -70,9 +70,13 @@ export default class SignatureForm extends React.Component<Props, any> {
 
 
     //Takes signature png and embeds it into component
-    sign = () => {
+    sign = async () => {
 
-        let signature = <img className='user-signature' src={this.props.signatureSource} alt=""/>
+        let request = await fetch('/Account/GetSignature', {credentials: 'same-origin'})
+        let response = await request.json()
+        let data = `data:image/png;base64,${response.signature_base64}`
+
+        let signature = <img className='user-signature' src={data} alt=""/>
 
         this.setState({
             signatureContent: signature

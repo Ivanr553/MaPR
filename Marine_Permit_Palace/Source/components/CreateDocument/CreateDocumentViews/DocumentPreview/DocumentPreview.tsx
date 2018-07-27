@@ -162,6 +162,7 @@ class DocumentPreview extends React.Component<Props, any> {
 
             let document_meta = props_document_meta.map(document_meta_field => {
                 document_meta_field.field_position = null
+                document_meta_field.assigned_to.map(user => user.dod_id)
                 return document_meta_field
             })
 
@@ -172,6 +173,7 @@ class DocumentPreview extends React.Component<Props, any> {
             }
 
             let body = JSON.stringify(assignedDocument)
+            console.log(assignedDocument)
 
             let response = await fetch('/DocumentManager/AssignDocument', {
                 method: "POST",

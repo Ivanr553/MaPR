@@ -1,14 +1,9 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import * as $ from 'jquery'
 
 const s =  require('./styling/style.sass')
 
-interface Props {
-    page: string
-}
-
-export default class Header extends React.Component<Props, any> {
+export default class Header extends React.Component<any, any> {
 
     constructor(props) {
         super(props)
@@ -19,18 +14,6 @@ export default class Header extends React.Component<Props, any> {
             page: ''
         }
         
-    }
-
-    logOff = async () => {
-
-        let response = await $.get('/Account/Logout')
-
-        if(!response) {
-            alert('There was an error with your request')
-        } else {
-            window.open('/A/App', '_self')
-        }
-
     }
 
     //Hamburger Menu
@@ -74,11 +57,11 @@ export default class Header extends React.Component<Props, any> {
         let headerLink
         let fullHeader = 'show-full-header'
 
-        if(this.props.page === 'Home') {
+        if(location.pathname === '/A/App/Home') {
             fullHeader = ''
         }
 
-        if(this.props.page === 'Register') {
+        if(location.pathname === '/A/App/Register') {
             headerLink = (
                 <Link className='Link header-tab log-in-tab' to={{pathname: '/A/App/'}}>
                     Log In
@@ -86,7 +69,7 @@ export default class Header extends React.Component<Props, any> {
             )
         }
 
-        if(this.props.page === 'Login') {
+        if(location.pathname === '/A/App/') {
             headerLink = (
                 <Link id='register-tab' className='Link header-tab register-tab' to={{pathname: '/A/App/Register'}}>
                     Register

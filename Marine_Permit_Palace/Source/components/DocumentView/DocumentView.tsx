@@ -174,19 +174,19 @@ export default class DocumentView extends React.Component<Props, any> {
 
     saveFile = async () => {
         
-        let saveFile = {
+        let newFile = {
             document_meta: this.state.documentObject.document_meta,
             name: (this.state.name !== '' ? this.state.name : 'New Document'),
             document_id: this.state.document_id,
             submitted_file_id: this.state.submitted_file_id
         }
 
-        let saveFilePromise = getSaveFilePromise(saveFile)
+        let newFilePromise = getSaveFilePromise(newFile)
         this.setState({
-            saveFilePromise: await saveFilePromise
+            newFilePromise: await newFilePromise
         })
 
-        let response = await saveFilePromise
+        let response = await newFilePromise
         let saveResult: saveResultInterface = await response.promise
 
         if(!this.state.submitted_file_id || this.state.submitted_file_id === null) {
@@ -214,8 +214,8 @@ export default class DocumentView extends React.Component<Props, any> {
         if(!!this.state.documentPromise) {
             this.state.documentPromise.cancel()
         }
-        if(!!this.state.saveFilePromise) {
-            this.state.saveFilePromise.cancel()
+        if(!!this.state.newFilePromise) {
+            this.state.newFilePromise.cancel()
         }
     }
 

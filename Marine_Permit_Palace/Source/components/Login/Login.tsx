@@ -96,7 +96,7 @@ export default class Login extends React.Component<Props, any> {
         return(
             <div className='Login'>
 
-                <Header page={'Login'}/>
+                <Header />
 
                 <div className='login-content-container'>
                     <div className='login-container-section'>

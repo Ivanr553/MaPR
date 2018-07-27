@@ -1,8 +1,7 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
-import * as $ from 'jquery'
 
-import {authenticateUser} from '../../services/services'
+import {authenticateUser, logOff} from '../../services/services'
 
 const s = require('./styling/style.sass')
 
@@ -29,6 +28,30 @@ export default class Home extends React.Component<Props, any> {
 
   }
 
+  //View Handling
+  handleAccountPress = () => {
+    this.setState({
+      currentView: <Account />
+    })
+  }
+
+  getCurrentView = (currentView) => {
+    this.setState({
+      currentView: currentView
+    }, () => {
+      if(this.state.currentView.type.name === 'CreateDocument') {
+        this.setState({
+          hamburgerSource: '/images/hamburger-menu-edit.png'
+        })
+      } else {
+        this.setState({
+          hamburgerSource: '/images/hamburger-menu.png'
+        })
+      }
+    })
+  }
+  
+
   //Hamburger Menu
   handleHamburgerMenuPress(e) {
 
@@ -38,7 +61,7 @@ export default class Home extends React.Component<Props, any> {
         <div id='hamburger-menu' className='hamburger-menu-element' style={{animation: 'show-hamburger-menu 1.5s forwards'}}>
             <div className='hamburger-menu-item hamburger-menu-element' id='account-hamburger-menu-item' onClick={this.handleAccountPress}>Account</div>
             <div className='hamburger-menu-item hamburger-menu-element' id='settings-hamburger-menu-item'>Help</div>
-            <div className='hamburger-menu-item hamburger-menu-element' id='log-out-hamburger-menu-item' onClick={this.logOff}>Log Out</div>
+            <div className='hamburger-menu-item hamburger-menu-element' id='log-out-hamburger-menu-item' onClick={logOff}>Log Out</div>
         </div>
 
         this.setState({
@@ -65,43 +88,15 @@ export default class Home extends React.Component<Props, any> {
 
   }
 
-  handleAccountPress = () => {
+  getHamburgerState = (hamburgerState) => {
     this.setState({
-      currentView: <Account />
+      hamburgerState: hamburgerState
     })
-  }
-
-  logOff = async () => {
-
-    let response = await $.get('/Account/Logout')
-
-    if(!response) {
-        alert('There was an error with your request')
-    } else {
-        window.open('/A/App', '_self')
-    }
-
   }
 
   getHamburgerMenuBrightness = async (hamburgerSource) => {
     this.setState({
       hamburgerSource: hamburgerSource
-    })
-  }
-
-  getCurrentView = (currentView) => {
-    this.setState({
-      currentView: currentView
-    }, () => {
-      if(this.state.currentView.type.name === 'CreateDocument') {
-        this.setState({
-          hamburgerSource: '/images/hamburger-menu-edit.png'
-        })
-      } else {
-        this.setState({
-          hamburgerSource: '/images/hamburger-menu.png'
-        })
-      }
     })
   }
 
@@ -127,12 +122,6 @@ export default class Home extends React.Component<Props, any> {
     })
   }
 
-  getHamburgerState = (hamburgerState) => {
-    this.setState({
-      hamburgerState: hamburgerState
-    })
-  }
-
   componentDidMount() {
     authenticateUser()
   }
@@ -141,11 +130,11 @@ export default class Home extends React.Component<Props, any> {
     return(
       <div className="Home" onClick={(e) => {this.handleHomeClick(e)}}>
         
-        <Header page={'Home'}/>
+        <Header />
 
         <MetaBar getCurrentView={this.getCurrentView}/>
 
-        <HamburgerMenu handleAccountPress={() => this.getCurrentView(<Account />)} logOff={this.logOff} getHamburgerState={this.getHamburgerState} closeHamburgerMenuBool={this.state.closeHamburgerMenu} hamburgerSource={this.state.hamburgerSource}/>
+        <HamburgerMenu handleAccountPress={() => this.getCurrentView(<Account />)} logOff={logOff} getHamburgerState={this.getHamburgerState} closeHamburgerMenuBool={this.state.closeHamburgerMenu} hamburgerSource={this.state.hamburgerSource}/>
 
         <div id='documents-container' className={this.state.animate} >
           {this.state.currentView}

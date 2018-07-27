@@ -61,7 +61,20 @@ let authenticateUser = async () => {
       window.open('/A/App', '_self')
     }
 
-  }
+}
+
+let logOff = async () => {
+
+    let request = await fetch('/Account/Logout', {credentials: 'same-origin'})
+    let response = await request.json()
+
+    if(!response) {
+        alert('There was an error with your request')
+    } else {
+        window.open('/A/App', '_self')
+    }
+
+}
 
 
-export {getDocumentPromise, getSaveFilePromise, authenticateUser}
+export {getDocumentPromise, getSaveFilePromise, authenticateUser, logOff}

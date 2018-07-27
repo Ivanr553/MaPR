@@ -3,7 +3,7 @@
     width: 5vw
     height: 5vw
     border-radius: 100px
-    background-color: rgb(155, 170, 196)
+    // background-color: rgb(155, 170, 196)
     position: fixed
     bottom: 1vw
     right: 3vw
@@ -11,7 +11,7 @@
     flex-direction: column
     justify-content: center
     align-items: center
-    cursor: pointer
+    // cursor: pointer
 
 .tolkit-image
     width: 50%
@@ -20,7 +20,7 @@
 .tools-container
     width: 100%
     height: auto
-    bottom: 120%
+    bottom: 0
     display: flex
     flex-direction: column
     align-items: center
@@ -36,7 +36,81 @@
     cursor: pointer
     background-color: white
     border-radius: 100px
+    animation: shrink-toolbelt 0.25s forwards
+    margin-bottom: 2vh
+    position: relative
+
+.toolbar-tool > div
+    animation: grow-toolbelt 0.25s forwards
+
+.toolbar-tool:hover
+    animation: grow-toolbelt 0.25s forwards
+
+.toolbar-tool:hover > div
+    animation: shrink-toolbelt 0.25s forwards
+
 
 .toolbar-tool-image
     width: 50%
     height: auto
+
+.toolbar-info-box
+    width: 250%
+    height: auto
+    padding: 1em
+    position: absolute
+    right: 150%
+    top: auto
+    font-size: 2em
+
+.toolbar-info-box-ready
+    background-color: rgb(229, 255, 221)
+
+.toolbar-info-box-not-ready
+    background-color: rgb(255, 221, 221)
+
+
+.toolbar-info-box-triangle
+    width: 0
+    height: 0
+    border-top: 0.75vw solid transparent
+    border-bottom: 0.75vw solid transparent
+    position: absolute
+    top: calc((100% - 1.5vw) / 2)
+    right: -0.75vw
+
+.toolbar-info-box-triangle-ready
+    border-left: 0.75vw solid rgb(229, 255, 221)
+
+.toolbar-info-box-triangle-not-ready
+    border-left: 0.75vw solid rgb(255, 221, 221)
+
+
+.tool-bar-info-fade-away
+    animation: fade-away-toolbelt 0.5s forwards !important
+
+@keyframes grow-toolbelt
+    0%
+        transform: scale(1.0) translateY(0)
+    100%
+        transform: scale(1.1) translateY(-0.5vh)
+
+
+@keyframes shrink-toolbelt
+    0%
+        transform: scale(1.1) translateY(-0.5vh)
+    100%
+        transform: scale(1.0) translateY(0)
+
+@keyframes fade-away-toolbelt
+    0%
+        opacity: 1
+        transform: scale(1.1) translateY(-0.5vh)
+    99%
+        opacity: 0
+        transform: scale(1.1) translateY(-0.5vh)
+        width: 250%
+    100%
+        width: 0
+        opacity: 0
+        transform: scale(1.1) translateY(-0.5vh)

@@ -10,7 +10,7 @@ import CreateDocumentNavButton from './CreateDocumentNavButton/CreateDocumentNav
 //Modules
 import {user, createDocumentState} from './CreateDocumentValidation'
 import {documentResponse, document_meta_field, databaseUser} from '../../AppValidation'
-import {getDocumentPromise} from '../../services/services'
+import {getTemplateDocumentPromise} from '../../services/services'
 
 interface Props {
     createDocumentState: object,
@@ -248,8 +248,9 @@ export default class CreateDocument extends React.Component<Props, any> {
 
     getDocumentMeta = async () => {
 
-        let promise = await getDocumentPromise(this.state.document_id)
-        let documentResponse: documentResponse  = await promise.promise as documentResponse
+        let promise = await getTemplateDocumentPromise(this.state.document_id)
+        let request = await promise.promise
+        let documentResponse: documentResponse  = await request.json() as documentResponse
         let document_meta = documentResponse.document_meta
 
         this.setState({
@@ -353,8 +354,6 @@ export default class CreateDocument extends React.Component<Props, any> {
 
         }
         if(this.state.documentPreviewBoolean) {
-
-            console.log(this.state.document_meta)
 
             return (
                 <div id='CreateDocument'>

@@ -32,6 +32,16 @@ let getDocumentPromise = async (document_id: string) => {
 
 }
 
+let getTemplateDocumentPromise = async (document_id: string) => {
+
+    let promise = fetch(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`, {credentials: 'same-origin'})
+    
+    let getDocumentResponse = await makeCancelable(promise)
+
+    return getDocumentResponse
+
+}
+
 let getSaveFilePromise = async (saveFile): Promise<CancellablePromise> => {
 
     let savePromise = fetch(`/DocumentSave/SaveFile`, {
@@ -75,4 +85,4 @@ let logOff = async () => {
 }
 
 
-export {getDocumentPromise, getSaveFilePromise, authenticateUser, logOff}
+export {getDocumentPromise, getTemplateDocumentPromise, getSaveFilePromise, authenticateUser, logOff}

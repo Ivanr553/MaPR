@@ -80,7 +80,7 @@ export default class SignatureView extends React.Component<any, any> {
         })
     }
 
-    printCanvas = () => {
+    printCanvas = async () => {
 
         this.startSave()
 
@@ -90,12 +90,21 @@ export default class SignatureView extends React.Component<any, any> {
         let testImage = new Image()
         testImage.src = source
 
-        /** 
-        
-        needs to be sent to backend to save signature png
-        
-        
-        */
+        let body = {
+            signature_base64: source
+        }
+
+        let request = await fetch('/Account/AssignSignature', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+                'Content-Transfer-Encoding': 'base64'
+            },
+            body: JSON.stringify(body)
+        })
+        let response = await request.json()
+        console.log(response)
 
         this.setState({
             canvasEdited: false

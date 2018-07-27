@@ -8,7 +8,7 @@ import CheckboxInput from './UserInputComponents/CheckboxInput/CheckboxInput'
 import TextInput from './UserInputComponents/TextInput/TextInput'
 
 import {documentResponse, saveResultInterface, documentDimensions, document_meta_field} from '../../AppValidation'
-import {getDocumentPromise, getSaveFilePromise} from '../../services/services'
+import {getDocumentPromise, getTemplateDocumentPromise, getSaveFilePromise} from '../../services/services'
 import ToolBar from './ToolBar/ToolBar';
 
 interface Props {
@@ -82,18 +82,21 @@ export default class DocumentView extends React.Component<Props, any> {
         if(!this.checkForDocument()) {
             return
         }
-      
-        let documentPromise = getDocumentPromise(this.props.document_id)
-        console.log(this.props.document_id)
+
+        let request
+        if(this.props.view === 'PendingDocuments') {
+            request = getDocumentPromise(this.props.document_id)
+        }
+        if(this.props.view === 'DocumentPreview') {
+            request = getTemplateDocumentPromise(this.props.document_id)
+        }
+        let documentPromise = await request
         this.setState({
             documentPromise: await documentPromise
         })
 
-        let request = await documentPromise
-        let response = await request.promise 
+        let response = await documentPromise.promise 
         let documentObject: documentResponse = await response.json() as documentResponse
-        console.log(documentObject)
-
 
         this.setState({
             documentObject: documentObject,
@@ -191,17 +194,17 @@ export default class DocumentView extends React.Component<Props, any> {
         let newFile = {
             document_meta: payload_document_meta,
             name: !!this.state.name ? this.state.name : 'New Document',
-            document_id: this.state.document_id,
-            submitted_file_id: null
+            submitted_file_id: this.props.document_id
         }
 
-        let newFilePromise = getSaveFilePromise(newFile)
+        let request = getSaveFilePromise(newFile)
+        let newFilePromise = await request
+
         this.setState({
             newFilePromise: await newFilePromise
         })
 
-        let request = await newFilePromise
-        let response = await request.promise
+        let response = await newFilePromise.promise
         let saveResult: saveResultInterface = await response.json()
 
         console.log(saveResult)
@@ -214,8 +217,37 @@ export default class DocumentView extends React.Component<Props, any> {
 
     }
 
+
+    //Form Validation
+    validateCanSubmit(): boolean {
+
+        if(this.props.document_id)
+
+        return false
+
+    }
+
+
+    //Toolbar functionality
+
+    handleApprove = () => {
+
+        alert('Document Approved')
+
+    }
+
+    handleSubmit = () => {
+
+        alert('Document Submitted')
+
+    }
+
+
+
+    //React Lifecycle Methods
+
     componentDidMount() {
-        if(!!!this.props.document_meta) {
+        if(!!!this.props.document_meta && this.props.view === 'PendingDocuments') {
             getDocumentPromise(this.props.document_id)
             this.populatePage()
         } else {
@@ -239,6 +271,7 @@ export default class DocumentView extends React.Component<Props, any> {
     render() {
         let document_id = '../../dist/documents/NAVMC10694.pdf'
         let noDocumentWarning = <div></div>
+        let toolbar = <div></div>
 
         if(this.state.noDocument) {
             noDocumentWarning = (
@@ -246,6 +279,10 @@ export default class DocumentView extends React.Component<Props, any> {
                     There is no document selected
                 </div>
             )
+        }
+
+        if(this.props.view === 'PendingDocuments') {
+            toolbar = <ToolBar handleApprove={this.handleApprove} handleSubmit={this.handleSubmit} canSubmit={this.validateCanSubmit()}/>
         }
 
         return(
@@ -256,7 +293,7 @@ export default class DocumentView extends React.Component<Props, any> {
                 <div id='document-form-div'>
                     {this.documentFields()}
                 </div>
-                <ToolBar />
+                {toolbar}
             </div>
         )
     }

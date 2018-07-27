@@ -61,6 +61,21 @@ namespace Marine_Permit_Palace.Controllers
                     //Grab the desired file
                     SubmittedDocument SubmittedDocument = _SubmittedDocumentService.GetPopulated(id);
 
+                    ApplicationUser user = await _UserManager.GetUserAsync(User);
+
+                    var DocAssignees = _DocumentAsigneeService.GetByDocument(SubmittedDocument.IdSubmittedDocument);
+                    var UserPermissions = DocAssignees.FirstOrDefault(e => e.IdAssigneeId == user.Id);
+                    if(UserPermissions == null || !UserPermissions.IsActive)
+                    {
+                        return Json(new Result()
+                        {
+                            reason = "User does not have permission to view this document",
+                            result = "Failure",
+                            status_code = 401
+                        });
+                    }
+
+
                     Marine_Permit_Palace.Models.Document document = _DocumentSerivce.Get(SubmittedDocument.DocumentId);
                     MemoryStream PDF_Mem = new MemoryStream();
                     MemoryStream file = new MemoryStream(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.TemplateName)));
@@ -72,14 +87,14 @@ namespace Marine_Permit_Palace.Controllers
                         AcroFields pdfFormFields = stamper.AcroFields;
                         //AcroFields.FieldPosition
 
-                        ApplicationUser user = await _UserManager.GetUserAsync(User);
+                       
                         if (user != null)
                         {
                             //populate all the known fields based on user information
                             AutoFillManager.AutoFillBasedOnUser(user, pdfFormFields);
                         }
 
-                        string RequestingUserId = _UserManager.GetUserId(User);
+                        string RequestingUserId = user.Id;
 
                         List<string> FieldNames = pdfFormFields.Fields.Select(e => e.Key).ToList();
                         List<DocumentMeta> JsonDocument = new List<DocumentMeta>();
@@ -145,7 +160,7 @@ namespace Marine_Permit_Palace.Controllers
 
                             }
 
-                            JsonDocument.Add(new DocumentMeta() { field_name = field, field_position = Position, value = value, field_type = field_type });
+                            JsonDocument.Add(new DocumentMeta() {  field_name = field, field_position = Position, value = value, field_type = field_type });
                         }
                         var page1 = reader.GetPageSize(1);
                         return Json(new
@@ -153,7 +168,9 @@ namespace Marine_Permit_Palace.Controllers
                             result = "Success",
                             status_code = 200,
                             document_size = page1,
-                            document_meta = JsonDocument
+                            document_meta = JsonDocument,
+                            is_completed = SubmittedDocument.IsCompleted,
+                            is_edit_locked = SubmittedDocument.IsEditLocked,
                         });
                     }
                 }
@@ -562,6 +579,7 @@ namespace Marine_Permit_Palace.Controllers
             public string name { get; set; }
             public string document_id { get; set; }
             public string submitted_file_id { get; set; }
+            public bool is_completed { get; set; }
         }
 
 
@@ -580,13 +598,33 @@ namespace Marine_Permit_Palace.Controllers
                 {
                     return Json(new { result = "Failure", reason = "No Document with that ID exists" });
                 }
-
+                var user = _UserManager.GetUserAsync(User).Result;
                 Guid sub_file_guid = Guid.Empty;
                 SubmittedDocument SubmittedDoc = null;
                 if (Guid.TryParse(document.submitted_file_id, out sub_file_guid))
                 {
                     SubmittedDoc = _SubmittedDocumentService.Get(sub_file_guid);
+                    
+                    
                     SubmittedDoc.Name = document.name;
+                    if(SubmittedDoc.IsCompleted)
+                    {
+                        return Json(new Result()
+                        {
+                            reason = "Document is no longer editable. Document was completed.",
+                            result = "Failure",
+                            status_code = 400
+                        });
+                    }
+                    if(SubmittedDoc.IsEditLocked)
+                    {
+                        return Json(new Result()
+                        {
+                            reason = "Document is not editable.",
+                            result = "Failure",
+                            status_code = 400
+                        });
+                    }
                 }
                 else
                 {
@@ -604,6 +642,19 @@ namespace Marine_Permit_Palace.Controllers
                 else
                 {
                     SubmittedDoc = _SubmittedDocumentService.Update(SubmittedDoc);
+                }
+
+                var AssignedUsers = _DocumentAsigneeService.GetByDocument(SubmittedDoc.IdSubmittedDocument);
+
+                var UserPermissions = AssignedUsers.FirstOrDefault(e => e.IdAssigneeId == user.Id);
+                if (UserPermissions == null || !UserPermissions.IsAllowedEdit)
+                {
+                    return Json(new Result()
+                    {
+                        reason = "User Does not have permission to edit this document.",
+                        result = "Failure",
+                        status_code = 401
+                    });
                 }
                 List<DocumentCheckBoxField> CBFields = document.document_meta
                     .Where(e => e.field_type  == "Checkbox")
@@ -666,7 +717,25 @@ namespace Marine_Permit_Palace.Controllers
                         status_code = 500
                     });
                 }
-
+                if(document.is_completed)
+                {
+                    if(UserPermissions.IsAllowedSubmit)
+                    {
+                        SubmittedDoc.IsCompleted = true;
+                        SubmittedDoc.DateCompletedUtc = DateTime.UtcNow;
+                        SubmittedDoc.IsEditLocked = true;
+                        _SubmittedDocumentService.Update(SubmittedDoc);
+                    }
+                    else
+                    {
+                        return Json(new Result()
+                        {
+                            reason = "Document saved, but user does not have permission to submit this document.",
+                            result = "Failure",
+                            status_code = 401
+                        });
+                    }
+                }
 
                 return Json(new Result(){ result = "Success", reason = SubmittedDoc.IdSubmittedDocument.ToString()});
             }

@@ -79,6 +79,7 @@ namespace Marine_Permit_Palace.Controllers
                             AutoFillManager.AutoFillBasedOnUser(user, pdfFormFields);
                         }
 
+                        string RequestingUserId = _UserManager.GetUserId(User);
 
                         List<string> FieldNames = pdfFormFields.Fields.Select(e => e.Key).ToList();
                         List<DocumentMeta> JsonDocument = new List<DocumentMeta>();
@@ -86,15 +87,12 @@ namespace Marine_Permit_Palace.Controllers
                         {
                             var Position = pdfFormFields.GetFieldPositions(field).FirstOrDefault();
                             if (Position == null) continue;
-                            string value = "";
 
                             string field_type;
                             switch (reader.AcroFields.GetFieldType(field))
                             {
                                 case AcroFields.FIELD_TYPE_CHECKBOX:
                                     field_type = ("Checkbox");
-                                    var f = SubmittedDocument.DocumentCheckBoxFields.FirstOrDefault(e => e.IdFormName == field);
-                                    value = (f != null) ? (f.FormValue) ? "On" : "Off" : "Off";
                                     break;
                                 case AcroFields.FIELD_TYPE_COMBO:
                                     field_type = ("Combobox");
@@ -113,18 +111,40 @@ namespace Marine_Permit_Palace.Controllers
                                     break;
                                 case AcroFields.FIELD_TYPE_SIGNATURE:
                                     field_type = ("Signature");
-                                    var t = SubmittedDocument.DocumentSignatureFields.FirstOrDefault(e => e.IdFormName == field);
-                                    value = (t != null && t.SignatureData != null) ? Convert.ToBase64String(t.SignatureData.Data) : "";
                                     break;
                                 case AcroFields.FIELD_TYPE_TEXT:
                                     field_type = ("Text");
-                                    var g = SubmittedDocument.DocumentFormFields.FirstOrDefault(e => e.IdFormName == field);
-                                    value = (g != null) ? g.FormValue : "";
                                     break;
                                 default:
                                     field_type = ("?");
                                     break;
                             }
+                            string value, disabled_message = null;
+                            bool IsAllowedToEdit = true;
+
+                            var field_data = SubmittedDocument[field];
+                            if (field_data == null)
+                            {
+                                value = pdfFormFields.GetField(field);
+                            }
+                            else
+                            {
+                                value = field_data.value;
+                                if (string.IsNullOrEmpty(field_data.user_assigned))
+                                {
+                                    var OtherUser = await _UserManager.FindByIdAsync(field_data.user_assigned);
+                                    if (OtherUser != null)
+                                    {
+                                        IsAllowedToEdit = RequestingUserId == field_data.user_assigned;
+                                        if (!IsAllowedToEdit)
+                                        {
+                                            disabled_message = $"This field is assigned to {OtherUser.Rank}. {OtherUser.LastName}, {OtherUser.FirstName}";
+                                        }
+                                    }
+                                }
+
+                            }
+
                             JsonDocument.Add(new DocumentMeta() { field_name = field, field_position = Position, value = value, field_type = field_type });
                         }
                         var page1 = reader.GetPageSize(1);
@@ -380,115 +400,115 @@ namespace Marine_Permit_Palace.Controllers
             }
           
         }
-        public async Task<JsonResult> EditSavedFile(string submitted_document_id)
-        {
-            Guid id;
-            if (Guid.TryParse(submitted_document_id, out id))
-            {
-                //Grab the desired file
-                SubmittedDocument document = _SubmittedDocumentService.GetPopulated(id);
-                if(document == null)
-                {
-                    return Json(new Result()
-                    {
-                        reason = "No file found",
-                        result = "Failure",
-                        status_code = 404
-                    });
-                }
-                string RequestingUserId = _UserManager.GetUserId(User);
+        //public async Task<JsonResult> EditSavedFile(string submitted_document_id)
+        //{
+        //    Guid id;
+        //    if (Guid.TryParse(submitted_document_id, out id))
+        //    {
+        //        //Grab the desired file
+        //        SubmittedDocument document = _SubmittedDocumentService.GetPopulated(id);
+        //        if(document == null)
+        //        {
+        //            return Json(new Result()
+        //            {
+        //                reason = "No file found",
+        //                result = "Failure",
+        //                status_code = 404
+        //            });
+        //        }
+        //        string RequestingUserId = _UserManager.GetUserId(User);
 
 
-                MemoryStream PDF_Mem = new MemoryStream();
-                MemoryStream file = new MemoryStream(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.Document.TemplateName)));
-                file.CopyTo(PDF_Mem);
-                using (PdfReader reader = new PdfReader(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.Document.TemplateName))))
-                using (PdfStamper stamper = new PdfStamper(reader, PDF_Mem, '\0', false))
-                {
-                    stamper.FormFlattening = false;
-                    AcroFields pdfFormFields = stamper.AcroFields;
-                    AcroFields.FieldPosition fieldPosition = new AcroFields.FieldPosition();
+        //        MemoryStream PDF_Mem = new MemoryStream();
+        //        MemoryStream file = new MemoryStream(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.Document.TemplateName)));
+        //        file.CopyTo(PDF_Mem);
+        //        using (PdfReader reader = new PdfReader(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.Document.TemplateName))))
+        //        using (PdfStamper stamper = new PdfStamper(reader, PDF_Mem, '\0', false))
+        //        {
+        //            stamper.FormFlattening = false;
+        //            AcroFields pdfFormFields = stamper.AcroFields;
+        //            AcroFields.FieldPosition fieldPosition = new AcroFields.FieldPosition();
 
-                    List<string> FieldNames = pdfFormFields.Fields.Select(e => e.Key).ToList();
-                    List<DocumentMeta> JsonDocument = new List<DocumentMeta>();
-                    foreach (string field in FieldNames)
-                    {
-                        string field_type;
-                        switch (reader.AcroFields.GetFieldType(field))
-                        {
-                            case AcroFields.FIELD_TYPE_CHECKBOX:
-                                field_type = ("Checkbox");
-                                break;
-                            case AcroFields.FIELD_TYPE_COMBO:
-                                field_type = ("Combobox");
-                                break;
-                            case AcroFields.FIELD_TYPE_LIST:
-                                field_type = ("List");
-                                break;
-                            case AcroFields.FIELD_TYPE_NONE:
-                                field_type = ("None");
-                                break;
-                            case AcroFields.FIELD_TYPE_PUSHBUTTON:
-                                field_type = ("Pushbutton");
-                                break;
-                            case AcroFields.FIELD_TYPE_RADIOBUTTON:
-                                field_type = ("Radiobutton");
-                                break;
-                            case AcroFields.FIELD_TYPE_SIGNATURE:
-                                field_type = ("Signature");
-                                break;
-                            case AcroFields.FIELD_TYPE_TEXT:
-                                field_type = ("Text");
-                                break;
-                            default:
-                                field_type = ("?");
-                                break;
-                        }
+        //            List<string> FieldNames = pdfFormFields.Fields.Select(e => e.Key).ToList();
+        //            List<DocumentMeta> JsonDocument = new List<DocumentMeta>();
+        //            foreach (string field in FieldNames)
+        //            {
+        //                string field_type;
+        //                switch (reader.AcroFields.GetFieldType(field))
+        //                {
+        //                    case AcroFields.FIELD_TYPE_CHECKBOX:
+        //                        field_type = ("Checkbox");
+        //                        break;
+        //                    case AcroFields.FIELD_TYPE_COMBO:
+        //                        field_type = ("Combobox");
+        //                        break;
+        //                    case AcroFields.FIELD_TYPE_LIST:
+        //                        field_type = ("List");
+        //                        break;
+        //                    case AcroFields.FIELD_TYPE_NONE:
+        //                        field_type = ("None");
+        //                        break;
+        //                    case AcroFields.FIELD_TYPE_PUSHBUTTON:
+        //                        field_type = ("Pushbutton");
+        //                        break;
+        //                    case AcroFields.FIELD_TYPE_RADIOBUTTON:
+        //                        field_type = ("Radiobutton");
+        //                        break;
+        //                    case AcroFields.FIELD_TYPE_SIGNATURE:
+        //                        field_type = ("Signature");
+        //                        break;
+        //                    case AcroFields.FIELD_TYPE_TEXT:
+        //                        field_type = ("Text");
+        //                        break;
+        //                    default:
+        //                        field_type = ("?");
+        //                        break;
+        //                }
 
-                        var Position = pdfFormFields.GetFieldPositions(field).FirstOrDefault();
-                        if (Position == null) continue;
+        //                var Position = pdfFormFields.GetFieldPositions(field).FirstOrDefault();
+        //                if (Position == null) continue;
 
 
-                        string value, disabled_message = null;
-                        bool IsAllowedToEdit = true;
+        //                string value, disabled_message = null;
+        //                bool IsAllowedToEdit = true;
 
-                        var field_data = document[field];
-                        if (field_data == null)
-                        {
-                            value = pdfFormFields.GetField(field);
-                        }
-                        else
-                        {
-                            value = field_data.value;
-                            if(string.IsNullOrEmpty(field_data.user_assigned))
-                            {
-                                var OtherUser = await _UserManager.FindByIdAsync(field_data.user_assigned);
-                                if(OtherUser != null)
-                                {
-                                    IsAllowedToEdit = RequestingUserId == field_data.user_assigned;
-                                    if (!IsAllowedToEdit)
-                                    {
-                                        disabled_message = $"This field is assigned to {OtherUser.Rank}. {OtherUser.LastName}, {OtherUser.FirstName}";
-                                    }
-                                }
-                            }
+        //                var field_data = document[field];
+        //                if (field_data == null)
+        //                {
+        //                    value = pdfFormFields.GetField(field);
+        //                }
+        //                else
+        //                {
+        //                    value = field_data.value;
+        //                    if(string.IsNullOrEmpty(field_data.user_assigned))
+        //                    {
+        //                        var OtherUser = await _UserManager.FindByIdAsync(field_data.user_assigned);
+        //                        if(OtherUser != null)
+        //                        {
+        //                            IsAllowedToEdit = RequestingUserId == field_data.user_assigned;
+        //                            if (!IsAllowedToEdit)
+        //                            {
+        //                                disabled_message = $"This field is assigned to {OtherUser.Rank}. {OtherUser.LastName}, {OtherUser.FirstName}";
+        //                            }
+        //                        }
+        //                    }
 
-                        }
-                        JsonDocument.Add(new DocumentMeta() { field_name = field, field_position = Position, value = value, field_type = field_type, is_disabled = !IsAllowedToEdit, disabled_message = disabled_message });
-                    }
-                    var page1 = reader.GetPageSize(1);
-                    return Json(new
-                    {
-                        document_size = page1,
-                        document_meta = JsonDocument
-                    });
-                }
-            }
-            else
-            {
-                return Json(new Result("Failure", "Incorrect Guid Format", 406));
-            }
-        }
+        //                }
+        //                JsonDocument.Add(new DocumentMeta() { field_name = field, field_position = Position, value = value, field_type = field_type, is_disabled = !IsAllowedToEdit, disabled_message = disabled_message });
+        //            }
+        //            var page1 = reader.GetPageSize(1);
+        //            return Json(new
+        //            {
+        //                document_size = page1,
+        //                document_meta = JsonDocument
+        //            });
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return Json(new Result("Failure", "Incorrect Guid Format", 406));
+        //    }
+        //}
 
         //public IActionResult GetSavedFile(string submitted_document_id)
         //{

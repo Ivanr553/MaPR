@@ -50,6 +50,109 @@ namespace Marine_Permit_Palace.Controllers
                 .Select(e => new { e.IdDocument, e.Name }));
         }
 
+
+        public async Task<JsonResult> GetSubmittedDocumentMeta(string submitted_document_id)
+        {
+            try
+            {
+                Guid id;
+                if (Guid.TryParse(submitted_document_id, out id))
+                {
+                    //Grab the desired file
+                    SubmittedDocument SubmittedDocument = _SubmittedDocumentService.GetPopulated(id);
+
+                    Marine_Permit_Palace.Models.Document document = _DocumentSerivce.Get(SubmittedDocument.DocumentId);
+                    MemoryStream PDF_Mem = new MemoryStream();
+                    MemoryStream file = new MemoryStream(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.TemplateName)));
+                    file.CopyTo(PDF_Mem);
+                    using (PdfReader reader = new PdfReader(System.IO.File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", document.TemplateName))))
+                    using (PdfStamper stamper = new PdfStamper(reader, PDF_Mem, '\0', false))
+                    {
+                        stamper.FormFlattening = false;
+                        AcroFields pdfFormFields = stamper.AcroFields;
+                        //AcroFields.FieldPosition
+
+                        ApplicationUser user = await _UserManager.GetUserAsync(User);
+                        if (user != null)
+                        {
+                            //populate all the known fields based on user information
+                            AutoFillManager.AutoFillBasedOnUser(user, pdfFormFields);
+                        }
+
+
+                        List<string> FieldNames = pdfFormFields.Fields.Select(e => e.Key).ToList();
+                        List<DocumentMeta> JsonDocument = new List<DocumentMeta>();
+                        foreach (string field in FieldNames)
+                        {
+                            var Position = pdfFormFields.GetFieldPositions(field).FirstOrDefault();
+                            if (Position == null) continue;
+                            string value = "";
+
+                            string field_type;
+                            switch (reader.AcroFields.GetFieldType(field))
+                            {
+                                case AcroFields.FIELD_TYPE_CHECKBOX:
+                                    field_type = ("Checkbox");
+                                    var f = SubmittedDocument.DocumentCheckBoxFields.FirstOrDefault(e => e.IdFormName == field);
+                                    value = (f != null) ? (f.FormValue) ? "On" : "Off" : "Off";
+                                    break;
+                                case AcroFields.FIELD_TYPE_COMBO:
+                                    field_type = ("Combobox");
+                                    break;
+                                case AcroFields.FIELD_TYPE_LIST:
+                                    field_type = ("List");
+                                    break;
+                                case AcroFields.FIELD_TYPE_NONE:
+                                    field_type = ("None");
+                                    break;
+                                case AcroFields.FIELD_TYPE_PUSHBUTTON:
+                                    field_type = ("Pushbutton");
+                                    break;
+                                case AcroFields.FIELD_TYPE_RADIOBUTTON:
+                                    field_type = ("Radiobutton");
+                                    break;
+                                case AcroFields.FIELD_TYPE_SIGNATURE:
+                                    field_type = ("Signature");
+                                    var t = SubmittedDocument.DocumentSignatureFields.FirstOrDefault(e => e.IdFormName == field);
+                                    value = (t != null && t.SignatureData != null) ? Convert.ToBase64String(t.SignatureData.Data) : "";
+                                    break;
+                                case AcroFields.FIELD_TYPE_TEXT:
+                                    field_type = ("Text");
+                                    var g = SubmittedDocument.DocumentFormFields.FirstOrDefault(e => e.IdFormName == field);
+                                    value = (g != null) ? g.FormValue : "";
+                                    break;
+                                default:
+                                    field_type = ("?");
+                                    break;
+                            }
+                            JsonDocument.Add(new DocumentMeta() { field_name = field, field_position = Position, value = value, field_type = field_type });
+                        }
+                        var page1 = reader.GetPageSize(1);
+                        return Json(new
+                        {
+                            result = "Success",
+                            status_code = 200,
+                            document_size = page1,
+                            document_meta = JsonDocument
+                        });
+                    }
+                }
+                else
+                {
+                    return Json(new Result("Failure", "Incorrect Guid Format", 406));
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new Result()
+                {
+                    reason = $"Something went wrong while reading the file: See Exception...  {ex.Message}",
+                    result = "Failure",
+                    status_code = 500
+                });
+            }
+        }
+
         public async Task<IActionResult> GetSavedDocument(string submitted_document_id)
         {
             Guid id;
@@ -57,6 +160,9 @@ namespace Marine_Permit_Palace.Controllers
             {
                 //Grab the desired file
                 SubmittedDocument SubmittedDocument = _SubmittedDocumentService.GetPopulated(id);
+
+
+
                 string DocumentPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dist", "documents", SubmittedDocument.Document.TemplateName);
 
                 if(!System.IO.File.Exists(DocumentPath))
@@ -68,6 +174,8 @@ namespace Marine_Permit_Palace.Controllers
                         status_code = 404
                     });
                 }
+
+
 
                 MemoryStream PDF_Mem = new MemoryStream(System.IO.File.ReadAllBytes(DocumentPath));
 
@@ -483,6 +591,7 @@ namespace Marine_Permit_Palace.Controllers
                     {
                         FormValue = (e.value == "On"),
                         IdFormName = e.field_name,
+                        IsCompleted = (e.value == "On"),
                         IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument
                     }).ToList();
 
@@ -492,6 +601,7 @@ namespace Marine_Permit_Palace.Controllers
                     {
                         FormValue = e.value,
                         IdFormName = e.field_name,
+                        IsCompleted = !string.IsNullOrEmpty(e.value),
                         IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument
                     }).ToList();
 
@@ -501,6 +611,7 @@ namespace Marine_Permit_Palace.Controllers
                     {
                         IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument,
                         IdFormName = e.field_name,
+                        IsCompleted = !string.IsNullOrEmpty(e.value),
                         SignatureData = new DataStorage()
                         {
                             Data = Convert.FromBase64String(e.value),

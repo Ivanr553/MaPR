@@ -27,6 +27,7 @@ namespace Marine_Permit_Palace.Controllers
         private readonly ILogger _logger;
         private readonly IStoredTokenService _StoredToken;
         private readonly IUserService _UserService;
+        private readonly IDataStorageService _DataStor;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -34,11 +35,13 @@ namespace Marine_Permit_Palace.Controllers
             IEmailSender emailSender,
             IUserService ius,
             IStoredTokenService ists,
+            IDataStorageService ids,
             ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _StoredToken = ists;
+            _DataStor = ids;
             _emailSender = emailSender;
             _UserService = ius;
             _logger = logger;
@@ -228,6 +231,67 @@ namespace Marine_Permit_Palace.Controllers
         //        return View();
         //    }
         //}
+
+
+        [HttpGet]
+        [Authorize]
+        public async Task<JsonResult> GetSignature()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var Signature = _DataStor.Get(user.SignatureDataId);
+            if (Signature != null)
+            {
+                return Json(new
+                {
+                    result = "Success",
+                    status_code = 200,
+                    signature_base64 = Convert.ToBase64String(Signature.Data)
+                });
+            }
+            else
+            {
+                return Json(new Result()
+                {
+                    reason = "No Signature assigned.",
+                    result = "Failure",
+                    status_code = 404
+                });
+            }
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        public async Task<JsonResult> AssignSignature([FromBody] string signature_base64)
+        {
+            try
+            {
+                DataStorage Sig = new DataStorage()
+                {
+                    Data = Convert.FromBase64String(signature_base64),
+                    Type = AppDataType.SIGNATURE
+                };
+                Sig = _DataStor.Add(Sig);
+                var user = await _userManager.GetUserAsync(User);
+                user.SignatureDataId = Sig.IdDataStorage;
+                await _userManager.UpdateAsync(user);
+                return Json(new Result()
+                {
+                    result = "Success",
+                    status_code = 200
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new Result()
+                {
+                    status_code = 500,
+                    reason = ex.Message,
+                    result = "Failure"
+                });
+            }
+        }
 
         [HttpGet]
         [AllowAnonymous]

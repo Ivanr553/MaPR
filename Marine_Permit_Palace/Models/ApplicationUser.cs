@@ -67,7 +67,8 @@ namespace Marine_Permit_Palace.Models
         public string MedicalCertRequired { get; set; }
         public bool WearsGlasses { get; set; }
         public string Organization { get; set; }
-        
+        public Guid? SignatureDataId { get; set; }
+
 
         public ICollection<UserSupervisorIntermediate> UserSupervisors { get; set; }
         public ICollection<UserSupervisorIntermediate> UserSubordinates { get; set; }

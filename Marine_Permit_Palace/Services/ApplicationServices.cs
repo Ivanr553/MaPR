@@ -223,7 +223,7 @@ namespace Marine_Permit_Palace.Services
                 stor = _DataStor.Update(field.SignatureData);
             }
 
-            field.SignatureData = stor;
+            field.SignatureDataId = stor.IdDataStorage;
             if(_context.DocumentSignatureField.FirstOrDefault(e => e.IdFormName == field.IdFormName && e.IdSubmittedDocumentId == field.IdSubmittedDocumentId) != null)
             {
                 //Update

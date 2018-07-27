@@ -25,24 +25,52 @@ namespace Marine_Permit_Palace.Services
 
         public DocumentFields GetAllAssignedFields(string UserId, bool ExcludeCompleted = false)
         {
-            DocumentFields fields = new DocumentFields()
+            DocumentFields fields = new DocumentFields();
+
+            if(ExcludeCompleted)
             {
-                CheckBoxes = _context.DocumentCheckBoxField
-                .Include(e => e.SubmittedDocument)
-                .Where(e => e.AssigneeId == UserId && e.IsActive
-                   && e.IsCompleted == (!ExcludeCompleted) ? e.IsCompleted : false)
-                    .ToList(),
-                FormFields = _context.DocumentFormField
-                .Include(e => e.SubmittedDocument)
-                .Where(e => e.AssigneeId == UserId && e.IsActive
-                  && e.IsCompleted == (!ExcludeCompleted) ? e.IsCompleted : false)
-                    .ToList(),
-                SignatureFields = _context.DocumentSignatureField
-                .Include(e => e.SubmittedDocument)
-                .Where(e => e.AssigneeId == UserId && e.IsActive
-                 && e.IsCompleted == (!ExcludeCompleted) ? e.IsCompleted : false)
-                    .ToList(),
-            };
+                fields.CheckBoxes = _context.DocumentCheckBoxField
+                    .Include(e => e.SubmittedDocument)
+                    .Where(e => e.AssigneeId == UserId && e.IsActive
+                    && !e.IsCompleted)
+                    .Distinct()
+                    .ToList();
+
+                fields.FormFields = _context.DocumentFormField
+                    .Include(e => e.SubmittedDocument)
+                    .Where(e => e.AssigneeId == UserId && e.IsActive
+                    && !e.IsCompleted)
+                    .Distinct()
+                    .ToList();
+
+                fields.SignatureFields = _context.DocumentSignatureField
+                    .Include(e => e.SubmittedDocument)
+                    .Where(e => e.AssigneeId == UserId && e.IsActive
+                    && !e.IsCompleted)
+                    .Distinct()
+                    .ToList();
+            }
+            else
+            {
+                fields.CheckBoxes = _context.DocumentCheckBoxField
+                    .Include(e => e.SubmittedDocument)
+                    .Where(e => e.AssigneeId == UserId && e.IsActive)
+                    .Distinct()
+                    .ToList();
+
+                fields.FormFields = _context.DocumentFormField
+                    .Include(e => e.SubmittedDocument)
+                    .Where(e => e.AssigneeId == UserId && e.IsActive)
+                    .Distinct()
+                    .ToList();
+
+                fields.SignatureFields = _context.DocumentSignatureField
+                    .Include(e => e.SubmittedDocument)
+                    .Where(e => e.AssigneeId == UserId && e.IsActive)
+                    .Distinct()
+                    .ToList();
+            }
+            
             return fields;
         }
 

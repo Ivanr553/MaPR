@@ -41,7 +41,7 @@ namespace Marine_Permit_Palace.Controllers
 
                     status_code = 200,
 
-                    notification_count = RequiresAttention.Count + AwaitingFields.CheckBoxes.Count + AwaitingFields.FormFields.Count + AwaitingFields.SignatureFields.Count,
+                    notification_count = RequiresAttention.Count,
 
                     awaiting_documents = RequiresAttention.Select(e => new
                     {
@@ -50,25 +50,28 @@ namespace Marine_Permit_Palace.Controllers
                         document_id = e.DocumentId
                     }),
 
-                    awaiting_signature = AwaitingFields.SignatureFields.Select(e => new
+                    awaiting_signature = AwaitingFields.SignatureFields.Distinct().Select(e => new
                     {
                         submitted_document_name = e.SubmittedDocument.Name,
                         submitted_document_id = e.IdSubmittedDocumentId,
-                        document_id = e.SubmittedDocument.DocumentId
+                        document_id = e.SubmittedDocument.DocumentId,
+                        form_name = e.IdFormName
                     }),
 
-                    awaiting_field_input = AwaitingFields.FormFields.Select(e => new
+                    awaiting_field_input = AwaitingFields.FormFields.Distinct().Select(e => new
                     {
                         submitted_document_name = e.SubmittedDocument.Name,
                         submitted_document_id = e.IdSubmittedDocumentId,
-                        document_id = e.SubmittedDocument.DocumentId
+                        document_id = e.SubmittedDocument.DocumentId,
+                        form_name = e.IdFormName
                     }),
 
-                    awaiting_approval = AwaitingFields.CheckBoxes.Select(e => new
+                    awaiting_approval = AwaitingFields.CheckBoxes.Distinct().Select(e => new
                     {
                         submitted_document_name = e.SubmittedDocument.Name,
                         submitted_document_id = e.IdSubmittedDocumentId,
-                        document_id = e.SubmittedDocument.DocumentId
+                        document_id = e.SubmittedDocument.DocumentId,
+                        form_name = e.IdFormName
                     })
 
                 });

@@ -65,15 +65,19 @@ class DocumentView extends React.Component {
             if (!this.checkForDocument()) {
                 return;
             }
-            let documentPromise = services_1.getDocumentPromise(this.props.document_id);
-            console.log(this.props.document_id);
+            let request;
+            if (this.props.view === 'PendingDocuments') {
+                request = services_1.getDocumentPromise(this.props.document_id);
+            }
+            if (this.props.view === 'DocumentPreview') {
+                request = services_1.getTemplateDocumentPromise(this.props.document_id);
+            }
+            let documentPromise = yield request;
             this.setState({
                 documentPromise: yield documentPromise
             });
-            let request = yield documentPromise;
-            let response = yield request.promise;
+            let response = yield documentPromise.promise;
             let documentObject = yield response.json();
-            console.log(documentObject);
             this.setState({
                 documentObject: documentObject,
                 document_id: this.props.document_id
@@ -124,15 +128,14 @@ class DocumentView extends React.Component {
             let newFile = {
                 document_meta: payload_document_meta,
                 name: !!this.state.name ? this.state.name : 'New Document',
-                document_id: this.state.document_id,
-                submitted_file_id: null
+                submitted_file_id: this.props.document_id
             };
-            let newFilePromise = services_1.getSaveFilePromise(newFile);
+            let request = services_1.getSaveFilePromise(newFile);
+            let newFilePromise = yield request;
             this.setState({
                 newFilePromise: yield newFilePromise
             });
-            let request = yield newFilePromise;
-            let response = yield request.promise;
+            let response = yield newFilePromise.promise;
             let saveResult = yield response.json();
             console.log(saveResult);
             if (!this.state.submitted_file_id || this.state.submitted_file_id === null) {
@@ -141,6 +144,13 @@ class DocumentView extends React.Component {
                 });
             }
         });
+        //Toolbar functionality
+        this.handleApprove = () => {
+            alert('Document Approved');
+        };
+        this.handleSubmit = () => {
+            alert('Document Submitted');
+        };
         this.state = {
             documentObject: undefined,
             submitted_file_id: '',
@@ -164,8 +174,14 @@ class DocumentView extends React.Component {
             });
         });
     }
+    //Form Validation
+    validateCanSubmit() {
+        if (this.props.document_id)
+            return false;
+    }
+    //React Lifecycle Methods
     componentDidMount() {
-        if (!!!this.props.document_meta) {
+        if (!!!this.props.document_meta && this.props.view === 'PendingDocuments') {
             services_1.getDocumentPromise(this.props.document_id);
             this.populatePage();
         }
@@ -188,14 +204,18 @@ class DocumentView extends React.Component {
     render() {
         let document_id = '../../dist/documents/NAVMC10694.pdf';
         let noDocumentWarning = React.createElement("div", null);
+        let toolbar = React.createElement("div", null);
         if (this.state.noDocument) {
             noDocumentWarning = (React.createElement("div", { id: 'document-view-no-document-warning' }, "There is no document selected"));
+        }
+        if (this.props.view === 'PendingDocuments') {
+            toolbar = React.createElement(ToolBar_1.default, { handleApprove: this.handleApprove, handleSubmit: this.handleSubmit, canSubmit: this.validateCanSubmit() });
         }
         return (React.createElement("div", { className: 'DocumentView' },
             noDocumentWarning,
             React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: document_id }),
             React.createElement("div", { id: 'document-form-div' }, this.documentFields()),
-            React.createElement(ToolBar_1.default, null)));
+            toolbar));
     }
 }
 exports.default = DocumentView;

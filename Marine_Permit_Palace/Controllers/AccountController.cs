@@ -258,17 +258,20 @@ namespace Marine_Permit_Palace.Controllers
                 });
             }
         }
-
+        public class SignatureSave
+        {
+            public string signature_base64 { get; set; }
+        }
 
         [HttpPost]
         [Authorize]
-        public async Task<JsonResult> AssignSignature([FromBody] string signature_base64)
+        public async Task<JsonResult> AssignSignature([FromBody] SignatureSave data)
         {
             try
             {
                 DataStorage Sig = new DataStorage()
                 {
-                    Data = Convert.FromBase64String(signature_base64),
+                    Data = Convert.FromBase64String(data.signature_base64.Remove(0,22)),
                     Type = AppDataType.SIGNATURE
                 };
                 Sig = _DataStor.Add(Sig);

@@ -184,8 +184,9 @@ class CreateDocument extends React.Component {
             });
         };
         this.getDocumentMeta = () => __awaiter(this, void 0, void 0, function* () {
-            let promise = yield services_1.getDocumentPromise(this.state.document_id);
-            let documentResponse = yield promise.promise;
+            let promise = yield services_1.getTemplateDocumentPromise(this.state.document_id);
+            let request = yield promise.promise;
+            let documentResponse = yield request.json();
             let document_meta = documentResponse.document_meta;
             this.setState({
                 document_meta: document_meta
@@ -263,7 +264,6 @@ class CreateDocument extends React.Component {
                     React.createElement(SelectPermissions_1.default, { assigned_user: this.state.assigned_user, handleToggleAssignedUser: this.handleToggleAssignedUser, removeAssignedUser: this.removeAssignedUser, currentSelectedFieldId: this.state.currentSelectedFieldId, handleAddedUserPress: this.handleAddedUserPress, selectPermissionsBoolean: this.state.selectPermissionsBoolean, addUser: this.addUser, deleteUser: this.deleteUser, userList: this.state.userList, getSelectPermissionsComplete: this.getSelectPermissionsComplete }))));
         }
         if (this.state.documentPreviewBoolean) {
-            console.log(this.state.document_meta);
             return (React.createElement("div", { id: 'CreateDocument' },
                 React.createElement("div", { id: 'create-document-nav-bar' },
                     React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectDocumentComplete, id: 'create-document-nav-bar-item-document', innerText: 'Select Document', onClickHandler: this.handleSelectDocumentView, disable: false, selected: this.state.selectDocumentBoolean }),

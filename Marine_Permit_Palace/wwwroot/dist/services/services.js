@@ -28,6 +28,12 @@ let getDocumentPromise = (document_id) => __awaiter(this, void 0, void 0, functi
     return getDocumentResponse;
 });
 exports.getDocumentPromise = getDocumentPromise;
+let getTemplateDocumentPromise = (document_id) => __awaiter(this, void 0, void 0, function* () {
+    let promise = fetch(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`, { credentials: 'same-origin' });
+    let getDocumentResponse = yield makeCancelable(promise);
+    return getDocumentResponse;
+});
+exports.getTemplateDocumentPromise = getTemplateDocumentPromise;
 let getSaveFilePromise = (saveFile) => __awaiter(this, void 0, void 0, function* () {
     let savePromise = fetch(`/DocumentSave/SaveFile`, {
         method: 'POST',

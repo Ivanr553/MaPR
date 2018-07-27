@@ -120,24 +120,37 @@ namespace Marine_Permit_Palace.Controllers
         }
 
         [HttpPost]
-        [RequestSizeLimit(valueCountLimit: 214748364)]
         public async Task<JsonResult> AssignDocument([FromBody]AssignDocumentData data)
         {
             if(data != null)
             {
                 //Assign the document to the specified users. With the specified field values.
 
-                SubmittedDocument doc = _SubmittedDocumentService.Get(data.submitted_document_id);
-                if(doc != null)
+                Marine_Permit_Palace.Models.Document RefDocument = _DocumentService.Get(data.document_id);
+                if (RefDocument == null)
+                {
+                    return Json(new { result = "Failure", reason = "No Document with that ID exists" });
+                }
+                SubmittedDocument SubmittedDoc = null;
+
+                SubmittedDoc = new SubmittedDocument()
+                {
+                    Document = RefDocument,
+                    DocumentId = data.document_id,
+                    Name = data.document_name
+                };
+                SubmittedDoc = _SubmittedDocumentService.Add(SubmittedDoc);
+
+                if(SubmittedDoc != null)
                 {
                     foreach(var user in data.assignees)
                     {
-                        ApplicationUser assignee = await _UserManager.FindByNameAsync(user.dod_id);
+                        ApplicationUser assignee = await _UserManager.FindByNameAsync(user.dod_id.ToString());
                         if (assignee == null) continue;
 
                         DocumentAssigneeIntermediate documentAssigneeIntermediate = new DocumentAssigneeIntermediate()
                         {
-                            IdActiveDocumentId = doc.IdSubmittedDocument,
+                            IdActiveDocumentId = SubmittedDoc.IdSubmittedDocument,
                             IdAssigneeId = assignee.Id,
                             IsAllowedApprove = user.is_allowed_approve,
                             IsAllowedAssignFields = user.is_allowed_assign,
@@ -155,98 +168,65 @@ namespace Marine_Permit_Palace.Controllers
                             });
                         }
                     }
-
-                    foreach(var field in data.document_meta)
+                    List<DocumentCheckBoxField> CBFields = data.document_meta
+                    .Where(e => e.field_type == "Checkbox")
+                    .Select(e => new DocumentCheckBoxField()
                     {
-                        //I Need to update each field
-                        try
+                        FormValue = (e.value == "On"),
+                        IdFormName = e.field_name,
+                        IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument,
+                        AssigneeId = e.assigned_to
+                    }).ToList();
+
+                    List<DocumentFormField> FMFields = data.document_meta
+                        .Where(e => e.field_type == "Text")
+                        .Select(e => new DocumentFormField()
                         {
-                            switch (field.field_type)
-                            {
-                                case "Checkbox":
-                                    {
-                                        if (!string.IsNullOrEmpty(field.assigned_to))
-                                        {
-                                            var cbox = _DocCheck.Get(doc.IdSubmittedDocument, field.field_name);
-                                            if (cbox == null) continue;
-                                            ApplicationUser user = await _UserManager.FindByNameAsync(field.assigned_to);
-                                            if (user != null)
-                                            {
-                                                cbox.AssigneeId = user.Id;
-                                                _DocCheck.Update(cbox, false);
-                                            }
-                                        }
-                                        break;
-                                    }
-                                //case "Combobox":
-                                //    {
+                            FormValue = e.value,
+                            IdFormName = e.field_name,
+                            IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument,
+                            AssigneeId = e.assigned_to
+                        }).ToList();
 
-                                //        break;
-                                //    }
-                                //case "List":
-                                //    {
-
-                                //        break;
-                                //    }
-                                case "Text":
-                                    {
-
-                                        if (!string.IsNullOrEmpty(field.assigned_to))
-                                        {
-                                            var cbox = _DocForm.Get(doc.IdSubmittedDocument, field.field_name);
-                                            if (cbox == null) continue;
-                                            ApplicationUser user = await _UserManager.FindByNameAsync(field.assigned_to);
-                                            if (user != null)
-                                            {
-                                                cbox.AssigneeId = user.Id;
-                                                _DocForm.Update(cbox, false);
-                                            }
-                                        }
-                                        break;
-                                    }
-                                //case "Pushbutton":
-                                //    {
-
-                                //        break;
-                                //    }
-                                //case "Radiobutton":
-                                //    {
-
-                                //        break;
-                                //    }
-                                case "Signature":
-                                    {
-
-                                        if (!string.IsNullOrEmpty(field.assigned_to))
-                                        {
-                                            var cbox = _DocSig.Get(doc.IdSubmittedDocument, field.field_name);
-                                            if (cbox == null) continue;
-                                            ApplicationUser user = await _UserManager.FindByNameAsync(field.assigned_to);
-                                            if (user != null)
-                                            {
-                                                cbox.AssigneeId = user.Id;
-                                                _DocSig.Update(cbox, false);
-                                            }
-                                        }
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        continue;
-                                    }
-                            }
-                        }
-                        catch(Exception ex)
+                    List<DocumentSignatureField> SigFields = data.document_meta
+                        .Where(e => e.field_type == "Signature")
+                        .Select(e => new DocumentSignatureField()
                         {
-                            return Json(new Result()
-                            {
-                                reason = "Database save failure. Please try again later.",
-                                result = "Failure",
-                                status_code = 500
-                            });
-                        }
+                            IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument,
+                            IdFormName = e.field_name,
+                            AssigneeId = e.assigned_to
+                        }).ToList();
+
+                    try { _DocSig.SaveWithDocumentSignatureData(SigFields); }
+                    catch (Exception ex)
+                    {
+                        return Json(new Result()
+                        {
+                            reason = ex.Message,
+                            result = "Failure",
+                            status_code = 500
+                        });
                     }
-
+                    try { _DocCheck.SaveAllCheckBoxFields(CBFields); }
+                    catch (Exception ex)
+                    {
+                        return Json(new Result()
+                        {
+                            reason = ex.Message,
+                            result = "Failure",
+                            status_code = 500
+                        });
+                    }
+                    try { _DocForm.SaveAllFormFields(FMFields); }
+                    catch (Exception ex)
+                    {
+                        return Json(new Result()
+                        {
+                            reason = ex.Message,
+                            result = "Failure",
+                            status_code = 500
+                        });
+                    }
 
                     try { _DatabaseService.SaveChanges(); }
                     catch (Exception ex)
@@ -261,7 +241,7 @@ namespace Marine_Permit_Palace.Controllers
 
                     return Json(new Result()
                     {
-                        reason = "Document Updated Successfully.",
+                        reason = "Document Created Successfully.",
                         result = "Success",
                         status_code = 200
                     });
@@ -287,16 +267,16 @@ namespace Marine_Permit_Palace.Controllers
     public class AssignDocumentData
     {
 
-
+        public string document_name { get; set; }
         public List<DocumentMeta> document_meta { get; set; }
         public List<DocumentAssinee> assignees { get; set; }
-        public Guid submitted_document_id { get; set; }
+        public Guid document_id { get; set; }
 
     }
 
     public class DocumentAssinee
     {
-        public string dod_id { get; set; }
+        public int dod_id { get; set; }
         public bool is_allowed_edit { get; set; }
         public bool is_allowed_approve { get; set; }
         public bool is_allowed_submit { get; set; }

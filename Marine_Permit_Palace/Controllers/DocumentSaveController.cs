@@ -44,7 +44,7 @@ namespace Marine_Permit_Palace.Controllers
             _DocumentCheckBoxService = idcbs;
         }
 
-        public IActionResult GetAllDocuments()
+        public IActionResult GetAllTemplateDocuments()
         {
             return Json(_DocumentSerivce.GetAll<Marine_Permit_Palace.Models.Document>()
                 .Select(e => new { e.IdDocument, e.Name }));

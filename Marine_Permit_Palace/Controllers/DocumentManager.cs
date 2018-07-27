@@ -143,11 +143,12 @@ namespace Marine_Permit_Palace.Controllers
 
                 if(SubmittedDoc != null)
                 {
+                    Dictionary<string, string> AssignedUsers = new Dictionary<string, string>();
                     foreach(var user in data.assignees)
                     {
                         ApplicationUser assignee = await _UserManager.FindByNameAsync(user.dod_id.ToString());
                         if (assignee == null) continue;
-
+                        AssignedUsers.Add(assignee.UserName, assignee.Id);
                         DocumentAssigneeIntermediate documentAssigneeIntermediate = new DocumentAssigneeIntermediate()
                         {
                             IdActiveDocumentId = SubmittedDoc.IdSubmittedDocument,
@@ -168,6 +169,9 @@ namespace Marine_Permit_Palace.Controllers
                             });
                         }
                     }
+
+
+
                     List<DocumentCheckBoxField> CBFields = data.document_meta
                     .Where(e => e.field_type == "Checkbox")
                     .Select(e => new DocumentCheckBoxField()
@@ -175,7 +179,7 @@ namespace Marine_Permit_Palace.Controllers
                         FormValue = (e.value == "On"),
                         IdFormName = e.field_name,
                         IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument,
-                        AssigneeId = e.assigned_to
+                        AssigneeId = string.IsNullOrEmpty(e.assigned_to) ? null : AssignedUsers[e.assigned_to]
                     }).ToList();
 
                     List<DocumentFormField> FMFields = data.document_meta
@@ -185,7 +189,7 @@ namespace Marine_Permit_Palace.Controllers
                             FormValue = e.value,
                             IdFormName = e.field_name,
                             IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument,
-                            AssigneeId = e.assigned_to
+                            AssigneeId = string.IsNullOrEmpty(e.assigned_to) ? null : AssignedUsers[e.assigned_to]
                         }).ToList();
 
                     List<DocumentSignatureField> SigFields = data.document_meta
@@ -194,10 +198,10 @@ namespace Marine_Permit_Palace.Controllers
                         {
                             IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument,
                             IdFormName = e.field_name,
-                            AssigneeId = e.assigned_to
+                            AssigneeId = string.IsNullOrEmpty(e.assigned_to) ? null : AssignedUsers[e.assigned_to]
                         }).ToList();
 
-                    try { _DocSig.SaveWithDocumentSignatureData(SigFields); }
+                    try { _DocSig.Add(SigFields, false); }
                     catch (Exception ex)
                     {
                         return Json(new Result()
@@ -207,7 +211,7 @@ namespace Marine_Permit_Palace.Controllers
                             status_code = 500
                         });
                     }
-                    try { _DocCheck.SaveAllCheckBoxFields(CBFields); }
+                    try { _DocCheck.Add(CBFields); }
                     catch (Exception ex)
                     {
                         return Json(new Result()
@@ -217,7 +221,7 @@ namespace Marine_Permit_Palace.Controllers
                             status_code = 500
                         });
                     }
-                    try { _DocForm.SaveAllFormFields(FMFields); }
+                    try { _DocForm.Add(FMFields); }
                     catch (Exception ex)
                     {
                         return Json(new Result()

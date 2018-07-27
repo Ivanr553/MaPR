@@ -61,7 +61,7 @@ namespace Marine_Permit_Palace.Models
         public DateTime DateSignedUtc { get; set; } //Signed stored here becasue they are linked
 
         public DataStorage SignatureData { get; set; }
-        public Guid SignatureDataId { get; set; }
+        public Guid? SignatureDataId { get; set; }
 
         /// <summary>
         /// The user assigned to this field

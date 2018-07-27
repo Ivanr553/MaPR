@@ -20,10 +20,12 @@ namespace Marine_Permit_Palace.Services
             //Add Functions
             T Add<T>(T add, ClaimsPrincipal user, bool save_context_after_execute = true) where T : UserEditableDataRowProperties;
             T Add<T>(T add, bool save_context_after_execute = true) where T : DataRowProperties;
+            void Add<T>(List<T> add, bool save_context_after_execute = true) where T : DataRowProperties;
             T AddBySystem<T>(T add, bool save_context_after_execute = true) where T : UserEditableDataRowProperties;
             //Update Functions
             T Update<T>(T update, ClaimsPrincipal user, bool save_context_after_execute = true) where T : UserEditableDataRowProperties;
             T Update<T>(T update, bool save_context_after_execute = true) where T : DataRowProperties;
+            void Update<T>(List<T> update, bool save_context_after_execute = true) where T : DataRowProperties;
             T UpdateBySystem<T>(T update, bool save_context_after_execute = true) where T : UserEditableDataRowProperties;
             //Delete Funcitons
             T FlagForDelete<T>(T delete, ClaimsPrincipal user, bool save_context_after_execute = true) where T : UserEditableDataRowProperties;
@@ -389,7 +391,41 @@ namespace Marine_Permit_Palace.Services
                 return _context.Set<T>().Where(e => e.IsActive);
             }
 
-
+        public void Add<T>(List<T> add, bool save_context_after_execute = true) where T : DataRowProperties
+        {
+            add.ForEach(e =>
+            {
+                e.DateCreatedUtc = DateTime.UtcNow;
+                e.DateLastModifiedUtc = DateTime.UtcNow;
+                e.IsActive = true;
+            });
+            _context.AddRange(add);
+            try
+            {
+                if (save_context_after_execute) _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
         }
+
+        public void Update<T>(List<T> update, bool save_context_after_execute = true) where T : DataRowProperties
+        {
+            update.ForEach(e =>
+            {
+                e.DateLastModifiedUtc = DateTime.UtcNow;
+            });
+            _context.UpdateRange(update);
+            try
+            {
+                if (save_context_after_execute) _context.SaveChanges();
+            }
+            catch
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
 
 }

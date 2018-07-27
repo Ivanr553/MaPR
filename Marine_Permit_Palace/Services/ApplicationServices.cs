@@ -77,14 +77,14 @@ namespace Marine_Permit_Palace.Services
                         else ToAdd.Add(e);
                     });
 
-                    _context.DocumentFormField.AddRange(ToAdd);
-                    _context.DocumentFormField.UpdateRange(ToUpdate);
+                    Add(ToAdd);
+                    Update(ToUpdate);
                     _context.SaveChanges();
                     return true;
                 }
                 else
                 {
-                    _context.DocumentFormField.AddRange(Fields);
+                    Add(Fields);
                     _context.SaveChanges();
                     return true;
                 }
@@ -123,14 +123,14 @@ namespace Marine_Permit_Palace.Services
                         else ToAdd.Add(e);
                     });
 
-                    _context.DocumentCheckBoxField.AddRange(ToAdd);
-                    _context.DocumentCheckBoxField.UpdateRange(ToUpdate);
+                     Add(ToAdd);
+                     Update(ToUpdate);
                     _context.SaveChanges();
                     return true;
                 }
                 else
                 {
-                    _context.DocumentCheckBoxField.AddRange(Fields);
+                    Add(Fields);
                     _context.SaveChanges();
                     return true;
                 }
@@ -154,18 +154,18 @@ namespace Marine_Permit_Palace.Services
 
         }
 
-        public List<SubmittedDocument> GetAllAssigedToUser(string UserId, bool RequiresAttentionOnly = false)
+        public List<SubmittedDocument> GetAllAssigedToUser(string UserId, bool RequiresAttentionOnly = true)
         {
             var AssignedDocuments = _context.DocumentAssigneeIntermediate
                 .Include(e => e.ActiveDocument)
                 .Where(e => e.IdAssigneeId == UserId)
-                .Select(e => e.ActiveDocument);
+                .Select(e => e.ActiveDocument).ToList();
             if(RequiresAttentionOnly)
             {
                 AssignedDocuments = AssignedDocuments
-                .Where(e => e.IsCompleted);
+                .Where(e => !e.IsCompleted).ToList();
             }
-            return AssignedDocuments.ToList();
+            return AssignedDocuments;
         }
         
 

@@ -4,12 +4,15 @@ import * as $ from 'jquery'
 
 const s =  require('./styling/style.sass')
 
-export default class Header extends React.Component<any, any> {
+interface Props {
+    page: string
+}
+
+export default class Header extends React.Component<Props, any> {
 
     constructor(props) {
         super(props)
         this.state = {
-            username: '',
             hamburgerMenu: '',
             hamburgerMenuShow: false,
             currentView: '',
@@ -25,28 +28,9 @@ export default class Header extends React.Component<any, any> {
         if(!response) {
             alert('There was an error with your request')
         } else {
-            this.setState({
-                username: ''
-            }, () => {
-                window.open('/A/App', '_self')
-            })
+            window.open('/A/App', '_self')
         }
 
-    }
-
-    getCurrentUser = async () => {
-        
-        if(!this.props.getCurrentUser) {
-            return
-        }
-
-        let user = await this.props.getCurrentUser()
-
-        if(user.username) {
-            this.setState({
-                username: user.username
-            })
-        }
     }
 
     //Hamburger Menu
@@ -83,10 +67,6 @@ export default class Header extends React.Component<any, any> {
 
         }
 
-    }
-
-    componentDidMount() {
-        this.getCurrentUser()
     }
 
     render() {

@@ -15,7 +15,6 @@ export default class MetaBar extends React.Component<any, any> {
     constructor(props) {
         super(props)
         this.state = {
-            user: {},
             currentView: '',
             documentResults: [],
             currentDocuments: [],
@@ -34,16 +33,6 @@ export default class MetaBar extends React.Component<any, any> {
 
 
     //========================== Sending/Retrieving Data ==========================
-
-    getCurrentUser = async () => {
-
-        let user = await this.props.getCurrentUser()
-
-        this.setState({
-            user: user
-        })
-
-    }
 
     getDocuments = async () => {
 
@@ -197,7 +186,7 @@ export default class MetaBar extends React.Component<any, any> {
 
     handleDocumentListPress = () => {
         this.setState({
-            currentView: <PendingDocuments selectDocument={this.handleDocumentLinkPress} documents={this.state.documentResults} document_id={this.state.document_id} />
+            currentView: <PendingDocuments selectDocument={this.handleDocumentLinkPress} documents={this.state.documentResults} />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
             this.handleMetabarSelectionStyling('document-list-metabar-button', 'document-list-metabar-triangle')
@@ -238,7 +227,6 @@ export default class MetaBar extends React.Component<any, any> {
 
     componentDidMount() {
         this.getDocuments()
-        this.getCurrentUser()
         this.getNotifications()
     }
 

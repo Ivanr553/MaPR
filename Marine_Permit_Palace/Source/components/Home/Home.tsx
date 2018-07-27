@@ -1,13 +1,13 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
-import { Link } from 'react-router-dom'
 import * as $ from 'jquery'
+
+import {authenticateUser} from '../../services/services'
 
 const s = require('./styling/style.sass')
 
 import Header from '../Header/Header'
 import MetaBar from '../MetaBar/MetaBar'
-import DocumentList from '../DocumentList/DocumentList'
 import Account from '../Account/Account'
 import HamburgerMenu from '../HamburgerMenu/HamburgerMenu';
 
@@ -17,7 +17,6 @@ export default class Home extends React.Component<Props, any> {
   constructor(props) {
     super(props)
     this.state = {
-      user: {},
       username: '',
       currentView: '',
       documentResults: [],
@@ -28,8 +27,6 @@ export default class Home extends React.Component<Props, any> {
       closeHamburgerMenu: false
     }
 
-    this.getUser = this.getUser.bind(this)
-    this.getCurrentUser = this.getCurrentUser.bind(this)
   }
 
   //Hamburger Menu
@@ -81,46 +78,9 @@ export default class Home extends React.Component<Props, any> {
     if(!response) {
         alert('There was an error with your request')
     } else {
-        this.setState({
-            username: ''
-        }, () => {
-            window.open('/A/App', '_self')
-        })
+        window.open('/A/App', '_self')
     }
 
-  }
-
-  async getUser() {
-
-    let response = await $.get('/Account/WhoAmI')
-    
-    if(!response) {
-      window.open('/A/App', '_self')
-    }
-
-    let user = {
-        first_name: 'John',
-        last_name: 'Smith',
-        middle_name: 'Doe',
-        username: response.username,
-        street_address: '1234 United Way',
-        state: 'CA',
-        country: 'US',
-        zip: 93021,
-        authorization: 1
-    }
-
-    this.setState({
-        user: user
-    })
-
-    return user
-
-  }
-
-  async getCurrentUser() {
-    let user = await this.getUser()
-    return user
   }
 
   getHamburgerMenuBrightness = async (hamburgerSource) => {
@@ -173,17 +133,17 @@ export default class Home extends React.Component<Props, any> {
     })
   }
 
-  async componentDidMount() {
-    this.getUser()
+  componentDidMount() {
+    authenticateUser()
   }
 
   render() {
     return(
       <div className="Home" onClick={(e) => {this.handleHomeClick(e)}}>
         
-        <Header getCurrentUser={this.getCurrentUser} page={'Home'}/>
+        <Header page={'Home'}/>
 
-        <MetaBar getCurrentView={this.getCurrentView} getCurrentUser={this.getCurrentUser}/>
+        <MetaBar getCurrentView={this.getCurrentView}/>
 
         <HamburgerMenu handleAccountPress={() => this.getCurrentView(<Account />)} logOff={this.logOff} getHamburgerState={this.getHamburgerState} closeHamburgerMenuBool={this.state.closeHamburgerMenu} hamburgerSource={this.state.hamburgerSource}/>
 

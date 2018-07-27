@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as $ from 'jquery'
 
 import DocumentView from '../../../DocumentView/DocumentView'
 import DocumentPreviewSidebar from './DocumentPreviewSidebar';
@@ -132,7 +131,7 @@ class DocumentPreview extends React.Component<Props, any> {
         
     }
 
-    // NOT WORKING //
+    // NOT WORKING -- Waiting on Mitchell //
 
     submitDocument = async () => {
 
@@ -174,14 +173,17 @@ class DocumentPreview extends React.Component<Props, any> {
 
             let body = JSON.stringify(assignedDocument)
 
-            console.log(body)
-
-            let result = await $.ajax({
-                method: 'POST',
-                url: '/DocumentManager/AssignDocument',
-                data: body,
-                dataType: 'application/json'
+            let response = await fetch('/DocumentManager/AssignDocument', {
+                method: "POST",
+                mode: "cors",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                },
+                body: JSON.stringify(assignedDocument)
             })
+
+            let result = await response.json()
 
             console.log(result)
 

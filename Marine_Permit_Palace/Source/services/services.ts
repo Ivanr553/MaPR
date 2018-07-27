@@ -51,5 +51,17 @@ let getSaveFilePromise = async (saveFile): Promise<CancellablePromise> => {
 
 }
 
+//User Management
+let authenticateUser = async () => {
 
-export {getDocumentPromise, getSaveFilePromise}
+    let request = await fetch('/Account/WhoAmI', {credentials: 'same-origin'})
+    let response = await request.json()
+
+    if(!response) {
+      window.open('/A/App', '_self')
+    }
+
+  }
+
+
+export {getDocumentPromise, getSaveFilePromise, authenticateUser}

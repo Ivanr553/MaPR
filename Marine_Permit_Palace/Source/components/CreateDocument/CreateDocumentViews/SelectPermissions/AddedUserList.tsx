@@ -32,7 +32,6 @@ class AddedUserList extends React.Component<AddedUserListProps, any> {
 
         userList.forEach(user => {
             if(!!user.assigned_to) {
-                console.log(user.assigned_to)
                 if(user.assigned_to.indexOf(currentSelectedFieldId) >= 0) {
                     result = true
                 }
@@ -47,8 +46,6 @@ class AddedUserList extends React.Component<AddedUserListProps, any> {
 
         let userList = this.props.userList
         let userElementList = []
-
-        console.log(userList)
 
         if(this.props.isInSidebar) {
             userList = userList.filter(user => {

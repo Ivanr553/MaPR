@@ -99,7 +99,7 @@ export default class Register extends React.Component<Props, any> {
         return(
             <div className='Register'>
 
-                <Header page={'Register'}/>
+                <Header />
 
                 <div className='register-content-container'>
                     <div className='register-container-section'>

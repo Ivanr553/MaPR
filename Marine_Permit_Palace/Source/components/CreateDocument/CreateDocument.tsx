@@ -268,9 +268,9 @@ export default class CreateDocument extends React.Component<Props, any> {
         }
     }
 
-    getDocumentName = (documentName) => {
+    getDocumentName = (document_name) => {
         this.setState({
-            documentName: documentName
+            document_name: document_name
         })
     }
 

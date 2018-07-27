@@ -38,7 +38,8 @@ export default class MetaBar extends React.Component<any, any> {
 
         try {
 
-            let documentList = await $.get('/DocumentSave/GetAllDocuments')
+            let request = await fetch('/DocumentSave/GetAllDocuments', {credentials: 'same-origin'})
+            let documentList = await request.json()
 
             this.setState({
                 documentResults: documentList
@@ -71,12 +72,14 @@ export default class MetaBar extends React.Component<any, any> {
     getNotifications = async () => {
 
         try{
-            let response = await $.get('/Notification')
-            console.log(response)
+            let request = await fetch('/Notification', {credentials: 'same-origin'})
+            let response = await request.json()
             let notificationCount = response.notification_count
+
             this.setState({
                 notificationCount: notificationCount
             })
+            
         } catch(e) {
             Error(e)
         }

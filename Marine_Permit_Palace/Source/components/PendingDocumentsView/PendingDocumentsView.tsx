@@ -19,6 +19,18 @@ export default class PendingDocumentsView extends React.Component<Props, any> {
         }
     }
 
+    getDocuments = async () => {
+
+        let request = await fetch('/DocumentSave/GetAllTemplateDocuments', {credentials: 'same-origin'})
+        let response = await request.json()
+        console.log(response)
+
+    }
+
+    componentDidMount() {
+        this.getDocuments()
+    }
+
     render() {
         return(
             <div className='DocumentList'>

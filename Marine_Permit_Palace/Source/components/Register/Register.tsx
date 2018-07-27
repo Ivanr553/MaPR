@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
-import * as $ from 'jquery'
 
 const s = require('./styling/style.sass')
 
@@ -68,15 +67,14 @@ export default class Register extends React.Component<Props, any> {
 
         try {
 
-            let registerResponse = await $.ajax({
+            let request = await fetch('/Account/RegisterAndLogin', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json; charset=UTF-8'
                 },
-                url: `/Account/RegisterAndLogin`,
-                dataType: 'json',
-                data: JSON.stringify(newUser)
+                body: JSON.stringify(newUser)
             })
+            let registerResponse = await request.json()
 
             if(registerResponse.result === 'Failure') {
                 alert('User already created')

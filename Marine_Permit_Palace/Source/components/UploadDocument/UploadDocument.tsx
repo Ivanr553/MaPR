@@ -1,6 +1,4 @@
 import * as React from 'react'
-import * as $ from 'jquery'
-import PDF from 'react-pdf-js'
 
 const s = require('./styling/style.sass')
 
@@ -26,12 +24,14 @@ export default class UploadDocument extends React.Component<any, any> {
             let file = e.dataTransfer.files[0]
             let url = '/DocumentUpload/Upload'
     
-            let response = await $.ajax({
+            let request = await fetch(url, {
                 method: 'POST',
-                url: url,
-                contentType: 'application-pdf',
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                },
                 body: file
             })
+            let response = await request.json()
     
             console.log(response)
 
@@ -50,12 +50,14 @@ export default class UploadDocument extends React.Component<any, any> {
             let file = this.files.current.files[0]
             let url = '/DocumentUpload/Upload'
     
-            let response = await $.ajax({
+            let request = await fetch(url, {
                 method: 'POST',
-                url: url,
-                contentType: 'application-pdf',
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                },
                 body: file
             })
+            let response = await request.json()
     
             console.log(response)
 

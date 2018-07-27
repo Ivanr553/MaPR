@@ -87,14 +87,14 @@ export default class DocumentView extends React.Component<Props, any> {
             documentPromise: await documentPromise
         })
 
-        let response = await documentPromise
-        let documentObject: documentResponse = await response.promise as documentResponse
+        let request = await documentPromise
+        let response = await request.promise 
+        let documentObject: documentResponse = await response.json() as documentResponse
+
 
         this.setState({
             documentObject: documentObject,
             document_id: this.props.document_id
-        }, () => {
-            this.saveFile()
         })
 
     }
@@ -174,11 +174,22 @@ export default class DocumentView extends React.Component<Props, any> {
 
     saveFile = async () => {
         
+        let payload_document_meta = []
+        this.state.documentObject.document_meta.forEach(document_meta_field => {
+            payload_document_meta.push(Object.assign({}, document_meta_field))
+        })
+        payload_document_meta.map(document_meta_field => {
+            if(!!document_meta_field.field_position) {
+                delete document_meta_field.field_position
+            }
+            return document_meta_field
+        })
+
         let newFile = {
-            document_meta: this.state.documentObject.document_meta,
-            name: (this.state.name !== '' ? this.state.name : 'New Document'),
+            document_meta: payload_document_meta,
+            name: !!this.state.name ? this.state.name : 'New Document',
             document_id: this.state.document_id,
-            submitted_file_id: this.state.submitted_file_id
+            submitted_file_id: null
         }
 
         let newFilePromise = getSaveFilePromise(newFile)
@@ -186,8 +197,11 @@ export default class DocumentView extends React.Component<Props, any> {
             newFilePromise: await newFilePromise
         })
 
-        let response = await newFilePromise
-        let saveResult: saveResultInterface = await response.promise
+        let request = await newFilePromise
+        let response = await request.promise
+        let saveResult: saveResultInterface = await response.json()
+
+        console.log(saveResult)
 
         if(!this.state.submitted_file_id || this.state.submitted_file_id === null) {
             this.setState({

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as $ from 'jquery'
+
 
 const s = require('./styling/style.sass')
 
@@ -38,7 +38,7 @@ export default class MetaBar extends React.Component<any, any> {
 
         try {
 
-            let request = await fetch('/DocumentSave/GetAllDocuments', {credentials: 'same-origin'})
+            let request = await fetch('/DocumentSave/GetAllDocuments', {credentials: "same-origin"})
             let documentList = await request.json()
 
             this.setState({
@@ -48,7 +48,7 @@ export default class MetaBar extends React.Component<any, any> {
             })
 
         } catch(e) {
-            Error(e)
+            throw new Error(e)
         }
 
     }
@@ -79,9 +79,9 @@ export default class MetaBar extends React.Component<any, any> {
             this.setState({
                 notificationCount: notificationCount
             })
-            
+
         } catch(e) {
-            Error(e)
+            throw new Error(e)
         }
 
     }

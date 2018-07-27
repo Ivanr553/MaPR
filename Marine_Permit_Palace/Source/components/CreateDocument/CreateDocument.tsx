@@ -354,6 +354,8 @@ export default class CreateDocument extends React.Component<Props, any> {
         }
         if(this.state.documentPreviewBoolean) {
 
+            console.log(this.state.document_meta)
+
             return (
                 <div id='CreateDocument'>
                     <div id='create-document-nav-bar'>

@@ -216,7 +216,7 @@ export default class CreateDocument extends React.Component<Props, any> {
 
         //Checking if a user has already been assigned to a field
         if(document_meta[this.state.currentSelectedFieldId].assigned_to !== null) {
-            console.log('user is already assigned to a field',document_meta[this.state.currentSelectedFieldId].assigned_to) 
+            console.log('user is already assigned to a field', document_meta[this.state.currentSelectedFieldId].assigned_to) 
             return false
         }
 

@@ -94,6 +94,8 @@ export default class SignatureView extends React.Component<any, any> {
             signature_base64: source
         }
 
+        console.log(body)
+
         let request = await fetch('/Account/AssignSignature', {
             method: 'POST',
             credentials: 'same-origin',
@@ -121,6 +123,24 @@ export default class SignatureView extends React.Component<any, any> {
             })
 
         })
+    }
+
+    getSignature = async () => {
+
+        let request = await fetch('/Account/GetSignature', {credentials: 'same-origin'})
+        let response = await request.json()
+        let data = response.signature_base64
+
+        let canvas: HTMLCanvasElement = document.getElementById('signature-canvas') as HTMLCanvasElement
+        let context = canvas.getContext('2d')
+
+        let testImage = new Image()
+        testImage.onload = function() {
+            context.drawImage(testImage, 0, 0)
+        }
+
+        testImage.src = `data:image/png;base64,${data}`
+
     }
 
     setCanvasDimensions = () => {
@@ -172,6 +192,7 @@ export default class SignatureView extends React.Component<any, any> {
 
     componentDidMount() {
         this.setCanvasDimensions()
+        this.getSignature()
         window.addEventListener('resize', this.setCanvasDimensions)
     }
 
@@ -190,7 +211,7 @@ export default class SignatureView extends React.Component<any, any> {
                 </div>
                     <div id='signature-edit-button' className={this.state.enablePenStyle} onClick={this.enablePen}>{this.state.enablePenText}</div>
                 <div id='signature-main-container'>
-                    <img className='canvas-icon' id='redo-icon' src="/images/cached.png" alt="" onClick={this.clearCanvas}/>
+                    <img className='canvas-clear-icon' id='redo-icon' src="/images/cached.png" alt="" onClick={this.clearCanvas}/>
                     <img className='canvas-icon' id={this.state.savingIconId} src={this.state.savingIconSource} alt="" onClick={this.completeSave}/>
                     <canvas id='signature-canvas' width={this.state.canvasWidth} height={this.state.canvasHeight} onMouseMoveCapture={(e) => this.canvasPen(e)} onMouseLeave={this.clearPrevMousePos}>
                     </canvas>

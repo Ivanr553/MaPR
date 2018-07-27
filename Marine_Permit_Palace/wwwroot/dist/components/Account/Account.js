@@ -1,12 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const s = require('./styling/style.sass');
@@ -107,14 +99,10 @@ class Account extends React.Component {
             'additional-tab': false
         };
     }
-    componentWillMount() {
+    componentDidMount() {
         this.generateInfo(this.state.user.personalInfo, 'personalInfoArray');
         this.generateInfo(this.state.user.accountInfo, 'accountInfoArray');
         this.generateInfo(this.state.user.additionalInfo, 'additionalInfoArray');
-    }
-    componentDidMount() {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
     }
     render() {
         return (React.createElement("div", { id: 'Account' },
@@ -129,12 +117,7 @@ class Account extends React.Component {
                     React.createElement("div", { id: 'account-tab-title', className: 'account-tab-title' },
                         "Account Information",
                         React.createElement("img", { id: 'account-tab-arrow', className: 'account-tab-title-arrow', src: "/images/down-arrow-1.png", alt: "" })),
-                    React.createElement("div", { id: 'account-tab-list', className: 'account-content-list' }, this.state.accountInfoArray)),
-                React.createElement("div", { id: 'additional-tab', className: 'account-tab', onClick: (e) => this.handleAccountTabPress(e, 'additional-tab', 'additional-tab-title', 'additional-tab-list', 'additional-tab-arrow') },
-                    React.createElement("div", { id: 'additional-tab-title', className: 'account-tab-title' },
-                        "Additional Information",
-                        React.createElement("img", { id: 'additional-tab-arrow', className: 'account-tab-title-arrow', src: "/images/down-arrow-1.png", alt: "" })),
-                    React.createElement("div", { id: 'additional-tab-list', className: 'account-content-list' }, this.state.additionalInfoArray)))));
+                    React.createElement("div", { id: 'account-tab-list', className: 'account-content-list' }, this.state.accountInfoArray)))));
     }
 }
 exports.default = Account;

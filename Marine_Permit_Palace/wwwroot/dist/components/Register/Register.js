@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const $ = require("jquery");
 const s = require('./styling/style.sass');
 const Header_1 = require("../Header/Header");
 const Footer_1 = require("../Footer/Footer");
@@ -55,15 +54,14 @@ class Register extends React.Component {
                 remember_me: true
             };
             try {
-                let registerResponse = yield $.ajax({
+                let request = yield fetch('/Account/RegisterAndLogin', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json; charset=UTF-8'
                     },
-                    url: `/Account/RegisterAndLogin`,
-                    dataType: 'json',
-                    data: JSON.stringify(newUser)
+                    body: JSON.stringify(newUser)
                 });
+                let registerResponse = yield request.json();
                 if (registerResponse.result === 'Failure') {
                     alert('User already created');
                     console.log(registerResponse);
@@ -87,7 +85,7 @@ class Register extends React.Component {
     }
     render() {
         return (React.createElement("div", { className: 'Register' },
-            React.createElement(Header_1.default, { page: 'Register' }),
+            React.createElement(Header_1.default, null),
             React.createElement("div", { className: 'register-content-container' },
                 React.createElement("div", { className: 'register-container-section' },
                     React.createElement("div", { className: 'register-title' }, "Register"),

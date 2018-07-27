@@ -68,15 +68,30 @@ class DocumentView extends React.Component {
             this.setState({
                 documentPromise: yield documentPromise
             });
-            let response = yield documentPromise;
-            let documentObject = yield response.promise;
+            let request = yield documentPromise;
+            let response = yield request.promise;
+            let documentObject = yield response.json();
+            this.setState({
+                documentObject: documentObject,
+                document_id: this.props.document_id
+            });
+        });
+        this.documentFields = () => {
+            let documentObject = this.state.documentObject;
+            if (!!!this.state.documentObject) {
+                return;
+            }
+            if (!!this.props.document_meta && !!documentObject) {
+                documentObject.document_meta = this.props.document_meta;
+            }
             let documentFields = [];
             for (let form in documentObject.document_meta) {
                 let document_meta_field = documentObject.document_meta[form];
-                let name = this.cleanUpFieldName(document_meta_field.field_name);
                 let dimensions = this.getDocumentSize(documentObject, document_meta_field.field_position.position.left, document_meta_field.field_position.position.top, document_meta_field.field_position.position.height, document_meta_field.field_position.position.width);
                 if (document_meta_field.field_type === 'Checkbox') {
-                    document_meta_field.value = false;
+                    if (document_meta_field.value === '') {
+                        document_meta_field.value = false;
+                    }
                     let newForm = React.createElement(CheckboxInput_1.default, { key: form, id: form, width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, checked: document_meta_field.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });
                     documentFields.push(newForm);
                 }
@@ -86,32 +101,37 @@ class DocumentView extends React.Component {
                     documentFields.push(newForm);
                 }
                 else if (document_meta_field.field_type === 'Signature') {
-                    let newForm = React.createElement(SignatureForm_1.default, { key: form, id: form, width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });
+                    let newForm = React.createElement(SignatureForm_1.default, { key: form, id: form, width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler, assigned_to: document_meta_field.assigned_to });
                     documentFields.push(newForm);
                 }
-                delete document_meta_field.field_position;
             }
-            this.setState({
-                documentFields: documentFields,
-                documentObject: documentObject,
-                document_id: this.props.document_id
-            }, () => {
-                this.saveFile();
-            });
-        });
+            return documentFields;
+        };
         this.saveFile = () => __awaiter(this, void 0, void 0, function* () {
-            let saveFile = {
-                document_meta: this.state.documentObject.document_meta,
-                name: (this.state.name !== '' ? this.state.name : 'New Document'),
-                document_id: this.state.document_id,
-                submitted_file_id: this.state.submitted_file_id
-            };
-            let saveFilePromise = services_1.getSaveFilePromise(saveFile);
-            this.setState({
-                saveFilePromise: yield saveFilePromise
+            let payload_document_meta = [];
+            this.state.documentObject.document_meta.forEach(document_meta_field => {
+                payload_document_meta.push(Object.assign({}, document_meta_field));
             });
-            let response = yield saveFilePromise;
-            let saveResult = yield response.promise;
+            payload_document_meta.map(document_meta_field => {
+                if (!!document_meta_field.field_position) {
+                    delete document_meta_field.field_position;
+                }
+                return document_meta_field;
+            });
+            let newFile = {
+                document_meta: payload_document_meta,
+                name: !!this.state.name ? this.state.name : 'New Document',
+                document_id: this.state.document_id,
+                submitted_file_id: null
+            };
+            let newFilePromise = services_1.getSaveFilePromise(newFile);
+            this.setState({
+                newFilePromise: yield newFilePromise
+            });
+            let request = yield newFilePromise;
+            let response = yield request.promise;
+            let saveResult = yield response.json();
+            console.log(saveResult);
             if (!this.state.submitted_file_id || this.state.submitted_file_id === null) {
                 this.setState({
                     submitted_file_id: saveResult.reason
@@ -119,7 +139,7 @@ class DocumentView extends React.Component {
             }
         });
         this.state = {
-            documentObject: {},
+            documentObject: undefined,
             submitted_file_id: '',
             noDocument: false
         };
@@ -128,13 +148,8 @@ class DocumentView extends React.Component {
         return __awaiter(this, void 0, void 0, function* () {
             let documentObject = Object.assign({}, this.state.documentObject);
             let document_meta_field = documentObject.document_meta[id];
-            if (e.target.className === 'document-checkbox') {
-                if (document_meta_field.value != true) {
-                    document_meta_field.value = true;
-                }
-                else {
-                    document_meta_field.value = false;
-                }
+            if (e.target.className === 'CheckboxInput') {
+                document_meta_field.value = !document_meta_field.value;
             }
             else {
                 document_meta_field.value = e.target.value;
@@ -147,15 +162,24 @@ class DocumentView extends React.Component {
         });
     }
     componentDidMount() {
-        services_1.getDocumentPromise(this.props.document_id);
-        this.populatePage();
+        if (!!!this.props.document_meta) {
+            services_1.getDocumentPromise(this.props.document_id);
+            this.populatePage();
+        }
+        else {
+            this.setState({
+                document_meta: this.props.document_meta
+            }, () => {
+                this.populatePage();
+            });
+        }
     }
     componentWillUnmount() {
-        if (this.state.documentPromise) {
+        if (!!this.state.documentPromise) {
             this.state.documentPromise.cancel();
         }
-        if (this.state.saveFilePromise) {
-            this.state.saveFilePromise.cancel();
+        if (!!this.state.newFilePromise) {
+            this.state.newFilePromise.cancel();
         }
     }
     render() {
@@ -167,7 +191,7 @@ class DocumentView extends React.Component {
         return (React.createElement("div", { className: 'DocumentView' },
             noDocumentWarning,
             React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: document_id }),
-            React.createElement("div", { id: 'document-form-div' }, this.state.documentFields)));
+            React.createElement("div", { id: 'document-form-div' }, this.documentFields())));
     }
 }
 exports.default = DocumentView;

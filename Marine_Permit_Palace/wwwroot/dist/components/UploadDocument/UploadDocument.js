@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const $ = require("jquery");
 const s = require('./styling/style.sass');
 class UploadDocument extends React.Component {
     //@ts-ignore
@@ -21,12 +20,14 @@ class UploadDocument extends React.Component {
             try {
                 let file = e.dataTransfer.files[0];
                 let url = '/DocumentUpload/Upload';
-                let response = yield $.ajax({
+                let request = yield fetch(url, {
                     method: 'POST',
-                    url: url,
-                    contentType: 'application-pdf',
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8'
+                    },
                     body: file
                 });
+                let response = yield request.json();
                 console.log(response);
             }
             catch (e) {
@@ -39,12 +40,14 @@ class UploadDocument extends React.Component {
                 // @ts-ignore
                 let file = this.files.current.files[0];
                 let url = '/DocumentUpload/Upload';
-                let response = yield $.ajax({
+                let request = yield fetch(url, {
                     method: 'POST',
-                    url: url,
-                    contentType: 'application-pdf',
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8'
+                    },
                     body: file
                 });
+                let response = yield request.json();
                 console.log(response);
             }
             catch (e) {

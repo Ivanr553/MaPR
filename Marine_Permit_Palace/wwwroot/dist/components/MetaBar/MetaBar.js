@@ -9,9 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const $ = require("jquery");
 const s = require('./styling/style.sass');
-const DocumentList_1 = require("../DocumentList/DocumentList");
+const PendingDocumentsView_1 = require("../PendingDocumentsView/PendingDocumentsView");
 const DocumentView_1 = require("../DocumentView/DocumentView");
 const About_1 = require("../About/About");
 const CreateDocument_1 = require("../CreateDocument/CreateDocument");
@@ -21,15 +20,10 @@ class MetaBar extends React.Component {
     constructor(props) {
         super(props);
         //========================== Sending/Retrieving Data ==========================
-        this.getCurrentUser = () => __awaiter(this, void 0, void 0, function* () {
-            let user = yield this.props.getCurrentUser();
-            this.setState({
-                user: user
-            });
-        });
         this.getDocuments = () => __awaiter(this, void 0, void 0, function* () {
             try {
-                let documentList = yield $.get('/DocumentSave/GetAllDocuments');
+                let request = yield fetch('/DocumentSave/GetAllDocuments', { credentials: "same-origin" });
+                let documentList = yield request.json();
                 this.setState({
                     documentResults: documentList
                 }, () => {
@@ -37,7 +31,7 @@ class MetaBar extends React.Component {
                 });
             }
             catch (e) {
-                Error(e);
+                throw new Error(e);
             }
         });
         this.getCurrentView = (currentView) => {
@@ -47,17 +41,23 @@ class MetaBar extends React.Component {
                 this.props.getCurrentView(this.state.currentView);
             });
         };
+        this.getCreateDocumentState = (createDocumentState) => {
+            this.setState({
+                createDocumentState: createDocumentState
+            });
+        };
         //==================== Handle Notifications ======================
         this.getNotifications = () => __awaiter(this, void 0, void 0, function* () {
             try {
-                let response = yield $.get('/Notification');
+                let request = yield fetch('/Notification', { credentials: 'same-origin' });
+                let response = yield request.json();
                 let notificationCount = response.notification_count;
                 this.setState({
                     notificationCount: notificationCount
                 });
             }
             catch (e) {
-                Error(e);
+                throw new Error(e);
             }
         });
         this.renderNotification = () => {
@@ -92,7 +92,7 @@ class MetaBar extends React.Component {
         });
         this.handleDocumentLinkPress = (e) => __awaiter(this, void 0, void 0, function* () {
             let target = e.target;
-            while (!target.classList.contains('viewable-document')) {
+            while (!target.classList.contains('document-item')) {
                 target = target.parentNode;
             }
             let document_id = target.id;
@@ -121,7 +121,7 @@ class MetaBar extends React.Component {
         };
         this.handleNewDocumentPress = () => {
             this.setState({
-                currentView: React.createElement(CreateDocument_1.default, { getCurrentView: this.getCurrentView, documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
+                currentView: React.createElement(CreateDocument_1.default, { createDocumentState: this.state.createDocumentState, getCreateDocumentState: this.getCreateDocumentState, getCurrentView: this.getCurrentView, documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
             }, () => {
                 this.props.getCurrentView(this.state.currentView);
                 this.handleMetabarSelectionStyling('create-document-metabar-button', 'create-document-metabar-triangle');
@@ -129,7 +129,7 @@ class MetaBar extends React.Component {
         };
         this.handleDocumentListPress = () => {
             this.setState({
-                currentView: React.createElement(DocumentList_1.default, { documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
+                currentView: React.createElement(PendingDocumentsView_1.default, { selectDocument: this.handleDocumentLinkPress, documents: this.state.documentResults })
             }, () => {
                 this.props.getCurrentView(this.state.currentView);
                 this.handleMetabarSelectionStyling('document-list-metabar-button', 'document-list-metabar-triangle');
@@ -159,16 +159,23 @@ class MetaBar extends React.Component {
             });
         };
         this.state = {
-            user: {},
             currentView: '',
             documentResults: [],
-            currentDocuments: []
+            currentDocuments: [],
+            createDocumentState: {
+                document_id: '',
+                document_meta: Array,
+                documentName: '',
+                userList: [],
+                selectDocumentBoolean: true,
+                documentPreviewBoolean: false,
+                selectPermissionsBoolean: false
+            }
         };
     }
     //==================== React Lifecycle Methods ====================
     componentDidMount() {
         this.getDocuments();
-        this.getCurrentUser();
         this.getNotifications();
     }
     componentDidCatch() {

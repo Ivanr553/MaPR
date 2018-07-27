@@ -125,8 +125,6 @@ class SignatureView extends React.Component {
             canvasEdited: true
         };
     }
-    componentWillMount() {
-    }
     componentDidMount() {
         this.setCanvasDimensions();
         window.addEventListener('resize', this.setCanvasDimensions);

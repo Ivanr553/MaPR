@@ -5,35 +5,29 @@ const s = require('./styling/style.sass');
 class TextInput extends React.Component {
     constructor(props) {
         super(props);
+        //NEEDS TO BE FIXED
         //Getting style from props
-        this.setStyle = () => {
-            let style = this.state.style;
-            style.position = this.props.position;
-            style.border = this.props.border;
-            style.width = this.props.width + 'px';
-            style.height = this.props.height + 'px';
-            style.top = this.props.top + 'px';
-            style.left = this.props.left + 'px';
-            this.setState({
-                style: style
-            });
+        this.getStyle = () => {
+            let style = {
+                position: this.props.position,
+                border: this.props.border,
+                width: `${this.props.width}px`,
+                height: `${this.props.height}px`,
+                top: `${this.props.top}px`,
+                left: `${this.props.left}px`,
+            };
+            return style;
         };
         this.state = {
             style: {}
         };
     }
-    //React lifecycle methods
-    componentWillMount() {
-        this.setStyle();
-    }
-    componentDidMount() {
-    }
     render() {
         if (this.props.view === 'DocumentPreview') {
-            return (React.createElement("textarea", { readOnly: true, id: this.props.id, className: 'TextInput preview-TextInput', style: this.state.style, defaultValue: this.props.value, onClick: this.props.previewOnClickHandler }));
+            return (React.createElement("textarea", { readOnly: true, id: this.props.id, className: 'TextInput preview-TextInput', style: this.getStyle(), defaultValue: this.props.value, onClick: this.props.previewOnClickHandler }));
         }
         if (this.props.view === 'PendingDocuments' || this.props.view === 'AccountPage') {
-            return (React.createElement("textarea", { id: this.props.id, className: 'TextInput', style: this.state.style, defaultValue: this.props.value, onChange: this.props.onChange }));
+            return (React.createElement("textarea", { id: this.props.id, className: 'TextInput', style: this.getStyle(), defaultValue: this.props.value, onChange: this.props.onChange }));
         }
     }
 }

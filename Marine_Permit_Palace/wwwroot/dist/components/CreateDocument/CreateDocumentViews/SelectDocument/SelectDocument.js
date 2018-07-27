@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
+const DocumentItem_1 = require("../../../DocumentList/DocumentItem/DocumentItem");
+const DocumentList_1 = require("../../../DocumentList/DocumentList");
 class SelectDocument extends React.Component {
     constructor(props) {
         super(props);
@@ -19,32 +21,16 @@ class SelectDocument extends React.Component {
             }
         };
         this.getDocumentList = (documents) => {
-            let documentList = [];
-            for (let i = 0; i < documents.length; i++) {
-                let document_id = '/dist/documents/' + documents[i].document_id;
-                let newDocument = React.createElement("div", { key: i, className: 'viewable-document', id: documents[i].idDocument, onClick: (e) => { this.selectDocument(e); } },
-                    React.createElement("div", { className: 'viewable-document-field', id: 'first-field' }, (i + 1) + '.'),
-                    React.createElement("div", { className: 'viewable-document-field' }, documents[i].name));
-                documentList.push(newDocument);
-            }
-            this.setState({
-                documentList: documentList
-            });
+            return (documents.map((document) => {
+                return (React.createElement(DocumentItem_1.default, { key: Math.random(), document: document, selectDocument: this.selectDocument, selectedDocument: this.props.document_id }));
+            }));
         };
         this.selectDocument = (e) => {
             let target = e.target;
-            while (!target.classList.contains('viewable-document')) {
+            while (!target.classList.contains('document-item')) {
                 target = target.parentNode;
             }
             let parent = target.parentNode;
-            for (let i = 0; i < parent.children.length; i++) {
-                if (parent.children[i].className === 'viewable-document') {
-                    parent.children[i].style.border = 'solid 2px rgba(0, 0, 0, 0)';
-                }
-            }
-            if (target.classList.contains('viewable-document')) {
-                target.style.border = 'solid 2px rgba(38, 107, 168, 0.7)';
-            }
             this.setState({
                 document_id: target.id
             }, () => {
@@ -62,16 +48,13 @@ class SelectDocument extends React.Component {
         this.state = {};
     }
     //React Lifecycle
-    componentWillMount() {
-        this.getDocumentList(this.props.documents);
-    }
     componentDidMount() {
         this.handleShow();
     }
     render() {
         return (React.createElement("div", { id: 'SelectDocument', style: this.handleShow() },
             React.createElement("div", { className: 'documents-header' }, "Select Template Document"),
-            React.createElement("div", { className: 'document-list-container' }, this.state.documentList)));
+            React.createElement(DocumentList_1.default, { documents: this.props.documents, selectDocument: this.selectDocument, document_id: this.props.document_id })));
     }
 }
 exports.default = SelectDocument;

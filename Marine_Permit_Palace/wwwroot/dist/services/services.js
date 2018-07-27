@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const $ = require("jquery");
 //Make Cancellable Promises
 let makeCancelable = (promise) => __awaiter(this, void 0, void 0, function* () {
     let hasCanceled_ = false;
@@ -24,23 +23,42 @@ let makeCancelable = (promise) => __awaiter(this, void 0, void 0, function* () {
     };
 });
 let getDocumentPromise = (document_id) => __awaiter(this, void 0, void 0, function* () {
-    let promise = $.get(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`);
+    let promise = fetch(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`, { credentials: 'same-origin' });
     let getDocumentResponse = yield makeCancelable(promise);
     return getDocumentResponse;
 });
 exports.getDocumentPromise = getDocumentPromise;
 let getSaveFilePromise = (saveFile) => __awaiter(this, void 0, void 0, function* () {
-    let savePromise = $.ajax({
+    let savePromise = fetch(`/DocumentSave/SaveFile`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json; charset=UTF-8'
         },
-        url: `/DocumentSave/SaveFile`,
-        dataType: 'json',
-        data: JSON.stringify(saveFile)
+        credentials: 'same-origin',
+        body: JSON.stringify(saveFile)
     });
     let documentSavePromise = yield makeCancelable(savePromise);
     return documentSavePromise;
 });
 exports.getSaveFilePromise = getSaveFilePromise;
+//User Management
+let authenticateUser = () => __awaiter(this, void 0, void 0, function* () {
+    let request = yield fetch('/Account/WhoAmI', { credentials: 'same-origin' });
+    let response = yield request.json();
+    if (!response) {
+        window.open('/A/App', '_self');
+    }
+});
+exports.authenticateUser = authenticateUser;
+let logOff = () => __awaiter(this, void 0, void 0, function* () {
+    let request = yield fetch('/Account/Logout', { credentials: 'same-origin' });
+    let response = yield request.json();
+    if (!response) {
+        alert('There was an error with your request');
+    }
+    else {
+        window.open('/A/App', '_self');
+    }
+});
+exports.logOff = logOff;
 //# sourceMappingURL=services.js.map

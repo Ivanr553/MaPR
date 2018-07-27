@@ -158,6 +158,7 @@ namespace Marine_Permit_Palace.Services
         {
             var AssignedDocuments = _context.DocumentAssigneeIntermediate
                 .Include(e => e.ActiveDocument)
+                .ThenInclude(e => e.Document)
                 .Where(e => e.IdAssigneeId == UserId)
                 .Select(e => e.ActiveDocument).ToList();
             if(RequiresAttentionOnly)

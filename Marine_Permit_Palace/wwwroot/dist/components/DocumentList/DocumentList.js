@@ -1,36 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
+const DocumentItem_1 = require("./DocumentItem/DocumentItem");
 const s = require('./styling/style.sass');
 class DocumentList extends React.Component {
     constructor(props) {
         super(props);
+        //Creates list in state of objects to be rendered
+        this.getDocumentList = (documents) => {
+            return (documents.map((document) => {
+                return (React.createElement(DocumentItem_1.default, { key: Math.random(), document: document, selectDocument: this.props.selectDocument, selectedDocument: this.props.document_id }));
+            }));
+        };
         this.state = {
             documentList: []
         };
     }
-    //Creates list in state of objects to be rendered
-    renderDocuments() {
-        let documents = this.props.documentResults;
-        let documentList = [];
-        for (let i = 0; i < documents.length; i++) {
-            let file = '/dist/documents/' + documents[i].file;
-            let newDocument = React.createElement("div", { key: i, className: 'viewable-document', id: documents[i].idDocument, onClick: (e) => { this.props.viewDocument(e); } },
-                React.createElement("div", { className: 'viewable-document-field', id: 'first-field' }, (i + 1) + '.'),
-                React.createElement("div", { className: 'viewable-document-field' }, documents[i].name));
-            documentList.push(newDocument);
-        }
-        this.setState({
-            documentList: documentList
-        });
-    }
-    componentWillMount() {
-        this.renderDocuments();
-    }
     render() {
-        return (React.createElement("div", { className: 'DocumentList' },
-            React.createElement("div", { className: 'documents-header' }, "Pending Documents"),
-            React.createElement("div", { className: 'document-list-container' }, this.state.documentList)));
+        return (React.createElement("div", { className: 'document-list-container' }, this.getDocumentList(this.props.documents)));
     }
 }
 exports.default = DocumentList;

@@ -1,19 +1,34 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
+const AddedUser_1 = require("../SelectPermissions/AddedUser");
 const AddedUserList_1 = require("../SelectPermissions/AddedUserList");
 class DocumentPreviewSidebar extends React.Component {
     constructor(props) {
         super(props);
+        this.cleanUpFieldName = (field_name) => {
+            while (field_name.indexOf('_') > -1) {
+                field_name = field_name.replace('_', ' ');
+            }
+            return field_name.charAt(0).toUpperCase() + field_name.slice(1);
+        };
         this.showSelectedField = () => {
             if (this.props.currentSelectedField === undefined) {
                 return;
             }
             else {
+                let field_name = this.cleanUpFieldName(this.props.currentSelectedField.field_name);
                 return (React.createElement("div", null,
-                    React.createElement("div", { className: 'selected-field-content' },
-                        React.createElement("div", { className: 'selected-field-name' }, this.props.currentSelectedField.field_name),
-                        React.createElement("div", { className: 'selected-field-assigned-user' }, this.props.currentSelectedField.assigned_to !== null ? this.props.currentSelectedField.assigned_to.name : null))));
+                    React.createElement("div", { className: 'preview-documents-header' }, field_name),
+                    React.createElement("div", { className: 'selected-field-display-container' }, this.showSelectedFieldContent())));
+            }
+        };
+        this.showSelectedFieldContent = () => {
+            if (this.props.currentSelectedField.assigned_to !== null) {
+                return React.createElement(AddedUser_1.default, { removeAssignedUser: this.props.removeAssignedUser, key: Math.random(), fieldAssigned: true, currentSelectedFieldId: this.props.currentSelectedFieldId, user: this.props.currentSelectedField.assigned_to, handleAddedUserPress: e => this.props.handleAddedUserPress(e), deleteUser: this.props.deleteUser, isInSidebar: true });
+            }
+            else {
+                return null;
             }
         };
         //Sidebar Functions
@@ -41,11 +56,9 @@ class DocumentPreviewSidebar extends React.Component {
     render() {
         return (React.createElement("div", { id: 'document-view-sidebar', className: '' },
             React.createElement("div", { id: 'close-sidebar-icon', onClick: this.hideSidebar }, "x"),
-            React.createElement("div", { className: 'preview-documents-header' }, "Selected Field"),
-            React.createElement("div", { className: 'selected-field-display-container' }, this.showSelectedField()),
+            this.showSelectedField(),
             React.createElement("div", { className: 'preview-documents-header' }, "User List"),
-            React.createElement("div", { id: 'added-users-container-preview' },
-                React.createElement(AddedUserList_1.default, { currentSelectedFieldId: this.props.currentSelectedFieldId, userList: this.props.userList, assignUserToField: this.props.assignUserToField, deleteUser: this.props.deleteUser, isInSidebar: true }))));
+            React.createElement(AddedUserList_1.default, { removeAssignedUser: this.props.removeAssignedUser, className: 'added-users-container-preview', currentSelectedFieldId: this.props.currentSelectedFieldId, userList: this.props.userList, handleAddedUserPress: this.props.handleAddedUserPress, deleteUser: this.props.deleteUser, isInSidebar: true })));
     }
 }
 exports.default = DocumentPreviewSidebar;

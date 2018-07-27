@@ -238,7 +238,7 @@ namespace Marine_Permit_Palace.Controllers
                 .Select(e => new
                 {
                     document_name = e.Name,
-                    template_name = e.Document.Name,
+                    template_name = (e.Document != null) ? e.Document.Name : "",
                     submitted_document_id = e.IdSubmittedDocument,
                     last_modified_utc = e.DateLastModifiedUtc,
                     created_utc = e.DateCreatedUtc,

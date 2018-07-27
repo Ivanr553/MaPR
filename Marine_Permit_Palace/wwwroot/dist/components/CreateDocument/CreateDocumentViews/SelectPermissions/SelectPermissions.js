@@ -10,7 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const AddedUserList_1 = require("./AddedUserList");
-const $ = require("jquery");
+const AddedUserPermissions_1 = require("./AddedUserPermissions");
+const s = require('./styling/style.sass');
 class SelectPermissions extends React.Component {
     constructor(props) {
         super(props);
@@ -28,6 +29,29 @@ class SelectPermissions extends React.Component {
                 return style;
             }
         };
+        this.handleAddedUserPress = (e) => {
+            let target = e.target;
+            if (target.classList.contains('added-user-delete-icon')) {
+                return;
+            }
+            while (target.id === '') {
+                target = target.parentNode;
+            }
+            let id = parseInt(target.id);
+            let user = this.props.userList.filter(user => {
+                return user.dod_id === id;
+            })[0];
+            this.setState({
+                selectedUser: user
+            });
+        };
+        this.handleSwitchToggle = (field) => {
+            const selectedUser = this.state.selectedUser;
+            selectedUser[field] = !selectedUser[field];
+            this.setState({
+                selectedUser: selectedUser
+            });
+        };
         //Finding and displaying added users
         this.handleFindUser = (e) => __awaiter(this, void 0, void 0, function* () {
             let query = e.target.value;
@@ -36,9 +60,8 @@ class SelectPermissions extends React.Component {
                 return;
             }
             try {
-                let result = yield $.get(`/Account/FindUsers?search=${query}`);
-                //No users yet, will just use fake ones for now  
-                let userArray = ['user1', 'user2', 'user3'];
+                let request = yield fetch(`/Account/FindUsers?search=${query}`, { credentials: 'same-origin' });
+                let userArray = yield request.json();
                 this.displayUsersFromSearch(userArray);
             }
             catch (e) {
@@ -55,7 +78,11 @@ class SelectPermissions extends React.Component {
         this.displayUsersFromSearch = (userArray) => {
             let userSearchResultsArray = [];
             for (let i = 0; i < userArray.length; i++) {
-                let userSearchResult = (React.createElement("li", { key: i, className: 'user-search-result', onClick: this.props.addUser }, userArray[i]));
+                let user = userArray[i];
+                let userSearchResult = (React.createElement("li", { key: user.dod_id, className: 'user-search-result', onClick: () => this.props.addUser(user) },
+                    user.dod_id,
+                    ", ",
+                    user.first_name));
                 userSearchResultsArray.push(userSearchResult);
             }
             let userSearchResults = (React.createElement("ul", { id: 'user-search-results-list' }, userSearchResultsArray));
@@ -68,8 +95,8 @@ class SelectPermissions extends React.Component {
             this.props.getSelectPermissionsComplete(selectPermissionsComplete);
         };
         this.state = {
-            userObjects: [],
-            userList: []
+            userSearchResults: '',
+            selectedUser: undefined
         };
     }
     componentDidMount() {
@@ -82,10 +109,12 @@ class SelectPermissions extends React.Component {
                 React.createElement("div", { id: 'user-search-main-container' },
                     React.createElement("div", { id: 'user-search-bar-container' },
                         React.createElement("div", { id: 'search-bar-magnifying-glass' }),
-                        React.createElement("input", { onBlur: this.clearUsersFromSearch, onFocus: (e) => { this.handleFindUser(e); }, onChange: (e) => { this.handleFindUser(e); }, id: 'user-search-bar', placeholder: 'Find Users', type: "text" }),
+                        React.createElement("input", { autoComplete: 'off', onBlur: this.clearUsersFromSearch, onFocus: (e) => { this.handleFindUser(e); }, onChange: (e) => { this.handleFindUser(e); }, id: 'user-search-bar', placeholder: 'Find Users', type: "text" }),
                         this.state.userSearchResults),
-                    React.createElement("div", { id: 'added-users-title' }, "Selected Users"),
-                    React.createElement(AddedUserList_1.default, { currentSelectedFieldId: this.props.currentSelectedFieldId, userList: this.props.userList, assignUserToField: this.props.assignUserToField, deleteUser: this.props.deleteUser, isInSidebar: false })))));
+                    React.createElement("div", { className: 'added-users-components-grid' },
+                        React.createElement("div", { id: 'added-users-title' }, "Selected Users"),
+                        React.createElement(AddedUserList_1.default, { selectedUser: this.state.selectedUser, handleAddedUserPress: this.handleAddedUserPress, removeAssignedUser: this.props.removeAssignedUser, className: 'added-users-container', currentSelectedFieldId: this.props.currentSelectedFieldId, userList: this.props.userList, deleteUser: this.props.deleteUser, isInSidebar: false }),
+                        React.createElement(AddedUserPermissions_1.default, { assigned_user: this.props.assigned_user, selectedUser: this.state.selectedUser, handleSwitchToggle: this.handleSwitchToggle, handleAssignedUserToggle: this.props.handleToggleAssignedUser }))))));
     }
 }
 exports.default = SelectPermissions;

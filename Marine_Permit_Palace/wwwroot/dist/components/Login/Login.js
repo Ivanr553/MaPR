@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const $ = require("jquery");
 const s = require('./styling/style.sass');
 const Header_1 = require("../Header/Header");
 const Footer_1 = require("../Footer/Footer");
@@ -38,15 +37,15 @@ class Login extends React.Component {
         this.handleLogin = () => __awaiter(this, void 0, void 0, function* () {
             try {
                 let user = this.state.user;
-                let loginAttempt = yield $.ajax({
+                let request = yield fetch('/Account/Login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json; charset=UTF-8'
                     },
-                    url: `/Account/Login`,
-                    dataType: 'json',
-                    data: JSON.stringify(user)
+                    credentials: 'same-origin',
+                    body: JSON.stringify(user)
                 });
+                let loginAttempt = yield request.json();
                 if (loginAttempt.result === 'NotRegistered') {
                     let sendToRegister = confirm('User not registered');
                     if (sendToRegister) {
@@ -75,11 +74,9 @@ class Login extends React.Component {
             }
         };
     }
-    componentDidMount() {
-    }
     render() {
         return (React.createElement("div", { className: 'Login' },
-            React.createElement(Header_1.default, { page: 'Login' }),
+            React.createElement(Header_1.default, null),
             React.createElement("div", { className: 'login-content-container' },
                 React.createElement("div", { className: 'login-container-section' },
                     React.createElement("div", { className: 'login-title' }, "Log In"),

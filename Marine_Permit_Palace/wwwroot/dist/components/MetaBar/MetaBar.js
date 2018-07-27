@@ -22,17 +22,35 @@ class MetaBar extends React.Component {
         //========================== Sending/Retrieving Data ==========================
         this.getDocuments = () => __awaiter(this, void 0, void 0, function* () {
             try {
-                let request = yield fetch('/DocumentSave/GetAllDocuments', { credentials: "same-origin" });
+                let request = yield fetch('/DocumentSave/GetAllTemplateDocuments', { credentials: "same-origin" });
                 let documentList = yield request.json();
                 this.setState({
                     documentResults: documentList
-                }, () => {
-                    this.populateDocumentLinks();
                 });
             }
             catch (e) {
                 throw new Error(e);
             }
+        });
+        this.getPendingDocuments = () => __awaiter(this, void 0, void 0, function* () {
+            let pendingDocuments = yield fetch('/DocumentSave/GetSavedDocuments', { credentials: 'same-origin' })
+                .then(data => {
+                return data.json()
+                    .then(data => {
+                    let responseArray = data.my_documents;
+                    return responseArray.map(item => {
+                        return {
+                            name: item.document_name,
+                            idDocument: item.submitted_document_id
+                        };
+                    });
+                });
+            });
+            this.setState({
+                pendingDocuments: pendingDocuments
+            }, () => {
+                this.handleDocumentListPress();
+            });
         });
         this.getCurrentView = (currentView) => {
             this.setState({
@@ -66,19 +84,22 @@ class MetaBar extends React.Component {
             }
         };
         //================= Populating Content on Page ==================
-        this.populateDocumentLinks = () => {
-            let documents = this.state.documentResults.slice();
-            let documentLinks = [];
-            for (let i = 0; i < documents.length; i++) {
-                let documentLink = React.createElement("div", { className: 'document-link', id: documents[i].idDocument, key: i, "data-params": { id: documents[i].id, document: documents[i] }, onClick: (e) => { this.handleLinkPress(e); } }, documents[i].name);
-                documentLinks.push(documentLink);
-            }
-            this.setState({
-                documentLinks: documentLinks
-            }, () => {
-                this.handleDocumentListPress();
-            });
-        };
+        // populateDocumentLinks = () => {
+        //     let documents = this.state.documentResults.slice()
+        //     let documentLinks = []
+        //     for(let i = 0; i < documents.length; i++) {
+        //         let documentLink = 
+        //             <div className='document-link' id={documents[i].idDocument} key={i} data-params={{ id: documents[i].id, document: documents[i]}} onClick={(e) => {this.handleLinkPress(e)}}>
+        //                 {documents[i].name}
+        //             </div>
+        //         documentLinks.push(documentLink)
+        //     }
+        //     this.setState({
+        //         documentLinks: documentLinks
+        //     }, () => {
+        //         this.handleDocumentListPress()
+        //     })
+        // }
         //================== OnClick/Button Handlers =================
         this.handleLinkPress = (e) => __awaiter(this, void 0, void 0, function* () {
             let document_id = e.target.id;
@@ -96,13 +117,15 @@ class MetaBar extends React.Component {
                 target = target.parentNode;
             }
             let document_id = target.id;
-            let setFile = yield this.setState({
+            this.setState({
                 document_id: document_id
+            }, () => {
+                this.setState({
+                    currentView: React.createElement(DocumentView_1.default, { document_id: this.state.document_id, view: 'PendingDocuments' })
+                }, () => {
+                    this.props.getCurrentView(this.state.currentView);
+                });
             });
-            let setCurrentView = yield this.setState({
-                currentView: React.createElement(DocumentView_1.default, { document_id: this.state.document_id, view: 'PendingDocuments' })
-            });
-            let getCurrentView = yield this.props.getCurrentView(this.state.currentView);
         });
         this.handleMetabarSelectionStyling = (selectedMetabarView, selectedMetabarViewButton) => {
             //Removing classes from buttons
@@ -129,7 +152,7 @@ class MetaBar extends React.Component {
         };
         this.handleDocumentListPress = () => {
             this.setState({
-                currentView: React.createElement(PendingDocumentsView_1.default, { selectDocument: this.handleDocumentLinkPress, documents: this.state.documentResults })
+                currentView: React.createElement(PendingDocumentsView_1.default, { selectDocument: this.handleDocumentLinkPress, pendingDocuments: this.state.pendingDocuments })
             }, () => {
                 this.props.getCurrentView(this.state.currentView);
                 this.handleMetabarSelectionStyling('document-list-metabar-button', 'document-list-metabar-triangle');
@@ -161,6 +184,7 @@ class MetaBar extends React.Component {
         this.state = {
             currentView: '',
             documentResults: [],
+            pendingDocuments: [],
             currentDocuments: [],
             createDocumentState: {
                 document_id: '',
@@ -176,6 +200,7 @@ class MetaBar extends React.Component {
     //==================== React Lifecycle Methods ====================
     componentDidMount() {
         this.getDocuments();
+        this.getPendingDocuments();
         this.getNotifications();
     }
     componentDidCatch() {

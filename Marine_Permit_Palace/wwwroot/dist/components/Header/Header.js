@@ -45,7 +45,7 @@ class Header extends React.Component {
         if (location.pathname === '/A/App/Register') {
             headerLink = (React.createElement(react_router_dom_1.Link, { className: 'Link header-tab log-in-tab', to: { pathname: '/A/App/' } }, "Log In"));
         }
-        if (location.pathname === '/A/App/') {
+        if (location.pathname === '/A/App' || location.pathname === '/A/App/') {
             headerLink = (React.createElement(react_router_dom_1.Link, { id: 'register-tab', className: 'Link header-tab register-tab', to: { pathname: '/A/App/Register' } }, "Register"));
         }
         return (React.createElement("div", { id: 'HomeHeader', className: fullHeader },

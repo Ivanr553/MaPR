@@ -176,7 +176,7 @@ namespace Marine_Permit_Palace.Services
                 .Include(e => e.Document)
                 .Include(e => e.DocumentFormFields)
                 .Include(e => e.DocumentCheckBoxFields)
-                .Include(e => e.DocumentSignatureFields.Select(f => f.SignatureData))
+                .Include(e => e.DocumentSignatureFields).ThenInclude(e => e.SignatureData)
                 .FirstOrDefault(e => e.IdSubmittedDocument == IdSubmittedDocument);
         }
     }

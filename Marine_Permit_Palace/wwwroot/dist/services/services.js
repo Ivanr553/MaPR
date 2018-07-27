@@ -23,7 +23,7 @@ let makeCancelable = (promise) => __awaiter(this, void 0, void 0, function* () {
     };
 });
 let getDocumentPromise = (document_id) => __awaiter(this, void 0, void 0, function* () {
-    let promise = fetch(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`, { credentials: 'same-origin' });
+    let promise = fetch(`/DocumentSave/GetSubmittedDocumentMeta?submitted_document_id=${document_id}`, { credentials: 'same-origin' });
     let getDocumentResponse = yield makeCancelable(promise);
     return getDocumentResponse;
 });

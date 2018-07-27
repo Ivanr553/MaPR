@@ -4,7 +4,8 @@ const React = require("react");
 const s = require('./ToolBarStyle.sass');
 class ToolBar extends React.Component {
     render() {
-        return (React.createElement("div", { className: 'ToolBar' }));
+        return (React.createElement("div", { className: 'ToolBar' },
+            React.createElement("img", { className: 'tolkit-image', src: "/images/toolkit.png", alt: "" })));
     }
 }
 exports.default = ToolBar;

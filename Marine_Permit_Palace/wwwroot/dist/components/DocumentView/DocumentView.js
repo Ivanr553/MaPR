@@ -15,6 +15,7 @@ const SignatureForm_1 = require("./UserInputComponents/SignatureForm/SignatureFo
 const CheckboxInput_1 = require("./UserInputComponents/CheckboxInput/CheckboxInput");
 const TextInput_1 = require("./UserInputComponents/TextInput/TextInput");
 const services_1 = require("../../services/services");
+const ToolBar_1 = require("./ToolBar/ToolBar");
 class DocumentView extends React.Component {
     constructor(props) {
         super(props);
@@ -65,12 +66,14 @@ class DocumentView extends React.Component {
                 return;
             }
             let documentPromise = services_1.getDocumentPromise(this.props.document_id);
+            console.log(this.props.document_id);
             this.setState({
                 documentPromise: yield documentPromise
             });
             let request = yield documentPromise;
             let response = yield request.promise;
             let documentObject = yield response.json();
+            console.log(documentObject);
             this.setState({
                 documentObject: documentObject,
                 document_id: this.props.document_id
@@ -191,7 +194,8 @@ class DocumentView extends React.Component {
         return (React.createElement("div", { className: 'DocumentView' },
             noDocumentWarning,
             React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: document_id }),
-            React.createElement("div", { id: 'document-form-div' }, this.documentFields())));
+            React.createElement("div", { id: 'document-form-div' }, this.documentFields()),
+            React.createElement(ToolBar_1.default, null)));
     }
 }
 exports.default = DocumentView;

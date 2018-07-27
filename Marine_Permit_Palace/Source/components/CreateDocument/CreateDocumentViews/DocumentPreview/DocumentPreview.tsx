@@ -30,7 +30,7 @@ class DocumentPreview extends React.Component<Props, any> {
     constructor(props) {
         super(props)
         this.state = {
-            documentName: '',
+            document_name: '',
             currentSelectedField: '',
             userList: [],
             assigned_to: ''
@@ -76,14 +76,14 @@ class DocumentPreview extends React.Component<Props, any> {
 
     handleDocumentNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
-        let documentName = this.state.documentName
+        let document_name = this.state.document_name
 
-        documentName = e.target.value
+        document_name = e.target.value
 
         this.setState({
-            documentName: documentName
+            document_name: document_name
         }, () => {
-            this.props.getDocumentName(this.state.documentName)
+            this.props.getDocumentName(this.state.document_name)
         })
     }
 
@@ -102,7 +102,6 @@ class DocumentPreview extends React.Component<Props, any> {
     verifyDocumentCompletion = () => {
 
         let document_meta = this.props.document_meta
-        console.log(this.props.userList)
 
         let signatureFields = document_meta.filter(field => field.field_type === 'Signature')
 
@@ -162,18 +161,18 @@ class DocumentPreview extends React.Component<Props, any> {
 
             let document_meta = props_document_meta.map(document_meta_field => {
                 document_meta_field.field_position = null
-                document_meta_field.assigned_to.map(user => user.dod_id)
+                if(!!document_meta_field.assigned_to) {
+                    document_meta_field.assigned_to = document_meta_field.assigned_to.dod_id
+                }
                 return document_meta_field
             })
 
             let assignedDocument = {
                 document_meta: document_meta,
-                submitted_document_id: this.props.document_id,
+                document_id: this.props.document_id,
+                document_name: this.state.name,
                 assignees: assignees
             }
-
-            let body = JSON.stringify(assignedDocument)
-            console.log(assignedDocument)
 
             let response = await fetch('/DocumentManager/AssignDocument', {
                 method: "POST",

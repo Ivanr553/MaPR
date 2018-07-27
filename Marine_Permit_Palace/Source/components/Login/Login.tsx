@@ -1,7 +1,5 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
-import {Link} from 'react-router-dom'
-import * as $ from 'jquery'
 
 const s = require('./styling/style.sass')
 
@@ -57,15 +55,16 @@ export default class Login extends React.Component<Props, any> {
 
             let user = this.state.user
 
-            let loginAttempt = await $.ajax({
+            let request = await fetch('/Account/Login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json; charset=UTF-8'
                 },
-                url: `/Account/Login`,
-                dataType: 'json',
-                data: JSON.stringify(user)
+                credentials: 'same-origin',
+                body: JSON.stringify(user)
             })
+
+            let loginAttempt = await request.json()
 
             if(loginAttempt.result === 'NotRegistered') {
                 let sendToRegister = confirm('User not registered')
@@ -87,9 +86,6 @@ export default class Login extends React.Component<Props, any> {
             console.log(e)
         }
 
-    }
-
-    componentDidMount() {
     }
 
     render() {

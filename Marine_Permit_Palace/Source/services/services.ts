@@ -1,6 +1,5 @@
 
 import {CancellablePromise} from '../AppValidation'
-import * as $ from 'jquery'
 
 //Make Cancellable Promises
 let makeCancelable = async (promise: Promise<any>) : Promise<CancellablePromise> => {
@@ -25,7 +24,7 @@ let makeCancelable = async (promise: Promise<any>) : Promise<CancellablePromise>
 
 let getDocumentPromise = async (document_id: string) => {
       
-    let promise = $.get(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`)
+    let promise = fetch(`/DocumentSave/GetDocumentMeta?document_id=${document_id}`, {credentials: 'same-origin'})
     
     let getDocumentResponse = await makeCancelable(promise)
 
@@ -35,14 +34,13 @@ let getDocumentPromise = async (document_id: string) => {
 
 let getSaveFilePromise = async (saveFile): Promise<CancellablePromise> => {
 
-    let savePromise = $.ajax({
+    let savePromise = fetch(`/DocumentSave/SaveFile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8'
         },
-        url: `/DocumentSave/SaveFile`,
-        dataType: 'json',
-        data: JSON.stringify(saveFile)
+        credentials: 'same-origin',
+        body: JSON.stringify(saveFile)
     })
 
     let documentSavePromise = await makeCancelable(savePromise)

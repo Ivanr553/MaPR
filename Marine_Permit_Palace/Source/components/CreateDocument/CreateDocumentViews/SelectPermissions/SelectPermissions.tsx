@@ -1,7 +1,5 @@
 import * as React from 'react';
-import AddedUser from './AddedUser';
 import AddedUserList from './AddedUserList'
-import * as $ from 'jquery'
 
 import {user} from '../../CreateDocumentValidation'
 import {databaseUser} from '../../../../AppValidation'
@@ -97,8 +95,9 @@ class SelectPermissions extends React.Component<Props, any> {
 
         try {
 
-            let userArray: Array<databaseUser> = await $.get(`/Account/FindUsers?search=${query}`)
-            
+            let request = await fetch(`/Account/FindUsers?search=${query}`, {credentials: 'same-origin'})
+            let userArray: Array<databaseUser> = await request.json()
+
             this.displayUsersFromSearch(userArray)
 
         } catch(e) {

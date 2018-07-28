@@ -13,6 +13,7 @@ import ToolBar from './ToolBar/ToolBar';
 
 interface Props {
     document_id: string,
+    document_name?: string,
     view: 'PendingDocuments' | 'DocumentPreview',
     previewOnClickHandler?: (e: React.ChangeEvent<HTMLInputElement>) => void,
     document_meta?: Array<document_meta_field> 
@@ -195,8 +196,9 @@ export default class DocumentView extends React.Component<Props, any> {
 
         let newFile = {
             document_meta: payload_document_meta,
-            name: !!this.state.name ? this.state.name : 'New Document',
-            submitted_file_id: this.props.document_id
+            name: this.props.document_name,
+            submitted_file_id: this.props.document_id,
+            is_completed: false
         }
 
         let request = getSaveFilePromise(newFile)
@@ -210,12 +212,6 @@ export default class DocumentView extends React.Component<Props, any> {
         let saveResult: saveResultInterface = await response.json()
 
         console.log(saveResult)
-
-        if(!this.state.submitted_file_id || this.state.submitted_file_id === null) {
-            this.setState({
-                submitted_file_id: saveResult.reason
-            })
-        }
 
     }
 

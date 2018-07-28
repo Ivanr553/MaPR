@@ -210,7 +210,7 @@ export default class DocumentView extends React.Component<Props, any> {
             clearTimeout(this.state.saveFileTimeout)
         }
 
-        let saveFileTimeout = setTimeout(() => this.saveFile(), 2000)
+        let saveFileTimeout = setTimeout(() => this.saveFile(false), 2000)
 
         this.setState({
             saveFileTimeout: saveFileTimeout
@@ -218,7 +218,7 @@ export default class DocumentView extends React.Component<Props, any> {
 
     }
 
-    saveFile = async () => {
+    saveFile = async (is_completed: boolean) => {
         
         let payload_document_meta = []
         this.state.documentObject.document_meta.forEach(document_meta_field => {
@@ -235,7 +235,7 @@ export default class DocumentView extends React.Component<Props, any> {
             document_meta: payload_document_meta,
             name: !!!this.props.document_name ? '' : this.props.document_name,
             submitted_file_id: this.props.document_id,
-            is_completed: false
+            is_completed: is_completed
         }
 
         let request = getSaveFilePromise(newFile)
@@ -251,7 +251,7 @@ export default class DocumentView extends React.Component<Props, any> {
         console.log(saveResult)
     }
 
-    quickSave = async () => {
+    quickSave = async (is_completed: boolean) => {
 
         let payload_document_meta = []
         this.state.documentObject.document_meta.forEach(document_meta_field => {
@@ -268,7 +268,7 @@ export default class DocumentView extends React.Component<Props, any> {
             document_meta: payload_document_meta,
             name: !!!this.props.document_name ? '' : this.props.document_name,
             submitted_file_id: this.props.document_id,
-            is_completed: false
+            is_completed: is_completed
         }
 
         let request = getSaveFilePromise(newFile)
@@ -293,11 +293,12 @@ export default class DocumentView extends React.Component<Props, any> {
 
         let resultArray: Array<boolean> = document_meta.map((document_meta_field: document_meta_field) => {
 
-            if(document_meta_field.field_type === 'Text') {
-                if(document_meta_field.value === ''){
-                    return false
-                }
-            }
+            //This checks to see if the text fields have been edited -- disabled for now
+            // if(document_meta_field.field_type === 'Text') {
+            //     if(document_meta_field.value === ''){
+            //         return false
+            //     }
+            // }
 
             if(document_meta_field.field_type === 'Signature') {
                 if(!!!document_meta_field.value) {
@@ -328,7 +329,14 @@ export default class DocumentView extends React.Component<Props, any> {
 
     handleSubmit = () => {
 
-        
+        if(!this.validateCanSubmit()) {
+            return alert('Document is not complete')
+        }
+
+        if(this.validateCanSubmit()) {
+            return alert('Document Submitted')
+            // this.quickSave(true)
+        }
 
     }
 
@@ -355,7 +363,7 @@ export default class DocumentView extends React.Component<Props, any> {
         }
         if(!!this.state.saveFileTimeout) {
             clearTimeout(this.state.saveFileTimeout)
-            this.quickSave()
+            this.quickSave(false)
         }
     }
 

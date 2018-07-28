@@ -39,6 +39,7 @@ class MetaBar extends React.Component {
                     .then(data => {
                     let responseArray = data.my_documents;
                     return responseArray.map(item => {
+                        // console.log(item)
                         return {
                             name: item.document_name,
                             idDocument: item.submitted_document_id
@@ -83,45 +84,25 @@ class MetaBar extends React.Component {
                 return React.createElement("img", { id: 'pending-document-notification', src: "/images/notification-undefined.png", alt: "", onClick: this.handleDocumentListPress });
             }
         };
-        //================= Populating Content on Page ==================
-        // populateDocumentLinks = () => {
-        //     let documents = this.state.documentResults.slice()
-        //     let documentLinks = []
-        //     for(let i = 0; i < documents.length; i++) {
-        //         let documentLink = 
-        //             <div className='document-link' id={documents[i].idDocument} key={i} data-params={{ id: documents[i].id, document: documents[i]}} onClick={(e) => {this.handleLinkPress(e)}}>
-        //                 {documents[i].name}
-        //             </div>
-        //         documentLinks.push(documentLink)
-        //     }
-        //     this.setState({
-        //         documentLinks: documentLinks
-        //     }, () => {
-        //         this.handleDocumentListPress()
-        //     })
-        // }
         //================== OnClick/Button Handlers =================
-        this.handleLinkPress = (e) => __awaiter(this, void 0, void 0, function* () {
-            let document_id = e.target.id;
-            let setFile = yield this.setState({
-                document_id: document_id
-            });
-            let setCurrentView = yield this.setState({
-                currentView: React.createElement(DocumentView_1.default, { document_id: this.state.document_id, view: 'PendingDocuments' })
-            });
-            let getCurrentView = yield this.props.getCurrentView(this.state.currentView);
-        });
         this.handleDocumentLinkPress = (e) => __awaiter(this, void 0, void 0, function* () {
             let target = e.target;
             while (!target.classList.contains('document-item')) {
                 target = target.parentNode;
             }
             let document_id = target.id;
+            let pendingDocuments = this.state.pendingDocuments;
+            let document_name = '';
+            pendingDocuments.forEach(document => {
+                if (document.idDocument === document_id) {
+                    document_name = document.name;
+                }
+            });
             this.setState({
                 document_id: document_id
             }, () => {
                 this.setState({
-                    currentView: React.createElement(DocumentView_1.default, { document_id: this.state.document_id, view: 'PendingDocuments' })
+                    currentView: React.createElement(DocumentView_1.default, { document_name: document_name, document_id: this.state.document_id, view: 'PendingDocuments' })
                 }, () => {
                     this.props.getCurrentView(this.state.currentView);
                 });

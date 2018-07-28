@@ -674,11 +674,11 @@ namespace Marine_Permit_Palace.Controllers
                         IdSubmittedDocumentId = SubmittedDoc.IdSubmittedDocument,
                         IdFormName = e.field_name,
                         IsCompleted = !string.IsNullOrEmpty(e.value),
-                        SignatureData = new DataStorage()
+                        SignatureData = !string.IsNullOrEmpty(e.value) ? new DataStorage()
                         {
                             Data = Convert.FromBase64String(e.value),
                             Type = AppDataType.SIGNATURE
-                        }
+                        } : null
                     }).ToList();
 
                 try { _DocumentSignatureService.SaveWithDocumentSignatureData(SigFields); } catch(Exception ex)

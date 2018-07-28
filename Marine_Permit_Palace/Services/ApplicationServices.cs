@@ -62,7 +62,7 @@ namespace Marine_Permit_Palace.Services
             if (Fields.Count > 0)
             {
                 List<DocumentFormField> Existing = _context.DocumentFormField.AsNoTracking()
-                    .Where(e => e.IdSubmittedDocumentId == Fields.First().IdSubmittedDocumentId)
+                    .Where(e => e.IdSubmittedDocumentId == Fields.First().IdSubmittedDocumentId).AsNoTracking()
                     .ToList();
                 List<DocumentFormField> ToUpdate = new List<DocumentFormField>();
                 List<DocumentFormField> ToAdd = new List<DocumentFormField>();
@@ -108,7 +108,7 @@ namespace Marine_Permit_Palace.Services
             if (Fields.Count > 0)
             {
                 List<DocumentCheckBoxField> Existing = _context.DocumentCheckBoxField
-                    .Where(e => e.IdSubmittedDocumentId == Fields.First().IdSubmittedDocumentId)
+                    .Where(e => e.IdSubmittedDocumentId == Fields.First().IdSubmittedDocumentId).AsNoTracking()
                     .ToList();
                 List<DocumentCheckBoxField> ToUpdate = new List<DocumentCheckBoxField>();
                 List<DocumentCheckBoxField> ToAdd = new List<DocumentCheckBoxField>();

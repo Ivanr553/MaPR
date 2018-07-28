@@ -81,6 +81,8 @@ class DocumentView extends React.Component {
             this.setState({
                 documentObject: documentObject,
                 document_id: this.props.document_id
+            }, () => {
+                console.log(this.state.documentObject);
             });
         });
         this.documentFields = () => {
@@ -127,8 +129,9 @@ class DocumentView extends React.Component {
             });
             let newFile = {
                 document_meta: payload_document_meta,
-                name: !!this.state.name ? this.state.name : 'New Document',
-                submitted_file_id: this.props.document_id
+                name: this.props.document_name,
+                submitted_file_id: this.props.document_id,
+                is_completed: false
             };
             let request = services_1.getSaveFilePromise(newFile);
             let newFilePromise = yield request;
@@ -138,11 +141,6 @@ class DocumentView extends React.Component {
             let response = yield newFilePromise.promise;
             let saveResult = yield response.json();
             console.log(saveResult);
-            if (!this.state.submitted_file_id || this.state.submitted_file_id === null) {
-                this.setState({
-                    submitted_file_id: saveResult.reason
-                });
-            }
         });
         //Toolbar functionality
         this.handleApprove = () => {

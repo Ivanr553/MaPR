@@ -70,6 +70,7 @@ class SignatureView extends React.Component {
             let body = {
                 signature_base64: source
             };
+            console.log(body);
             let request = yield fetch('/Account/AssignSignature', {
                 method: 'POST',
                 credentials: 'same-origin',
@@ -91,6 +92,18 @@ class SignatureView extends React.Component {
                     completeSaveTimeout: completeSaveTimeout
                 });
             });
+        });
+        this.getSignature = () => __awaiter(this, void 0, void 0, function* () {
+            let request = yield fetch('/Account/GetSignature', { credentials: 'same-origin' });
+            let response = yield request.json();
+            let data = response.signature_base64;
+            let canvas = document.getElementById('signature-canvas');
+            let context = canvas.getContext('2d');
+            let testImage = new Image();
+            testImage.onload = function () {
+                context.drawImage(testImage, 0, 0);
+            };
+            testImage.src = `data:image/png;base64,${data}`;
         });
         this.setCanvasDimensions = () => {
             this.setState({
@@ -143,6 +156,7 @@ class SignatureView extends React.Component {
     }
     componentDidMount() {
         this.setCanvasDimensions();
+        this.getSignature();
         window.addEventListener('resize', this.setCanvasDimensions);
     }
     componentWillUnmount() {
@@ -155,7 +169,7 @@ class SignatureView extends React.Component {
             React.createElement("div", { className: 'info-container' }, "This is your signature that is used throughout the application. You may edit the signature here and save it for use in auto-signing documents."),
             React.createElement("div", { id: 'signature-edit-button', className: this.state.enablePenStyle, onClick: this.enablePen }, this.state.enablePenText),
             React.createElement("div", { id: 'signature-main-container' },
-                React.createElement("img", { className: 'canvas-icon', id: 'redo-icon', src: "/images/cached.png", alt: "", onClick: this.clearCanvas }),
+                React.createElement("img", { className: 'canvas-clear-icon', id: 'redo-icon', src: "/images/cached.png", alt: "", onClick: this.clearCanvas }),
                 React.createElement("img", { className: 'canvas-icon', id: this.state.savingIconId, src: this.state.savingIconSource, alt: "", onClick: this.completeSave }),
                 React.createElement("canvas", { id: 'signature-canvas', width: this.state.canvasWidth, height: this.state.canvasHeight, onMouseMoveCapture: (e) => this.canvasPen(e), onMouseLeave: this.clearPrevMousePos }))));
     }

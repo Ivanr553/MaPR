@@ -5,7 +5,7 @@ const s = require('./ToolBarStyle.sass')
 interface Props {
     handleSubmit: () => void,
     handleApprove: () => void,
-    canSubmit: boolean
+    canSubmit: () => boolean
 }
 
 class ToolBar extends React.Component<Props, any> {
@@ -18,6 +18,7 @@ class ToolBar extends React.Component<Props, any> {
     }
 
     handleOnClick = () => {
+
         this.setState({
             timerDone: false
         }, () => {
@@ -27,7 +28,7 @@ class ToolBar extends React.Component<Props, any> {
 
     getToolbarInfoBox = () => {
 
-        if(this.props.canSubmit) {
+        if(this.props.canSubmit()) {
 
             if(this.state.timerDone) {
                 return (
@@ -46,7 +47,7 @@ class ToolBar extends React.Component<Props, any> {
             )
 
         }
-        if(!this.props.canSubmit) {
+        if(!this.props.canSubmit()) {
 
             if(this.state.timerDone) {
                 return (
@@ -68,16 +69,18 @@ class ToolBar extends React.Component<Props, any> {
 
     getSubmitStyle = () => {
 
-        if(this.props.canSubmit) {
+        if(this.props.canSubmit()) {
             let style = {
-                cursor: 'pointer'
+                cursor: 'pointer',
+                backgroundColor: 'white'
             }
             return style
         }
 
-        if(!this.props.canSubmit) {
+        if(!this.props.canSubmit()) {
             let style = {
-                cursor: 'default'
+                cursor: 'default',
+                backgroundColor: 'lightgrey'
             }
             return style
         }

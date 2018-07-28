@@ -13,7 +13,8 @@ interface Props {
     view: 'PendingDocuments' | 'DocumentPreview',
     assigned_to?: user,
     previewOnClickHandler?: any,
-    signatureSource?: any
+    signature_base64?: HTMLImageElement,
+    signHandler?: (e) => void
 }
 
 export default class SignatureForm extends React.Component<Props, any> {
@@ -70,17 +71,13 @@ export default class SignatureForm extends React.Component<Props, any> {
 
 
     //Takes signature png and embeds it into component
-    sign = async () => {
+    getSignatureContent = () => {
+        if(!!!this.props.signature_base64) {
+            return <img src="" alt=""/>
+        }
 
-        let request = await fetch('/Account/GetSignature', {credentials: 'same-origin'})
-        let response = await request.json()
-        let data = `data:image/png;base64,${response.signature_base64}`
-
-        let signature = <img className='user-signature' src={data} alt=""/>
-
-        this.setState({
-            signatureContent: signature
-        })
+        return <img className='user-signature' src={`data:image/png;base64,${this.props.signature_base64}`} alt=""/>
+       
     }
 
     documentPreviewContent = () => {
@@ -103,8 +100,8 @@ export default class SignatureForm extends React.Component<Props, any> {
 
 
             return(
-                <div className='SignatureForm' style={this.getPendingDocumentsStyle()} onClick={this.sign}>
-                    {this.state.signatureContent}
+                <div id={this.props.id} className='SignatureForm' style={this.getPendingDocumentsStyle()} onClick={(e) => this.props.signHandler(e)}>
+                    {this.getSignatureContent()}
                 </div>
             )
         }

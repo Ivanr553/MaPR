@@ -11,7 +11,7 @@ interface Props {
     height: number,
     left: number,
     top: number,
-    checked: boolean,
+    checked: 'On' | 'Off',
     onChange: any,
     view: 'PendingDocuments' | 'DocumentPreview',
     userList?: Array<any>,
@@ -44,7 +44,7 @@ export default class CheckboxInput extends React.Component<Props, any> {
 
         let checkmark
 
-        if(this.props.checked) {
+        if(this.props.checked === 'On') {
             checkmark = 'X'
         }
 

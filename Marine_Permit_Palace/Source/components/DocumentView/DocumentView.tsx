@@ -7,7 +7,7 @@ import SignatureForm from './UserInputComponents/SignatureForm/SignatureForm'
 import CheckboxInput from './UserInputComponents/CheckboxInput/CheckboxInput'
 import TextInput from './UserInputComponents/TextInput/TextInput'
 
-import {documentResponse, saveResultInterface, documentDimensions, document_meta_field} from '../../AppValidation'
+import {documentResponse, saveResultInterface, documentDimensions, document_meta_field, document} from '../../AppValidation'
 import {getDocumentPromise, getTemplateDocumentPromise, getSaveFilePromise} from '../../services/services'
 import ToolBar from './ToolBar/ToolBar';
 
@@ -16,7 +16,8 @@ interface Props {
     document_name?: string,
     view: 'PendingDocuments' | 'DocumentPreview',
     previewOnClickHandler?: (e: React.ChangeEvent<HTMLInputElement>) => void,
-    document_meta?: Array<document_meta_field> 
+    document_meta?: Array<document_meta_field>,
+    signature_base64?: string
 }
 
 export default class DocumentView extends React.Component<Props, any> {
@@ -135,7 +136,7 @@ export default class DocumentView extends React.Component<Props, any> {
             if(document_meta_field.field_type === 'Checkbox') {
 
                 if(document_meta_field.value === '') {
-                    document_meta_field.value = false
+                    document_meta_field.value = 'Off'
                 }
 
                 let newForm = <CheckboxInput key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} checked={document_meta_field.value} onChange={(e) => {this.handleFormEdit(e, form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
@@ -151,7 +152,7 @@ export default class DocumentView extends React.Component<Props, any> {
                 documentFields.push(newForm)
             }
             else if(document_meta_field.field_type === 'Signature') {
-                let newForm = <SignatureForm key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} assigned_to={document_meta_field.assigned_to}/>
+                let newForm = <SignatureForm key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} assigned_to={document_meta_field.assigned_to} signature_base64={document_meta_field.value} signHandler={this.signHandler}/>
 
                 documentFields.push(newForm)
             }
@@ -168,7 +169,7 @@ export default class DocumentView extends React.Component<Props, any> {
         let document_meta_field = documentObject.document_meta[id]
 
         if(e.target.className === 'CheckboxInput'){
-            document_meta_field.value = !document_meta_field.value
+            document_meta_field.value = document_meta_field.value === 'Off' ? 'On' : 'Off' 
         } else {
             document_meta_field.value = e.target.value
         }
@@ -177,8 +178,44 @@ export default class DocumentView extends React.Component<Props, any> {
         this.setState({
             documentObject: documentObject
         }, () => {
-            this.saveFile()
+            this.autoSave()
         })
+    }
+
+    signHandler = (e) => {
+
+        let target = e.target
+        while(!!!target.id) {
+            target = target.parentNode
+        }
+        let id = target.id
+
+        let documentObject = this.state.documentObject
+        let document_meta_field = documentObject.document_meta[id]
+        console.log(document_meta_field)
+
+        document_meta_field.value = this.props.signature_base64
+
+        this.setState({
+            documentObject: documentObject
+        }, () => {
+            this.autoSave()
+        })
+
+    }
+
+    autoSave = () => {
+
+        if(!!this.state.saveFileTimeout) {
+            clearTimeout(this.state.saveFileTimeout)
+        }
+
+        let saveFileTimeout = setTimeout(() => this.saveFile(), 2000)
+
+        this.setState({
+            saveFileTimeout: saveFileTimeout
+        })
+
     }
 
     saveFile = async () => {
@@ -187,7 +224,7 @@ export default class DocumentView extends React.Component<Props, any> {
         this.state.documentObject.document_meta.forEach(document_meta_field => {
             payload_document_meta.push(Object.assign({}, document_meta_field))
         })
-        payload_document_meta.map(document_meta_field => {
+        payload_document_meta = payload_document_meta.map(document_meta_field => {
             if(!!document_meta_field.field_position) {
                 delete document_meta_field.field_position
             }
@@ -196,7 +233,7 @@ export default class DocumentView extends React.Component<Props, any> {
 
         let newFile = {
             document_meta: payload_document_meta,
-            name: this.props.document_name,
+            name: !!!this.props.document_name ? '' : this.props.document_name,
             submitted_file_id: this.props.document_id,
             is_completed: false
         }
@@ -210,6 +247,35 @@ export default class DocumentView extends React.Component<Props, any> {
 
         let response = await newFilePromise.promise
         let saveResult: saveResultInterface = await response.json()
+        
+        console.log(saveResult)
+    }
+
+    quickSave = async () => {
+
+        let payload_document_meta = []
+        this.state.documentObject.document_meta.forEach(document_meta_field => {
+            payload_document_meta.push(Object.assign({}, document_meta_field))
+        })
+        payload_document_meta = payload_document_meta.map(document_meta_field => {
+            if(!!document_meta_field.field_position) {
+                delete document_meta_field.field_position
+            }
+            return document_meta_field
+        })
+
+        let newFile = {
+            document_meta: payload_document_meta,
+            name: !!!this.props.document_name ? '' : this.props.document_name,
+            submitted_file_id: this.props.document_id,
+            is_completed: false
+        }
+
+        let request = getSaveFilePromise(newFile)
+        let newFilePromise = await request
+
+        let response = await newFilePromise.promise
+        let saveResult: saveResultInterface = await response.json()
 
         console.log(saveResult)
 
@@ -217,11 +283,37 @@ export default class DocumentView extends React.Component<Props, any> {
 
 
     //Form Validation
-    validateCanSubmit(): boolean {
+    validateCanSubmit = (): boolean => {
 
-        if(this.props.document_id)
+        if(!!!this.state.documentObject) {
+            return
+        }
 
-        return false
+        let document_meta: Array<document_meta_field> = this.state.documentObject.document_meta
+
+        let resultArray: Array<boolean> = document_meta.map((document_meta_field: document_meta_field) => {
+
+            if(document_meta_field.field_type === 'Text') {
+                if(document_meta_field.value === ''){
+                    return false
+                }
+            }
+
+            if(document_meta_field.field_type === 'Signature') {
+                if(!!!document_meta_field.value) {
+                    return false
+                }
+            }
+
+            return true
+
+        })
+
+        if(resultArray.indexOf(false) >= 0) {
+            return false
+        }
+
+        return true
 
     }
 
@@ -230,20 +322,17 @@ export default class DocumentView extends React.Component<Props, any> {
 
     handleApprove = () => {
 
-        alert('Document Approved')
+       
 
     }
 
     handleSubmit = () => {
 
-        alert('Document Submitted')
+        
 
     }
 
-
-
     //React Lifecycle Methods
-
     componentDidMount() {
         if(!!!this.props.document_meta && this.props.view === 'PendingDocuments') {
             getDocumentPromise(this.props.document_id)
@@ -264,6 +353,10 @@ export default class DocumentView extends React.Component<Props, any> {
         if(!!this.state.newFilePromise) {
             this.state.newFilePromise.cancel()
         }
+        if(!!this.state.saveFileTimeout) {
+            clearTimeout(this.state.saveFileTimeout)
+            this.quickSave()
+        }
     }
 
     render() {
@@ -280,7 +373,7 @@ export default class DocumentView extends React.Component<Props, any> {
         }
 
         if(this.props.view === 'PendingDocuments') {
-            toolbar = <ToolBar handleApprove={this.handleApprove} handleSubmit={this.handleSubmit} canSubmit={this.validateCanSubmit()}/>
+            toolbar = <ToolBar handleApprove={this.handleApprove} handleSubmit={this.handleSubmit} canSubmit={this.validateCanSubmit}/>
         }
 
         return(

@@ -79,6 +79,17 @@ export default class MetaBar extends React.Component<any, any> {
 
     }
 
+    getSignature = async () => {
+
+        let request = await fetch('/Account/GetSignature', {credentials: 'same-origin'})
+        let response = await request.json()
+
+        this.setState({
+            signature_base64: response.signature_base64
+        })
+
+    }
+
     getCurrentView = (currentView: React.ComponentElement<HTMLElement, any>) => {
         this.setState({
             currentView: currentView
@@ -144,7 +155,7 @@ export default class MetaBar extends React.Component<any, any> {
             document_id: document_id
         }, () => {
             this.setState({
-                currentView: <DocumentView document_name={document_name} document_id={this.state.document_id} view={'PendingDocuments'} />
+                currentView: <DocumentView signature_base64={this.state.signature_base64} document_name={document_name} document_id={this.state.document_id} view={'PendingDocuments'} />
             }, () => {
                 this.props.getCurrentView(this.state.currentView)
             })
@@ -226,6 +237,7 @@ export default class MetaBar extends React.Component<any, any> {
         this.getDocuments()
         this.getPendingDocuments()
         this.getNotifications()
+        this.getSignature()
     }
 
     componentDidCatch() {

@@ -146,19 +146,19 @@ export default class MetaBar extends React.Component<any, any> {
 
     //================== OnClick/Button Handlers =================
 
-    handleLinkPress = async (e) => {
+    handleLinkPress = (e) => {
 
         let document_id = e.target.id
 
-        let setFile = await this.setState({
+        this.setState({
             document_id: document_id
         })
 
-        let setCurrentView = await this.setState({
+        this.setState({
             currentView: <DocumentView document_id={this.state.document_id} view={'PendingDocuments'}/>
         })
 
-        let getCurrentView = await this.props.getCurrentView(this.state.currentView)
+        this.props.getCurrentView(this.state.currentView)
     }
 
     handleDocumentLinkPress = async (e) => {

@@ -101,6 +101,8 @@ export default class DocumentView extends React.Component<Props, any> {
         this.setState({
             documentObject: documentObject,
             document_id: this.props.document_id
+        }, () => {
+            console.log(this.state.documentObject)
         })
 
     }

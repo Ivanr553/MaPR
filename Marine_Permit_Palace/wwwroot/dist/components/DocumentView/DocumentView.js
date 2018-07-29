@@ -162,6 +162,7 @@ class DocumentView extends React.Component {
             });
             let response = yield newFilePromise.promise;
             let saveResult = yield response.json();
+            console.log(saveResult);
             return saveResult;
         });
         this.quickSave = (is_completed) => __awaiter(this, void 0, void 0, function* () {
@@ -185,6 +186,7 @@ class DocumentView extends React.Component {
             let newFilePromise = yield request;
             let response = yield newFilePromise.promise;
             let saveResult = yield response.json();
+            console.log(saveResult);
             return saveResult;
         });
         //Form Validation

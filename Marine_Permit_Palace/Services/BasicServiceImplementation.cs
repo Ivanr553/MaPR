@@ -380,6 +380,7 @@ namespace Marine_Permit_Palace.Services
             //Get Functions
             public T Get(params object[] primary_key)
             {
+                if (primary_key.Count() == 0 || primary_key[0] == null) return default(T);
                 return (T)_context.Find(typeof(T), primary_key);
             }
             public IEnumerable<T> GetAll<T>() where T : DataRowProperties

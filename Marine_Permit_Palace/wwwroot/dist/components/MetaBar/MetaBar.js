@@ -86,7 +86,7 @@ class MetaBar extends React.Component {
             }
         });
         this.renderNotification = () => {
-            if (this.state.notificationCount <= 0) {
+            if (this.state.notificationCount >= 0) {
                 return React.createElement("img", { id: 'pending-document-notification', src: "/images/notification-undefined.png", alt: "", onClick: this.handleDocumentListPress });
             }
         };

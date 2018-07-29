@@ -101,7 +101,7 @@ class SelectPermissions extends React.Component<Props, any> {
             this.displayUsersFromSearch(userArray)
 
         } catch(e) {
-            console.log(e)
+            throw new Error(e)
         }
 
     }

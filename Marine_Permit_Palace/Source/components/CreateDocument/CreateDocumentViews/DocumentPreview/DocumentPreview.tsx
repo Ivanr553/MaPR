@@ -112,17 +112,14 @@ class DocumentPreview extends React.Component<Props, any> {
         })
 
         if(result.indexOf(false) >=0) {
-            console.log('fields unfinished')
             return false
         }
 
         if(this.state.documentName === '') {
-            console.log('document name invalid')
             return false
         }
 
         if(this.props.assigned_user === null) {
-            console.log('no assigned user')
             return false
         }
 
@@ -135,7 +132,6 @@ class DocumentPreview extends React.Component<Props, any> {
     submitDocument = async () => {
 
         if(!this.verifyDocumentCompletion()) {
-            console.log('document unfinished')
             return
         }
 
@@ -184,9 +180,7 @@ class DocumentPreview extends React.Component<Props, any> {
                 body: JSON.stringify(assignedDocument)
             })
 
-            let result = await response.json()
-
-            console.log(result)
+            return await response.json()
 
         } catch(e) {
             throw Error(e)

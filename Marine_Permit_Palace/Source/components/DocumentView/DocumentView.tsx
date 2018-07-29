@@ -103,8 +103,6 @@ export default class DocumentView extends React.Component<Props, any> {
         this.setState({
             documentObject: documentObject,
             document_id: this.props.document_id
-        }, () => {
-            console.log(this.state.documentObject)
         })
 
     }
@@ -192,7 +190,6 @@ export default class DocumentView extends React.Component<Props, any> {
 
         let documentObject = this.state.documentObject
         let document_meta_field = documentObject.document_meta[id]
-        console.log(document_meta_field)
 
         document_meta_field.value = this.props.signature_base64
 
@@ -248,7 +245,7 @@ export default class DocumentView extends React.Component<Props, any> {
         let response = await newFilePromise.promise
         let saveResult: saveResultInterface = await response.json()
         
-        console.log(saveResult)
+        return saveResult
     }
 
     quickSave = async (is_completed: boolean) => {
@@ -277,7 +274,7 @@ export default class DocumentView extends React.Component<Props, any> {
         let response = await newFilePromise.promise
         let saveResult: saveResultInterface = await response.json()
 
-        console.log(saveResult)
+        return saveResult
 
     }
 

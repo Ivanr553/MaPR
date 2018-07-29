@@ -58,7 +58,7 @@ class HamburgerMenu extends React.Component<Props, any> {
     }
 
     componentDidMount() {
-
+        
     }
 
     render() {
@@ -80,9 +80,9 @@ class HamburgerMenu extends React.Component<Props, any> {
                         <div className='hamburger-menu-item'>
                             Account
                         </div>
-                        <div className='hamburger-menu-item'>
+                        {/* <div className='hamburger-menu-item'>
                             Help
-                        </div>
+                        </div> */}
                         <div className='hamburger-menu-item'>
                             Log Out
                         </div>
@@ -100,9 +100,9 @@ class HamburgerMenu extends React.Component<Props, any> {
                         <div className='hamburger-menu-item hamburger-menu-element' id='account-hamburger-menu-item' onClick={this.handleAccountPress}>
                             Account
                         </div>
-                        <div className='hamburger-menu-item hamburger-menu-element' id='settings-hamburger-menu-item'>
+                        {/* <div className='hamburger-menu-item hamburger-menu-element' id='settings-hamburger-menu-item'>
                             Help
-                        </div>
+                        </div> */}
                         <div className='hamburger-menu-item hamburger-menu-element' id='log-out-hamburger-menu-item' onClick={this.logOff}>
                             Log Out
                         </div>

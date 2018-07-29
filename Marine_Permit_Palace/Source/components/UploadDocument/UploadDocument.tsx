@@ -11,8 +11,6 @@ export default class UploadDocument extends React.Component<any, any> {
         this.state = {
 
         }
-        //@ts-ignore
-        this.files = React.createRef()
     }
 
     uploadDroppedFile = async (e) => {
@@ -32,39 +30,42 @@ export default class UploadDocument extends React.Component<any, any> {
                 body: file
             })
             let response = await request.json()
-    
+
             console.log(response)
 
+            if(response.status_code === 200) {
+                alert('Upload Successful!')
+            } else {
+                alert('Error With Upload')
+            }
+
         } catch(e) {
-            Error(e)
+            throw new Error(e)
         }
 
     }
 
-    handleFormSubmit = async (e) => {
-        e.preventDefault()
+    // handleFormSubmit = async (e) => {
+    //     e.preventDefault()
 
-        try {
+    //     try {
 
-            // @ts-ignore
-            let file = this.files.current.files[0]
-            let url = '/DocumentUpload/Upload'
+    //         let file = this.files.current.files[0]
+    //         let url = '/DocumentUpload/Upload'
     
-            let request = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json; charset=UTF-8'
-                },
-                body: file
-            })
-            let response = await request.json()
-    
-            console.log(response)
+    //         let request = await fetch(url, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json; charset=UTF-8'
+    //             },
+    //             body: file
+    //         })
+    //         let response = await request.json()
 
-        } catch(e) {
-            Error(e)
-        }
-    }
+    //     } catch(e) {
+    //         Error(e)
+    //     }
+    // }
 
     render() {
         return(
@@ -79,13 +80,13 @@ export default class UploadDocument extends React.Component<any, any> {
                     Drop Files Here
                 </div>
 
-                <form id='file-submition-form' action="" method='post'
+                {/* <form id='file-submition-form' action="" method='post'
                     onSubmit={(e) => this.handleFormSubmit(e)}>
                     <input id='uploadedFile' type="file" 
                     //@ts-ignore
                     name='file[]' multiple={true} ref={this.files}/>
                     <input type="submit" value='Upload'/>
-                </form>
+                </form> */}
             </div>
         )
     }

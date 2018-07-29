@@ -21,9 +21,7 @@ class AddedUser extends React.Component<Props, any> {
         if(this.props.isInSidebar) {
             
             let style = {
-                cursor: 
-                    ((!!this.props.user.assigned_to && this.props.user.assigned_to.indexOf(this.props.currentSelectedFieldId) >= 0) || this.props.fieldAssigned) 
-                        ? 'default' : 'pointer',
+                cursor: 'pointer',
                 backgroundColor: 
                     (!!this.props.user.assigned_to && this.props.user.assigned_to.indexOf(this.props.currentSelectedFieldId) >= 0) 
                         ? 'lightgrey' : ''
@@ -54,11 +52,11 @@ class AddedUser extends React.Component<Props, any> {
 
         if(this.props.isInSidebar) {
             return (
-                <div style={this.getStyle()} className='added-user' id={this.props.user.dod_id.toString()}>
-                    <div onClick={(e) => this.props.handleAddedUserPress(e)}>
+                <div style={this.getStyle()} className='added-user' id={this.props.user.dod_id.toString()} onClick={(e) => this.props.handleAddedUserPress(e)}>
+                    <div>
                         {this.props.user.dod_id}
                     </div>
-                    <div onClick={(e) => this.props.handleAddedUserPress(e)}>
+                    <div>
                         {this.props.user.name}
                     </div>
                 </div>

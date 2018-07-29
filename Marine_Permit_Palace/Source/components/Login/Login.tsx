@@ -83,7 +83,7 @@ export default class Login extends React.Component<Props, any> {
             }
 
         } catch(e) {
-            console.log(e)
+            throw new Error(e)
         }
 
     }

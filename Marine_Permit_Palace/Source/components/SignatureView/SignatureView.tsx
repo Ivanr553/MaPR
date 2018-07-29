@@ -94,8 +94,6 @@ export default class SignatureView extends React.Component<any, any> {
             signature_base64: source
         }
 
-        console.log(body)
-
         let request = await fetch('/Account/AssignSignature', {
             method: 'POST',
             credentials: 'same-origin',
@@ -106,7 +104,6 @@ export default class SignatureView extends React.Component<any, any> {
             body: JSON.stringify(body)
         })
         let response = await request.json()
-        console.log(response)
 
         this.setState({
             canvasEdited: false

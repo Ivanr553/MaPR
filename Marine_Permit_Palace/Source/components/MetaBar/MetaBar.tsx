@@ -61,7 +61,6 @@ export default class MetaBar extends React.Component<any, any> {
                         .then(data => {
                             let responseArray = data.my_documents
                             return responseArray.map(item => {
-                                // console.log(item)
                                 return {
                                     name: item.document_name,
                                     idDocument: item.submitted_document_id

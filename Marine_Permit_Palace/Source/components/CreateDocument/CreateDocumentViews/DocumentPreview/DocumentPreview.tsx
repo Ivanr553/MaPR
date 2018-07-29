@@ -166,7 +166,7 @@ class DocumentPreview extends React.Component<Props, any> {
             let assignedDocument = {
                 document_meta: document_meta,
                 document_id: this.props.document_id,
-                document_name: this.state.name,
+                document_name: this.state.document_name,
                 assignees: assignees
             }
 

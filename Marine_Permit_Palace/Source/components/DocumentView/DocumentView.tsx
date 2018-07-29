@@ -244,6 +244,8 @@ export default class DocumentView extends React.Component<Props, any> {
 
         let response = await newFilePromise.promise
         let saveResult: saveResultInterface = await response.json()
+
+        console.log(saveResult)
         
         return saveResult
     }
@@ -273,6 +275,8 @@ export default class DocumentView extends React.Component<Props, any> {
 
         let response = await newFilePromise.promise
         let saveResult: saveResultInterface = await response.json()
+        
+        console.log(saveResult)
 
         return saveResult
 

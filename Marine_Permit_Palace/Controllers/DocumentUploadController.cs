@@ -25,6 +25,15 @@ namespace Marine_Permit_Palace.Controllers
         public IActionResult Upload(List<IFormFile> formFiles)
         {
             Dictionary<string, string> FileResults = new Dictionary<string, string>();
+            if(formFiles.Count == 0)
+            {
+                return Json(new Result()
+                {
+                    reason = "No files were sent",
+                    result = "Failure",
+                    status_code = 400
+                });
+            }
             foreach(var file in formFiles)
             {
                 //Verify the file type
@@ -37,6 +46,9 @@ namespace Marine_Permit_Palace.Controllers
                         TemplateName = file.FileName
                     };
                     pdfDoc = _DocumentService.Add(pdfDoc, User);
+                    ///TODO
+                    //Read the entire document and warn of any unsuppored fields
+
 
                     string path = Path.Combine(_HostingEnv.WebRootPath, "dist", "documents");
                     

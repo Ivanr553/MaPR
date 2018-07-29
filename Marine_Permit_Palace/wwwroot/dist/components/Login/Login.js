@@ -63,7 +63,7 @@ class Login extends React.Component {
                 }
             }
             catch (e) {
-                console.log(e);
+                throw new Error(e);
             }
         });
         this.state = {

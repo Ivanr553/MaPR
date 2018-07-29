@@ -47,7 +47,9 @@ namespace Marine_Permit_Palace.Controllers
                     {
                         submitted_document_name = e.Name,
                         submitted_document_id = e.IdSubmittedDocument,
-                        document_id = e.DocumentId
+                        document_id = e.DocumentId,
+                        assigned_by = (e.Assigner != null)? e.Assigner.Rank + " " + e.Assigner.FirstName + " " + e.Assigner.LastName : null,
+                        date_assigned = e.DateCreatedUtc
                     }),
 
                     awaiting_signature = AwaitingFields.SignatureFields.Distinct().Select(e => new

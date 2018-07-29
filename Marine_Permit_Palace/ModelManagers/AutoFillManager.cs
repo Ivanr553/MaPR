@@ -23,8 +23,6 @@ namespace Marine_Permit_Palace.ModelManagers
 
         public static void AutoFillBasedOnUser(ApplicationUser user, AcroFields Fields)
         {
-            Fields.SetField("IDONTEXISTSJSHS", "Hallo", true); // test
-
             Fields.SetField("last_first_middle", $"{user.LastName}, {user.FirstName}, {user.MiddleName}", true);
             Fields.SetField("rank", user.Rank, true);
             Fields.SetField("dod_id_number", user.DodIdNumber.ToString(), true);

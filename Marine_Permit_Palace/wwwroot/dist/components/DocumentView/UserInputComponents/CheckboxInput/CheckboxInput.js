@@ -21,7 +21,7 @@ class CheckboxInput extends React.Component {
     }
     render() {
         let checkmark;
-        if (this.props.checked) {
+        if (this.props.checked === 'On') {
             checkmark = 'X';
         }
         if (this.props.view === 'DocumentPreview') {

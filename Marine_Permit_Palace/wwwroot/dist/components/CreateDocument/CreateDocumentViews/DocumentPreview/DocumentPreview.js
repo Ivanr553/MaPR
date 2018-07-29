@@ -68,15 +68,12 @@ class DocumentPreview extends React.Component {
                 }
             });
             if (result.indexOf(false) >= 0) {
-                console.log('fields unfinished');
                 return false;
             }
             if (this.state.documentName === '') {
-                console.log('document name invalid');
                 return false;
             }
             if (this.props.assigned_user === null) {
-                console.log('no assigned user');
                 return false;
             }
             return true;
@@ -84,7 +81,6 @@ class DocumentPreview extends React.Component {
         // NOT WORKING -- Waiting on Mitchell //
         this.submitDocument = () => __awaiter(this, void 0, void 0, function* () {
             if (!this.verifyDocumentCompletion()) {
-                console.log('document unfinished');
                 return;
             }
             let userList = this.props.userList.slice();
@@ -124,8 +120,7 @@ class DocumentPreview extends React.Component {
                     },
                     body: JSON.stringify(assignedDocument)
                 });
-                let result = yield response.json();
-                console.log(result);
+                return yield response.json();
             }
             catch (e) {
                 throw Error(e);

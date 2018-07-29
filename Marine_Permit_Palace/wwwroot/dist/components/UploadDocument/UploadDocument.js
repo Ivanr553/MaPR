@@ -29,35 +29,36 @@ class UploadDocument extends React.Component {
                 });
                 let response = yield request.json();
                 console.log(response);
+                if (response.status_code === 200) {
+                    alert('Upload Successful!');
+                }
+                else {
+                    alert('Error With Upload');
+                }
             }
             catch (e) {
-                Error(e);
-            }
-        });
-        this.handleFormSubmit = (e) => __awaiter(this, void 0, void 0, function* () {
-            e.preventDefault();
-            try {
-                // @ts-ignore
-                let file = this.files.current.files[0];
-                let url = '/DocumentUpload/Upload';
-                let request = yield fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json; charset=UTF-8'
-                    },
-                    body: file
-                });
-                let response = yield request.json();
-                console.log(response);
-            }
-            catch (e) {
-                Error(e);
+                throw new Error(e);
             }
         });
         this.state = {};
-        //@ts-ignore
-        this.files = React.createRef();
     }
+    // handleFormSubmit = async (e) => {
+    //     e.preventDefault()
+    //     try {
+    //         let file = this.files.current.files[0]
+    //         let url = '/DocumentUpload/Upload'
+    //         let request = await fetch(url, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json; charset=UTF-8'
+    //             },
+    //             body: file
+    //         })
+    //         let response = await request.json()
+    //     } catch(e) {
+    //         Error(e)
+    //     }
+    // }
     render() {
         return (React.createElement("div", { id: 'UploadDocument', onDragOver: (e) => {
                 e.preventDefault();
@@ -65,12 +66,7 @@ class UploadDocument extends React.Component {
             React.createElement("div", { className: 'documents-header' }, "Upload Document"),
             React.createElement("div", { id: 'dropzone', onDrop: (e) => {
                     this.uploadDroppedFile(e);
-                } }, "Drop Files Here"),
-            React.createElement("form", { id: 'file-submition-form', action: "", method: 'post', onSubmit: (e) => this.handleFormSubmit(e) },
-                React.createElement("input", { id: 'uploadedFile', type: "file", 
-                    //@ts-ignore
-                    name: 'file[]', multiple: true, ref: this.files }),
-                React.createElement("input", { type: "submit", value: 'Upload' }))));
+                } }, "Drop Files Here")));
     }
 }
 exports.default = UploadDocument;

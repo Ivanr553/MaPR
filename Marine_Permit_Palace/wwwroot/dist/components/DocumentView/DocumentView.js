@@ -81,8 +81,6 @@ class DocumentView extends React.Component {
             this.setState({
                 documentObject: documentObject,
                 document_id: this.props.document_id
-            }, () => {
-                console.log(this.state.documentObject);
             });
         });
         this.documentFields = () => {
@@ -99,7 +97,7 @@ class DocumentView extends React.Component {
                 let dimensions = this.getDocumentSize(documentObject, document_meta_field.field_position.position.left, document_meta_field.field_position.position.top, document_meta_field.field_position.position.height, document_meta_field.field_position.position.width);
                 if (document_meta_field.field_type === 'Checkbox') {
                     if (document_meta_field.value === '') {
-                        document_meta_field.value = false;
+                        document_meta_field.value = 'Off';
                     }
                     let newForm = React.createElement(CheckboxInput_1.default, { key: form, id: form, width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, checked: document_meta_field.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });
                     documentFields.push(newForm);
@@ -110,18 +108,42 @@ class DocumentView extends React.Component {
                     documentFields.push(newForm);
                 }
                 else if (document_meta_field.field_type === 'Signature') {
-                    let newForm = React.createElement(SignatureForm_1.default, { key: form, id: form, width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler, assigned_to: document_meta_field.assigned_to });
+                    let newForm = React.createElement(SignatureForm_1.default, { key: form, id: form, width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler, assigned_to: document_meta_field.assigned_to, signature_base64: document_meta_field.value, signHandler: this.signHandler });
                     documentFields.push(newForm);
                 }
             }
             return documentFields;
         };
-        this.saveFile = () => __awaiter(this, void 0, void 0, function* () {
+        this.signHandler = (e) => {
+            let target = e.target;
+            while (!!!target.id) {
+                target = target.parentNode;
+            }
+            let id = target.id;
+            let documentObject = this.state.documentObject;
+            let document_meta_field = documentObject.document_meta[id];
+            document_meta_field.value = this.props.signature_base64;
+            this.setState({
+                documentObject: documentObject
+            }, () => {
+                this.autoSave();
+            });
+        };
+        this.autoSave = () => {
+            if (!!this.state.saveFileTimeout) {
+                clearTimeout(this.state.saveFileTimeout);
+            }
+            let saveFileTimeout = setTimeout(() => this.saveFile(false), 2000);
+            this.setState({
+                saveFileTimeout: saveFileTimeout
+            });
+        };
+        this.saveFile = (is_completed) => __awaiter(this, void 0, void 0, function* () {
             let payload_document_meta = [];
             this.state.documentObject.document_meta.forEach(document_meta_field => {
                 payload_document_meta.push(Object.assign({}, document_meta_field));
             });
-            payload_document_meta.map(document_meta_field => {
+            payload_document_meta = payload_document_meta.map(document_meta_field => {
                 if (!!document_meta_field.field_position) {
                     delete document_meta_field.field_position;
                 }
@@ -129,9 +151,9 @@ class DocumentView extends React.Component {
             });
             let newFile = {
                 document_meta: payload_document_meta,
-                name: this.props.document_name,
+                name: !!!this.props.document_name ? '' : this.props.document_name,
                 submitted_file_id: this.props.document_id,
-                is_completed: false
+                is_completed: is_completed
             };
             let request = services_1.getSaveFilePromise(newFile);
             let newFilePromise = yield request;
@@ -140,14 +162,67 @@ class DocumentView extends React.Component {
             });
             let response = yield newFilePromise.promise;
             let saveResult = yield response.json();
-            console.log(saveResult);
+            return saveResult;
         });
+        this.quickSave = (is_completed) => __awaiter(this, void 0, void 0, function* () {
+            let payload_document_meta = [];
+            this.state.documentObject.document_meta.forEach(document_meta_field => {
+                payload_document_meta.push(Object.assign({}, document_meta_field));
+            });
+            payload_document_meta = payload_document_meta.map(document_meta_field => {
+                if (!!document_meta_field.field_position) {
+                    delete document_meta_field.field_position;
+                }
+                return document_meta_field;
+            });
+            let newFile = {
+                document_meta: payload_document_meta,
+                name: !!!this.props.document_name ? '' : this.props.document_name,
+                submitted_file_id: this.props.document_id,
+                is_completed: is_completed
+            };
+            let request = services_1.getSaveFilePromise(newFile);
+            let newFilePromise = yield request;
+            let response = yield newFilePromise.promise;
+            let saveResult = yield response.json();
+            return saveResult;
+        });
+        //Form Validation
+        this.validateCanSubmit = () => {
+            if (!!!this.state.documentObject) {
+                return;
+            }
+            let document_meta = this.state.documentObject.document_meta;
+            let resultArray = document_meta.map((document_meta_field) => {
+                //This checks to see if the text fields have been edited -- disabled for now
+                // if(document_meta_field.field_type === 'Text') {
+                //     if(document_meta_field.value === ''){
+                //         return false
+                //     }
+                // }
+                if (document_meta_field.field_type === 'Signature') {
+                    if (!!!document_meta_field.value) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+            if (resultArray.indexOf(false) >= 0) {
+                return false;
+            }
+            return true;
+        };
         //Toolbar functionality
         this.handleApprove = () => {
-            alert('Document Approved');
         };
         this.handleSubmit = () => {
-            alert('Document Submitted');
+            if (!this.validateCanSubmit()) {
+                return alert('Document is not complete');
+            }
+            if (this.validateCanSubmit()) {
+                return alert('Document Submitted');
+                // this.quickSave(true)
+            }
         };
         this.state = {
             documentObject: undefined,
@@ -160,7 +235,7 @@ class DocumentView extends React.Component {
             let documentObject = Object.assign({}, this.state.documentObject);
             let document_meta_field = documentObject.document_meta[id];
             if (e.target.className === 'CheckboxInput') {
-                document_meta_field.value = !document_meta_field.value;
+                document_meta_field.value = document_meta_field.value === 'Off' ? 'On' : 'Off';
             }
             else {
                 document_meta_field.value = e.target.value;
@@ -168,14 +243,9 @@ class DocumentView extends React.Component {
             this.setState({
                 documentObject: documentObject
             }, () => {
-                this.saveFile();
+                this.autoSave();
             });
         });
-    }
-    //Form Validation
-    validateCanSubmit() {
-        if (this.props.document_id)
-            return false;
     }
     //React Lifecycle Methods
     componentDidMount() {
@@ -198,6 +268,10 @@ class DocumentView extends React.Component {
         if (!!this.state.newFilePromise) {
             this.state.newFilePromise.cancel();
         }
+        if (!!this.state.saveFileTimeout) {
+            clearTimeout(this.state.saveFileTimeout);
+            this.quickSave(false);
+        }
     }
     render() {
         let document_id = '../../dist/documents/NAVMC10694.pdf';
@@ -207,7 +281,7 @@ class DocumentView extends React.Component {
             noDocumentWarning = (React.createElement("div", { id: 'document-view-no-document-warning' }, "There is no document selected"));
         }
         if (this.props.view === 'PendingDocuments') {
-            toolbar = React.createElement(ToolBar_1.default, { handleApprove: this.handleApprove, handleSubmit: this.handleSubmit, canSubmit: this.validateCanSubmit() });
+            toolbar = React.createElement(ToolBar_1.default, { handleApprove: this.handleApprove, handleSubmit: this.handleSubmit, canSubmit: this.validateCanSubmit });
         }
         return (React.createElement("div", { className: 'DocumentView' },
             noDocumentWarning,

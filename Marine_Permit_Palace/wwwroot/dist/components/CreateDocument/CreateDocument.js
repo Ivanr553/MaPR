@@ -156,13 +156,11 @@ class CreateDocument extends React.Component {
             }
             //Checking if user has already been assigned this field
             if (user.assigned_to.indexOf(parseInt(this.state.currentSelectedFieldId)) >= 0) {
-                console.log('user is already assigned to field', user.assigned_to, this.state.currentSelectedFieldId);
                 this.removeAssignedUser(user, parseInt(this.state.currentSelectedFieldId));
                 return false;
             }
             //Checking if a user has already been assigned to a field
             if (document_meta[this.state.currentSelectedFieldId].assigned_to !== null) {
-                console.log('user is already assigned to a field', document_meta[this.state.currentSelectedFieldId].assigned_to);
                 return false;
             }
             return true;

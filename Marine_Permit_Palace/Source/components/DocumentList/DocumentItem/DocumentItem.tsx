@@ -38,8 +38,8 @@ class DocumentItem extends React.Component<Props, any> {
     render() {
         return (
             <div className='document-item' style={this.getStyle()} id={this.props.document.idDocument} onClick={(e) => {this.props.selectDocument(e)}}>
-                <div className='document-item-field'>ID: {this.props.document.idDocument}</div>
                 <div className='document-item-field'>{this.props.document.name}</div>
+                <div className='document-item-field'>ID: {this.props.document.idDocument}</div>
             </div>
         );
     }

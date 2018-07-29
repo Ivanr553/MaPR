@@ -70,7 +70,6 @@ class SignatureView extends React.Component {
             let body = {
                 signature_base64: source
             };
-            console.log(body);
             let request = yield fetch('/Account/AssignSignature', {
                 method: 'POST',
                 credentials: 'same-origin',
@@ -81,7 +80,6 @@ class SignatureView extends React.Component {
                 body: JSON.stringify(body)
             });
             let response = yield request.json();
-            console.log(response);
             this.setState({
                 canvasEdited: false
             }, () => {

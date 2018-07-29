@@ -346,7 +346,7 @@ namespace Marine_Permit_Palace.Controllers
                         if (user != null)
                         {
                             //populate all the known fields based on user information
-                            AutoFillManager.AutoFillBasedOnUser(user, pdfFormFields);
+                            //AutoFillManager.AutoFillBasedOnUser(user, pdfFormFields);
                         }
 
 
@@ -586,7 +586,7 @@ namespace Marine_Permit_Palace.Controllers
         [HttpPost]
         public JsonResult SaveFile([FromBody] SaveDocumentObject document)
         {
-            if (document != null && !string.IsNullOrEmpty(document.name) && !string.IsNullOrEmpty(document.submitted_file_id))
+            if (document != null && !string.IsNullOrEmpty(document.submitted_file_id))
             {
                 Guid SubmittedDocId;
                 if (!Guid.TryParse(document.submitted_file_id, out SubmittedDocId))

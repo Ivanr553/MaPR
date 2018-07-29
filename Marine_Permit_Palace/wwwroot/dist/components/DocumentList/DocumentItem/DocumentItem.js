@@ -20,10 +20,10 @@ class DocumentItem extends React.Component {
     }
     render() {
         return (React.createElement("div", { className: 'document-item', style: this.getStyle(), id: this.props.document.idDocument, onClick: (e) => { this.props.selectDocument(e); } },
+            React.createElement("div", { className: 'document-item-field' }, this.props.document.name),
             React.createElement("div", { className: 'document-item-field' },
                 "ID: ",
-                this.props.document.idDocument),
-            React.createElement("div", { className: 'document-item-field' }, this.props.document.name)));
+                this.props.document.idDocument)));
     }
 }
 exports.default = DocumentItem;

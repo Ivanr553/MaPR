@@ -126,6 +126,8 @@ namespace Marine_Permit_Palace.Controllers
             {
                 //Assign the document to the specified users. With the specified field values.
 
+                var assigning_user = await _UserManager.GetUserAsync(User);
+
                 Marine_Permit_Palace.Models.Document RefDocument = _DocumentService.Get(data.document_id);
                 if (RefDocument == null)
                 {
@@ -137,7 +139,8 @@ namespace Marine_Permit_Palace.Controllers
                 {
                     Document = RefDocument,
                     DocumentId = data.document_id,
-                    Name = data.document_name
+                    Name = data.document_name,
+                    AssignerId = assigning_user.Id
                 };
                 SubmittedDoc = _SubmittedDocumentService.Add(SubmittedDoc);
 

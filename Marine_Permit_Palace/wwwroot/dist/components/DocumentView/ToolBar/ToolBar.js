@@ -13,7 +13,7 @@ class ToolBar extends React.Component {
             });
         };
         this.getToolbarInfoBox = () => {
-            if (this.props.canSubmit) {
+            if (this.props.canSubmit()) {
                 if (this.state.timerDone) {
                     return (React.createElement("div", { className: 'toolbar-info-box toolbar-info-box-ready tool-bar-info-fade-away' },
                         "Document is ready to be submitted",
@@ -23,7 +23,7 @@ class ToolBar extends React.Component {
                     "Document is ready to be submitted",
                     React.createElement("div", { className: 'toolbar-info-box-triangle toolbar-info-box-triangle-ready' })));
             }
-            if (!this.props.canSubmit) {
+            if (!this.props.canSubmit()) {
                 if (this.state.timerDone) {
                     return (React.createElement("div", { className: 'toolbar-info-box toolbar-info-box-not-ready tool-bar-info-fade-away' },
                         "Document is ready to be submitted",
@@ -35,15 +35,17 @@ class ToolBar extends React.Component {
             }
         };
         this.getSubmitStyle = () => {
-            if (this.props.canSubmit) {
+            if (this.props.canSubmit()) {
                 let style = {
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    backgroundColor: 'white'
                 };
                 return style;
             }
-            if (!this.props.canSubmit) {
+            if (!this.props.canSubmit()) {
                 let style = {
-                    cursor: 'default'
+                    cursor: 'default',
+                    backgroundColor: 'lightgrey'
                 };
                 return style;
             }

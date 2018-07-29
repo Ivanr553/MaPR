@@ -77,7 +77,7 @@ namespace Marine_Permit_Palace.Data
                 entity.HasOne(e => e.Document)
                     .WithMany(e => e.SubmittedDocuments)
                     .HasForeignKey(e => e.DocumentId);
-                
+
                 //User Editable Data Linkage
                 entity.HasOne(e => e.CreatedBy)
                     .WithMany(e => e.SubmittedDocumentsCreatedBy)

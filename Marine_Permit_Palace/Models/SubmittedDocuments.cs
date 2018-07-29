@@ -29,7 +29,7 @@ namespace Marine_Permit_Palace.Models
         public bool IsEditLocked { get; set; }
 
         public Document Document { get; set; }
-        public Guid DocumentId { get; set; }
+        public Guid DocumentId { get; set; } 
 
         public Permit Cont { get; set; }
 

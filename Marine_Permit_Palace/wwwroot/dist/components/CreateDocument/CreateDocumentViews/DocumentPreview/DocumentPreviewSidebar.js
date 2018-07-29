@@ -28,7 +28,7 @@ class DocumentPreviewSidebar extends React.Component {
                 return React.createElement(AddedUser_1.default, { removeAssignedUser: this.props.removeAssignedUser, key: Math.random(), fieldAssigned: true, currentSelectedFieldId: this.props.currentSelectedFieldId, user: this.props.currentSelectedField.assigned_to, handleAddedUserPress: e => this.props.handleAddedUserPress(e), deleteUser: this.props.deleteUser, isInSidebar: true });
             }
             else {
-                return null;
+                return React.createElement("div", { className: 'added-user', style: { cursor: 'default' } }, "Select User");
             }
         };
         //Sidebar Functions

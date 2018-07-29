@@ -65,7 +65,7 @@ class SelectPermissions extends React.Component {
                 this.displayUsersFromSearch(userArray);
             }
             catch (e) {
-                console.log(e);
+                throw new Error(e);
             }
         });
         this.clearUsersFromSearch = () => {

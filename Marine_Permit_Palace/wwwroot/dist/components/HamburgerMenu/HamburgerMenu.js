@@ -50,7 +50,6 @@ class HamburgerMenu extends React.Component {
                 React.createElement("img", { className: 'hamburger-menu-element', id: 'hamburger-icon', src: this.props.hamburgerSource, alt: "" }),
                 React.createElement("div", { id: 'hamburger-menu', style: { animation: 'hide-hamburger-menu 0.75s forwards' } },
                     React.createElement("div", { className: 'hamburger-menu-item' }, "Account"),
-                    React.createElement("div", { className: 'hamburger-menu-item' }, "Help"),
                     React.createElement("div", { className: 'hamburger-menu-item' }, "Log Out"))));
         }
         if (this.state.hamburgerState === 'open') {
@@ -58,7 +57,6 @@ class HamburgerMenu extends React.Component {
                 React.createElement("img", { className: 'hamburger-menu-element', id: 'hamburger-icon', src: this.props.hamburgerSource, alt: "" }),
                 React.createElement("div", { id: 'hamburger-menu', className: 'hamburger-menu-element', style: { animation: 'show-hamburger-menu 1.5s forwards' } },
                     React.createElement("div", { className: 'hamburger-menu-item hamburger-menu-element', id: 'account-hamburger-menu-item', onClick: this.handleAccountPress }, "Account"),
-                    React.createElement("div", { className: 'hamburger-menu-item hamburger-menu-element', id: 'settings-hamburger-menu-item' }, "Help"),
                     React.createElement("div", { className: 'hamburger-menu-item hamburger-menu-element', id: 'log-out-hamburger-menu-item', onClick: this.logOff }, "Log Out"))));
         }
         return React.createElement("div", null, "Something Broke!");

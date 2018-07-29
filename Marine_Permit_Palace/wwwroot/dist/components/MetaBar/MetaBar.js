@@ -39,7 +39,6 @@ class MetaBar extends React.Component {
                     .then(data => {
                     let responseArray = data.my_documents;
                     return responseArray.map(item => {
-                        // console.log(item)
                         return {
                             name: item.document_name,
                             idDocument: item.submitted_document_id
@@ -51,6 +50,13 @@ class MetaBar extends React.Component {
                 pendingDocuments: pendingDocuments
             }, () => {
                 this.handleDocumentListPress();
+            });
+        });
+        this.getSignature = () => __awaiter(this, void 0, void 0, function* () {
+            let request = yield fetch('/Account/GetSignature', { credentials: 'same-origin' });
+            let response = yield request.json();
+            this.setState({
+                signature_base64: response.signature_base64
             });
         });
         this.getCurrentView = (currentView) => {
@@ -102,7 +108,7 @@ class MetaBar extends React.Component {
                 document_id: document_id
             }, () => {
                 this.setState({
-                    currentView: React.createElement(DocumentView_1.default, { document_name: document_name, document_id: this.state.document_id, view: 'PendingDocuments' })
+                    currentView: React.createElement(DocumentView_1.default, { signature_base64: this.state.signature_base64, document_name: document_name, document_id: this.state.document_id, view: 'PendingDocuments' })
                 }, () => {
                     this.props.getCurrentView(this.state.currentView);
                 });
@@ -183,6 +189,7 @@ class MetaBar extends React.Component {
         this.getDocuments();
         this.getPendingDocuments();
         this.getNotifications();
+        this.getSignature();
     }
     componentDidCatch() {
     }

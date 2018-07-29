@@ -64,14 +64,13 @@ class Register extends React.Component {
                 let registerResponse = yield request.json();
                 if (registerResponse.result === 'Failure') {
                     alert('User already created');
-                    console.log(registerResponse);
                 }
                 if (registerResponse.result === 'Success') {
                     window.open('/A/App/Home', '_self');
                 }
             }
             catch (e) {
-                console.log(e);
+                throw new Error(e);
             }
         });
         this.state = {

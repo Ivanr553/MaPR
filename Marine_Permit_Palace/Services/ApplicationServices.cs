@@ -159,6 +159,8 @@ namespace Marine_Permit_Palace.Services
             var AssignedDocuments = _context.DocumentAssigneeIntermediate
                 .Include(e => e.ActiveDocument)
                 .ThenInclude(e => e.Document)
+                .Include(e => e.ActiveDocument)
+                .ThenInclude(e => e.Assigner)
                 .Where(e => e.IdAssigneeId == UserId)
                 .Select(e => e.ActiveDocument).ToList();
             if(RequiresAttentionOnly)
@@ -225,7 +227,7 @@ namespace Marine_Permit_Palace.Services
             }
 
             field.SignatureDataId = stor.IdDataStorage;
-            if(_context.DocumentSignatureField.FirstOrDefault(e => e.IdFormName == field.IdFormName && e.IdSubmittedDocumentId == field.IdSubmittedDocumentId) != null)
+            if(_context.DocumentSignatureField.AsNoTracking().FirstOrDefault(e => e.IdFormName == field.IdFormName && e.IdSubmittedDocumentId == field.IdSubmittedDocumentId) != null)
             {
                 //Update
                 return Update(field);

@@ -70,8 +70,10 @@ namespace Marine_Permit_Palace.Services
                 {
                     Fields.ForEach(e =>
                     {
-                        if (Existing.FirstOrDefault(f => f.IdFormName == e.IdFormName) != null)
+                        var FdExi = Existing.FirstOrDefault(f => f.IdFormName == e.IdFormName);
+                        if (FdExi != null)
                         {
+                            e.AssigneeId = FdExi.AssigneeId;
                             ToUpdate.Add(e);
                         }
                         else ToAdd.Add(e);
@@ -116,8 +118,10 @@ namespace Marine_Permit_Palace.Services
                 {
                     Fields.ForEach(e =>
                     {
-                        if (Existing.FirstOrDefault(f => f.IdFormName == e.IdFormName) != null)
+                        var CBExist = Existing.FirstOrDefault(f => f.IdFormName == e.IdFormName);
+                        if (CBExist != null)
                         {
+                            e.AssigneeId = CBExist.AssigneeId;
                             ToUpdate.Add(e);
                         }
                         else ToAdd.Add(e);
@@ -227,8 +231,10 @@ namespace Marine_Permit_Palace.Services
             }
 
             field.SignatureDataId = stor.IdDataStorage;
-            if(_context.DocumentSignatureField.AsNoTracking().FirstOrDefault(e => e.IdFormName == field.IdFormName && e.IdSubmittedDocumentId == field.IdSubmittedDocumentId) != null)
+            var Field = _context.DocumentSignatureField.AsNoTracking().FirstOrDefault(e => e.IdFormName == field.IdFormName && e.IdSubmittedDocumentId == field.IdSubmittedDocumentId);
+            if (Field != null)
             {
+                field.AssigneeId = Field.AssigneeId;
                 //Update
                 return Update(field);
             }

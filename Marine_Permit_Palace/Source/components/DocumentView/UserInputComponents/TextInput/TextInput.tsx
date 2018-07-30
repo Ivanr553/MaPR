@@ -18,7 +18,7 @@ interface Props {
     view: 'PendingDocuments' | 'DocumentPreview' | 'AccountPage',
     userList?: Array<any>,
     previewOnClickHandler?: any,
-    is_disabled: boolean
+    is_disabled?: boolean
 }
 
 export default class TextInput extends React.Component<Props, any> {

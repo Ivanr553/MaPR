@@ -6,8 +6,9 @@ interface CancellablePromise {
 }
 
 interface document {
-    idDocument: string,
-    name: string
+    document_id: string,
+    name: string,
+    is_complete: boolean
 }
 
 interface document_meta_field {

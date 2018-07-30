@@ -72,15 +72,27 @@ export default class MetaBar extends React.Component<any, any> {
                             return responseArray.map(item => {
                                 return {
                                     name: item.document_name,
-                                    idDocument: item.submitted_document_id
+                                    document_id: item.submitted_document_id,
+                                    is_complete: item.is_complete
                                 }
                             })
                         })
                 })
         
-    
+        let pendingDocumentList = []
+        let completedDocumentList = []
+        pendingDocuments.forEach(document => {
+            if(document.is_complete) {
+                completedDocumentList.push(document)
+            }
+            if(!document.is_complete) {
+                pendingDocumentList.push(document)
+            }
+        })
+
         this.setState({
-            pendingDocuments: pendingDocuments
+            pendingDocumentList: pendingDocumentList,
+            completedDocumentList: completedDocumentList
         }, () => {
             this.handleDocumentListPress()
         })
@@ -202,7 +214,7 @@ export default class MetaBar extends React.Component<any, any> {
 
     handleDocumentListPress = () => {
         this.setState({
-            currentView: <PendingDocuments selectDocument={this.handleDocumentLinkPress} pendingDocuments={this.state.pendingDocuments} />
+            currentView: <PendingDocuments selectDocument={this.handleDocumentLinkPress} pendingDocumentList={this.state.pendingDocumentList} completedDocumentList={this.state.completedDocumentList} />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
             this.handleMetabarSelectionStyling('document-list-metabar-button', 'document-list-metabar-triangle')

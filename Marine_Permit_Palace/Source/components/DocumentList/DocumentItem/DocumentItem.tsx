@@ -19,14 +19,14 @@ class DocumentItem extends React.Component<Props, any> {
 
     getStyle = () => {
 
-        if(this.props.document.idDocument === this.props.selectedDocument) {
+        if(this.props.document.document_id === this.props.selectedDocument) {
 
             return {
                 border: 'solid 2px rgba(38, 107, 168, 0.7)'
             }
         }
 
-        if(this.props.document.idDocument !== this.props.selectedDocument) {
+        if(this.props.document.document_id !== this.props.selectedDocument) {
             
             return {
                 border: 'solid 2px rgba(0, 0, 0, 0)'
@@ -37,9 +37,9 @@ class DocumentItem extends React.Component<Props, any> {
 
     render() {
         return (
-            <div className='document-item' style={this.getStyle()} id={this.props.document.idDocument} onClick={(e) => {this.props.selectDocument(e)}}>
+            <div className='document-item' style={this.getStyle()} id={this.props.document.document_id} onClick={(e) => {this.props.selectDocument(e)}}>
                 <div className='document-item-field'>{this.props.document.name}</div>
-                <div className='document-item-field'>ID: {this.props.document.idDocument}</div>
+                <div className='document-item-field'>ID: {this.props.document.document_id}</div>
             </div>
         );
     }

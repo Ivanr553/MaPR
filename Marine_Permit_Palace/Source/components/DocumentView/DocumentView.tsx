@@ -168,27 +168,12 @@ export default class DocumentView extends React.Component<Props, any> {
 
         let documentObject = Object.assign({}, this.state.documentObject)
         let document_meta_field: document_meta_field = documentObject.document_meta[id]
-        let dod_id = this.props.dod_id
-
-        console.log(document_meta_field)
-        console.log(dod_id)
-
-        if(!!document_meta_field.assigned_to && document_meta_field.assigned_to.indexOf(dod_id) < 0) {
-            console.log('cannot edit field')
-            return
-        }
-
-        if(!document_meta_field.is_disabled) {
-            console.log('cannot edit field')
-            return
-        }
 
         if(e.target.className === 'CheckboxInput'){
             document_meta_field.value = document_meta_field.value === 'Off' ? 'On' : 'Off' 
         } else {
             document_meta_field.value = e.target.value
         }
-
 
         this.setState({
             documentObject: documentObject

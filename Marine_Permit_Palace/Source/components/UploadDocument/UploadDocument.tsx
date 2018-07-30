@@ -25,7 +25,7 @@ export default class UploadDocument extends React.Component<any, any> {
             let request = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json; charset=UTF-8'
+                    'Content-Type': 'application/pdf; charset=UTF-8'
                 },
                 body: file
             })

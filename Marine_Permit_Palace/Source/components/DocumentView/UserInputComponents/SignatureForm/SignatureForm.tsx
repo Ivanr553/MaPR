@@ -14,7 +14,8 @@ interface Props {
     assigned_to?: user,
     previewOnClickHandler?: any,
     signature_base64?: HTMLImageElement,
-    signHandler?: (e) => void
+    signHandler?: (e) => void,
+    is_disabled: boolean
 }
 
 export default class SignatureForm extends React.Component<Props, any> {
@@ -27,11 +28,11 @@ export default class SignatureForm extends React.Component<Props, any> {
         }
     }
 
-    getDocumentPreviewStyle = () => {
+    getDocumentPreviewStyle = (): React.CSSProperties => {
 
         if(!!this.props.assigned_to) {
 
-            let style = {
+            let style: React.CSSProperties = {
                 width: `${this.props.width}px`,
                 height: `${this.props.height}px`,
                 top: `${this.props.top}px`,
@@ -43,7 +44,7 @@ export default class SignatureForm extends React.Component<Props, any> {
         }
         else {
 
-            let style = {
+            let style: React.CSSProperties = {
                 width: `${this.props.width}px`,
                 height: `${this.props.height}px`,
                 top: `${this.props.top}px`,
@@ -57,16 +58,33 @@ export default class SignatureForm extends React.Component<Props, any> {
     }
 
     //Getting style from props
-    getPendingDocumentsStyle = () => {
+    getPendingDocumentsStyle = (): React.CSSProperties => {
 
-        let style = {
-            width: `${this.props.width}px`,
-            height: `${this.props.height}px`,
-            top: `${this.props.top}px`,
-            left: `${this.props.left}px`,
+        if(this.props.is_disabled) {
+
+            let style: React.CSSProperties = {
+                width: `${this.props.width}px`,
+                height: `${this.props.height}px`,
+                top: `${this.props.top}px`,
+                left: `${this.props.left}px`,
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                cursor: 'default'
+            }
+
+            return style
+
+        } else {
+
+            let style: React.CSSProperties = {
+                width: `${this.props.width}px`,
+                height: `${this.props.height}px`,
+                top: `${this.props.top}px`,
+                left: `${this.props.left}px`,
+            }
+    
+            return style
+
         }
-
-        return style
     }
 
 
@@ -89,6 +107,12 @@ export default class SignatureForm extends React.Component<Props, any> {
     render() {
 
         if(this.props.view === 'DocumentPreview') {
+
+            if(this.props.is_disabled) {
+                <div id={this.props.id} className='SignatureForm' style={this.getDocumentPreviewStyle()}>
+                    {this.documentPreviewContent()}
+                </div> 
+            }
 
             return (
                 <div id={this.props.id} className='SignatureForm' style={this.getDocumentPreviewStyle()} onClick={(e) => {this.props.previewOnClickHandler(e)}}>

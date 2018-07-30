@@ -18,13 +18,58 @@ class ToolBar extends React.Component<Props, any> {
     }
 
     handleOnClick = () => {
-
         this.setState({
-            timerDone: false
+            timerDone: false,
+            open: !this.state.open
         }, () => {
             this.setTimer()
         })
     }
+
+    getLeftArrowStyle = (): React.CSSProperties => {
+
+        if(this.state.open) {
+
+            let style = {
+                animation: 'animate-toolbar-left-arrow-opening 0.2s forwards'
+            }
+    
+            return style
+        }
+
+        if(!this.state.open) {
+
+            let style = {
+                animation: 'animate-toolbar-left-arrow-closing 0.2s forwards'
+            }
+
+            return style
+        }
+
+    }
+
+    getRightArrowStyle = (): React.CSSProperties => {
+
+        if(this.state.open) {
+
+            let style = {
+                animation: 'animate-toolbar-right-arrow-opening 0.2s forwards'
+            }
+    
+            return style
+        }
+
+        if(!this.state.open) {
+
+            let style = {
+                animation: 'animate-toolbar-right-arrow-closing 0.2s forwards'
+            }
+
+            return style
+        }
+
+    }
+
 
     getToolbarInfoBox = () => {
 
@@ -111,17 +156,18 @@ class ToolBar extends React.Component<Props, any> {
 
     render() {
         return (
-            <div className='ToolBar'>
-                {/* <img className='tolkit-image' src="/images/toolkit.png" alt=""/> */}
-                <div className='tools-container' onClick={this.handleOnClick}>
-                    {/* <div className='toolbar-tool' onClick={this.props.handleApprove}>
-                        <img className='toolbar-tool-image' src='/images/check.png' alt=""/>
-                    </div> */}
+            <div className='ToolBar' onClick={this.handleOnClick}>
+                <img style={this.getLeftArrowStyle()} className='toolkit-arrow toolkit-arrow-left' src="/images/left-arrow-1.png" alt=""/>
+                <img style={this.getRightArrowStyle()} className='toolkit-arrow toolkit-arrow-right' src="/images/left-arrow-1.png" alt=""/>
+                {/* <div className='tools-container'>
+                    <div className='toolbar-tool toolbar-delete' onClick={this.props.handleApprove}>
+                        X
+                    </div>
                     <div style={this.getSubmitStyle()} className='toolbar-tool' onClick={this.props.handleSubmit}>
                         <img className='toolbar-tool-image' src='/images/submit.png' alt=""/>
                         {this.getToolbarInfoBox()}
                     </div>
-                </div>
+                </div> */}
             </div>
         );
     }

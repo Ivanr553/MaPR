@@ -8,6 +8,25 @@
   align-items: center
   justify-content: flex-start
 
+.canvas-icon-document-view
+  width: 40px
+  height: auto
+  opacity: 0.5
+  position: absolute
+  z-index: 500
+  top: 0.5vh
+  right: 11vh
+  opacity: 0
+
+#saving-icon
+  animation: pulse 1.5s infinite linear
+
+#saving-icon-complete-document-view
+  top: 1vh
+  right: 12vh
+  opacity: 0
+  animation: fade-in 1s forwards
+
 .pdf-image
   position: absolute
   left: calc((100% - 612px) / 2)
@@ -127,3 +146,17 @@
   100%
     border: solid 1px rgba(109, 167, 255, 0.8)
     // transform: translate(-3px, -3px)
+
+@keyframes pulse
+  0%
+      opacity: 0.5
+  50%
+      opacity: 0.2
+  100%
+        opacity: 0.5
+
+@keyframes fade-in
+  0%
+      opacity: 0
+  100%
+      opacity: 1

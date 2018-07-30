@@ -1,6 +1,5 @@
 import * as React from 'react'
 
-
 const s = require('./styling/style.sass')
 
 import PendingDocuments from '../PendingDocumentsView/PendingDocumentsView'
@@ -9,6 +8,7 @@ import About from '../About/About'
 import CreateDocument from '../CreateDocument/CreateDocument'
 import UploadDocument from '../UploadDocument/UploadDocument'
 import SignatureView from '../SignatureView/SignatureView'
+import { getUser } from '../../services/services';
 
 export default class MetaBar extends React.Component<any, any> {
 
@@ -34,6 +34,15 @@ export default class MetaBar extends React.Component<any, any> {
 
 
     //========================== Sending/Retrieving Data ==========================
+
+    getUser = async () => {
+        let user = await getUser()
+        let dod_id = parseInt(user.username)
+
+        this.setState({
+            dod_id: dod_id
+        })
+    }
 
     getDocuments = async () => {
 
@@ -154,7 +163,7 @@ export default class MetaBar extends React.Component<any, any> {
             document_id: document_id
         }, () => {
             this.setState({
-                currentView: <DocumentView signature_base64={this.state.signature_base64} document_name={document_name} document_id={this.state.document_id} view={'PendingDocuments'} />
+                currentView: <DocumentView dod_id={this.state.dod_id} signature_base64={this.state.signature_base64} document_name={document_name} document_id={this.state.document_id} view={'PendingDocuments'} />
             }, () => {
                 this.props.getCurrentView(this.state.currentView)
             })
@@ -184,7 +193,7 @@ export default class MetaBar extends React.Component<any, any> {
 
     handleNewDocumentPress = () => {
         this.setState({
-            currentView: <CreateDocument createDocumentState={this.state.createDocumentState} getCreateDocumentState={this.getCreateDocumentState} getCurrentView={this.getCurrentView} documentResults={this.state.documentResults} viewDocument={this.handleDocumentLinkPress} />
+            currentView: <CreateDocument getPendingDocuments={this.getPendingDocuments} createDocumentState={this.state.createDocumentState} getCreateDocumentState={this.getCreateDocumentState} getCurrentView={this.getCurrentView} documentResults={this.state.documentResults} viewDocument={this.handleDocumentLinkPress} />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
             this.handleMetabarSelectionStyling('create-document-metabar-button', 'create-document-metabar-triangle')
@@ -237,6 +246,7 @@ export default class MetaBar extends React.Component<any, any> {
         this.getPendingDocuments()
         this.getNotifications()
         this.getSignature()
+        this.getUser()
     }
 
     componentDidCatch() {

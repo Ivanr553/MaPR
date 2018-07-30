@@ -23,7 +23,7 @@ interface document_meta_field {
         }
     },
     assigned_to: any,
-    isDisabled: boolean,
+    is_disabled: boolean,
     disabled_message: string
 }
 

@@ -1,9 +1,11 @@
+@import ../../../style
+
 
 .ToolBar
     width: 5vw
     height: 5vw
     border-radius: 100px
-    // background-color: rgb(155, 170, 196)
+    background-color: rgb(88, 164, 239)
     position: fixed
     bottom: 1vw
     right: 3vw
@@ -11,7 +13,31 @@
     flex-direction: column
     justify-content: center
     align-items: center
-    // cursor: pointer
+    cursor: pointer
+    // animation: animate-toolbar-closed 0.2s forwards
+
+.Toolbar:hover
+    // animation: animate-toolbar-open 0.2s forwards
+
+
+.Toolbar:hover > .toolkit-arrow-right
+    animation: animate-toolbar-right-arrow-hover-over 0.2s forwards
+
+.Toolbar:hover > .toolkit-arrow-left
+    animation: animate-toolbar-left-arrow-hover-over 0.2s forwards
+
+.toolkit-arrow
+    width: 30%
+    height: auto
+    position: absolute
+    top: auto
+    left: auto
+
+.toolkit-arrow-left
+    animation: animate-toolbar-left-arrow-hover-out 0.2s forwards
+
+.toolkit-arrow-right
+    animation: animate-toolbar-right-arrow-hover-out 0.2s forwards
 
 .tolkit-image
     width: 50%
@@ -37,8 +63,13 @@
     background-color: white
     border-radius: 100px
     animation: shrink-toolbelt 0.25s forwards
-    margin-bottom: 2vh
+    margin-bottom: 3vh
     position: relative
+
+.toolbar-delete
+    color: white
+    font-size: 3.5em
+    background-color: rgb(255, 153, 153)
 
 .toolbar-tool > div
     animation: grow-toolbelt 0.25s forwards
@@ -114,3 +145,64 @@
         width: 0
         opacity: 0
         transform: scale(1.1) translateY(-0.5vh)
+
+
+@keyframes animate-toolbar-open
+    0%
+        transform: rotate(0deg)
+    100%
+        transform: rotate(90deg)
+
+@keyframes animate-toolbar-closed
+    0%
+        transform: rotate(90deg)
+    100%
+        transform: rotate(0deg)
+
+@keyframes animate-toolbar-left-arrow-opening
+    0%
+        transform: rotate(180deg) translateX(-50%)
+    100%
+        transform: rotate(180deg) translateX(35%)
+
+@keyframes animate-toolbar-right-arrow-opening
+    0%
+        transform: translateX(-50%)
+    100%
+        transform: translateX(35%)
+
+@keyframes animate-toolbar-left-arrow-closing
+    0%
+        transform: rotate(180deg) translateX(35%)
+    100%
+        transform: rotate(180deg) translateX(-50%)
+
+@keyframes animate-toolbar-right-arrow-closing
+    0%
+        transform: translateX(35%)
+    100%
+        transform: translateX(-50%)
+
+@keyframes animate-toolbar-left-arrow-hover-over
+    0%
+        transform: rotate(180deg) translateX(35%)
+    100%
+        transform: rotate(180deg) translateX(50%)
+
+@keyframes animate-toolbar-right-arrow-hover-over
+    0%
+        transform: translateX(35%)
+    100%
+        transform: translateX(50%)
+
+@keyframes animate-toolbar-left-arrow-hover-out
+    0%
+        transform: rotate(180deg) translateX(50%)
+    100%
+        transform: rotate(180deg) translateX(35%)
+
+@keyframes animate-toolbar-right-arrow-hover-out
+    0%
+        transform: translateX(50%)
+    100%
+        transform: translateX(35%)

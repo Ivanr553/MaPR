@@ -12,7 +12,6 @@ interface Props {
     document_id: string,
     userList: Array<user>,
     getDocumentName(documentName: String): void,
-    getDocumentPreviewComplete(documentPreviewComplete: boolean): void,
     documentPreviewBoolean: boolean,
     handleAddedUserPress: (e: React.MouseEvent) => void,
     deleteUser: (e: any) => void,
@@ -21,7 +20,8 @@ interface Props {
     currentSelectedFieldId: number,
     currentSelectedField: currentSelectedField,
     removeAssignedUser: (user: user, removeOption: null | number) => void,
-    assigned_user: user
+    assigned_user: user,
+    completeDocumentCreation: () => void
 }
 
  
@@ -115,7 +115,7 @@ class DocumentPreview extends React.Component<Props, any> {
             return false
         }
 
-        if(this.state.documentName === '') {
+        if(this.state.document_name === '') {
             return false
         }
 
@@ -170,6 +170,8 @@ class DocumentPreview extends React.Component<Props, any> {
                 assignees: assignees
             }
 
+            console.log(assignedDocument)
+
             let response = await fetch('/DocumentManager/AssignDocument', {
                 method: "POST",
                 mode: "cors",
@@ -180,10 +182,15 @@ class DocumentPreview extends React.Component<Props, any> {
                 body: JSON.stringify(assignedDocument)
             })
 
-            return await response.json()
+            if((response as any).status === 200) {
+                this.props.completeDocumentCreation()
+            } else {
+                alert('There was an error submitting the document')
+                throw new Error(response.statusText)
+            }
 
         } catch(e) {
-            throw Error(e)
+            throw new Error(e)
          }
 
     }
@@ -211,11 +218,6 @@ class DocumentPreview extends React.Component<Props, any> {
             document_id: this.props.document_id
         })
     }
-
-    giveDocumentPreviewComplete = (): void => {
-        this.props.getDocumentPreviewComplete(true)
-    }
-
 
     //React lifecycle methods
     componentDidMount() {

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import PDF from 'react-pdf-js'
 
-const s = require('./styling/style.sass')
+const s = require('./styling/DocumentViewStyle.sass')
 
 import SignatureForm from './UserInputComponents/SignatureForm/SignatureForm'
 import CheckboxInput from './UserInputComponents/CheckboxInput/CheckboxInput'
@@ -17,7 +17,8 @@ interface Props {
     view: 'PendingDocuments' | 'DocumentPreview',
     previewOnClickHandler?: (e: React.ChangeEvent<HTMLInputElement>) => void,
     document_meta?: Array<document_meta_field>,
-    signature_base64?: string
+    signature_base64?: string,
+    dod_id?: number
 }
 
 export default class DocumentView extends React.Component<Props, any> {
@@ -27,7 +28,9 @@ export default class DocumentView extends React.Component<Props, any> {
         this.state ={
             documentObject: undefined,
             submitted_file_id: '',
-            noDocument: false
+            noDocument: false,
+            savingIconSource: '/images/clock.png',
+            savingIconId: '',
         }
     }
 
@@ -107,7 +110,7 @@ export default class DocumentView extends React.Component<Props, any> {
 
     }
 
-    documentFields = () => {
+    createDocumentFields = () => {
 
         let documentObject = this.state.documentObject
         if(!!!this.state.documentObject) {
@@ -137,20 +140,20 @@ export default class DocumentView extends React.Component<Props, any> {
                     document_meta_field.value = 'Off'
                 }
 
-                let newForm = <CheckboxInput key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} checked={document_meta_field.value} onChange={(e) => {this.handleFormEdit(e, form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
+                let newForm = <CheckboxInput is_disabled={document_meta_field.is_disabled} key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} checked={document_meta_field.value} onChange={(e) => {this.handleFormEdit(e, form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
 
                 documentFields.push(newForm)
             }
             else if(document_meta_field.field_type === 'Text') {
                 let newForm = 
                     <div key={form} className='form-wrapper'>
-                        <TextInput key={form} id={form} position={'absolute'} border={'none'} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} value={document_meta_field.value} onChange={(e) => {this.handleFormEdit(e, form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
+                        <TextInput is_disabled={document_meta_field.is_disabled} key={form} id={form} position={'absolute'} border={'none'} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} value={document_meta_field.value} onChange={(e) => {this.handleFormEdit(e, form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
                     </div>
 
                 documentFields.push(newForm)
             }
             else if(document_meta_field.field_type === 'Signature') {
-                let newForm = <SignatureForm key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} assigned_to={document_meta_field.assigned_to} signature_base64={document_meta_field.value} signHandler={this.signHandler}/>
+                let newForm = <SignatureForm is_disabled={document_meta_field.is_disabled} key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} assigned_to={document_meta_field.assigned_to} signature_base64={document_meta_field.value} signHandler={this.signHandler}/>
 
                 documentFields.push(newForm)
             }
@@ -164,7 +167,21 @@ export default class DocumentView extends React.Component<Props, any> {
     async handleFormEdit(e, id) {
 
         let documentObject = Object.assign({}, this.state.documentObject)
-        let document_meta_field = documentObject.document_meta[id]
+        let document_meta_field: document_meta_field = documentObject.document_meta[id]
+        let dod_id = this.props.dod_id
+
+        console.log(document_meta_field)
+        console.log(dod_id)
+
+        if(!!document_meta_field.assigned_to && document_meta_field.assigned_to.indexOf(dod_id) < 0) {
+            console.log('cannot edit field')
+            return
+        }
+
+        if(!document_meta_field.is_disabled) {
+            console.log('cannot edit field')
+            return
+        }
 
         if(e.target.className === 'CheckboxInput'){
             document_meta_field.value = document_meta_field.value === 'Off' ? 'On' : 'Off' 
@@ -206,8 +223,10 @@ export default class DocumentView extends React.Component<Props, any> {
         if(!!this.state.saveFileTimeout) {
             clearTimeout(this.state.saveFileTimeout)
         }
-
-        let saveFileTimeout = setTimeout(() => this.saveFile(false), 2000)
+        let saveFileTimeout = setTimeout(() => {
+            this.saveFile(false)
+            this.startSave()
+        }, 2000)
 
         this.setState({
             saveFileTimeout: saveFileTimeout
@@ -245,7 +264,7 @@ export default class DocumentView extends React.Component<Props, any> {
         let response = await newFilePromise.promise
         let saveResult: saveResultInterface = await response.json()
 
-        console.log(saveResult)
+        this.completeSave()
         
         return saveResult
     }
@@ -319,6 +338,36 @@ export default class DocumentView extends React.Component<Props, any> {
 
     }
 
+    //Save functionality
+
+    startSave = () => {
+        this.setState({
+            savingIconId: 'saving-icon'
+        })
+    }
+
+    completeSave = () => {
+        this.setState({
+            savingIconSource: '/images/check-green.png',
+            savingIconId: 'saving-icon-complete-document-view'
+        }, () => {
+
+            let clearSavingIcon = (
+                setTimeout(() => {
+                    this.setState({
+                        savingIconId: '',
+                        savingIconSource: '/images/clock.png'
+                    })
+                }, 2000)
+            )
+
+            this.setState({
+                clearSavingIcon: clearSavingIcon
+            })
+
+        })
+    }
+
 
     //Toolbar functionality
 
@@ -388,10 +437,11 @@ export default class DocumentView extends React.Component<Props, any> {
         return(
             <div className='DocumentView'>
                 {noDocumentWarning}
+                <img className='canvas-icon-document-view' id={this.state.savingIconId} src={this.state.savingIconSource} alt="" onClick={this.completeSave}/>
                 <PDF className='pdf-image' file={document_id} >
                 </PDF>
                 <div id='document-form-div'>
-                    {this.documentFields()}
+                    {this.createDocumentFields()}
                 </div>
                 {toolbar}
             </div>

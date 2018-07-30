@@ -17,7 +17,8 @@ interface Props {
     onChange: any,
     view: 'PendingDocuments' | 'DocumentPreview' | 'AccountPage',
     userList?: Array<any>,
-    previewOnClickHandler?: any
+    previewOnClickHandler?: any,
+    is_disabled: boolean
 }
 
 export default class TextInput extends React.Component<Props, any> {
@@ -31,12 +32,10 @@ export default class TextInput extends React.Component<Props, any> {
         }
     }
 
-    //NEEDS TO BE FIXED
-
     //Getting style from props
-    getStyle = () => {
+    getStyle = (): React.CSSProperties => {
 
-        let style = {
+        let style: React.CSSProperties = {
             position: this.props.position as any,
             border: this.props.border,
             width: `${this.props.width}px`,
@@ -48,7 +47,25 @@ export default class TextInput extends React.Component<Props, any> {
         return style
     }
 
+    getDisabledStyle = (): React.CSSProperties => {
+        
+        let style: React.CSSProperties = {
+            position: this.props.position as any,
+            border: this.props.border,
+            width: `${this.props.width}px`,
+            height: `${this.props.height}px`,
+            top: `${this.props.top}px`,
+            left: `${this.props.left}px`,
+            backgroundColor: 'rgba(0, 0, 0, 0.1)',
+            cursor: 'default'
+        }
+
+        return style
+    }
+
     render() {
+
+
 
         if(this.props.view === 'DocumentPreview') {
             
@@ -58,6 +75,14 @@ export default class TextInput extends React.Component<Props, any> {
         }
 
         if(this.props.view === 'PendingDocuments' || this.props.view === 'AccountPage') {
+
+            if(this.props.is_disabled) {
+            
+                return (
+                    <textarea readOnly id={this.props.id} className='TextInput' style={this.getDisabledStyle()} defaultValue={this.props.value}/>
+                )
+
+            }
 
             return(
                 <textarea id={this.props.id} className='TextInput' style={this.getStyle()} defaultValue={this.props.value} onChange={this.props.onChange} />

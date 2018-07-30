@@ -71,6 +71,13 @@ let authenticateUser = async () => {
 
 }
 
+let getUser = async () => {
+
+    let request = await fetch('/Account/WhoAmI', {credentials: 'same-origin'})
+    let response = await request.json()
+    return response
+}
+
 let logOff = async () => {
 
     let request = await fetch('/Account/Logout', {credentials: 'same-origin'})
@@ -85,4 +92,4 @@ let logOff = async () => {
 }
 
 
-export {getDocumentPromise, getTemplateDocumentPromise, getSaveFilePromise, authenticateUser, logOff}
+export {getDocumentPromise, getTemplateDocumentPromise, getSaveFilePromise, authenticateUser, getUser, logOff}

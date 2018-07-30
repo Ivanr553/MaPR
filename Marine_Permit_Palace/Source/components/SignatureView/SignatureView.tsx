@@ -59,9 +59,6 @@ export default class SignatureView extends React.Component<any, any> {
 
         let bounds = canvas.getBoundingClientRect()
 
-        let prevX = this.state.prevX || e.pageX - bounds.left
-        let prevY = this.state.prevX || e.pageY - bounds.top
-
         let x = e.pageX - bounds.left
         let y = e.pageY - bounds.bottom + (canvas.height)
 
@@ -103,6 +100,7 @@ export default class SignatureView extends React.Component<any, any> {
             },
             body: JSON.stringify(body)
         })
+
         let response = await request.json()
 
         this.setState({

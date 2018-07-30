@@ -137,7 +137,8 @@ namespace Marine_Permit_Palace.Controllers
                             string value, disabled_message = null;
                             bool IsAllowedToEdit = true;
 
-                            var field_data = SubmittedDocument[field];
+                            FieldData field_data = SubmittedDocument[field];
+                            var AssigneeDodID = "";
                             if (field_data == null)
                             {
                                 value = pdfFormFields.GetField(field);
@@ -150,6 +151,7 @@ namespace Marine_Permit_Palace.Controllers
                                     var OtherUser = await _UserManager.FindByIdAsync(field_data.user_assigned);
                                     if (OtherUser != null)
                                     {
+                                        AssigneeDodID = OtherUser.UserName;
                                         IsAllowedToEdit = RequestingUserId == field_data.user_assigned;
                                         if (!IsAllowedToEdit)
                                         {
@@ -160,7 +162,7 @@ namespace Marine_Permit_Palace.Controllers
 
                             }
 
-                            JsonDocument.Add(new DocumentMeta() {  field_name = field, field_position = Position, value = value, field_type = field_type });
+                            JsonDocument.Add(new DocumentMeta() {  field_name = field, field_position = Position, value = value, field_type = field_type, assigned_to = AssigneeDodID, disabled_message = disabled_message, is_disabled = !IsAllowedToEdit });
                         }
                         var page1 = reader.GetPageSize(1);
                         return Json(new
@@ -678,7 +680,8 @@ namespace Marine_Permit_Palace.Controllers
                         {
                             Data = Convert.FromBase64String(e.value),
                             Type = AppDataType.SIGNATURE
-                        } : null
+                        } : null,
+                        AssigneeId = string.IsNullOrEmpty(e.assigned_to) ?  null : ( _UserManager.FindByNameAsync(e.assigned_to).Result).Id
                     }).ToList();
 
                 try { _DocumentSignatureService.SaveWithDocumentSignatureData(SigFields); } catch(Exception ex)

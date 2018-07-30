@@ -76,8 +76,15 @@ class Register extends React.Component {
         this.state = {
             dodNumber: '',
             password: '',
+            isPasswordValid: false,
             confirmPassword: '',
-            email: ''
+            email: '',
+            formErrors: {
+                dodNumber: '',
+                password: '',
+                confirmPassword: '',
+                email: '',
+            }
         };
     }
     componentDidMount() {

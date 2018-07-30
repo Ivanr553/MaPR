@@ -1,16 +1,22 @@
-﻿  {
-    "compilerOptions": {
-      "outDir": "./wwwroot/dist/",
-      "noImplicitAny": false,
-      "noEmitOnError": false,
-      "removeComments": false,
-      "sourceMap": true,
-      "target": "es6",
-      "module": "commonjs",
-      "moduleResolution": "node",
-      "jsx": "react"
-    },
-    "include": [
-      "./Source"
-    ]
-  }
+﻿{
+  "compilerOptions": {
+    "outDir": "./wwwroot/dist/",
+    "noImplicitAny": false,
+    "noEmitOnError": false,
+    "removeComments": false,
+    "sourceMap": true,
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "jsx": "react"
+  },
+  "exclude": [
+    "node_modules",
+    "typings",
+    "wwwroot"
+  ],
+  "types": [],
+  "include": [
+    "./Source"
+  ]
+}

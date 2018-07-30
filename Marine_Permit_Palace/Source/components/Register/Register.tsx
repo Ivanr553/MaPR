@@ -14,8 +14,15 @@ export default class Register extends React.Component<Props, any> {
         this.state = {
             dodNumber: '',
             password: '',
+            isPasswordValid: false,
             confirmPassword: '',
-            email: ''
+            email: '',
+            formErrors: {
+                dodNumber: '',
+                password: '',
+                confirmPassword: '',
+                email: '',
+            }
         }
     }
 
@@ -31,7 +38,9 @@ export default class Register extends React.Component<Props, any> {
         }) 
     }
 
+
     handlePassword = (e) => {
+
         this.setState({
             password: e.target.value
         })

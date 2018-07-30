@@ -166,7 +166,7 @@ export default class MetaBar extends React.Component<any, any> {
         let document_name = ''
 
         pendingDocuments.forEach(document => {
-            if(document.idDocument === document_id) {
+            if(document.document_id === document_id) {
                 document_name = document.name
             }
         })

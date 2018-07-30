@@ -25,6 +25,17 @@ export default class DocumentList extends React.Component<Props, any> {
     //Creates list in state of objects to be rendered
     getDocumentList = (documents: Array<document>) => {
 
+        documents = documents.map(document => {
+            if(!!document.idDocument){
+                let document_id = document.idDocument
+                delete document.idDocument
+                document.document_id = document_id
+                return document
+            } else {
+                return document
+            }
+        })
+
         return (
             documents.map(
                 (document) => {

@@ -7,6 +7,7 @@ interface CancellablePromise {
 
 interface document {
     document_id: string,
+    idDocument?: string
     name: string,
     is_complete: boolean
 }

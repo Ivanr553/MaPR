@@ -41,19 +41,6 @@ class SelectDocument extends React.Component<Props, any> {
         }
     }
 
-    getDocumentList = (documents: Array<document>) => {
-
-        return (
-            documents.map(
-                (document) => {
-                    return (
-                    <DocumentItem key={Math.random()} document={document} selectDocument={this.selectDocument} selectedDocument={this.props.document_id}/>
-                )
-            }
-            )
-        )
-    }
-
     selectDocument = (e) => {
         
         let target = e.target
@@ -61,7 +48,6 @@ class SelectDocument extends React.Component<Props, any> {
         while (!target.classList.contains('document-item')) {
             target = target.parentNode
         }
-        let parent = target.parentNode
 
 
         this.setState({
@@ -88,6 +74,7 @@ class SelectDocument extends React.Component<Props, any> {
     }
  
     render() {
+
         return (
             <div id='SelectDocument' style={this.handleShow()}>
                 <div className='documents-header'>Select Template Document</div>

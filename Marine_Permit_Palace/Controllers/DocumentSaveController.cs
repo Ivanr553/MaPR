@@ -680,8 +680,7 @@ namespace Marine_Permit_Palace.Controllers
                         {
                             Data = Convert.FromBase64String(e.value),
                             Type = AppDataType.SIGNATURE
-                        } : null,
-                        AssigneeId = string.IsNullOrEmpty(e.assigned_to) ?  null : ( _UserManager.FindByNameAsync(e.assigned_to).Result).Id
+                        } : null
                     }).ToList();
 
                 try { _DocumentSignatureService.SaveWithDocumentSignatureData(SigFields); } catch(Exception ex)

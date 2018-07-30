@@ -190,8 +190,6 @@ export default class CreateDocument extends React.Component<Props, any> {
         this.setState({
             userList: userList,
             document_meta: document_meta
-        }, () => {
-            console.log(this.state.document_meta)
         })
 
     }

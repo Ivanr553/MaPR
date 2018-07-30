@@ -27,14 +27,12 @@ export default class PendingDocumentsView extends React.Component<Props, any> {
 
     render() {
 
-        console.log(this.props.pendingDocuments)
-
         return(
             <div className='DocumentList'>
                 <div className='documents-header'>Pending Documents</div>
                 <DocumentList documents={this.props.pendingDocuments} selectDocument={this.props.selectDocument} document_id={this.state.document_id} />
-                <div className='documents-header'>Completed Documents</div>
-                <DocumentList documents={this.props.pendingDocuments} selectDocument={this.props.selectDocument} document_id={this.state.document_id} />
+                {/* <div className='documents-header'>Completed Documents</div>
+                <DocumentList documents={this.props.pendingDocuments} selectDocument={this.props.selectDocument} document_id={this.state.document_id} /> */}
             </div>
         )
     }

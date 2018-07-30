@@ -119,7 +119,6 @@ export default class MetaBar extends React.Component<any, any> {
         try{
             let request = await fetch('/Notification', {credentials: 'same-origin'})
             let response = await request.json()
-            console.log(response)
             let notificationCount = response.notification_count
 
             this.setState({

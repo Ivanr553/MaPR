@@ -170,8 +170,6 @@ class DocumentPreview extends React.Component<Props, any> {
                 assignees: assignees
             }
 
-            console.log(assignedDocument)
-
             let response = await fetch('/DocumentManager/AssignDocument', {
                 method: "POST",
                 mode: "cors",

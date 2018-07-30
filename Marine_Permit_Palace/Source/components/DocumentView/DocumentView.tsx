@@ -18,7 +18,9 @@ interface Props {
     previewOnClickHandler?: (e: React.ChangeEvent<HTMLInputElement>) => void,
     document_meta?: Array<document_meta_field>,
     signature_base64?: string,
-    dod_id?: number
+    dod_id?: number,
+    handleDocumentListPress?: () => void,
+    getDocuments?: () => void
 }
 
 export default class DocumentView extends React.Component<Props, any> {
@@ -234,7 +236,7 @@ export default class DocumentView extends React.Component<Props, any> {
 
         let newFile = {
             document_meta: payload_document_meta,
-            name: !!!this.props.document_name ? '' : this.props.document_name,
+            name: this.props.document_name,
             submitted_file_id: this.props.document_id,
             is_completed: is_completed
         }
@@ -269,7 +271,7 @@ export default class DocumentView extends React.Component<Props, any> {
 
         let newFile = {
             document_meta: payload_document_meta,
-            name: !!!this.props.document_name ? '' : this.props.document_name,
+            name: this.props.document_name,
             submitted_file_id: this.props.document_id,
             is_completed: is_completed
         }
@@ -279,6 +281,11 @@ export default class DocumentView extends React.Component<Props, any> {
 
         let response = await newFilePromise.promise
         let saveResult: saveResultInterface = await response.json()
+
+        if(is_completed) {
+            this.props.getDocuments()
+            this.props.handleDocumentListPress()
+        }
 
         return saveResult
 

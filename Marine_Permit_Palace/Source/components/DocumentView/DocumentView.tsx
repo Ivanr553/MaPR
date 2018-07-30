@@ -298,13 +298,6 @@ export default class DocumentView extends React.Component<Props, any> {
 
         let resultArray: Array<boolean> = document_meta.map((document_meta_field: document_meta_field) => {
 
-            //This checks to see if the text fields have been edited -- disabled for now
-            // if(document_meta_field.field_type === 'Text') {
-            //     if(document_meta_field.value === ''){
-            //         return false
-            //     }
-            // }
-
             if(document_meta_field.field_type === 'Signature') {
                 if(!!!document_meta_field.value) {
                     return false
@@ -369,8 +362,8 @@ export default class DocumentView extends React.Component<Props, any> {
         }
 
         if(this.validateCanSubmit()) {
+            this.quickSave(true)
             return alert('Document Submitted')
-            // this.quickSave(true)
         }
 
     }
@@ -416,7 +409,7 @@ export default class DocumentView extends React.Component<Props, any> {
         }
 
         if(this.props.view === 'PendingDocuments') {
-            toolbar = <ToolBar handleApprove={this.handleApprove} handleSubmit={this.handleSubmit} canSubmit={this.validateCanSubmit}/>
+            toolbar = <ToolBar handleApprove={this.handleApprove} handleSubmit={this.handleSubmit} canSubmit={this.validateCanSubmit()}/>
         }
 
         return(

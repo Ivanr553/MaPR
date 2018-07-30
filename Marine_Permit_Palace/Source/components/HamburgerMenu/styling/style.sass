@@ -1,0 +1,69 @@
+@import ../../../style
+    
+#hamburger-menu-container
+  position: absolute
+  top: 1vh
+  right: 2vw
+  z-index: 700
+
+#hamburger-icon
+  width: auto
+  height: 5vh
+  cursor: pointer
+  opacity: 0.9
+  padding-bottom: 10%
+  z-index: 700
+
+#hamburger-menu
+  width: auto
+  height: 0
+  min-height: 0
+  color: white
+  position: absolute
+  top: 7vh
+  right: 0vw
+  border-top: solid 3px $main-color
+  padding-top: 2.5px
+  overflow: hidden
+  opacity: 0
+  z-index: 700
+
+.hamburger-menu-item
+  width: auto
+  padding: 5% 60% 5% 5%
+  font-size: 2em
+  text-indent: 5%
+  color: rgb(245, 245, 245)
+  cursor: pointer
+  background-color: rgb(120, 120, 120)
+  margin-bottom: 2.5px
+  z-index: 700
+
+.hamburger-menu-item:hover
+  background-color: rgb(76, 87, 102)
+
+
+@keyframes show-hamburger-menu
+  0%
+    opacity: 0
+    height: 0
+    min-height: 0
+  50%
+    opacity: 1
+  99%
+    min-height: 30vh
+  100%
+    opacity: 1
+    height: auto
+
+@keyframes hide-hamburger-menu
+  0%
+    opacity: 1
+    height: auto
+    min-height: 30vh
+  50%
+    opacity: 1
+  100%
+    min-height: 0vh
+    opacity: 0
+    height: 0

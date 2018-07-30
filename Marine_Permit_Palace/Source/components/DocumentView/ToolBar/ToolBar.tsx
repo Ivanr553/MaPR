@@ -5,7 +5,7 @@ const s = require('./ToolBarStyle.sass')
 interface Props {
     handleSubmit: () => void,
     handleApprove: () => void,
-    canSubmit: () => boolean
+    canSubmit: boolean
 }
 
 class ToolBar extends React.Component<Props, any> {
@@ -19,10 +19,7 @@ class ToolBar extends React.Component<Props, any> {
 
     handleOnClick = () => {
         this.setState({
-            timerDone: false,
             open: !this.state.open
-        }, () => {
-            this.setTimer()
         })
     }
 
@@ -30,7 +27,7 @@ class ToolBar extends React.Component<Props, any> {
 
         if(this.state.open) {
 
-            let style = {
+            let style: React.CSSProperties = {
                 animation: 'animate-toolbar-left-arrow-opening 0.2s forwards'
             }
     
@@ -39,7 +36,7 @@ class ToolBar extends React.Component<Props, any> {
 
         if(!this.state.open) {
 
-            let style = {
+            let style: React.CSSProperties = {
                 animation: 'animate-toolbar-left-arrow-closing 0.2s forwards'
             }
 
@@ -52,7 +49,7 @@ class ToolBar extends React.Component<Props, any> {
 
         if(this.state.open) {
 
-            let style = {
+            let style: React.CSSProperties = {
                 animation: 'animate-toolbar-right-arrow-opening 0.2s forwards'
             }
     
@@ -61,7 +58,7 @@ class ToolBar extends React.Component<Props, any> {
 
         if(!this.state.open) {
 
-            let style = {
+            let style: React.CSSProperties = {
                 animation: 'animate-toolbar-right-arrow-closing 0.2s forwards'
             }
 
@@ -70,82 +67,46 @@ class ToolBar extends React.Component<Props, any> {
 
     }
 
+    getSubmitStyle = (): React.CSSProperties => {
 
-    getToolbarInfoBox = () => {
-
-        if(this.props.canSubmit()) {
-
-            if(this.state.timerDone) {
-                return (
-                    <div className='toolbar-info-box toolbar-info-box-ready tool-bar-info-fade-away'>
-                        Document is ready to be submitted
-                        <div className='toolbar-info-box-triangle toolbar-info-box-triangle-ready'></div>
-                    </div>
-                )
-            }
-
-            return (
-                <div className='toolbar-info-box toolbar-info-box-ready'>
-                    Document is ready to be submitted
-                    <div className='toolbar-info-box-triangle toolbar-info-box-triangle-ready'></div>
-                </div>
-            )
-
-        }
-        if(!this.props.canSubmit()) {
-
-            if(this.state.timerDone) {
-                return (
-                    <div className='toolbar-info-box toolbar-info-box-not-ready tool-bar-info-fade-away'>
-                        Document is ready to be submitted
-                        <div className='toolbar-info-box-triangle toolbar-info-box-triangle-not-ready'></div>
-                    </div>
-                )
-            }
-
-            return (
-                <div className='toolbar-info-box toolbar-info-box-not-ready'>
-                    Document is not ready to be submitted
-                    <div className='toolbar-info-box-triangle toolbar-info-box-triangle-not-ready'></div>
-                </div>
-            )
-        }
-    }
-
-    getSubmitStyle = () => {
-
-        if(this.props.canSubmit()) {
-            let style = {
+        if(this.props.canSubmit) {
+            let style: React.CSSProperties = {
                 cursor: 'pointer',
-                backgroundColor: 'white'
+                backgroundColor: 'rgb(221, 244, 255)'
             }
             return style
         }
 
-        if(!this.props.canSubmit()) {
-            let style = {
+        if(!this.props.canSubmit) {
+            let style: React.CSSProperties = {
                 cursor: 'default',
-                backgroundColor: 'lightgrey'
+                backgroundColor: 'rgb(255, 216, 216)'
             }
             return style
         }
 
     }
 
-    setTimer = () => {
-        let timeout = setTimeout(() => {
-            this.setState({
-                timerDone: true
-            })
-        }, 2000);
+    getToolbarStyle = (): React.CSSProperties => {
 
-        this.setState({
-            timeout: timeout
-        })
+        if(this.state.open) {
+            let style: React.CSSProperties = {
+                display: 'flex',
+                animation: 'toolbar-container-opening 0.7s forwards'
+            }
+            return style
+        }
+        if(!this.state.open) {
+            let style: React.CSSProperties = {
+                display: 'flex',
+                animation: 'toolbar-container-closing 0.7s forwards'
+            }
+            return style
+        }
+
     }
 
     componentDidMount() {
-        this.setTimer()
     }
 
     componentWillUnmount() {
@@ -159,15 +120,14 @@ class ToolBar extends React.Component<Props, any> {
             <div className='ToolBar' onClick={this.handleOnClick}>
                 <img style={this.getLeftArrowStyle()} className='toolkit-arrow toolkit-arrow-left' src="/images/left-arrow-1.png" alt=""/>
                 <img style={this.getRightArrowStyle()} className='toolkit-arrow toolkit-arrow-right' src="/images/left-arrow-1.png" alt=""/>
-                {/* <div className='tools-container'>
-                    <div className='toolbar-tool toolbar-delete' onClick={this.props.handleApprove}>
+                <div className='tools-container' style={this.getToolbarStyle()}>
+                    {/* <div className='toolbar-tool toolbar-delete' onClick={this.props.handleApprove}>
                         X
-                    </div>
+                    </div> */}
                     <div style={this.getSubmitStyle()} className='toolbar-tool' onClick={this.props.handleSubmit}>
                         <img className='toolbar-tool-image' src='/images/submit.png' alt=""/>
-                        {this.getToolbarInfoBox()}
                     </div>
-                </div> */}
+                </div>
             </div>
         );
     }

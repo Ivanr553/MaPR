@@ -14,11 +14,6 @@
     justify-content: center
     align-items: center
     cursor: pointer
-    // animation: animate-toolbar-closed 0.2s forwards
-
-.Toolbar:hover
-    // animation: animate-toolbar-open 0.2s forwards
-
 
 .Toolbar:hover > .toolkit-arrow-right
     animation: animate-toolbar-right-arrow-hover-over 0.2s forwards
@@ -46,11 +41,12 @@
 .tools-container
     width: 100%
     height: auto
-    bottom: 0
-    display: flex
+    bottom: 9vh
+    display: none
     flex-direction: column
     align-items: center
     position: absolute
+    opacity: 0
 
 .toolbar-tool
     width: 4vw
@@ -147,17 +143,23 @@
         transform: scale(1.1) translateY(-0.5vh)
 
 
-@keyframes animate-toolbar-open
+@keyframes toolbar-container-opening
     0%
-        transform: rotate(0deg)
+        opacity: 0
+        transform: translateY(20vh)
     100%
-        transform: rotate(90deg)
+        opacity: 1
+        transform: translateY(0)
 
-@keyframes animate-toolbar-closed
+@keyframes toolbar-container-closing
     0%
-        transform: rotate(90deg)
+        opacity: 1
+        transform: translateY(0)
+    50%
+        opacity: 0
     100%
-        transform: rotate(0deg)
+        opacity: 0
+        transform: translateY(35vh)
 
 @keyframes animate-toolbar-left-arrow-opening
     0%

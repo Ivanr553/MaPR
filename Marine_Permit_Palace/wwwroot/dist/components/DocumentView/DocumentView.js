@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const react_pdf_js_1 = require("react-pdf-js");
-const s = require('./styling/style.sass');
+const s = require('./styling/DocumentViewStyle.sass');
 const SignatureForm_1 = require("./UserInputComponents/SignatureForm/SignatureForm");
 const CheckboxInput_1 = require("./UserInputComponents/CheckboxInput/CheckboxInput");
 const TextInput_1 = require("./UserInputComponents/TextInput/TextInput");
@@ -83,7 +83,7 @@ class DocumentView extends React.Component {
                 document_id: this.props.document_id
             });
         });
-        this.documentFields = () => {
+        this.createDocumentFields = () => {
             let documentObject = this.state.documentObject;
             if (!!!this.state.documentObject) {
                 return;
@@ -99,16 +99,16 @@ class DocumentView extends React.Component {
                     if (document_meta_field.value === '') {
                         document_meta_field.value = 'Off';
                     }
-                    let newForm = React.createElement(CheckboxInput_1.default, { key: form, id: form, width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, checked: document_meta_field.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });
+                    let newForm = React.createElement(CheckboxInput_1.default, { is_disabled: document_meta_field.is_disabled, key: form, id: form, width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, checked: document_meta_field.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler });
                     documentFields.push(newForm);
                 }
                 else if (document_meta_field.field_type === 'Text') {
                     let newForm = React.createElement("div", { key: form, className: 'form-wrapper' },
-                        React.createElement(TextInput_1.default, { key: form, id: form, position: 'absolute', border: 'none', width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, value: document_meta_field.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler }));
+                        React.createElement(TextInput_1.default, { is_disabled: document_meta_field.is_disabled, key: form, id: form, position: 'absolute', border: 'none', width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, value: document_meta_field.value, onChange: (e) => { this.handleFormEdit(e, form); }, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler }));
                     documentFields.push(newForm);
                 }
                 else if (document_meta_field.field_type === 'Signature') {
-                    let newForm = React.createElement(SignatureForm_1.default, { key: form, id: form, width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler, assigned_to: document_meta_field.assigned_to, signature_base64: document_meta_field.value, signHandler: this.signHandler });
+                    let newForm = React.createElement(SignatureForm_1.default, { is_disabled: document_meta_field.is_disabled, key: form, id: form, width: dimensions.width, height: dimensions.height, top: dimensions.top, left: dimensions.left, view: this.props.view, previewOnClickHandler: this.props.previewOnClickHandler, assigned_to: document_meta_field.assigned_to, signature_base64: document_meta_field.value, signHandler: this.signHandler });
                     documentFields.push(newForm);
                 }
             }
@@ -133,7 +133,10 @@ class DocumentView extends React.Component {
             if (!!this.state.saveFileTimeout) {
                 clearTimeout(this.state.saveFileTimeout);
             }
-            let saveFileTimeout = setTimeout(() => this.saveFile(false), 2000);
+            let saveFileTimeout = setTimeout(() => {
+                this.saveFile(false);
+                this.startSave();
+            }, 2000);
             this.setState({
                 saveFileTimeout: saveFileTimeout
             });
@@ -151,7 +154,7 @@ class DocumentView extends React.Component {
             });
             let newFile = {
                 document_meta: payload_document_meta,
-                name: !!!this.props.document_name ? '' : this.props.document_name,
+                name: this.props.document_name,
                 submitted_file_id: this.props.document_id,
                 is_completed: is_completed
             };
@@ -162,7 +165,7 @@ class DocumentView extends React.Component {
             });
             let response = yield newFilePromise.promise;
             let saveResult = yield response.json();
-            console.log(saveResult);
+            this.completeSave();
             return saveResult;
         });
         this.quickSave = (is_completed) => __awaiter(this, void 0, void 0, function* () {
@@ -178,7 +181,7 @@ class DocumentView extends React.Component {
             });
             let newFile = {
                 document_meta: payload_document_meta,
-                name: !!!this.props.document_name ? '' : this.props.document_name,
+                name: this.props.document_name,
                 submitted_file_id: this.props.document_id,
                 is_completed: is_completed
             };
@@ -186,7 +189,10 @@ class DocumentView extends React.Component {
             let newFilePromise = yield request;
             let response = yield newFilePromise.promise;
             let saveResult = yield response.json();
-            console.log(saveResult);
+            if (is_completed) {
+                this.props.getDocuments();
+                this.props.handleDocumentListPress();
+            }
             return saveResult;
         });
         //Form Validation
@@ -196,12 +202,6 @@ class DocumentView extends React.Component {
             }
             let document_meta = this.state.documentObject.document_meta;
             let resultArray = document_meta.map((document_meta_field) => {
-                //This checks to see if the text fields have been edited -- disabled for now
-                // if(document_meta_field.field_type === 'Text') {
-                //     if(document_meta_field.value === ''){
-                //         return false
-                //     }
-                // }
                 if (document_meta_field.field_type === 'Signature') {
                     if (!!!document_meta_field.value) {
                         return false;
@@ -214,6 +214,28 @@ class DocumentView extends React.Component {
             }
             return true;
         };
+        //Save functionality
+        this.startSave = () => {
+            this.setState({
+                savingIconId: 'saving-icon'
+            });
+        };
+        this.completeSave = () => {
+            this.setState({
+                savingIconSource: '/images/check-green.png',
+                savingIconId: 'saving-icon-complete-document-view'
+            }, () => {
+                let clearSavingIcon = (setTimeout(() => {
+                    this.setState({
+                        savingIconId: '',
+                        savingIconSource: '/images/clock.png'
+                    });
+                }, 2000));
+                this.setState({
+                    clearSavingIcon: clearSavingIcon
+                });
+            });
+        };
         //Toolbar functionality
         this.handleApprove = () => {
         };
@@ -222,14 +244,16 @@ class DocumentView extends React.Component {
                 return alert('Document is not complete');
             }
             if (this.validateCanSubmit()) {
+                this.quickSave(true);
                 return alert('Document Submitted');
-                // this.quickSave(true)
             }
         };
         this.state = {
             documentObject: undefined,
             submitted_file_id: '',
-            noDocument: false
+            noDocument: false,
+            savingIconSource: '/images/clock.png',
+            savingIconId: '',
         };
     }
     handleFormEdit(e, id) {
@@ -283,12 +307,13 @@ class DocumentView extends React.Component {
             noDocumentWarning = (React.createElement("div", { id: 'document-view-no-document-warning' }, "There is no document selected"));
         }
         if (this.props.view === 'PendingDocuments') {
-            toolbar = React.createElement(ToolBar_1.default, { handleApprove: this.handleApprove, handleSubmit: this.handleSubmit, canSubmit: this.validateCanSubmit });
+            toolbar = React.createElement(ToolBar_1.default, { handleApprove: this.handleApprove, handleSubmit: this.handleSubmit, canSubmit: this.validateCanSubmit() });
         }
         return (React.createElement("div", { className: 'DocumentView' },
             noDocumentWarning,
+            React.createElement("img", { className: 'canvas-icon-document-view', id: this.state.savingIconId, src: this.state.savingIconSource, alt: "", onClick: this.completeSave }),
             React.createElement(react_pdf_js_1.default, { className: 'pdf-image', file: document_id }),
-            React.createElement("div", { id: 'document-form-div' }, this.documentFields()),
+            React.createElement("div", { id: 'document-form-div' }, this.createDocumentFields()),
             toolbar));
     }
 }

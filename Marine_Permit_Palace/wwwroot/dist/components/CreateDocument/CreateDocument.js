@@ -84,8 +84,6 @@ class CreateDocument extends React.Component {
         this.deleteUser = (e) => {
             let elementId = e.target.parentNode.id;
             let userList = this.state.userList;
-            let assignedField;
-            let editedUser;
             userList.forEach(user => {
                 if (user.dod_id.toString() === elementId.toString()) {
                     user = user;
@@ -191,6 +189,32 @@ class CreateDocument extends React.Component {
             });
         });
         //State Management
+        this.completeDocumentCreation = () => {
+            let state = {
+                document_id: '',
+                document_meta: Array,
+                documentName: '',
+                userList: [],
+                selectDocumentBoolean: true,
+                documentPreviewBoolean: false,
+                selectPermissionsBoolean: false
+            };
+            this.props.getCreateDocumentState(state);
+            this.setState({
+                document_id: '',
+                document_meta: Array,
+                documentName: '',
+                userList: [],
+                selectDocumentBoolean: true,
+                documentPreviewBoolean: false,
+                selectPermissionsBoolean: false,
+                selectDocumentComplete: false,
+                selectPermissionsComplete: false
+            }, () => {
+                this.handleSelectDocumentView();
+            });
+            this.props.getPendingDocuments();
+        };
         this.disableDocumentPreview = () => {
             if (this.state.selectDocumentComplete && this.state.selectPermissionsComplete) {
                 return false;
@@ -224,23 +248,15 @@ class CreateDocument extends React.Component {
                 selectPermissionsComplete: selectPermissionsComplete
             });
         };
-        this.getDocumentPreviewComplete = (documentPreviewComplete) => {
-            this.setState({
-                documentPreviewComplete: documentPreviewComplete
-            });
-        };
         this.state = this.props.createDocumentState;
     }
     componentDidUpdate() {
         this.props.getCreateDocumentState(this.state);
     }
     componentDidMount() {
-        this.setState({
-            state: this.props.createDocumentState
-        });
+        this.handleSelectDocumentView();
     }
     componentWillMount() {
-        this.handleSelectDocumentView();
     }
     render() {
         if (this.state.selectDocumentBoolean) {
@@ -268,7 +284,7 @@ class CreateDocument extends React.Component {
                     React.createElement(CreateDocumentNavButton_1.default, { complete: this.state.selectPermissionsComplete, id: 'create-permissions-nav-bar-item-document', innerText: 'Create Permissions', onClickHandler: this.handleSelectPermissionsView, disable: false, selected: this.state.selectPermissionsBoolean }),
                     React.createElement(CreateDocumentNavButton_1.default, { complete: false, id: 'document-preview-nav-bar-item-document', innerText: 'Preview', onClickHandler: this.handleSelectPreviewView, disable: this.disableDocumentPreview(), selected: this.state.documentPreviewBoolean })),
                 React.createElement("div", { className: 'container' },
-                    React.createElement(DocumentPreview_1.default, { assigned_user: this.state.assigned_user, removeAssignedUser: this.removeAssignedUser, currentSelectedField: this.state.document_meta[this.state.currentSelectedFieldId], handleSelectedFieldId: this.handleSelectedFieldId, currentSelectedFieldId: this.state.currentSelectedFieldId, deleteUser: this.deleteUser, handleAddedUserPress: this.handleAddedUserPress, documentPreviewBoolean: this.state.documentPreviewBoolean, userList: this.state.userList, document_id: this.state.document_id, document_meta: this.state.document_meta, getDocumentName: this.getDocumentName, getDocumentPreviewComplete: this.getDocumentPreviewComplete }))));
+                    React.createElement(DocumentPreview_1.default, { completeDocumentCreation: this.completeDocumentCreation, assigned_user: this.state.assigned_user, removeAssignedUser: this.removeAssignedUser, currentSelectedField: this.state.document_meta[this.state.currentSelectedFieldId], handleSelectedFieldId: this.handleSelectedFieldId, currentSelectedFieldId: this.state.currentSelectedFieldId, deleteUser: this.deleteUser, handleAddedUserPress: this.handleAddedUserPress, documentPreviewBoolean: this.state.documentPreviewBoolean, userList: this.state.userList, document_id: this.state.document_id, document_meta: this.state.document_meta, getDocumentName: this.getDocumentName }))));
         }
     }
 }

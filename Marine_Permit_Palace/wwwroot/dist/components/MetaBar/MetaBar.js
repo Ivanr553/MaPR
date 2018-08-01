@@ -16,10 +16,18 @@ const About_1 = require("../About/About");
 const CreateDocument_1 = require("../CreateDocument/CreateDocument");
 const UploadDocument_1 = require("../UploadDocument/UploadDocument");
 const SignatureView_1 = require("../SignatureView/SignatureView");
+const services_1 = require("../../services/services");
 class MetaBar extends React.Component {
     constructor(props) {
         super(props);
         //========================== Sending/Retrieving Data ==========================
+        this.getUser = () => __awaiter(this, void 0, void 0, function* () {
+            let user = yield services_1.getUser();
+            let dod_id = parseInt(user.username);
+            this.setState({
+                dod_id: dod_id
+            });
+        });
         this.getDocuments = () => __awaiter(this, void 0, void 0, function* () {
             try {
                 let request = yield fetch('/DocumentSave/GetAllTemplateDocuments', { credentials: "same-origin" });
@@ -41,13 +49,25 @@ class MetaBar extends React.Component {
                     return responseArray.map(item => {
                         return {
                             name: item.document_name,
-                            idDocument: item.submitted_document_id
+                            document_id: item.submitted_document_id,
+                            is_complete: item.is_complete
                         };
                     });
                 });
             });
+            let pendingDocumentList = [];
+            let completedDocumentList = [];
+            pendingDocuments.forEach(document => {
+                if (document.is_complete) {
+                    completedDocumentList.push(document);
+                }
+                if (!document.is_complete) {
+                    pendingDocumentList.push(document);
+                }
+            });
             this.setState({
-                pendingDocuments: pendingDocuments
+                pendingDocumentList: pendingDocumentList,
+                completedDocumentList: completedDocumentList
             }, () => {
                 this.handleDocumentListPress();
             });
@@ -100,7 +120,7 @@ class MetaBar extends React.Component {
             let pendingDocuments = this.state.pendingDocuments;
             let document_name = '';
             pendingDocuments.forEach(document => {
-                if (document.idDocument === document_id) {
+                if (document.document_id === document_id) {
                     document_name = document.name;
                 }
             });
@@ -108,7 +128,7 @@ class MetaBar extends React.Component {
                 document_id: document_id
             }, () => {
                 this.setState({
-                    currentView: React.createElement(DocumentView_1.default, { signature_base64: this.state.signature_base64, document_name: document_name, document_id: this.state.document_id, view: 'PendingDocuments' })
+                    currentView: React.createElement(DocumentView_1.default, { getDocuments: this.getDocuments, handleDocumentListPress: this.handleDocumentListPress, dod_id: this.state.dod_id, signature_base64: this.state.signature_base64, document_name: document_name, document_id: this.state.document_id, view: 'PendingDocuments' })
                 }, () => {
                     this.props.getCurrentView(this.state.currentView);
                 });
@@ -131,7 +151,7 @@ class MetaBar extends React.Component {
         };
         this.handleNewDocumentPress = () => {
             this.setState({
-                currentView: React.createElement(CreateDocument_1.default, { createDocumentState: this.state.createDocumentState, getCreateDocumentState: this.getCreateDocumentState, getCurrentView: this.getCurrentView, documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
+                currentView: React.createElement(CreateDocument_1.default, { getPendingDocuments: this.getPendingDocuments, createDocumentState: this.state.createDocumentState, getCreateDocumentState: this.getCreateDocumentState, getCurrentView: this.getCurrentView, documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
             }, () => {
                 this.props.getCurrentView(this.state.currentView);
                 this.handleMetabarSelectionStyling('create-document-metabar-button', 'create-document-metabar-triangle');
@@ -139,7 +159,7 @@ class MetaBar extends React.Component {
         };
         this.handleDocumentListPress = () => {
             this.setState({
-                currentView: React.createElement(PendingDocumentsView_1.default, { selectDocument: this.handleDocumentLinkPress, pendingDocuments: this.state.pendingDocuments })
+                currentView: React.createElement(PendingDocumentsView_1.default, { selectDocument: this.handleDocumentLinkPress, pendingDocumentList: this.state.pendingDocumentList, completedDocumentList: this.state.completedDocumentList })
             }, () => {
                 this.props.getCurrentView(this.state.currentView);
                 this.handleMetabarSelectionStyling('document-list-metabar-button', 'document-list-metabar-triangle');
@@ -190,6 +210,7 @@ class MetaBar extends React.Component {
         this.getPendingDocuments();
         this.getNotifications();
         this.getSignature();
+        this.getUser();
     }
     componentDidCatch() {
     }

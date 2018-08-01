@@ -10,12 +10,12 @@ class PendingDocumentsView extends React.Component {
             documentList: []
         };
     }
-    componentDidMount() {
-    }
     render() {
         return (React.createElement("div", { className: 'DocumentList' },
             React.createElement("div", { className: 'documents-header' }, "Pending Documents"),
-            React.createElement(DocumentList_1.default, { documents: this.props.pendingDocuments, selectDocument: this.props.selectDocument, document_id: this.state.document_id })));
+            React.createElement(DocumentList_1.default, { documents: this.props.pendingDocumentList, selectDocument: this.props.selectDocument, document_id: this.state.document_id }),
+            React.createElement("div", { className: 'documents-header' }, "Completed Documents"),
+            React.createElement(DocumentList_1.default, { documents: this.props.completedDocumentList, selectDocument: this.props.selectDocument, document_id: this.state.document_id })));
     }
 }
 exports.default = PendingDocumentsView;

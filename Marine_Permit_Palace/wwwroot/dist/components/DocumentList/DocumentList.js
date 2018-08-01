@@ -8,6 +8,17 @@ class DocumentList extends React.Component {
         super(props);
         //Creates list in state of objects to be rendered
         this.getDocumentList = (documents) => {
+            documents = documents.map(document => {
+                if (!!document.idDocument) {
+                    let document_id = document.idDocument;
+                    delete document.idDocument;
+                    document.document_id = document_id;
+                    return document;
+                }
+                else {
+                    return document;
+                }
+            });
             return (documents.map((document) => {
                 return (React.createElement(DocumentItem_1.default, { key: Math.random(), document: document, selectDocument: this.props.selectDocument, selectedDocument: this.props.document_id }));
             }));

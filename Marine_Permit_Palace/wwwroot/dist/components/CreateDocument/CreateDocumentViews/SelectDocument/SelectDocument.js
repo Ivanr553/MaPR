@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const DocumentItem_1 = require("../../../DocumentList/DocumentItem/DocumentItem");
 const DocumentList_1 = require("../../../DocumentList/DocumentList");
 class SelectDocument extends React.Component {
     constructor(props) {
@@ -20,17 +19,11 @@ class SelectDocument extends React.Component {
                 return style;
             }
         };
-        this.getDocumentList = (documents) => {
-            return (documents.map((document) => {
-                return (React.createElement(DocumentItem_1.default, { key: Math.random(), document: document, selectDocument: this.selectDocument, selectedDocument: this.props.document_id }));
-            }));
-        };
         this.selectDocument = (e) => {
             let target = e.target;
             while (!target.classList.contains('document-item')) {
                 target = target.parentNode;
             }
-            let parent = target.parentNode;
             this.setState({
                 document_id: target.id
             }, () => {

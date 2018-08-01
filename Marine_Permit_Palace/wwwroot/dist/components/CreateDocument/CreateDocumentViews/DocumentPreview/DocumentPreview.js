@@ -70,7 +70,7 @@ class DocumentPreview extends React.Component {
             if (result.indexOf(false) >= 0) {
                 return false;
             }
-            if (this.state.documentName === '') {
+            if (this.state.document_name === '') {
                 return false;
             }
             if (this.props.assigned_user === null) {
@@ -120,10 +120,16 @@ class DocumentPreview extends React.Component {
                     },
                     body: JSON.stringify(assignedDocument)
                 });
-                return yield response.json();
+                if (response.status === 200) {
+                    this.props.completeDocumentCreation();
+                }
+                else {
+                    alert('There was an error submitting the document');
+                    throw new Error(response.statusText);
+                }
             }
             catch (e) {
-                throw Error(e);
+                throw new Error(e);
             }
         });
         this.renderDocumentSaveButton = () => {
@@ -139,9 +145,6 @@ class DocumentPreview extends React.Component {
             this.setState({
                 document_id: this.props.document_id
             });
-        };
-        this.giveDocumentPreviewComplete = () => {
-            this.props.getDocumentPreviewComplete(true);
         };
         this.state = {
             document_name: '',

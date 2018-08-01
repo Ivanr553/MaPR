@@ -29,13 +29,26 @@ class SignatureForm extends React.Component {
         };
         //Getting style from props
         this.getPendingDocumentsStyle = () => {
-            let style = {
-                width: `${this.props.width}px`,
-                height: `${this.props.height}px`,
-                top: `${this.props.top}px`,
-                left: `${this.props.left}px`,
-            };
-            return style;
+            if (this.props.is_disabled) {
+                let style = {
+                    width: `${this.props.width}px`,
+                    height: `${this.props.height}px`,
+                    top: `${this.props.top}px`,
+                    left: `${this.props.left}px`,
+                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    cursor: 'default'
+                };
+                return style;
+            }
+            else {
+                let style = {
+                    width: `${this.props.width}px`,
+                    height: `${this.props.height}px`,
+                    top: `${this.props.top}px`,
+                    left: `${this.props.left}px`,
+                };
+                return style;
+            }
         };
         //Takes signature png and embeds it into component
         this.getSignatureContent = () => {
@@ -54,6 +67,9 @@ class SignatureForm extends React.Component {
     }
     render() {
         if (this.props.view === 'DocumentPreview') {
+            if (this.props.is_disabled) {
+                React.createElement("div", { id: this.props.id, className: 'SignatureForm', style: this.getDocumentPreviewStyle() }, this.documentPreviewContent());
+            }
             return (React.createElement("div", { id: this.props.id, className: 'SignatureForm', style: this.getDocumentPreviewStyle(), onClick: (e) => { this.props.previewOnClickHandler(e); } }, this.documentPreviewContent()));
         }
         if (this.props.view === 'PendingDocuments') {

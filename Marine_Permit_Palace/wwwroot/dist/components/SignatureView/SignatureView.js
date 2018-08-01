@@ -46,8 +46,6 @@ class SignatureView extends React.Component {
             let canvas = document.getElementById('signature-canvas');
             let context = canvas.getContext('2d');
             let bounds = canvas.getBoundingClientRect();
-            let prevX = this.state.prevX || e.pageX - bounds.left;
-            let prevY = this.state.prevX || e.pageY - bounds.top;
             let x = e.pageX - bounds.left;
             let y = e.pageY - bounds.bottom + (canvas.height);
             context.fillStyle = 'rgb(0, 0, 0)';

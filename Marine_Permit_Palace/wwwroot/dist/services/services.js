@@ -56,6 +56,12 @@ let authenticateUser = () => __awaiter(this, void 0, void 0, function* () {
     }
 });
 exports.authenticateUser = authenticateUser;
+let getUser = () => __awaiter(this, void 0, void 0, function* () {
+    let request = yield fetch('/Account/WhoAmI', { credentials: 'same-origin' });
+    let response = yield request.json();
+    return response;
+});
+exports.getUser = getUser;
 let logOff = () => __awaiter(this, void 0, void 0, function* () {
     let request = yield fetch('/Account/Logout', { credentials: 'same-origin' });
     let response = yield request.json();

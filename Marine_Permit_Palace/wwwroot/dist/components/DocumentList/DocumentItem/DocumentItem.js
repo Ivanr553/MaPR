@@ -5,12 +5,12 @@ class DocumentItem extends React.Component {
     constructor(props) {
         super(props);
         this.getStyle = () => {
-            if (this.props.document.idDocument === this.props.selectedDocument) {
+            if (this.props.document.document_id === this.props.selectedDocument) {
                 return {
                     border: 'solid 2px rgba(38, 107, 168, 0.7)'
                 };
             }
-            if (this.props.document.idDocument !== this.props.selectedDocument) {
+            if (this.props.document.document_id !== this.props.selectedDocument) {
                 return {
                     border: 'solid 2px rgba(0, 0, 0, 0)'
                 };
@@ -19,11 +19,11 @@ class DocumentItem extends React.Component {
         this.state = {};
     }
     render() {
-        return (React.createElement("div", { className: 'document-item', style: this.getStyle(), id: this.props.document.idDocument, onClick: (e) => { this.props.selectDocument(e); } },
+        return (React.createElement("div", { className: 'document-item', style: this.getStyle(), id: this.props.document.document_id, onClick: (e) => { this.props.selectDocument(e); } },
             React.createElement("div", { className: 'document-item-field' }, this.props.document.name),
             React.createElement("div", { className: 'document-item-field' },
                 "ID: ",
-                this.props.document.idDocument)));
+                this.props.document.document_id)));
     }
 }
 exports.default = DocumentItem;

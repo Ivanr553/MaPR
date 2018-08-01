@@ -23,7 +23,7 @@ class UploadDocument extends React.Component {
                 let request = yield fetch(url, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json; charset=UTF-8'
+                        'Content-Type': 'application/pdf; charset=UTF-8'
                     },
                     body: file
                 });

@@ -21,7 +21,7 @@ class SearchDocumentView extends React.Component<Props, any> {
             document_name: '',
 
             //Change back to default when that is created
-            switch_value: '1'
+            // switch_value: '1'
         }
     }
 
@@ -33,7 +33,7 @@ class SearchDocumentView extends React.Component<Props, any> {
 
     getSearchDocumentResults = async () => {
         let document_name = this.state.document_name
-        let switch_value = this.state.switch_value
+        // let switch_value = this.state.switch_value
         let url = `/Search/SubmittedDocuments?search_terms=${document_name}`
         let searchDocumentPromise = await getSearchDocumentPromise(url)
 
@@ -43,8 +43,12 @@ class SearchDocumentView extends React.Component<Props, any> {
 
         let request = await searchDocumentPromise.promise
         let response = await request.json()
+
         console.log(response)
 
+        this.setState({
+            documents: response
+        })
     }
 
     handleInputChange = (e, value) => {
@@ -71,7 +75,7 @@ class SearchDocumentView extends React.Component<Props, any> {
                     </div>
                 </div>
                 <div className='documents-header'>Search Results</div>
-                <SearchDocumentResultList handleSearchDocument={this.props.handleSearchDocument} searchDocumentResultList={[]} />
+                <SearchDocumentResultList handleSearchDocument={this.props.handleSearchDocument} searchDocumentResultList={this.state.documents} />
             </div>
         );
     }

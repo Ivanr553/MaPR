@@ -6,6 +6,7 @@ interface Props {
     searchDocument: {
         document_name: string,
         document_id: string,
+        submitted_document_id: string,
         date_created: string,
         date_last_edited: string,
         assigned_by: string,
@@ -35,7 +36,7 @@ class SearchDocumentResult extends React.Component<Props, any> {
         }
 
         if(e.target.className === 'search-document-link') {
-            this.props.handleSearchDocument(this.props.searchDocument.document_id, this.props.searchDocument.document_name)
+            this.props.handleSearchDocument(this.props.searchDocument.submitted_document_id, this.props.searchDocument.document_name)
             return
         }
 

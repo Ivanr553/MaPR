@@ -108,6 +108,18 @@ namespace Marine_Permit_Palace.Controllers
             return Json(new Result("Failure", "Invalid Login Attempt", 401));
         }
 
+        [HttpGet]
+        public JsonResult GetUserInfo()
+        {
+            return Json(false);
+        }
+
+        [HttpPost]
+        public JsonResult UpdateUserInfo()
+        {
+            return Json(false);
+        }
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> RegisterAndLogin([FromBody]RegisterAndLoginViewModel model)

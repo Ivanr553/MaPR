@@ -22,10 +22,11 @@ namespace Marine_Permit_Palace.Controllers
         }
 
         [HttpPost]
-        public IActionResult Upload(List<IFormFile> formFiles)
+        public IActionResult Upload(List<IFormFile> files)
         {
             Dictionary<string, string> FileResults = new Dictionary<string, string>();
-            if(formFiles.Count == 0)
+
+            if(files.Count == 0)
             {
                 return Json(new Result()
                 {
@@ -34,7 +35,7 @@ namespace Marine_Permit_Palace.Controllers
                     status_code = 400
                 });
             }
-            foreach(var file in formFiles)
+            foreach(var file in files)
             {
                 //Verify the file type
                 if(Path.GetExtension(file.FileName) == ".pdf")
@@ -42,7 +43,7 @@ namespace Marine_Permit_Palace.Controllers
                     Document pdfDoc = new Document()
                     {
                         CategoryId = Guid.Parse("23E78816-B264-4403-8763-C5DE3300202B"),
-                        Name = file.Name,
+                        Name = Path.GetFileNameWithoutExtension(file.FileName),
                         TemplateName = file.FileName
                     };
                     pdfDoc = _DocumentService.Add(pdfDoc, User);

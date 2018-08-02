@@ -6,7 +6,7 @@ const react_router_dom_1 = require("react-router-dom");
 const Home_1 = require("./components/Home/Home");
 const Register_1 = require("./components/Register/Register");
 const Login_1 = require("./components/Login/Login");
-const s = require('./style.sass');
+require("./style.sass");
 class App extends React.Component {
     render() {
         return (React.createElement("div", { id: 'App' },

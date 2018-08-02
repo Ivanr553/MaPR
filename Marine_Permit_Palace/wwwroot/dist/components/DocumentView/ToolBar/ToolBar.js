@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const s = require('./ToolBarStyle.sass');
+require("./ToolBarStyle.sass");
 class ToolBar extends React.Component {
     constructor(props) {
         super(props);
@@ -86,6 +86,8 @@ class ToolBar extends React.Component {
             React.createElement("img", { style: this.getLeftArrowStyle(), className: 'toolkit-arrow toolkit-arrow-left', src: "/images/left-arrow-1.png", alt: "" }),
             React.createElement("img", { style: this.getRightArrowStyle(), className: 'toolkit-arrow toolkit-arrow-right', src: "/images/left-arrow-1.png", alt: "" }),
             React.createElement("div", { className: 'tools-container', style: this.getToolbarStyle() },
+                React.createElement("div", { className: 'toolbar-tool toolbar-delete', onClick: this.props.handleApprove }, "X"),
+                React.createElement("div", { className: 'toolbar-tool toolbar-add', onClick: this.props.handleApprove }, "+"),
                 React.createElement("div", { style: this.getSubmitStyle(), className: 'toolbar-tool', onClick: this.props.handleSubmit },
                     React.createElement("img", { className: 'toolbar-tool-image', src: '/images/submit.png', alt: "" })))));
     }

@@ -16,18 +16,22 @@ export default class UploadDocument extends React.Component<any, any> {
     uploadDroppedFile = async (e) => {
         e.preventDefault()
         e.stopPropagation()
-
+        
         try {
 
-            let file = e.dataTransfer.files[0]
+            let FormStuff = new FormData(); 
+
+            for (var i = 0; i < e.dataTransfer.files.length; i++) {
+                FormStuff.append("files", e.dataTransfer.files[i]);
+                console.log(e.dataTransfer.files[i]);
+            }
+
             let url = '/DocumentUpload/Upload'
-    
+            
             let request = await fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/pdf; charset=UTF-8'
-                },
-                body: file
+                credentials: "same-origin",
+                body: FormStuff
             })
             let response = await request.json()
 
@@ -45,49 +49,19 @@ export default class UploadDocument extends React.Component<any, any> {
 
     }
 
-    // handleFormSubmit = async (e) => {
-    //     e.preventDefault()
-
-    //     try {
-
-    //         let file = this.files.current.files[0]
-    //         let url = '/DocumentUpload/Upload'
-    
-    //         let request = await fetch(url, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json; charset=UTF-8'
-    //             },
-    //             body: file
-    //         })
-    //         let response = await request.json()
-
-    //     } catch(e) {
-    //         Error(e)
-    //     }
-    // }
-
     render() {
         return(
-            <div id='UploadDocument' onDragOver={(e) => {
+           <div id='UploadDocument' onDragOver={(e) => {
                 e.preventDefault()
             }}>
-                <div className='documents-header'>Upload Document</div>
-
+                
+            <div className='documents-header'>Upload Document</div>
                 <div id='dropzone' onDrop={(e) => {
-                    this.uploadDroppedFile(e)
-                }}>
-                    Drop Files Here
+                        this.uploadDroppedFile(e)
+                    }}>
+                        Drop Files Here
                 </div>
-
-                {/* <form id='file-submition-form' action="" method='post'
-                    onSubmit={(e) => this.handleFormSubmit(e)}>
-                    <input id='uploadedFile' type="file" 
-                    //@ts-ignore
-                    name='file[]' multiple={true} ref={this.files}/>
-                    <input type="submit" value='Upload'/>
-                </form> */}
-            </div>
+           </div>
         )
     }
 

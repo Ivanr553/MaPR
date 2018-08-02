@@ -26,13 +26,20 @@ namespace Marine_Permit_Palace.Services
 
         public List<SearchResultModel> Search(string terms, AdvancedSearchSettings settings)
         {
+            //Make sure the results are only ones the user can see
+
+
             //Search By Name
            return _context.SubmittedDocument
                 .Include(e => e.Assigner)
                 .Include(e => e.DocumentAssigneeIntermediates)
                     .ThenInclude(e => e.Assignee)
                 .Include(e => e.Document)
-                .Where(e => e.Name.Contains(terms))
+                .Where(e => 
+
+                    e.Name.Contains(terms) || e.DocumentAssigneeIntermediates.Any(f => f.Assignee.Organization.Contains(terms))
+                
+                )
                 .Take(20)
                 .Select(e => new SearchResultModel()
                 {

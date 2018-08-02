@@ -22,8 +22,8 @@ namespace Marine_Permit_Palace.Controllers
              I need to search the names of documents and dates of document completion and creation. 
              I need to search for the users Organization as well.
              I need the ability to send advanced search queries.
-             
              */
+
             return Json(_SearchService.Search(search_terms, new AdvancedSearchSettings()));
         }
 

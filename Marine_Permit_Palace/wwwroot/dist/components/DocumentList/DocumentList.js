@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const DocumentItem_1 = require("./DocumentItem/DocumentItem");
-const s = require('./styling/style.sass');
+require("./styling/DocumentListStyle.sass");
 class DocumentList extends React.Component {
     constructor(props) {
         super(props);

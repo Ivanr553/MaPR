@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const react_router_dom_1 = require("react-router-dom");
-const s = require('./styling/style.sass');
+require("./styling/style.sass");
 class Header extends React.Component {
     constructor(props) {
         super(props);

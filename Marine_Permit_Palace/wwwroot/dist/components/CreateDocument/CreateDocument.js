@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const s = require('./styling/style.sass');
+require("./styling/style.sass");
 const SelectPermissions_1 = require("./CreateDocumentViews/SelectPermissions/SelectPermissions");
 const SelectDocument_1 = require("./CreateDocumentViews/SelectDocument/SelectDocument");
 const DocumentPreview_1 = require("./CreateDocumentViews/DocumentPreview/DocumentPreview");

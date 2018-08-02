@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const s = require('./styling/style.sass');
+require("./styling/style.sass");
 const PendingDocumentsView_1 = require("../PendingDocumentsView/PendingDocumentsView");
 const DocumentView_1 = require("../DocumentView/DocumentView");
 const About_1 = require("../About/About");
@@ -17,6 +17,7 @@ const CreateDocument_1 = require("../CreateDocument/CreateDocument");
 const UploadDocument_1 = require("../UploadDocument/UploadDocument");
 const SignatureView_1 = require("../SignatureView/SignatureView");
 const services_1 = require("../../services/services");
+const SearchDocumentView_1 = require("../SearchDocumentView/SearchDocumentView");
 class MetaBar extends React.Component {
     constructor(props) {
         super(props);
@@ -117,7 +118,7 @@ class MetaBar extends React.Component {
                 target = target.parentNode;
             }
             let document_id = target.id;
-            let pendingDocuments = this.state.pendingDocuments;
+            let pendingDocuments = this.state.pendingDocumentList;
             let document_name = '';
             pendingDocuments.forEach(document => {
                 if (document.document_id === document_id) {
@@ -134,13 +135,26 @@ class MetaBar extends React.Component {
                 });
             });
         });
+        this.handleSearchDocument = (document_id, document_name) => {
+            this.setState({
+                document_id: document_id
+            }, () => {
+                this.setState({
+                    currentView: React.createElement(DocumentView_1.default, { getDocuments: this.getDocuments, handleDocumentListPress: this.handleDocumentListPress, dod_id: this.state.dod_id, signature_base64: this.state.signature_base64, document_name: document_name, document_id: this.state.document_id, view: 'PendingDocuments' })
+                }, () => {
+                    this.props.getCurrentView(this.state.currentView);
+                });
+            });
+        };
         this.handleMetabarSelectionStyling = (selectedMetabarView, selectedMetabarViewButton) => {
             //Removing classes from buttons
+            document.getElementById('search-document-metabar-button').classList.remove('metabar-link-selected');
             document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected');
             document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected');
             document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected');
             document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected');
             //Removing classes from triangles
+            document.getElementById('search-document-metabar-triangle').classList.remove('metabar-triangle-selected');
             document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected');
             document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected');
             document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected');
@@ -149,6 +163,7 @@ class MetaBar extends React.Component {
             document.getElementById(selectedMetabarView).classList.add('metabar-link-selected');
             document.getElementById(selectedMetabarViewButton).classList.add('metabar-triangle-selected');
         };
+        //================================ View Functions ==================================
         this.handleNewDocumentPress = () => {
             this.setState({
                 currentView: React.createElement(CreateDocument_1.default, { getPendingDocuments: this.getPendingDocuments, createDocumentState: this.state.createDocumentState, getCreateDocumentState: this.getCreateDocumentState, getCurrentView: this.getCurrentView, documentResults: this.state.documentResults, viewDocument: this.handleDocumentLinkPress })
@@ -188,11 +203,19 @@ class MetaBar extends React.Component {
                 this.props.getCurrentView(this.state.currentView);
             });
         };
+        this.handleSearchDocumentPress = () => {
+            this.setState({
+                currentView: React.createElement(SearchDocumentView_1.default, { documents: this.state.pendingDocumentList, handleSearchDocument: this.handleSearchDocument })
+            }, () => {
+                this.props.getCurrentView(this.state.currentView);
+                this.handleMetabarSelectionStyling('search-document-metabar-button', 'search-document-metabar-triangle');
+            });
+        };
         this.state = {
             currentView: '',
             documentResults: [],
-            pendingDocuments: [],
-            currentDocuments: [],
+            pendingDocumentList: [],
+            currentDocumentsList: [],
             createDocumentState: {
                 document_id: '',
                 document_meta: Array,
@@ -218,6 +241,9 @@ class MetaBar extends React.Component {
         return (React.createElement("div", { id: 'MetaBar' },
             React.createElement("div", { id: 'logo-container' },
                 React.createElement("img", { id: 'logo', src: '/images/MAPR_logo_edit.png' })),
+            React.createElement("abbr", { title: 'Search Document', className: 'metabar-button-abbr' },
+                React.createElement("img", { id: 'search-document-metabar-button', className: 'metabar-link', src: '/images/search-icon-1.png', onClick: this.handleSearchDocumentPress }),
+                React.createElement("div", { id: 'search-document-metabar-triangle', className: 'metabar-triangle' })),
             React.createElement("div", { title: 'Pending Documents', className: 'metabar-button-abbr' },
                 this.renderNotification(),
                 React.createElement("img", { id: 'document-list-metabar-button', src: '/images/doc_icon.png', onClick: this.handleDocumentListPress }),

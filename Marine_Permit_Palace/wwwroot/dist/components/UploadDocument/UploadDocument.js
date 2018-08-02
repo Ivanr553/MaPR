@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const s = require('./styling/style.sass');
+require("./styling/style.sass");
 class UploadDocument extends React.Component {
     //@ts-ignore
     constructor(props) {
@@ -18,14 +18,16 @@ class UploadDocument extends React.Component {
             e.preventDefault();
             e.stopPropagation();
             try {
-                let file = e.dataTransfer.files[0];
+                let FormStuff = new FormData();
+                for (var i = 0; i < e.dataTransfer.files.length; i++) {
+                    FormStuff.append("files", e.dataTransfer.files[i]);
+                    console.log(e.dataTransfer.files[i]);
+                }
                 let url = '/DocumentUpload/Upload';
                 let request = yield fetch(url, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/pdf; charset=UTF-8'
-                    },
-                    body: file
+                    credentials: "same-origin",
+                    body: FormStuff
                 });
                 let response = yield request.json();
                 console.log(response);
@@ -42,23 +44,6 @@ class UploadDocument extends React.Component {
         });
         this.state = {};
     }
-    // handleFormSubmit = async (e) => {
-    //     e.preventDefault()
-    //     try {
-    //         let file = this.files.current.files[0]
-    //         let url = '/DocumentUpload/Upload'
-    //         let request = await fetch(url, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json; charset=UTF-8'
-    //             },
-    //             body: file
-    //         })
-    //         let response = await request.json()
-    //     } catch(e) {
-    //         Error(e)
-    //     }
-    // }
     render() {
         return (React.createElement("div", { id: 'UploadDocument', onDragOver: (e) => {
                 e.preventDefault();

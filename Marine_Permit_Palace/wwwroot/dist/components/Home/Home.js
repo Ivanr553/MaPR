@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const services_1 = require("../../services/services");
-const s = require('./styling/style.sass');
+require("./styling/style.sass");
 const Header_1 = require("../Header/Header");
 const MetaBar_1 = require("../MetaBar/MetaBar");
 const Account_1 = require("../Account/Account");

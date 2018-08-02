@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const s = require('./styling/style.sass');
+require("./styling/SignatureFormStyle.sass");
 class SignatureForm extends React.Component {
     constructor(props) {
         super(props);
@@ -46,6 +46,7 @@ class SignatureForm extends React.Component {
                     height: `${this.props.height}px`,
                     top: `${this.props.top}px`,
                     left: `${this.props.left}px`,
+                    backgroundColor: 'rgba(255, 242, 0, 0.1)'
                 };
                 return style;
             }
@@ -73,6 +74,9 @@ class SignatureForm extends React.Component {
             return (React.createElement("div", { id: this.props.id, className: 'SignatureForm', style: this.getDocumentPreviewStyle(), onClick: (e) => { this.props.previewOnClickHandler(e); } }, this.documentPreviewContent()));
         }
         if (this.props.view === 'PendingDocuments') {
+            if (this.props.is_disabled) {
+                return (React.createElement("div", { id: this.props.id, className: 'SignatureForm', style: this.getPendingDocumentsStyle() }, this.getSignatureContent()));
+            }
             return (React.createElement("div", { id: this.props.id, className: 'SignatureForm', style: this.getPendingDocumentsStyle(), onClick: (e) => this.props.signHandler(e) }, this.getSignatureContent()));
         }
     }

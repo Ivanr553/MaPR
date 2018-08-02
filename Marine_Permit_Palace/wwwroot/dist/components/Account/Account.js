@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const s = require('./styling/style.sass');
+require("./styling/style.sass");
 const TextInput_1 = require("../DocumentView/UserInputComponents/TextInput/TextInput");
 class Account extends React.Component {
     constructor(props) {
@@ -45,7 +45,7 @@ class Account extends React.Component {
                 document.getElementById(list).classList.remove('account-content-list-open');
                 document.getElementById(arrow).classList.remove('account-tab-title-arrow-open');
                 this.setState({
-                    [`${tab}`]: false
+                    [tab]: false
                 });
             }
             else {
@@ -54,7 +54,7 @@ class Account extends React.Component {
                 document.getElementById(list).classList.add('account-content-list-open');
                 document.getElementById(arrow).classList.add('account-tab-title-arrow-open');
                 this.setState({
-                    [`${tab}`]: true
+                    [tab]: true
                 });
             }
         };

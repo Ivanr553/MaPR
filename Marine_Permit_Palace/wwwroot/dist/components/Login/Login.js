@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const s = require('./styling/style.sass');
+require("./styling/style.sass");
 const Header_1 = require("../Header/Header");
 const Footer_1 = require("../Footer/Footer");
 class Login extends React.Component {

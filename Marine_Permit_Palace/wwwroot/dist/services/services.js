@@ -47,6 +47,12 @@ let getSaveFilePromise = (saveFile) => __awaiter(this, void 0, void 0, function*
     return documentSavePromise;
 });
 exports.getSaveFilePromise = getSaveFilePromise;
+let getSearchDocumentPromise = (url) => __awaiter(this, void 0, void 0, function* () {
+    let promise = fetch(url, { credentials: 'same-origin' });
+    let getSearchDocumentPromise = yield makeCancelable(promise);
+    return getSearchDocumentPromise;
+});
+exports.getSearchDocumentPromise = getSearchDocumentPromise;
 //User Management
 let authenticateUser = () => __awaiter(this, void 0, void 0, function* () {
     let request = yield fetch('/Account/WhoAmI', { credentials: 'same-origin' });

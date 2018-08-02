@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const s = require('./style.sass');
+require("./style.sass");
 class Button extends React.Component {
     constructor(props) {
         super(props);
@@ -9,7 +9,7 @@ class Button extends React.Component {
             if (this.state.hover) {
                 let style = {
                     backgroundColor: this.props.color ? this.props.color : '$main-color',
-                    color: 'black',
+                    color: this.props.secondaryColor ? this.props.secondaryColor : 'black',
                     borderColor: this.props.color ? this.props.color : '$main-color'
                 };
                 return style;

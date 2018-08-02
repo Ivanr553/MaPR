@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const react_pdf_js_1 = require("react-pdf-js");
-const s = require('./styling/DocumentViewStyle.sass');
+require("./styling/DocumentViewStyle.sass");
 const SignatureForm_1 = require("./UserInputComponents/SignatureForm/SignatureForm");
 const CheckboxInput_1 = require("./UserInputComponents/CheckboxInput/CheckboxInput");
 const TextInput_1 = require("./UserInputComponents/TextInput/TextInput");
@@ -72,12 +72,30 @@ class DocumentView extends React.Component {
             if (this.props.view === 'DocumentPreview') {
                 request = services_1.getTemplateDocumentPromise(this.props.document_id);
             }
+            console.log(this.props.document_id);
             let documentPromise = yield request;
             this.setState({
                 documentPromise: yield documentPromise
             });
-            let response = yield documentPromise.promise;
-            let documentObject = yield response.json();
+            let documentObject;
+            try {
+                let response = yield documentPromise.promise;
+                documentObject = (yield response.json());
+            }
+            catch (e) {
+                documentObject = {
+                    document_meta: [],
+                    document_size: {
+                        left: 0,
+                        right: 0,
+                        height: 0,
+                        width: 0
+                    },
+                    result: '',
+                    status_code: 401
+                };
+                throw new Error(e);
+            }
             this.setState({
                 documentObject: documentObject,
                 document_id: this.props.document_id

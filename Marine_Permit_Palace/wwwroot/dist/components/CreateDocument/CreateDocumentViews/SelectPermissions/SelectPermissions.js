@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const AddedUserList_1 = require("./AddedUserList");
 const AddedUserPermissions_1 = require("./AddedUserPermissions");
-const s = require('./styling/style.sass');
+require("./styling/style.sass");
 class SelectPermissions extends React.Component {
     constructor(props) {
         super(props);
@@ -108,7 +108,6 @@ class SelectPermissions extends React.Component {
             React.createElement("div", { className: 'document-list-container' },
                 React.createElement("div", { id: 'user-search-main-container' },
                     React.createElement("div", { id: 'user-search-bar-container' },
-                        React.createElement("div", { id: 'search-bar-magnifying-glass' }),
                         React.createElement("input", { autoComplete: 'off', onBlur: this.clearUsersFromSearch, onFocus: (e) => { this.handleFindUser(e); }, onChange: (e) => { this.handleFindUser(e); }, id: 'user-search-bar', placeholder: 'Find Users', type: "text" }),
                         this.state.userSearchResults),
                     React.createElement("div", { className: 'added-users-components-grid' },

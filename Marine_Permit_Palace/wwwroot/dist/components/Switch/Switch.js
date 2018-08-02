@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const s = require('./style.sass');
+require("./style.sass");
 class Switch extends React.Component {
     constructor(props) {
         super(props);

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const DocumentList_1 = require("../DocumentList/DocumentList");
-const s = require('./styling/style.sass');
+require("./styling/style.sass");
 class PendingDocumentsView extends React.Component {
     constructor(props) {
         super(props);

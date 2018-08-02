@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Marine_Permit_Palace.Services;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,10 @@ namespace Marine_Permit_Palace.Controllers
 {
     public class SearchController : Controller
     {
-        public SearchController()
+        ISearchService _SearchService;
+        public SearchController(ISearchService iss)
         {
-
+            _SearchService = iss;
         }
 
         [HttpGet]
@@ -21,12 +23,8 @@ namespace Marine_Permit_Palace.Controllers
              I need to search for the users Organization as well.
              I need the ability to send advanced search queries.
              
-             
-             
-             
              */
-
-            return Json(new { result="TEST", search_terms });
+            return Json(_SearchService.Search(search_terms, new AdvancedSearchSettings()));
         }
 
         [HttpPost]

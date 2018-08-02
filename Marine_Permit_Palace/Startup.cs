@@ -49,6 +49,7 @@ namespace Marine_Permit_Palace
             services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddScoped<IDataStorageService, DataStorageService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ISearchService, SearchService>();
 
             services.AddMvc();
         }

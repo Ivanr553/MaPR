@@ -110,10 +110,7 @@ class SearchDocumentResult extends React.Component<Props, any> {
     
     render() {
         return (
-            <div className='SearchDocumentResult' id={Math.random().toString()} onClick={(e) => {
-                // this.props.selectDocument(e)
-                this.handleOnClick(e)
-                }}>
+            <div className='SearchDocumentResult' id={Math.random().toString()} onClick={(e) => {this.handleOnClick(e)}}>
                 <div className='search-document-field search-document-field-title'>
                 <img className='search-document-link' src="/images/doc_icon.png" alt=""/>
                 <div className='search-document-field'>

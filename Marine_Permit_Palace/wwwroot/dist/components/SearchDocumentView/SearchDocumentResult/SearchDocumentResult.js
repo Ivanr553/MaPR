@@ -46,6 +46,13 @@ class SearchDocumentResult extends React.Component {
             //     }
             // }
         };
+        this.getDate = (date) => {
+            let returnDate = `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`;
+            if (returnDate === '0/1/1') {
+                return 'Not Complete';
+            }
+            return returnDate;
+        };
         this.getAssignedTo = () => {
             let assigned_to = this.props.searchDocument.assigned_to;
             let assigned_to_elements = [];
@@ -61,10 +68,7 @@ class SearchDocumentResult extends React.Component {
         };
     }
     render() {
-        return (React.createElement("div", { className: 'SearchDocumentResult', id: Math.random().toString(), onClick: (e) => {
-                // this.props.selectDocument(e)
-                this.handleOnClick(e);
-            } },
+        return (React.createElement("div", { className: 'SearchDocumentResult', id: Math.random().toString(), onClick: (e) => { this.handleOnClick(e); } },
             React.createElement("div", { className: 'search-document-field search-document-field-title' },
                 React.createElement("img", { className: 'search-document-link', src: "/images/doc_icon.png", alt: "" }),
                 React.createElement("div", { className: 'search-document-field' },
@@ -72,12 +76,12 @@ class SearchDocumentResult extends React.Component {
                     this.props.searchDocument.document_name),
                 React.createElement("div", { className: 'search-document-field' },
                     "Date Created: ",
-                    this.props.searchDocument.date_created),
+                    this.getDate(new Date(this.props.searchDocument.date_created))),
                 React.createElement("img", { className: this.state.arrowClassName, src: "/images/down-arrow-1.png", alt: "" })),
             React.createElement("div", { className: this.state.searchBodyClassName },
                 React.createElement("div", { className: 'search-document-content-line' },
                     React.createElement("div", null, "Date Last Edited:"),
-                    React.createElement("div", null, this.props.searchDocument.date_last_edited)),
+                    React.createElement("div", null, this.getDate(new Date(this.props.searchDocument.date_last_edited)))),
                 React.createElement("div", { className: 'search-document-content-line' },
                     React.createElement("div", null, "Assigned By:"),
                     React.createElement("div", null, this.props.searchDocument.assigned_by)),
@@ -88,14 +92,14 @@ class SearchDocumentResult extends React.Component {
                     React.createElement("div", null, "Is Completed:"),
                     React.createElement("div", null, this.props.searchDocument.is_completed)),
                 React.createElement("div", { className: 'search-document-content-line' },
+                    React.createElement("div", null, "Date Completed:"),
+                    React.createElement("div", null, this.getDate(new Date(this.props.searchDocument.date_completed)))),
+                React.createElement("div", { className: 'search-document-content-line' },
                     React.createElement("div", null, "Document Template Name:"),
                     React.createElement("div", null, this.props.searchDocument.document_template_name)),
                 React.createElement("div", { className: 'search-document-content-line' },
                     React.createElement("div", null, "User Organization:"),
-                    React.createElement("div", null, this.props.searchDocument.user_organization)),
-                React.createElement("div", { className: 'search-document-content-line' },
-                    React.createElement("div", null, "Date Completed:"),
-                    React.createElement("div", null, this.props.searchDocument.date_completed)))));
+                    React.createElement("div", null, this.props.searchDocument.user_organization)))));
     }
 }
 exports.default = SearchDocumentResult;

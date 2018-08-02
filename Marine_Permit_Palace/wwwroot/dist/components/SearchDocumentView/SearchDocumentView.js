@@ -31,7 +31,6 @@ class SearchDocumentView extends React.Component {
             });
             let request = yield searchDocumentPromise.promise;
             let response = yield request.json();
-            console.log(response);
             this.setState({
                 documents: response
             });

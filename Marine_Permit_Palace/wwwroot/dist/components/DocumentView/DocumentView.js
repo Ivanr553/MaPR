@@ -72,7 +72,6 @@ class DocumentView extends React.Component {
             if (this.props.view === 'DocumentPreview') {
                 request = services_1.getTemplateDocumentPromise(this.props.document_id);
             }
-            console.log(this.props.document_id);
             let documentPromise = yield request;
             this.setState({
                 documentPromise: yield documentPromise
@@ -81,19 +80,12 @@ class DocumentView extends React.Component {
             try {
                 let response = yield documentPromise.promise;
                 documentObject = (yield response.json());
+                if (documentObject.status_code === 401) {
+                    documentObject = null;
+                    alert('User does not have permission to view');
+                }
             }
             catch (e) {
-                documentObject = {
-                    document_meta: [],
-                    document_size: {
-                        left: 0,
-                        right: 0,
-                        height: 0,
-                        width: 0
-                    },
-                    result: '',
-                    status_code: 401
-                };
                 throw new Error(e);
             }
             this.setState({

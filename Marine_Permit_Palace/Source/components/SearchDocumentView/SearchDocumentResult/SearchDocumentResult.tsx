@@ -109,7 +109,7 @@ class SearchDocumentResult extends React.Component<Props, any> {
                     Document Name: {this.props.searchDocument.document_name}
                 </div>
                 <div className='search-document-field'>
-                    Document Date: {this.props.searchDocument.date_created}
+                    Date Created: {this.props.searchDocument.date_created}
                 </div>
                     <img className={this.state.arrowClassName} src="/images/down-arrow-1.png" alt=""/>
                 </div>

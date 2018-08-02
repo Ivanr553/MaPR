@@ -121,9 +121,12 @@ class ToolBar extends React.Component<Props, any> {
                 <img style={this.getLeftArrowStyle()} className='toolkit-arrow toolkit-arrow-left' src="/images/left-arrow-1.png" alt=""/>
                 <img style={this.getRightArrowStyle()} className='toolkit-arrow toolkit-arrow-right' src="/images/left-arrow-1.png" alt=""/>
                 <div className='tools-container' style={this.getToolbarStyle()}>
-                    {/* <div className='toolbar-tool toolbar-delete' onClick={this.props.handleApprove}>
+                    <div className='toolbar-tool toolbar-delete' onClick={this.props.handleApprove}>
                         X
-                    </div> */}
+                    </div>
+                    <div className='toolbar-tool toolbar-add' onClick={this.props.handleApprove}>
+                        +
+                    </div>
                     <div style={this.getSubmitStyle()} className='toolbar-tool' onClick={this.props.handleSubmit}>
                         <img className='toolbar-tool-image' src='/images/submit.png' alt=""/>
                     </div>

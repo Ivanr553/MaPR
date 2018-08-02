@@ -97,13 +97,32 @@ export default class DocumentView extends React.Component<Props, any> {
         if(this.props.view === 'DocumentPreview') {
             request = getTemplateDocumentPromise(this.props.document_id)
         }
+        console.log(this.props.document_id)
         let documentPromise = await request
         this.setState({
             documentPromise: await documentPromise
         })
+        let documentObject: documentResponse 
+        try {
+            let response = await documentPromise.promise 
+            documentObject = await response.json() as documentResponse
+        } catch(e) {
+            documentObject = {
+                document_meta: [],
+                document_size: {
+                    left: 0,
+                    right: 0,
+                    height: 0,
+                    width: 0
+                },
+                result: '',
+                status_code: 401
+            }
+            throw new Error(e)
+        }
 
-        let response = await documentPromise.promise 
-        let documentObject: documentResponse = await response.json() as documentResponse
+
+
 
         this.setState({
             documentObject: documentObject,

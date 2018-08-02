@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import {user} from '../../../CreateDocument/CreateDocumentValidation'
 
-const s = require('./styling/style.sass')
+import './styling/SignatureFormStyle.sass'
 
 interface Props {
     id: string,
@@ -80,13 +80,13 @@ export default class SignatureForm extends React.Component<Props, any> {
                 height: `${this.props.height}px`,
                 top: `${this.props.top}px`,
                 left: `${this.props.left}px`,
+                backgroundColor: 'rgba(255, 242, 0, 0.1)'
             }
     
             return style
 
         }
     }
-
 
     //Takes signature png and embeds it into component
     getSignatureContent = () => {
@@ -122,6 +122,13 @@ export default class SignatureForm extends React.Component<Props, any> {
         }
         if(this.props.view === 'PendingDocuments') {
 
+            if(this.props.is_disabled) {
+                return(
+                    <div id={this.props.id} className='SignatureForm' style={this.getPendingDocumentsStyle()}>
+                        {this.getSignatureContent()}
+                    </div>
+                )
+            }
 
             return(
                 <div id={this.props.id} className='SignatureForm' style={this.getPendingDocumentsStyle()} onClick={(e) => this.props.signHandler(e)}>

@@ -3,10 +3,11 @@ import * as React from 'react';
 interface Props {
     innerText: string,
     onClickHandler: (e) => any,
-    color?: string
+    color?: string,
+    secondaryColor?: string
 }
 
-const s = require('./style.sass')
+import './style.sass'
 
 class Button extends React.Component<Props, any> {
 
@@ -23,7 +24,7 @@ class Button extends React.Component<Props, any> {
             
             let style ={
                 backgroundColor: this.props.color ? this.props.color : '$main-color',
-                color: 'black',
+                color: this.props.secondaryColor ? this.props.secondaryColor : 'black',
                 borderColor: this.props.color ? this.props.color : '$main-color'
             }
 

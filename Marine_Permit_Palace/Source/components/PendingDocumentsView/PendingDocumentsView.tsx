@@ -3,7 +3,7 @@ import * as React from 'react'
 import DocumentList from '../DocumentList/DocumentList'
 import {document} from '../../AppValidation'
 
-const s = require('./styling/style.sass')
+import  './styling/style.sass'
 
 interface Props {
     pendingDocumentList: Array<document>,

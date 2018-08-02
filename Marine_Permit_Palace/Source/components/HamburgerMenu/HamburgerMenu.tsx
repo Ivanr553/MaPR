@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-const s = require('./styling/style.sass')
+import './styling/style.sass'
 
 interface Props {
     getHamburgerState(hamburgerState: string): void,

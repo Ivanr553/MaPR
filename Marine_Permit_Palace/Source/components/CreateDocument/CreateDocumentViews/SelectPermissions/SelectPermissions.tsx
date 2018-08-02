@@ -5,7 +5,7 @@ import {user} from '../../CreateDocumentValidation'
 import {databaseUser} from '../../../../AppValidation'
 import AddedUserPermissions from './AddedUserPermissions';
 
-const s = require('./styling/style.sass')
+import './styling/style.sass'
 
 interface Props {
     getSelectPermissionsComplete(selectPermissionsComplete: boolean): void,
@@ -161,7 +161,6 @@ class SelectPermissions extends React.Component<Props, any> {
                 <div className='document-list-container'>
                     <div id='user-search-main-container'>
                         <div id='user-search-bar-container'>
-                            <div id='search-bar-magnifying-glass'></div>
                             <input autoComplete='off' onBlur={this.clearUsersFromSearch} onFocus={(e) => {this.handleFindUser(e)}} onChange={(e) => {this.handleFindUser(e)}} id='user-search-bar' placeholder='Find Users' type="text"/>
                             {this.state.userSearchResults}
                         </div>

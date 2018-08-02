@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 
-const s =  require('./styling/style.sass')
+import './styling/style.sass'
 
 export default class Header extends React.Component<any, any> {
 

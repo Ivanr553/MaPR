@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-const s = require('./styling/style.sass')
+import './styling/style.sass'
 
 
 export default class UploadDocument extends React.Component<any, any> {

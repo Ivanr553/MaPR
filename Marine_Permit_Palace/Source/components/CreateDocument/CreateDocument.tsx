@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-const s = require('./styling/style.sass')
+import './styling/style.sass'
 
 import SelectPermissions from './CreateDocumentViews/SelectPermissions/SelectPermissions';
 import SelectDocument from './CreateDocumentViews/SelectDocument/SelectDocument';

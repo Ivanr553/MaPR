@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-const s = require('./ToolBarStyle.sass')
+import './ToolBarStyle.sass'
 
 interface Props {
     handleSubmit: () => void,

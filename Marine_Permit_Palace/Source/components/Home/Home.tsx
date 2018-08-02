@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router'
 
 import {authenticateUser, logOff} from '../../services/services'
 
-const s = require('./styling/style.sass')
+import './styling/style.sass'
 
 import Header from '../Header/Header'
 import MetaBar from '../MetaBar/MetaBar'

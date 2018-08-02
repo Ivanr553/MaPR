@@ -1,8 +1,6 @@
 import * as React from 'react'
-import { RouteComponentProps } from 'react-router'
-import { setTimeout } from 'timers';
 
-const s = require('./styling/style.sass')
+import './styling/style.sass'
 
 
 interface Props {

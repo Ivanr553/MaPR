@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
 
-const s = require('./styling/style.sass')
+import './styling/style.sass'
 
 import Header from '../Header/Header'
 import Footer from '../Footer/Footer'

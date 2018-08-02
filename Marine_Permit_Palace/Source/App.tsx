@@ -6,7 +6,7 @@ import Home from './components/Home/Home'
 import Register from './components/Register/Register'
 import Login from './components/Login/Login'
 
-const s = require('./style.sass')
+import './style.sass'
 
 export default class App extends React.Component<any, any> {
     render() {

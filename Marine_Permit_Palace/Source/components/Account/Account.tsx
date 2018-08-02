@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-const s = require('./styling/style.sass')
+import './styling/style.sass'
 
 import TextInput from '../DocumentView/UserInputComponents/TextInput/TextInput'
 
@@ -112,7 +112,7 @@ export default class Account extends React.Component<any, any> {
       document.getElementById(arrow).classList.remove('account-tab-title-arrow-open')
 
       this.setState({
-        [`${tab}`]: false
+        [tab]: false
       })
     } 
     
@@ -123,7 +123,7 @@ export default class Account extends React.Component<any, any> {
       document.getElementById(arrow).classList.add('account-tab-title-arrow-open')
 
       this.setState({
-        [`${tab}`]: true
+        [tab]: true
       })
     }
 

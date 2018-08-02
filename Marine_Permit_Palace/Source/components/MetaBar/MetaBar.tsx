@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-const s = require('./styling/style.sass')
+import './styling/style.sass'
 
 import PendingDocuments from '../PendingDocumentsView/PendingDocumentsView'
 import DocumentView from '../DocumentView/DocumentView'
@@ -9,6 +9,7 @@ import CreateDocument from '../CreateDocument/CreateDocument'
 import UploadDocument from '../UploadDocument/UploadDocument'
 import SignatureView from '../SignatureView/SignatureView'
 import { getUser } from '../../services/services';
+import SearchDocumentView from '../SearchDocumentView/SearchDocumentView';
 
 export default class MetaBar extends React.Component<any, any> {
 
@@ -186,12 +187,14 @@ export default class MetaBar extends React.Component<any, any> {
     handleMetabarSelectionStyling = (selectedMetabarView: string, selectedMetabarViewButton: string): void => {
 
         //Removing classes from buttons
+        document.getElementById('search-document-metabar-button').classList.remove('metabar-link-selected')
         document.getElementById('document-list-metabar-button').classList.remove('metabar-link-selected')
         document.getElementById('create-document-metabar-button').classList.remove('metabar-link-selected')
         document.getElementById('upload-document-metabar-button').classList.remove('metabar-link-selected')
         document.getElementById('signature-page-metabar-button').classList.remove('metabar-link-selected')
 
         //Removing classes from triangles
+        document.getElementById('search-document-metabar-triangle').classList.remove('metabar-triangle-selected')
         document.getElementById('document-list-metabar-triangle').classList.remove('metabar-triangle-selected')
         document.getElementById('create-document-metabar-triangle').classList.remove('metabar-triangle-selected')
         document.getElementById('upload-document-metabar-triangle').classList.remove('metabar-triangle-selected')
@@ -202,6 +205,9 @@ export default class MetaBar extends React.Component<any, any> {
         document.getElementById(selectedMetabarViewButton).classList.add('metabar-triangle-selected')
         
     }
+
+
+    //================================ View Functions ==================================
 
     handleNewDocumentPress = () => {
         this.setState({
@@ -231,7 +237,6 @@ export default class MetaBar extends React.Component<any, any> {
     }
 
     handleUploadDocumentPress = () => {
-
         this.setState({
             currentView: <UploadDocument />
         }, () => {
@@ -247,6 +252,15 @@ export default class MetaBar extends React.Component<any, any> {
         }, () => {
             this.props.getCurrentView(this.state.currentView)
             
+        })
+    }
+
+    handleSearchDocumentPress = () => {
+        this.setState({
+            currentView: <SearchDocumentView documents={this.state.pendingDocumentList} selectDocument={this.handleDocumentLinkPress} />
+        }, () => {
+            this.props.getCurrentView(this.state.currentView)
+            this.handleMetabarSelectionStyling('search-document-metabar-button', 'search-document-metabar-triangle')
         })
     }
 
@@ -272,6 +286,10 @@ export default class MetaBar extends React.Component<any, any> {
                 <div id='logo-container'>
                     <img id='logo' src='/images/MAPR_logo_edit.png'/>
                 </div>
+                <abbr title='Search Document' className='metabar-button-abbr'>
+                    <img id='search-document-metabar-button' className='metabar-link' src='/images/search-icon-1.png' onClick={this.handleSearchDocumentPress}/>
+                    <div id='search-document-metabar-triangle' className='metabar-triangle'></div>
+                </abbr>
                 <div title='Pending Documents' className='metabar-button-abbr'>
                         {this.renderNotification()}
                         <img id='document-list-metabar-button' src='/images/doc_icon.png' onClick={this.handleDocumentListPress}/>

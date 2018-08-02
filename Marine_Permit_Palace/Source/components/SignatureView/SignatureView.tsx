@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
 
-const s = require('./styling/style.sass')
+import './styling/SignatureViewStyle.sass'
 
 interface Props extends RouteComponentProps<any> {}
 export default class SignatureView extends React.Component<any, any> {

@@ -4,12 +4,12 @@ import {document} from '../../AppValidation'
 
 import DocumentItem from './DocumentItem/DocumentItem'
 
-const s = require('./styling/style.sass')
+import './styling/DocumentListStyle.sass'
 
 interface Props {
     selectDocument: (e) => void,
     documents: Array<document>,
-    document_id: string
+    document_id?: string
 }
 
 export default class DocumentList extends React.Component<Props, any> {

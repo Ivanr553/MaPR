@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {user} from '../CreateDocument/CreateDocumentValidation'
 
-const s = require('./style.sass')
+import './style.sass'
 
 interface Props {
     offInnerText: string,

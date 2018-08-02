@@ -59,6 +59,12 @@ let getSaveFilePromise = async (saveFile): Promise<CancellablePromise> => {
 
 }
 
+let getSearchDocumentPromise = async (url): Promise<CancellablePromise> => {
+    let promise: Promise<Response> = fetch(url, {credentials: 'same-origin'})
+    let getSearchDocumentPromise: CancellablePromise = await makeCancelable(promise)
+    return getSearchDocumentPromise
+}
+
 //User Management
 let authenticateUser = async () => {
 
@@ -92,4 +98,4 @@ let logOff = async () => {
 }
 
 
-export {getDocumentPromise, getTemplateDocumentPromise, getSaveFilePromise, authenticateUser, getUser, logOff}
+export {getDocumentPromise, getTemplateDocumentPromise, getSaveFilePromise, getSearchDocumentPromise, authenticateUser, getUser, logOff}

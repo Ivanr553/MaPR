@@ -1,7 +1,7 @@
 import * as React from 'react'
 import PDF from 'react-pdf-js'
 
-const s = require('./styling/DocumentViewStyle.sass')
+import './styling/DocumentViewStyle.sass'
 
 import SignatureForm from './UserInputComponents/SignatureForm/SignatureForm'
 import CheckboxInput from './UserInputComponents/CheckboxInput/CheckboxInput'

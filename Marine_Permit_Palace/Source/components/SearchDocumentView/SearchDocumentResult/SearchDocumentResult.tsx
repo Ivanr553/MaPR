@@ -82,6 +82,17 @@ class SearchDocumentResult extends React.Component<Props, any> {
 
     }
 
+    getDate = (date) => {
+
+        let returnDate = `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`
+
+        if(returnDate === '0/1/1') {
+            return 'Not Complete'
+        }
+        
+        return returnDate
+    }
+
     getAssignedTo = () => {
 
         let assigned_to = this.props.searchDocument.assigned_to
@@ -109,14 +120,14 @@ class SearchDocumentResult extends React.Component<Props, any> {
                     Document Name: {this.props.searchDocument.document_name}
                 </div>
                 <div className='search-document-field'>
-                    Date Created: {this.props.searchDocument.date_created}
+                    Date Created: {this.getDate(new Date(this.props.searchDocument.date_created))}
                 </div>
                     <img className={this.state.arrowClassName} src="/images/down-arrow-1.png" alt=""/>
                 </div>
                 <div className={this.state.searchBodyClassName}>
                     <div className='search-document-content-line'>
                         <div>Date Last Edited:</div>
-                        <div>{this.props.searchDocument.date_last_edited}</div>
+                        <div>{this.getDate(new Date(this.props.searchDocument.date_last_edited))}</div>
                     </div>
                     <div className='search-document-content-line'>
                         <div>Assigned By:</div>
@@ -131,6 +142,10 @@ class SearchDocumentResult extends React.Component<Props, any> {
                         <div>{this.props.searchDocument.is_completed}</div>
                     </div>
                     <div className='search-document-content-line'>
+                        <div>Date Completed:</div>
+                        <div>{this.getDate(new Date(this.props.searchDocument.date_completed))}</div>
+                    </div>
+                    <div className='search-document-content-line'>
                         <div>Document Template Name:</div>
                         <div>{this.props.searchDocument.document_template_name}</div>
                     </div>
@@ -138,10 +153,7 @@ class SearchDocumentResult extends React.Component<Props, any> {
                         <div>User Organization:</div>
                         <div>{this.props.searchDocument.user_organization}</div>
                     </div>
-                    <div className='search-document-content-line'>
-                        <div>Date Completed:</div>
-                        <div>{this.props.searchDocument.date_completed}</div>
-                    </div>
+
                 </div>
             </div>
         );

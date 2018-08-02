@@ -66,19 +66,19 @@ class SearchDocumentResult extends React.Component<Props, any> {
 
     getStyle = () => {
 
-        if(false) {
+        // if(false) {
 
-            return {
-                border: 'solid 2px rgba(38, 107, 168, 0.7)'
-            }
-        }
+        //     return {
+        //         border: 'solid 2px rgba(38, 107, 168, 0.7)'
+        //     }
+        // }
 
-        if(true) {
+        // if(true) {
             
-            return {
-                border: 'solid 2px rgba(0, 0, 0, 0)'
-            }
-        }
+        //     return {
+        //         border: 'solid 2px rgba(0, 0, 0, 0)'
+        //     }
+        // }
 
     }
 

@@ -18,8 +18,8 @@ export default class MetaBar extends React.Component<any, any> {
         this.state = {
             currentView: '',
             documentResults: [],
-            pendingDocuments: [],
-            currentDocuments: [],
+            pendingDocumentList: [],
+            currentDocumentsList: [],
             createDocumentState: {
                 document_id: '',
                 document_meta: Array,
@@ -163,12 +163,12 @@ export default class MetaBar extends React.Component<any, any> {
         }
 
         let document_id = target.id
-        let pendingDocuments = this.state.pendingDocuments
+        let pendingDocuments = this.state.pendingDocumentList
         let document_name = ''
 
         pendingDocuments.forEach(document => {
             if(document.document_id === document_id) {
-                document_name = document.name
+            document_name = document.name
             }
         })
 
@@ -182,6 +182,18 @@ export default class MetaBar extends React.Component<any, any> {
             })
         })
 
+    }
+
+    handleSearchDocument = (document_id: string, document_name) => {
+        this.setState({
+            document_id: document_id
+        }, () => {
+            this.setState({
+                currentView: <DocumentView getDocuments={this.getDocuments} handleDocumentListPress={this.handleDocumentListPress} dod_id={this.state.dod_id} signature_base64={this.state.signature_base64} document_name={document_name} document_id={this.state.document_id} view={'PendingDocuments'} />
+            }, () => {
+                this.props.getCurrentView(this.state.currentView)
+            })
+        })
     }
 
     handleMetabarSelectionStyling = (selectedMetabarView: string, selectedMetabarViewButton: string): void => {
@@ -257,7 +269,7 @@ export default class MetaBar extends React.Component<any, any> {
 
     handleSearchDocumentPress = () => {
         this.setState({
-            currentView: <SearchDocumentView documents={this.state.pendingDocumentList} selectDocument={this.handleDocumentLinkPress} />
+            currentView: <SearchDocumentView documents={this.state.pendingDocumentList} handleSearchDocument={this.handleSearchDocument} />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
             this.handleMetabarSelectionStyling('search-document-metabar-button', 'search-document-metabar-triangle')

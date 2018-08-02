@@ -1,4 +1,4 @@
-
+@import ../../../style.sass
     
 .SearchdocumentResult
   height: auto
@@ -8,12 +8,25 @@
   transform-origin: top
   font-size: 2em
   background-color: rgba(0, 0, 0, 0)
+  position: relative
+
+.search-document-link
+  width: calc(auto - 2vw)
+  height: calc(100% - 2vw)
+  padding: 1vw
+  background-color: $main-color-light
+  cursor: pointer
+  position: absolute
+  left: 0
+  top: 0
+  border-top-left-radius: 5px
+  border-bottom-left-radius: 5px
 
 .search-document-field-title
   font-size: 3em
-  width: calc(100% - 3vw)
+  width: calc(100% - 6vw)
   height: auto
-  padding: 3vh 0 3vh 3vw
+  padding: 3vh 0 3vh 6vw
   background-color: rgb(230, 230, 230)
   cursor: pointer
   background-color: white

@@ -15,7 +15,7 @@ interface Props {
         user_organization: string,
         date_completed: string
     },
-    selectDocument: (e) => void    
+    handleSearchDocument: (document_id: string, document_name: string) => void    
 }
 
 class SearchDocumentResult extends React.Component<Props, any> {
@@ -31,6 +31,11 @@ class SearchDocumentResult extends React.Component<Props, any> {
     handleOnClick = (e) => {
 
         if(e.target.className === 'search-document-content-line' || e.target.className === '') {
+            return
+        }
+
+        if(e.target.className === 'search-document-link') {
+            this.props.handleSearchDocument(this.props.searchDocument.document_id, this.props.searchDocument.document_name)
             return
         }
 
@@ -83,7 +88,7 @@ class SearchDocumentResult extends React.Component<Props, any> {
         
         assigned_to.forEach(user => {
             let newElement = (
-                <div>{user}</div>
+                <div key={Math.random()}>{user}</div>
             )
             assigned_to_elements.push(newElement)
         })
@@ -98,6 +103,7 @@ class SearchDocumentResult extends React.Component<Props, any> {
                 this.handleOnClick(e)
                 }}>
                 <div className='search-document-field search-document-field-title'>
+                <img className='search-document-link' src="/images/doc_icon.png" alt=""/>
                 <div className='search-document-field'>
                     Document Name: {this.props.searchDocument.document_name}
                 </div>

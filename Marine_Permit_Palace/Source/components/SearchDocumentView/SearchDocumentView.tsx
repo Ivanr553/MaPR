@@ -44,8 +44,6 @@ class SearchDocumentView extends React.Component<Props, any> {
         let request = await searchDocumentPromise.promise
         let response = await request.json()
 
-        console.log(response)
-
         this.setState({
             documents: response
         })

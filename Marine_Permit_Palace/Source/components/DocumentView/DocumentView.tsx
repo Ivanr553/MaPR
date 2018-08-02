@@ -97,7 +97,7 @@ export default class DocumentView extends React.Component<Props, any> {
         if(this.props.view === 'DocumentPreview') {
             request = getTemplateDocumentPromise(this.props.document_id)
         }
-        console.log(this.props.document_id)
+
         let documentPromise = await request
         this.setState({
             documentPromise: await documentPromise
@@ -106,22 +106,13 @@ export default class DocumentView extends React.Component<Props, any> {
         try {
             let response = await documentPromise.promise 
             documentObject = await response.json() as documentResponse
-        } catch(e) {
-            documentObject = {
-                document_meta: [],
-                document_size: {
-                    left: 0,
-                    right: 0,
-                    height: 0,
-                    width: 0
-                },
-                result: '',
-                status_code: 401
+            if(documentObject.status_code === 401) {
+                documentObject = null
+                alert('User does not have permission to view')
             }
+        } catch(e) {
             throw new Error(e)
         }
-
-
 
 
         this.setState({
@@ -313,7 +304,7 @@ export default class DocumentView extends React.Component<Props, any> {
 
     //Form Validation
     validateCanSubmit = (): boolean => {
-
+        
         if(!!!this.state.documentObject) {
             return
         }

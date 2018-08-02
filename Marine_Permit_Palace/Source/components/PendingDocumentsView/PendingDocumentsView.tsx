@@ -8,7 +8,7 @@ import  './styling/style.sass'
 interface Props {
     pendingDocumentList: Array<document>,
     completedDocumentList: Array<document>,
-    selectDocument: (e) => void
+    handleDocument: (document_id: string, document_name: string) => void
 }
 
 export default class PendingDocumentsView extends React.Component<Props, any> {
@@ -25,9 +25,9 @@ export default class PendingDocumentsView extends React.Component<Props, any> {
         return(
             <div className='DocumentList'>
                 <div className='documents-header'>Pending Documents</div>
-                <DocumentList documents={this.props.pendingDocumentList} selectDocument={this.props.selectDocument} document_id={this.state.document_id} />
+                <DocumentList documents={this.props.pendingDocumentList} handleDocument={this.props.handleDocument} document_id={this.state.document_id} />
                 <div className='documents-header'>Completed Documents</div>
-                <DocumentList documents={this.props.completedDocumentList} selectDocument={this.props.selectDocument} document_id={this.state.document_id} />
+                <DocumentList documents={this.props.completedDocumentList} handleDocument={this.props.handleDocument} document_id={this.state.document_id} />
             </div>
         )
     }

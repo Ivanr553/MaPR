@@ -8,7 +8,7 @@ import Button from '../Button/Button';
 import './SearchDocumentViewStyle.sass'
 
 interface Props {
-    handleSearchDocument: (document_id: string, document_name: string) => void,
+    handleDocument: (document_id: string, document_name: string) => void,
     documents?: any
 }
 
@@ -73,7 +73,7 @@ class SearchDocumentView extends React.Component<Props, any> {
                     </div>
                 </div>
                 <div className='documents-header'>Search Results</div>
-                <SearchDocumentResultList handleSearchDocument={this.props.handleSearchDocument} searchDocumentResultList={this.state.documents} />
+                <SearchDocumentResultList handleDocument={this.props.handleDocument} searchDocumentResultList={this.state.documents} />
             </div>
         );
     }

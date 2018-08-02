@@ -1,4 +1,4 @@
-@import ../../../style.sass
+@import ../../style.sass
     
 .SearchdocumentResult
   height: auto
@@ -10,7 +10,7 @@
   background-color: rgba(0, 0, 0, 0)
   position: relative
 
-.search-document-link
+.document-link
   width: calc(auto - 2vw)
   height: calc(100% - 2vw)
   padding: 1vw
@@ -22,7 +22,7 @@
   border-top-left-radius: 5px
   border-bottom-left-radius: 5px
 
-.search-document-field-title
+.document-field-title
   font-size: 3em
   width: calc(100% - 6vw)
   height: auto
@@ -38,23 +38,23 @@
   @media screen and (max-width: 1000px)
     font-size: 2em
 
-.search-document-field-title:hover
+.document-field-title:hover
   animation: hover-over-document 0.3s forwards
 
-.search-document-field
+.document-field
   font-size: 1.1em
 
-.search-document-title-arrow
+.document-title-arrow
   width: auto
   height: 90%
   animation: close-tab-arrow 0.2s forwards
 
-.search-document-title-arrow-open
+.document-title-arrow-open
   width: auto
   height: 90%
   animation: open-tab-arrow 0.2s forwards
 
-.search-content-body
+.content-body
   max-height: 0
   overflow: hidden
   width: auto
@@ -64,7 +64,7 @@
   border-bottom-left-radius: 5px
   border-bottom-right-radius: 5px
 
-.search-content-body-open
+.content-body-open
   max-height: 100vh
   width: auto
   transition: max-height 0.5s ease
@@ -74,7 +74,7 @@
   border-bottom-right-radius: 5px
   overflow: hidden
 
-.search-document-content-line
+.document-content-line
   width: 90%
   height: auto
   padding-top: 1vh
@@ -88,12 +88,12 @@
   cursor: default
   user-select: none
 
-.search-document-assigned-to-container
+.document-assigned-to-container
   display: flex
   flex-direction: row
   width: max-content
 
-.search-document-assigned-to-container > *:not(:first-child)
+.document-assigned-to-container > *:not(:first-child)
   margin-left: 0.5vw
 
 @keyframes hover-over-document

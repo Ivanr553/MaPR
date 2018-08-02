@@ -132,6 +132,11 @@ export default class DocumentView extends React.Component<Props, any> {
             documentObject.document_meta = this.props.document_meta
         }
 
+        if(documentObject.document_meta.length === 0) {
+            alert('No Document Meta')
+            return
+        }
+
         let documentFields = []
 
         for(let form in documentObject.document_meta) {
@@ -411,7 +416,6 @@ export default class DocumentView extends React.Component<Props, any> {
     }
 
     render() {
-
         let document_id = '../../dist/documents/NAVMC10694.pdf'
         let noDocumentWarning = <div></div>
         let toolbar = <div></div>

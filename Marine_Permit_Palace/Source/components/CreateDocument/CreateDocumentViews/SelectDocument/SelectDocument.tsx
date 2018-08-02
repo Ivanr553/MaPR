@@ -25,6 +25,7 @@ class SelectDocument extends React.Component<Props, any> {
 
     handleShow = () => {
         if(!this.props.selectDocumentBoolean) {
+
             let style = {
                 display: 'none'
             } 
@@ -32,6 +33,7 @@ class SelectDocument extends React.Component<Props, any> {
             return style
 
         } else {
+            
             let style = {
                 display: 'block'
             } 
@@ -49,6 +51,8 @@ class SelectDocument extends React.Component<Props, any> {
             target = target.parentNode
         }
 
+        console.log(target.id)
+
 
         this.setState({
             document_id: target.id
@@ -56,6 +60,31 @@ class SelectDocument extends React.Component<Props, any> {
             this.giveDocumentId()
             this.giveSelectDocumentComplete()
         })
+    }
+
+    //Creates list in state of objects to be rendered
+    getDocumentList = (documents: Array<any>) => {
+
+        documents = documents.map(document => {
+            if(!!document.idDocument){
+                let document_id = document.idDocument
+                delete document.idDocument
+                document.document_id = document_id
+                return document
+            } else {
+                return document
+            }
+        })
+
+        return (
+            documents.map(
+                (document) => {
+                    return (
+                    <DocumentItem key={Math.random()} selectedDocument={this.props.document_id} document={document} selectDocument={this.selectDocument}/>
+                )
+            }
+            )
+        )
     }
 
     //State Management
@@ -70,15 +99,16 @@ class SelectDocument extends React.Component<Props, any> {
 
     //React Lifecycle
     componentDidMount() {
-        this.handleShow()
+
     }
  
     render() {
-
         return (
             <div id='SelectDocument' style={this.handleShow()}>
                 <div className='documents-header'>Select Template Document</div>
-                <DocumentList documents={this.props.documents} selectDocument={this.selectDocument}document_id={this.props.document_id} />
+                <div className='document-list-container'>
+                    {this.getDocumentList(this.props.documents)}
+                </div>
             </div>
         );
     }

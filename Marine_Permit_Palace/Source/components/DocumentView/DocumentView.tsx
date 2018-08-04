@@ -6,7 +6,7 @@ import SignatureForm from './UserInputComponents/SignatureForm/SignatureForm'
 import CheckboxInput from './UserInputComponents/CheckboxInput/CheckboxInput'
 import TextInput from './UserInputComponents/TextInput/TextInput'
 
-import {documentResponse, saveResultInterface, documentDimensions, document_meta_field, document} from '../../AppValidation'
+import {documentResponse, documentPage, saveResultInterface, documentDimensions, document_meta_field, document} from '../../AppValidation'
 import {getDocumentPromise, getTemplateDocumentPromise, getSaveFilePromise} from '../../services/services'
 import ToolBar from './ToolBar/ToolBar';
 import DocumentPage from './DocumentPage/DocumentPage';
@@ -53,10 +53,10 @@ export default class DocumentView extends React.Component<Props, any> {
         }
     }
 
-    getDocumentSize = (documentObject: documentResponse, fieldLeft: number, fieldTop: number, fieldHeight: number, fieldWidth: number): documentDimensions => {
+    getDocumentSize = (documentObject: documentPage, fieldLeft: number, fieldTop: number, fieldHeight: number, fieldWidth: number): documentDimensions => {
 
-        let pdfWidth = documentObject.document_size.right
-        let pdfHeight = documentObject.document_size.height
+        let pdfWidth = documentObject.page.right
+        let pdfHeight = documentObject.page.height
         let webWidth = 612 //in px
         let webHeight = 792 // in px
 
@@ -92,11 +92,17 @@ export default class DocumentView extends React.Component<Props, any> {
     generatePages = () => {
 
         let pages = []
-        let documentObjectArray = [this.state.documentObject]
+        let documentObjectArray = this.state.documentObject
 
-        documentObjectArray.forEach((documentObject, index) => {
+        if(!!!documentObjectArray) {
+            return
+        }
 
-            let newPage = <DocumentPage documentObject={documentObject} pdfSource={'/dist/documents/NAVMC10694.pdf'} page={index+1} handleFormEdit={this.handleFormEdit} view={this.props.view} signature_base64={this.props.signature_base64} autoSave={this.autoSave} signHandler={this.signHandler} />
+        console.log(documentObjectArray)
+
+        documentObjectArray.pages.forEach((documentPage, index) => {
+
+            let newPage = <DocumentPage documentPage={documentPage} pdfSource={'/dist/documents/NAVMC10694.pdf'} page={index+1} handleFormEdit={this.handleFormEdit} view={this.props.view} signature_base64={this.props.signature_base64} autoSave={this.autoSave} signHandler={this.signHandler} />
 
             pages.push(newPage)
 
@@ -128,6 +134,7 @@ export default class DocumentView extends React.Component<Props, any> {
         try {
             let response = await documentPromise.promise 
             documentObject = await response.json() as documentResponse
+            console.log(documentObject)
             if(documentObject.status_code === 401) {
                 documentObject = null
                 alert('User does not have permission to view')
@@ -141,65 +148,6 @@ export default class DocumentView extends React.Component<Props, any> {
             documentObject: documentObject,
             document_id: this.props.document_id
         })
-
-    }
-
-    createDocumentFields = (documentObject) => {
-
-        if(!!!this.state.documentObject) {
-            return
-        }
-        documentObject = Object.assign({}, this.state.documentObject)
-        if(!!this.props.document_meta && !!documentObject) {
-            documentObject.document_meta = this.props.document_meta
-        }
-
-        if(documentObject.document_meta.length === 0) {
-            alert('No Document Meta')
-            return
-        }
-
-        let documentFields = []
-
-        for(let form in documentObject.document_meta) {
-            
-            let document_meta_field: document_meta_field = documentObject.document_meta[form]
-            let dimensions =   
-                this.getDocumentSize(
-                    documentObject,
-                    document_meta_field.field_position.position.left,
-                    document_meta_field.field_position.position.top,
-                    document_meta_field.field_position.position.height,
-                    document_meta_field.field_position.position.width
-                )
-
-            if(document_meta_field.field_type === 'Checkbox') {
-
-                if(document_meta_field.value === '') {
-                    document_meta_field.value = 'Off'
-                }
-
-                let newForm = <CheckboxInput is_disabled={document_meta_field.is_disabled} key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} checked={document_meta_field.value} onChange={(e) => {this.handleFormEdit(e, form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
-
-                documentFields.push(newForm)
-            }
-            else if(document_meta_field.field_type === 'Text') {
-                let newForm = 
-                    <div key={form} className='form-wrapper'>
-                        <TextInput is_disabled={document_meta_field.is_disabled} key={form} id={form} position={'absolute'} border={'none'} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} value={document_meta_field.value} onChange={(e) => {this.handleFormEdit(e, form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
-                    </div>
-
-                documentFields.push(newForm)
-            }
-            else if(document_meta_field.field_type === 'Signature') {
-                let newForm = <SignatureForm is_disabled={document_meta_field.is_disabled} key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} assigned_to={document_meta_field.assigned_to} signature_base64={document_meta_field.value} signHandler={this.signHandler}/>
-
-                documentFields.push(newForm)
-            }
-
-        }
-
-        return documentFields
 
     }
 
@@ -346,29 +294,29 @@ export default class DocumentView extends React.Component<Props, any> {
 
 
     //Form Validation
-    validateCanSubmit = (): boolean => {
+    validateCanSubmit = () => {
         
-        if(!!!this.state.documentObject) {
-            return
-        }
+        // if(!!!this.state.documentObject) {
+        //     return
+        // }
 
-        let document_meta: Array<document_meta_field> = this.state.documentObject.document_meta
+        // let document_meta: Array<document_meta_field> = this.state.documentObject.document_meta
 
-        let resultArray: Array<boolean> = document_meta.map((document_meta_field: document_meta_field) => {
+        // let resultArray: Array<boolean> = document_meta.map((document_meta_field: document_meta_field) => {
 
-            if(document_meta_field.field_type === 'Signature') {
-                if(!!!document_meta_field.value) {
-                    return false
-                }
-            }
+        //     if(document_meta_field.field_type === 'Signature') {
+        //         if(!!!document_meta_field.value) {
+        //             return false
+        //         }
+        //     }
 
-            return true
+        //     return true
 
-        })
+        // })
 
-        if(resultArray.indexOf(false) >= 0) {
-            return false
-        }
+        // if(resultArray.indexOf(false) >= 0) {
+        //     return false
+        // }
 
         return true
 

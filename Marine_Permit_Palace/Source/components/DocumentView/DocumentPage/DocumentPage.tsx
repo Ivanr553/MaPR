@@ -8,8 +8,10 @@ import CheckboxInput from '../UserInputComponents/CheckboxInput/CheckboxInput';
 import TextInput from '../UserInputComponents/TextInput/TextInput';
 import SignatureForm from '../UserInputComponents/SignatureForm/SignatureForm';
 
+import {documentPage} from '../../../AppValidation'
+
 interface Props {
-    documentObject: documentResponse,
+    documentPage: documentPage,
     document_meta?: Array<document_meta_field>, 
     pdfSource: string,
     page: number,
@@ -41,10 +43,12 @@ class DocumentPage extends React.Component<Props, any> {
     }
 
 
-    getDocumentSize = (documentObject: documentResponse, fieldLeft: number, fieldTop: number, fieldHeight: number, fieldWidth: number): documentDimensions => {
+    getDocumentSize = (documentPage: documentPage, fieldLeft: number, fieldTop: number, fieldHeight: number, fieldWidth: number): documentDimensions => {
 
-        let pdfWidth = documentObject.document_size.right
-        let pdfHeight = documentObject.document_size.height
+        console.log(documentPage)
+
+        let pdfWidth = documentPage.page.right
+        let pdfHeight = documentPage.page.height
         let webWidth = 612 //in px
         let webHeight = 792 // in px
 
@@ -68,29 +72,28 @@ class DocumentPage extends React.Component<Props, any> {
         }
     }
 
-    createDocumentFields = (documentObject) => {
+    createDocumentFields = (documentPage: documentPage) => {
 
-        if(!!!this.props.documentObject) {
+        if(!!!this.props.documentPage) {
             return
         }
-        documentObject = Object.assign({}, this.props.documentObject)
-        if(!!this.props.document_meta && !!documentObject) {
-            documentObject.document_meta = this.props.document_meta
+        if(!!this.props.document_meta && !!documentPage) {
+            documentPage.document_meta = this.props.document_meta
         }
 
-        if(documentObject.document_meta.length === 0) {
+        if(documentPage.document_meta.length === 0) {
             alert('No Document Meta')
             return
         }
 
         let documentFields = []
 
-        for(let form in documentObject.document_meta) {
+        for(let form in documentPage.document_meta) {
             
-            let document_meta_field: document_meta_field = documentObject.document_meta[form]
+            let document_meta_field: document_meta_field = documentPage.document_meta[form]
             let dimensions =   
                 this.getDocumentSize(
-                    documentObject,
+                    documentPage,
                     document_meta_field.field_position.position.left,
                     document_meta_field.field_position.position.top,
                     document_meta_field.field_position.position.height,
@@ -132,7 +135,7 @@ class DocumentPage extends React.Component<Props, any> {
             <div className='DocumentPage' style={this.getStyle()}>
                 <PDF className='pdf-image' file={this.props.pdfSource} page={this.props.page} />
                 <div className='document-fields-container'>
-                    {this.createDocumentFields(this.props.documentObject)}
+                    {this.createDocumentFields(this.props.documentPage)}
                 </div>
             </div>
         );

@@ -30,15 +30,19 @@ interface document_meta_field {
 }
 
 interface documentResponse {
+    pages: Array<documentPage>,
+    result: string,
+    status_code: number
+}
+
+interface documentPage {
     document_meta: Array<document_meta_field>,
-    document_size: {
+    page: {
         left: number,
         right: number,
         height: number,
         width: number
-    },
-    result: string,
-    status_code: number
+    }
 }
 
 interface databaseUser {
@@ -61,4 +65,4 @@ interface saveResultInterface {
     status_code: number
 }
 
-export {CancellablePromise, document, documentResponse, document_meta_field, saveResultInterface, databaseUser, documentDimensions}
+export {CancellablePromise, document, documentResponse, documentPage, document_meta_field, saveResultInterface, databaseUser, documentDimensions}

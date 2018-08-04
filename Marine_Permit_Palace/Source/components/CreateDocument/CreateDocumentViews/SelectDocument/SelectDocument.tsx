@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import DocumentItem from '../../../DocumentList/DocumentItem/DocumentItem';
-import DocumentList from '../../../DocumentList/DocumentList'
 
 import {document} from '../../../../AppValidation'
 
@@ -50,8 +49,6 @@ class SelectDocument extends React.Component<Props, any> {
         while (!target.classList.contains('document-item')) {
             target = target.parentNode
         }
-
-        console.log(target.id)
 
 
         this.setState({

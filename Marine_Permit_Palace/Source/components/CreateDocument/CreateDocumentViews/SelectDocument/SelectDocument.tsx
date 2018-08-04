@@ -3,6 +3,7 @@ import * as React from 'react';
 import DocumentItem from '../../../DocumentList/DocumentItem/DocumentItem';
 
 import {document} from '../../../../AppValidation'
+import SelectDocumentList from './SelectDocumentList';
 
 interface Props {
     documents: Array<document>,
@@ -103,9 +104,7 @@ class SelectDocument extends React.Component<Props, any> {
         return (
             <div id='SelectDocument' style={this.handleShow()}>
                 <div className='documents-header'>Select Template Document</div>
-                <div className='document-list-container'>
-                    {this.getDocumentList(this.props.documents)}
-                </div>
+                <SelectDocumentList selectDocument={this.selectDocument} document_id={this.props.document_id} documents={this.props.documents} />
             </div>
         );
     }

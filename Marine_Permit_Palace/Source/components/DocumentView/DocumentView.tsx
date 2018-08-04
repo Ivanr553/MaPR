@@ -328,12 +328,12 @@ export default class DocumentView extends React.Component<Props, any> {
         if(this.state.notificationCard !== '') {
 
             this.setState({
-                notificationCard: <NotificationCard message={this.state.notificationCardMessage} exit={true} clearNotification={this.clearNotification}/>
+                notificationCard: <NotificationCard key={Math.random()} message={this.state.notificationCardMessage} exit={true} clearNotification={this.clearNotification}/>
             }, () => {
 
                 setTimeout(() => {
                     this.setState({
-                        notificationCard: <NotificationCard message={message} exit={false} clearNotification={this.clearNotification}/>,
+                        notificationCard: <NotificationCard key={Math.random()} message={message} exit={false} clearNotification={this.clearNotification}/>,
                         notificationCardMessage: message
                     })
                 },
@@ -344,7 +344,7 @@ export default class DocumentView extends React.Component<Props, any> {
 
         else {
             this.setState({
-                notificationCard: <NotificationCard message={message} exit={false} clearNotification={this.clearNotification}/>,
+                notificationCard: <NotificationCard key={Math.random()} message={message} exit={false} clearNotification={this.clearNotification}/>,
                 notificationCardMessage: message
             })
         }

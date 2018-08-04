@@ -21,19 +21,17 @@ class NotificationCard extends React.Component<Props, any> {
     }
 
     handleCardTime = () => {
-        if(this.props.exit) {
-            return this.exit()
-        }
-
         this.show()
+
         let timer = setTimeout(
             () => {
                 this.exit()
             },
             5000
         )
-
-        this.startTimer(timer)
+        this.setState({
+            timer: timer
+        })
     }
 
     show = () => {
@@ -49,21 +47,14 @@ class NotificationCard extends React.Component<Props, any> {
             show: false
         }, () => {
             this.getStyle()
-            setTimeout(() => {
-                this.props.clearNotification()
-            }, 400)
         })
     }
 
-    startTimer = (timer) => {
-        this.setState({
-            timer: timer
-        })
-    }
 
     getStyle = (): React.CSSProperties => {
 
         if(this.props.exit) {
+
             return {
                 animation: 'hide-notification-card 0.5s forwards'
             }
@@ -84,6 +75,12 @@ class NotificationCard extends React.Component<Props, any> {
         }
 
 
+    }
+
+    componentWillUnmount() {
+        if(!!this.state.timer) {
+            clearInterval(this.state.timer)
+        }
     }
 
     componentDidMount() {

@@ -1,5 +1,4 @@
 import * as React from 'react'
-import PDF from 'react-pdf-js'
 
 import './styling/DocumentViewStyle.sass'
 
@@ -10,6 +9,7 @@ import TextInput from './UserInputComponents/TextInput/TextInput'
 import {documentResponse, saveResultInterface, documentDimensions, document_meta_field, document} from '../../AppValidation'
 import {getDocumentPromise, getTemplateDocumentPromise, getSaveFilePromise} from '../../services/services'
 import ToolBar from './ToolBar/ToolBar';
+import DocumentPage from './DocumentPage/DocumentPage';
 
 interface Props {
     document_id: string,
@@ -20,7 +20,7 @@ interface Props {
     signature_base64?: string,
     dod_id?: number,
     handleDocumentListPress?: () => void,
-    getDocuments?: () => void
+    getPendingDocuments?: () => void
 }
 
 export default class DocumentView extends React.Component<Props, any> {
@@ -28,11 +28,14 @@ export default class DocumentView extends React.Component<Props, any> {
     constructor(props) {
         super(props)
         this.state ={
-            documentObject: undefined,
             submitted_file_id: '',
             noDocument: false,
             savingIconSource: '/images/clock.png',
             savingIconId: '',
+            loading: (
+                <div className='loading-image'>Loading...</div>
+            ),
+            savingBar: ''
         }
     }
 
@@ -84,7 +87,26 @@ export default class DocumentView extends React.Component<Props, any> {
         return name
     }
 
-    populatePage = async () =>  {
+    // WHEN EDITING THE DIFFERENT FIELDS THERE MUST BE A WAY TO LINK THE FIELDS BACK TO THE CORRECT DOCUMENT OBJECT!
+
+    generatePages = () => {
+
+        let pages = []
+        let documentObjectArray = [this.state.documentObject]
+
+        documentObjectArray.forEach((documentObject, index) => {
+
+            let newPage = <DocumentPage documentObject={documentObject} pdfSource={'/dist/documents/NAVMC10694.pdf'} page={index+1} handleFormEdit={this.handleFormEdit} view={this.props.view} signature_base64={this.props.signature_base64} autoSave={this.autoSave} signHandler={this.signHandler} />
+
+            pages.push(newPage)
+
+        })
+
+        return pages
+
+    }
+
+    getDocumentObject = async () =>  {
 
         if(!this.checkForDocument()) {
             return
@@ -122,14 +144,19 @@ export default class DocumentView extends React.Component<Props, any> {
 
     }
 
-    createDocumentFields = () => {
+    createDocumentFields = (documentObject) => {
 
-        let documentObject = this.state.documentObject
         if(!!!this.state.documentObject) {
             return
         }
+        documentObject = Object.assign({}, this.state.documentObject)
         if(!!this.props.document_meta && !!documentObject) {
             documentObject.document_meta = this.props.document_meta
+        }
+
+        if(documentObject.document_meta.length === 0) {
+            alert('No Document Meta')
+            return
         }
 
         let documentFields = []
@@ -176,7 +203,7 @@ export default class DocumentView extends React.Component<Props, any> {
 
     }
 
-    async handleFormEdit(e, id) {
+    handleFormEdit = async (e, id) => {
 
         let documentObject = Object.assign({}, this.state.documentObject)
         let document_meta_field: document_meta_field = documentObject.document_meta[id]
@@ -221,8 +248,8 @@ export default class DocumentView extends React.Component<Props, any> {
             clearTimeout(this.state.saveFileTimeout)
         }
         let saveFileTimeout = setTimeout(() => {
-            this.saveFile(false)
             this.startSave()
+            this.saveFile(false)
         }, 2000)
 
         this.setState({
@@ -234,7 +261,8 @@ export default class DocumentView extends React.Component<Props, any> {
     saveFile = async (is_completed: boolean) => {
         
         let payload_document_meta = []
-        this.state.documentObject.document_meta.forEach(document_meta_field => {
+        let documentObject = Object.assign({}, this.state.documentObject)
+        documentObject.document_meta.forEach(document_meta_field => {
             payload_document_meta.push(Object.assign({}, document_meta_field))
         })
         payload_document_meta = payload_document_meta.map(document_meta_field => {
@@ -261,8 +289,14 @@ export default class DocumentView extends React.Component<Props, any> {
         let response = await newFilePromise.promise
         let saveResult: saveResultInterface = await response.json()
 
-        this.completeSave()
-        
+        if(saveResult.status_code === 401) {
+            alert(saveResult.reason)
+            this.unsuccessfulSave()
+            return
+        } else {
+            this.successfulSave()
+        }
+
         return saveResult
     }
 
@@ -292,8 +326,17 @@ export default class DocumentView extends React.Component<Props, any> {
         let response = await newFilePromise.promise
         let saveResult: saveResultInterface = await response.json()
 
+        if(saveResult.status_code === 401) {
+            alert(saveResult.reason)
+            this.unsuccessfulSave()
+            return
+        } else {
+            this.successfulSave()
+        }
+        
+
         if(is_completed) {
-            this.props.getDocuments()
+            this.props.getPendingDocuments()
             this.props.handleDocumentListPress()
         }
 
@@ -334,31 +377,51 @@ export default class DocumentView extends React.Component<Props, any> {
     //Save functionality
 
     startSave = () => {
+
+        let savingBar = (
+            <div id='saving-bar'> Saving... </div>
+        )
+
         this.setState({
-            savingIconId: 'saving-icon'
+            savingBar: savingBar
         })
+
     }
 
-    completeSave = () => {
+    successfulSave = () => {
+
+        let savingBar = (
+            <div id='saving-bar' className='saving-bar-success'> Save Successful </div>
+        )
+
         this.setState({
-            savingIconSource: '/images/check-green.png',
-            savingIconId: 'saving-icon-complete-document-view'
-        }, () => {
-
-            let clearSavingIcon = (
-                setTimeout(() => {
-                    this.setState({
-                        savingIconId: '',
-                        savingIconSource: '/images/clock.png'
-                    })
-                }, 2000)
-            )
-
-            this.setState({
-                clearSavingIcon: clearSavingIcon
-            })
-
+            savingBar: savingBar
         })
+
+        setTimeout(() => {
+            this.setState({
+                savingBar: ''
+            })
+        },
+        3000)
+    }
+
+    unsuccessfulSave = () => {
+
+        let savingBar = (
+            <div id='saving-bar' className='saving-bar-failure'> Save Unsuccessful </div>
+        )
+
+        this.setState({
+            savingBar: savingBar
+        })
+
+        setTimeout(() => {
+            this.setState({
+                savingBar: ''
+            })
+        },
+        3000)
     }
 
 
@@ -377,22 +440,24 @@ export default class DocumentView extends React.Component<Props, any> {
         }
 
         if(this.validateCanSubmit()) {
-            this.quickSave(true)
-            return alert('Document Submitted')
+            return this.quickSave(true)
         }
 
     }
 
     //React Lifecycle Methods
-    componentDidMount() {
+    async componentDidMount() {
         if(!!!this.props.document_meta && this.props.view === 'PendingDocuments') {
             getDocumentPromise(this.props.document_id)
-            this.populatePage()
+            await this.getDocumentObject()
+            this.setState({
+                loading: ''
+            })
         } else {
             this.setState({
                 document_meta: this.props.document_meta
             }, () => {
-                this.populatePage()
+                this.getDocumentObject()
             })
         }
     }
@@ -411,18 +476,7 @@ export default class DocumentView extends React.Component<Props, any> {
     }
 
     render() {
-
-        let document_id = '../../dist/documents/NAVMC10694.pdf'
-        let noDocumentWarning = <div></div>
         let toolbar = <div></div>
-
-        if(this.state.noDocument) {
-            noDocumentWarning = (
-                <div id='document-view-no-document-warning'>
-                    There is no document selected
-                </div>
-            )
-        }
 
         if(this.props.view === 'PendingDocuments') {
             toolbar = <ToolBar handleApprove={this.handleApprove} handleSubmit={this.handleSubmit} canSubmit={this.validateCanSubmit()}/>
@@ -430,13 +484,9 @@ export default class DocumentView extends React.Component<Props, any> {
 
         return(
             <div className='DocumentView'>
-                {noDocumentWarning}
-                <img className='canvas-icon-document-view' id={this.state.savingIconId} src={this.state.savingIconSource} alt="" onClick={this.completeSave}/>
-                <PDF className='pdf-image' file={document_id} >
-                </PDF>
-                <div id='document-form-div'>
-                    {this.createDocumentFields()}
-                </div>
+                {this.state.loading}
+                {this.state.savingBar}
+                {this.generatePages()}
                 {toolbar}
             </div>
         )

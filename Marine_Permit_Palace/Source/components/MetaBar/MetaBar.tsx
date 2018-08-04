@@ -45,7 +45,7 @@ export default class MetaBar extends React.Component<any, any> {
         })
     }
 
-    getDocuments = async () => {
+    getTemplateDocuments = async () => {
 
         try {
 
@@ -70,13 +70,7 @@ export default class MetaBar extends React.Component<any, any> {
                     return data.json()
                         .then(data => {
                             let responseArray = data.my_documents
-                            return responseArray.map(item => {
-                                return {
-                                    name: item.document_name,
-                                    document_id: item.submitted_document_id,
-                                    is_complete: item.is_complete
-                                }
-                            })
+                            return responseArray
                         })
                 })
         
@@ -176,7 +170,7 @@ export default class MetaBar extends React.Component<any, any> {
             document_id: document_id
         }, () => {
             this.setState({
-                currentView: <DocumentView getDocuments={this.getDocuments} handleDocumentListPress={this.handleDocumentListPress} dod_id={this.state.dod_id} signature_base64={this.state.signature_base64} document_name={document_name} document_id={this.state.document_id} view={'PendingDocuments'} />
+                currentView: <DocumentView getPendingDocuments={this.getPendingDocuments} handleDocumentListPress={this.handleDocumentListPress} dod_id={this.state.dod_id} signature_base64={this.state.signature_base64} document_name={document_name} document_id={this.state.document_id} view={'PendingDocuments'} />
             }, () => {
                 this.props.getCurrentView(this.state.currentView)
             })
@@ -184,12 +178,12 @@ export default class MetaBar extends React.Component<any, any> {
 
     }
 
-    handleSearchDocument = (document_id: string, document_name) => {
+    handleDocument = (document_id: string, document_name) => {
         this.setState({
             document_id: document_id
         }, () => {
             this.setState({
-                currentView: <DocumentView getDocuments={this.getDocuments} handleDocumentListPress={this.handleDocumentListPress} dod_id={this.state.dod_id} signature_base64={this.state.signature_base64} document_name={document_name} document_id={this.state.document_id} view={'PendingDocuments'} />
+                currentView: <DocumentView getPendingDocuments={this.getPendingDocuments} handleDocumentListPress={this.handleDocumentListPress} dod_id={this.state.dod_id} signature_base64={this.state.signature_base64} document_name={document_name} document_id={this.state.document_id} view={'PendingDocuments'} />
             }, () => {
                 this.props.getCurrentView(this.state.currentView)
             })
@@ -232,7 +226,7 @@ export default class MetaBar extends React.Component<any, any> {
 
     handleDocumentListPress = () => {
         this.setState({
-            currentView: <PendingDocuments selectDocument={this.handleDocumentLinkPress} pendingDocumentList={this.state.pendingDocumentList} completedDocumentList={this.state.completedDocumentList} />
+            currentView: <PendingDocuments handleDocument={this.handleDocument} pendingDocumentList={this.state.pendingDocumentList} completedDocumentList={this.state.completedDocumentList} />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
             this.handleMetabarSelectionStyling('document-list-metabar-button', 'document-list-metabar-triangle')
@@ -269,7 +263,7 @@ export default class MetaBar extends React.Component<any, any> {
 
     handleSearchDocumentPress = () => {
         this.setState({
-            currentView: <SearchDocumentView documents={this.state.pendingDocumentList} handleSearchDocument={this.handleSearchDocument} />
+            currentView: <SearchDocumentView documents={this.state.pendingDocumentList} handleDocument={this.handleDocument} />
         }, () => {
             this.props.getCurrentView(this.state.currentView)
             this.handleMetabarSelectionStyling('search-document-metabar-button', 'search-document-metabar-triangle')
@@ -280,7 +274,7 @@ export default class MetaBar extends React.Component<any, any> {
     //==================== React Lifecycle Methods ====================
 
     componentDidMount() {
-        this.getDocuments()
+        this.getTemplateDocuments()
         this.getPendingDocuments()
         this.getNotifications()
         this.getSignature()

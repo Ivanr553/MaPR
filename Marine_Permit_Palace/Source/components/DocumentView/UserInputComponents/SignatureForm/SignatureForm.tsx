@@ -75,6 +75,20 @@ export default class SignatureForm extends React.Component<Props, any> {
 
         } else {
 
+            if(this.props.signature_base64) {
+                
+                let style: React.CSSProperties = {
+                    width: `${this.props.width}px`,
+                    height: `${this.props.height}px`,
+                    top: `${this.props.top}px`,
+                    left: `${this.props.left}px`,
+                    backgroundColor: 'rgba(43, 173, 255, 0.1)',
+                    cursor: 'default'
+                }
+        
+                return style
+            }
+
             let style: React.CSSProperties = {
                 width: `${this.props.width}px`,
                 height: `${this.props.height}px`,

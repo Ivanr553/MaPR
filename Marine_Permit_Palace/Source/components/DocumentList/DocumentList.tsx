@@ -2,13 +2,13 @@ import * as React from 'react'
 
 import {document} from '../../AppValidation'
 
-import DocumentItem from './DocumentItem/DocumentItem'
+import DocumentResult from '../DocumentResult/DocumentResult'
 
 import './styling/DocumentListStyle.sass'
 
 interface Props {
-    selectDocument: (e) => void,
-    documents: Array<document>,
+    handleDocument: (document_id: string, document_name: string) => void
+    documents: Array<any>,
     document_id?: string
 }
 
@@ -23,7 +23,7 @@ export default class DocumentList extends React.Component<Props, any> {
     }
 
     //Creates list in state of objects to be rendered
-    getDocumentList = (documents: Array<document>) => {
+    getDocumentList = (documents: Array<any>) => {
 
         documents = documents.map(document => {
             if(!!document.idDocument){
@@ -40,7 +40,7 @@ export default class DocumentList extends React.Component<Props, any> {
             documents.map(
                 (document) => {
                     return (
-                    <DocumentItem key={Math.random()} document={document} selectDocument={this.props.selectDocument} selectedDocument={this.props.document_id}/>
+                    <DocumentResult key={Math.random()} document={document} handleDocument={this.props.handleDocument}/>
                 )
             }
             )

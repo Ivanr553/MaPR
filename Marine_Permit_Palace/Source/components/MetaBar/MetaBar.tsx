@@ -45,7 +45,7 @@ export default class MetaBar extends React.Component<any, any> {
         })
     }
 
-    getDocuments = async () => {
+    getTemplateDocuments = async () => {
 
         try {
 
@@ -170,7 +170,7 @@ export default class MetaBar extends React.Component<any, any> {
             document_id: document_id
         }, () => {
             this.setState({
-                currentView: <DocumentView getDocuments={this.getDocuments} handleDocumentListPress={this.handleDocumentListPress} dod_id={this.state.dod_id} signature_base64={this.state.signature_base64} document_name={document_name} document_id={this.state.document_id} view={'PendingDocuments'} />
+                currentView: <DocumentView getPendingDocuments={this.getPendingDocuments} handleDocumentListPress={this.handleDocumentListPress} dod_id={this.state.dod_id} signature_base64={this.state.signature_base64} document_name={document_name} document_id={this.state.document_id} view={'PendingDocuments'} />
             }, () => {
                 this.props.getCurrentView(this.state.currentView)
             })
@@ -183,7 +183,7 @@ export default class MetaBar extends React.Component<any, any> {
             document_id: document_id
         }, () => {
             this.setState({
-                currentView: <DocumentView getDocuments={this.getDocuments} handleDocumentListPress={this.handleDocumentListPress} dod_id={this.state.dod_id} signature_base64={this.state.signature_base64} document_name={document_name} document_id={this.state.document_id} view={'PendingDocuments'} />
+                currentView: <DocumentView getPendingDocuments={this.getPendingDocuments} handleDocumentListPress={this.handleDocumentListPress} dod_id={this.state.dod_id} signature_base64={this.state.signature_base64} document_name={document_name} document_id={this.state.document_id} view={'PendingDocuments'} />
             }, () => {
                 this.props.getCurrentView(this.state.currentView)
             })
@@ -274,7 +274,7 @@ export default class MetaBar extends React.Component<any, any> {
     //==================== React Lifecycle Methods ====================
 
     componentDidMount() {
-        this.getDocuments()
+        this.getTemplateDocuments()
         this.getPendingDocuments()
         this.getNotifications()
         this.getSignature()

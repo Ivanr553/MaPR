@@ -85,9 +85,7 @@ namespace Marine_Permit_Palace.Controllers
                     {
                         stamper.FormFlattening = false;
                         AcroFields pdfFormFields = stamper.AcroFields;
-                        //AcroFields.FieldPosition
 
-                       
                         if (user != null)
                         {
                             //populate all the known fields based on user information
@@ -97,11 +95,20 @@ namespace Marine_Permit_Palace.Controllers
                         string RequestingUserId = user.Id;
 
                         List<string> FieldNames = pdfFormFields.Fields.Select(e => e.Key).ToList();
-                        List<DocumentMeta> JsonDocument = new List<DocumentMeta>();
+                        //List<DocumentMeta> JsonDocument = new List<DocumentMeta>();
+                        List<PDFPage> pages = new List<PDFPage>();
                         foreach (string field in FieldNames)
                         {
                             var Position = pdfFormFields.GetFieldPositions(field).FirstOrDefault();
                             if (Position == null) continue;
+
+                            if (pages.FirstOrDefault(e => e.page_number == Position.page) == null)
+                            {
+                                pages.Add(new PDFPage() { page_number = Position.page, page = reader.GetPageSize(Position.page), document_meta = new List<DocumentMeta>() });
+                            }
+
+                            int indexOfPage = pages.FindIndex(e => e.page_number == Position.page);
+
 
                             string field_type;
                             switch (reader.AcroFields.GetFieldType(field))
@@ -162,17 +169,24 @@ namespace Marine_Permit_Palace.Controllers
 
                             }
 
-                            JsonDocument.Add(new DocumentMeta() {  field_name = field, field_position = Position, value = value, field_type = field_type, assigned_to = AssigneeDodID, disabled_message = disabled_message, is_disabled = !IsAllowedToEdit });
+                            pages[indexOfPage].document_meta.Add(new DocumentMeta()
+                            {
+                                field_name = field,
+                                field_position = Position,
+                                value = value,
+                                field_type = field_type,
+                                assigned_to = AssigneeDodID,
+                                disabled_message = disabled_message,
+                                is_disabled = !IsAllowedToEdit
+                            });
                         }
-                        var page1 = reader.GetPageSize(1);
+
+
                         return Json(new
                         {
                             result = "Success",
                             status_code = 200,
-                            document_size = page1,
-                            document_meta = JsonDocument,
-                            is_completed = SubmittedDocument.IsCompleted,
-                            is_edit_locked = SubmittedDocument.IsEditLocked,
+                            pages
                         });
                     }
                 }
@@ -190,6 +204,14 @@ namespace Marine_Permit_Palace.Controllers
                     status_code = 500
                 });
             }
+        }
+        public class PDFPage
+        {
+            public int page_number { get; set; }
+            public Rectangle page { get; set; }
+            public List<DocumentMeta> document_meta { get; set; }
+            public bool is_completed { get; set; }
+            public bool is_edit_locked { get; set; }
         }
 
         public async Task<IActionResult> GetSavedDocument(string submitted_document_id)
@@ -351,13 +373,21 @@ namespace Marine_Permit_Palace.Controllers
                             //AutoFillManager.AutoFillBasedOnUser(user, pdfFormFields);
                         }
 
-
+                        List<PDFPage> pages = new List<PDFPage>();
                         List<string> FieldNames = pdfFormFields.Fields.Select(e => e.Key).ToList();
-                        List<DocumentMeta> JsonDocument = new List<DocumentMeta>();
+                        
                         foreach (string field in FieldNames)
                         {
                             var Position = pdfFormFields.GetFieldPositions(field).FirstOrDefault();
                             if (Position == null) continue;
+
+                            if (pages.FirstOrDefault(e => e.page_number == Position.page) == null)
+                            {
+                                pages.Add(new PDFPage() { page_number = Position.page, page = reader.GetPageSize(Position.page), document_meta = new List<DocumentMeta>() });
+                            }
+
+                            int indexOfPage = pages.FindIndex(e => e.page_number == Position.page);
+
                             string value = pdfFormFields.GetField(field);
 
                             string field_type;
@@ -391,15 +421,20 @@ namespace Marine_Permit_Palace.Controllers
                                     field_type = ("?");
                                     break;
                             }
-                            JsonDocument.Add(new DocumentMeta() { field_name = field, field_position = Position, value = value, field_type = field_type });
+                            pages[indexOfPage].document_meta.Add(new DocumentMeta()
+                            {
+                                field_name = field,
+                                field_position = Position,
+                                value = value,
+                                field_type = field_type
+                            });
                         }
-                        var page1 = reader.GetPageSize(1);
+
                         return Json(new
                         {
                             result = "Success",
                             status_code = 200,
-                            document_size = page1,
-                            document_meta = JsonDocument
+                            pages
                         });
                     }
                 }

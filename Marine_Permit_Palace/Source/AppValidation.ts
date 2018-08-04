@@ -32,7 +32,8 @@ interface document_meta_field {
 interface documentResponse {
     pages: Array<documentPage>,
     result: string,
-    status_code: number
+    status_code: number,
+    reason?: string
 }
 
 interface documentPage {

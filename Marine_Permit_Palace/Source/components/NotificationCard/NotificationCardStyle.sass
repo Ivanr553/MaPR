@@ -1,0 +1,51 @@
+@import ../../style.sass
+
+.NotificationCard
+    max-width: 25vw
+    width: auto
+    height: auto
+    padding: 1.5vw 3vw 1.5vw 2vw
+    background-color: $metabar-color
+    color: white
+    font-size: 1.5em
+    position: fixed
+    bottom: 2vh
+    left: 10vw
+    z-index: 10
+    cursor: default
+    transform: translateY(25vh)
+    @media screen and (max-width: 800px)
+        font-size: 1em
+        left: 15vw
+    @media screen and (min-width: 1000px)
+        font-size: 2em
+
+.notification-card-exit
+    position: absolute
+    right: 3.5%
+    top: 7.5%
+    font-size: 1.5em
+    cursor: pointer
+    color: lightgrey
+
+.notification-card-exit:hover
+    color: white
+
+
+@keyframes show-notification-card
+    0%
+        transform: translateY(25vh)
+        opacity: 0
+    50%
+        opacity: 1
+    100%
+        transform: translateY(0vh)
+        opacity: 1
+
+@keyframes hide-notification-card
+    0%
+        transform: translateY(0)
+        opacity: 1
+    100%
+        transform: translateY(25vh)
+        opacity: 0

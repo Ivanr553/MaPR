@@ -15,7 +15,7 @@ interface Props {
     document_meta?: Array<document_meta_field>, 
     pdfSource: string,
     page: number,
-    handleFormEdit: (e, form) => void,
+    handleFormEdit: (e, page, form) => void,
     previewOnClickHandler?: () => void,
     view: any,
     signature_base64: string,
@@ -44,8 +44,6 @@ class DocumentPage extends React.Component<Props, any> {
 
 
     getDocumentSize = (documentPage: documentPage, fieldLeft: number, fieldTop: number, fieldHeight: number, fieldWidth: number): documentDimensions => {
-
-        console.log(documentPage)
 
         let pdfWidth = documentPage.page.right
         let pdfHeight = documentPage.page.height
@@ -106,14 +104,14 @@ class DocumentPage extends React.Component<Props, any> {
                     document_meta_field.value = 'Off'
                 }
 
-                let newForm = <CheckboxInput is_disabled={document_meta_field.is_disabled} key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} checked={document_meta_field.value} onChange={(e) => {this.props.handleFormEdit(e, form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
+                let newForm = <CheckboxInput is_disabled={document_meta_field.is_disabled} key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} checked={document_meta_field.value} onChange={(e) => {this.props.handleFormEdit(e, (this.props.page - 1), form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
 
                 documentFields.push(newForm)
             }
             else if(document_meta_field.field_type === 'Text') {
                 let newForm = 
                     <div key={form} className='form-wrapper'>
-                        <TextInput is_disabled={document_meta_field.is_disabled} key={form} id={form} position={'absolute'} border={'none'} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} value={document_meta_field.value} onChange={(e) => {this.props.handleFormEdit(e, form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
+                        <TextInput is_disabled={document_meta_field.is_disabled} key={form} id={form} position={'absolute'} border={'none'} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} value={document_meta_field.value} onChange={(e) => {this.props.handleFormEdit(e, (this.props.page - 1), form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
                     </div>
 
                 documentFields.push(newForm)

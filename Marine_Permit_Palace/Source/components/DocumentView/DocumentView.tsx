@@ -10,6 +10,7 @@ import {documentResponse, documentPage, saveResultInterface, documentDimensions,
 import {getDocumentPromise, getTemplateDocumentPromise, getSaveFilePromise} from '../../services/services'
 import ToolBar from './ToolBar/ToolBar';
 import DocumentPage from './DocumentPage/DocumentPage';
+import NotificationCard from '../NotificationCard/NotificationCard';
 
 interface Props {
     document_id: string,
@@ -28,6 +29,7 @@ export default class DocumentView extends React.Component<Props, any> {
     constructor(props) {
         super(props)
         this.state ={
+            documentObject: {} as documentResponse,
             submitted_file_id: '',
             noDocument: false,
             savingIconSource: '/images/clock.png',
@@ -35,7 +37,9 @@ export default class DocumentView extends React.Component<Props, any> {
             loading: (
                 <div className='loading-image'>Loading...</div>
             ),
-            savingBar: ''
+            savingBar: '',
+            notificationCard: '',
+            notificationCardMessage: ''
         }
     }
 
@@ -94,15 +98,13 @@ export default class DocumentView extends React.Component<Props, any> {
         let pages = []
         let documentObjectArray = this.state.documentObject
 
-        if(!!!documentObjectArray) {
+        if(!!!documentObjectArray.pages) {
             return
         }
 
-        console.log(documentObjectArray)
-
         documentObjectArray.pages.forEach((documentPage, index) => {
 
-            let newPage = <DocumentPage documentPage={documentPage} pdfSource={'/dist/documents/NAVMC10694.pdf'} page={index+1} handleFormEdit={this.handleFormEdit} view={this.props.view} signature_base64={this.props.signature_base64} autoSave={this.autoSave} signHandler={this.signHandler} />
+            let newPage = <DocumentPage key={index} documentPage={documentPage} pdfSource={'/dist/documents/NAVMC10694.pdf'} page={index+1} handleFormEdit={this.handleFormEdit} view={this.props.view} signature_base64={this.props.signature_base64} autoSave={this.autoSave} signHandler={this.signHandler} />
 
             pages.push(newPage)
 
@@ -134,27 +136,26 @@ export default class DocumentView extends React.Component<Props, any> {
         try {
             let response = await documentPromise.promise 
             documentObject = await response.json() as documentResponse
-            console.log(documentObject)
-            if(documentObject.status_code === 401) {
-                documentObject = null
-                alert('User does not have permission to view')
+
+            if(documentObject.status_code > 200) {
+                throw documentObject.reason
+            } else {
+                this.setState({
+                    documentObject: documentObject,
+                    document_id: this.props.document_id
+                })
             }
-        } catch(e) {
-            throw new Error(e)
+
+        } catch(message) {
+            this.handleNotification(message)
         }
-
-
-        this.setState({
-            documentObject: documentObject,
-            document_id: this.props.document_id
-        })
 
     }
 
-    handleFormEdit = async (e, id) => {
+    handleFormEdit = async (e, page, id) => {
 
-        let documentObject = Object.assign({}, this.state.documentObject)
-        let document_meta_field: document_meta_field = documentObject.document_meta[id]
+        let documentObject: documentResponse = Object.assign({}, this.state.documentObject)
+        let document_meta_field: document_meta_field = documentObject.pages[page].document_meta[id]
 
         if(e.target.className === 'CheckboxInput'){
             document_meta_field.value = document_meta_field.value === 'Off' ? 'On' : 'Off' 
@@ -196,7 +197,6 @@ export default class DocumentView extends React.Component<Props, any> {
             clearTimeout(this.state.saveFileTimeout)
         }
         let saveFileTimeout = setTimeout(() => {
-            this.startSave()
             this.saveFile(false)
         }, 2000)
 
@@ -210,8 +210,8 @@ export default class DocumentView extends React.Component<Props, any> {
         
         let payload_document_meta = []
         let documentObject = Object.assign({}, this.state.documentObject)
-        documentObject.document_meta.forEach(document_meta_field => {
-            payload_document_meta.push(Object.assign({}, document_meta_field))
+        documentObject.pages.forEach(document_meta => {
+            payload_document_meta.push(Object.assign({}, document_meta))
         })
         payload_document_meta = payload_document_meta.map(document_meta_field => {
             if(!!document_meta_field.field_position) {
@@ -234,27 +234,29 @@ export default class DocumentView extends React.Component<Props, any> {
             newFilePromise: await newFilePromise
         })
 
-        let response = await newFilePromise.promise
-        let saveResult: saveResultInterface = await response.json()
-
-        if(saveResult.status_code === 401) {
-            alert(saveResult.reason)
-            this.unsuccessfulSave()
-            return
-        } else {
-            this.successfulSave()
+        try {
+            let response = await newFilePromise.promise
+            let saveResult: saveResultInterface = await response.json()
+    
+            if(saveResult.status_code > 200) {
+                throw saveResult.reason
+            } else {
+                this.handleNotification('Save Successful')
+                return saveResult
+            }
+        } catch(message) {
+            return this.handleNotification(message)
         }
 
-        return saveResult
     }
 
     quickSave = async (is_completed: boolean) => {
 
-        let payload_document_meta = []
-        this.state.documentObject.document_meta.forEach(document_meta_field => {
-            payload_document_meta.push(Object.assign({}, document_meta_field))
+        let payload_documentObject: Array<any> = []
+        this.state.documentObject.pages.forEach(document_meta => {
+            payload_documentObject.push(Object.assign({}, document_meta))
         })
-        payload_document_meta = payload_document_meta.map(document_meta_field => {
+        payload_documentObject = payload_documentObject.map(document_meta_field => {
             if(!!document_meta_field.field_position) {
                 delete document_meta_field.field_position
             }
@@ -262,7 +264,7 @@ export default class DocumentView extends React.Component<Props, any> {
         })
 
         let newFile = {
-            document_meta: payload_document_meta,
+            document_meta: payload_documentObject,
             name: this.props.document_name,
             submitted_file_id: this.props.document_id,
             is_completed: is_completed
@@ -271,24 +273,23 @@ export default class DocumentView extends React.Component<Props, any> {
         let request = getSaveFilePromise(newFile)
         let newFilePromise = await request
 
-        let response = await newFilePromise.promise
-        let saveResult: saveResultInterface = await response.json()
-
-        if(saveResult.status_code === 401) {
-            alert(saveResult.reason)
-            this.unsuccessfulSave()
-            return
-        } else {
-            this.successfulSave()
+        try {
+            let response = await newFilePromise.promise
+            let saveResult: saveResultInterface = await response.json()
+    
+            if(saveResult.status_code > 200) {
+                throw saveResult.reason
+            } else {
+                this.handleNotification('Save Successful')
+                if(is_completed) {
+                    this.props.getPendingDocuments()
+                    this.props.handleDocumentListPress()
+                }
+                return saveResult
+            }
+        } catch(message) {
+            return this.handleNotification(message)
         }
-        
-
-        if(is_completed) {
-            this.props.getPendingDocuments()
-            this.props.handleDocumentListPress()
-        }
-
-        return saveResult
 
     }
 
@@ -322,54 +323,38 @@ export default class DocumentView extends React.Component<Props, any> {
 
     }
 
-    //Save functionality
+    handleNotification(message: string) {
 
-    startSave = () => {
+        if(this.state.notificationCard !== '') {
 
-        let savingBar = (
-            <div id='saving-bar'> Saving... </div>
-        )
+            this.setState({
+                notificationCard: <NotificationCard message={this.state.notificationCardMessage} exit={true} clearNotification={this.clearNotification}/>
+            }, () => {
 
-        this.setState({
-            savingBar: savingBar
-        })
+                setTimeout(() => {
+                    this.setState({
+                        notificationCard: <NotificationCard message={message} exit={false} clearNotification={this.clearNotification}/>,
+                        notificationCardMessage: message
+                    })
+                },
+                500)
+
+            })
+        }
+
+        else {
+            this.setState({
+                notificationCard: <NotificationCard message={message} exit={false} clearNotification={this.clearNotification}/>,
+                notificationCardMessage: message
+            })
+        }
 
     }
 
-    successfulSave = () => {
-
-        let savingBar = (
-            <div id='saving-bar' className='saving-bar-success'> Save Successful </div>
-        )
-
+    clearNotification = () => {
         this.setState({
-            savingBar: savingBar
+            notificationCard: ''
         })
-
-        setTimeout(() => {
-            this.setState({
-                savingBar: ''
-            })
-        },
-        3000)
-    }
-
-    unsuccessfulSave = () => {
-
-        let savingBar = (
-            <div id='saving-bar' className='saving-bar-failure'> Save Unsuccessful </div>
-        )
-
-        this.setState({
-            savingBar: savingBar
-        })
-
-        setTimeout(() => {
-            this.setState({
-                savingBar: ''
-            })
-        },
-        3000)
     }
 
 
@@ -401,6 +386,7 @@ export default class DocumentView extends React.Component<Props, any> {
             this.setState({
                 loading: ''
             })
+            // this.handleNotification('Hello')
         } else {
             this.setState({
                 document_meta: this.props.document_meta
@@ -432,6 +418,7 @@ export default class DocumentView extends React.Component<Props, any> {
 
         return(
             <div className='DocumentView'>
+                {this.state.notificationCard}
                 {this.state.loading}
                 {this.state.savingBar}
                 {this.generatePages()}

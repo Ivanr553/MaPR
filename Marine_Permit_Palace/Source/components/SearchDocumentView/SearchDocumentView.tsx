@@ -38,6 +38,11 @@ class SearchDocumentView extends React.Component<Props, any> {
         let searchDocumentPromise = await getSearchDocumentPromise(url)
 
         this.setState({
+            searching: true,
+            documents: []
+        })
+
+        this.setState({
             searchDocumentPromise: searchDocumentPromise
         })
 
@@ -73,7 +78,7 @@ class SearchDocumentView extends React.Component<Props, any> {
                     </div>
                 </div>
                 <div className='documents-header'>Search Results</div>
-                <SearchDocumentResultList handleDocument={this.props.handleDocument} searchDocumentResultList={this.state.documents} />
+                <SearchDocumentResultList searching={this.state.searching} handleDocument={this.props.handleDocument} searchDocumentResultList={this.state.documents} />
             </div>
         );
     }

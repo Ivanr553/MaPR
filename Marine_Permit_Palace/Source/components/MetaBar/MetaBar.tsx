@@ -23,7 +23,7 @@ export default class MetaBar extends React.Component<any, any> {
             createDocumentState: {
                 document_id: '',
                 document_meta: Array,
-                documentName: '',
+                document_name: '',
                 userList: [],
                 selectDocumentBoolean: true,
                 documentPreviewBoolean: false,

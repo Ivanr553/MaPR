@@ -15,8 +15,10 @@ interface Props {
     onChange: any,
     view: 'PendingDocuments' | 'DocumentPreview' | 'AccountPage',
     userList?: Array<any>,
-    previewOnClickHandler?: any,
-    is_disabled?: boolean
+    previewOnClickHandler?: (e, page: number, field_name: string) => void,
+    is_disabled?: boolean,
+    page: number,
+    field_name: string
 }
 
 export default class TextInput extends React.Component<Props, any> {
@@ -68,7 +70,7 @@ export default class TextInput extends React.Component<Props, any> {
         if(this.props.view === 'DocumentPreview') {
             
             return(
-                <textarea readOnly id={this.props.id} className='TextInput preview-TextInput' style={this.getStyle()} defaultValue={this.props.value} onClick={this.props.previewOnClickHandler} />
+                <textarea readOnly id={this.props.id} className='TextInput preview-TextInput' style={this.getStyle()} defaultValue={this.props.value} onClick={(e) => this.props.previewOnClickHandler(e, this.props.page, this.props.field_name)} />
             )
         }
 

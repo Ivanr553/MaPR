@@ -12,10 +12,12 @@ interface Props {
     top: number,
     view: 'PendingDocuments' | 'DocumentPreview',
     assigned_to?: user,
-    previewOnClickHandler?: any,
+    previewOnClickHandler?: (e, page: number, field_name: string) => void,
     signature_base64?: HTMLImageElement,
-    signHandler?: (e) => void,
-    is_disabled: boolean
+    signHandler?: (e, page) => void,
+    is_disabled: boolean,
+    page: number,
+    field_name: string
 }
 
 export default class SignatureForm extends React.Component<Props, any> {
@@ -129,7 +131,7 @@ export default class SignatureForm extends React.Component<Props, any> {
             }
 
             return (
-                <div id={this.props.id} className='SignatureForm' style={this.getDocumentPreviewStyle()} onClick={(e) => {this.props.previewOnClickHandler(e)}}>
+                <div id={this.props.id} className='SignatureForm' style={this.getDocumentPreviewStyle()} onClick={(e) => {this.props.previewOnClickHandler(e, this.props.page, this.props.field_name)}}>
                     {this.documentPreviewContent()}
                 </div> 
             )
@@ -145,7 +147,7 @@ export default class SignatureForm extends React.Component<Props, any> {
             }
 
             return(
-                <div id={this.props.id} className='SignatureForm' style={this.getPendingDocumentsStyle()} onClick={(e) => this.props.signHandler(e)}>
+                <div id={this.props.id} className='SignatureForm' style={this.getPendingDocumentsStyle()} onClick={(e) => this.props.signHandler(e, this.props.page)}>
                     {this.getSignatureContent()}
                 </div>
             )

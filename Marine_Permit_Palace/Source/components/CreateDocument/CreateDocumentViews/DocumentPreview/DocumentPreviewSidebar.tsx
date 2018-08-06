@@ -3,18 +3,16 @@ import * as React from 'react';
 import AddedUser from '../SelectPermissions/AddedUser'
 import AddedUserList from '../SelectPermissions/AddedUserList';
 
-import {user, currentSelectedField} from '../../CreateDocumentValidation'
+import {user, selectedField} from '../../CreateDocumentValidation'
 
 
 interface Props {
     showSidebar: boolean,
     getHideSidebar: (boolean) => void,
-    currentSelectedField: currentSelectedField,
+    selectedField: selectedField,
     handleAddedUserPress: (e: React.MouseEvent) => void,
     deleteUser: (e: React.MouseEvent) => void,
-    userList: Array<user>,
-    currentSelectedFieldId: number,
-    removeAssignedUser: (user: user, removeOption: null | number) => void
+    userList: Array<user>
 }
 
 class DocumentPreviewSidebar extends React.Component<Props, any> {
@@ -35,12 +33,12 @@ class DocumentPreviewSidebar extends React.Component<Props, any> {
     }
 
     showSelectedField = () => {
-        if(this.props.currentSelectedField === undefined) {
-            return
-        }
-         else {
 
-            let field_name: string = this.cleanUpFieldName(this.props.currentSelectedField.field_name)
+        if(!!!this.props.selectedField) {
+            return
+        } else {
+
+            let field_name: string = this.cleanUpFieldName(this.props.selectedField.field_name)
 
             return (
                 <div>
@@ -54,9 +52,10 @@ class DocumentPreviewSidebar extends React.Component<Props, any> {
     }
 
     showSelectedFieldContent = () => {
+        console.log(this.props.selectedField)
 
-        if(this.props.currentSelectedField.assigned_to !== null) {
-            return <AddedUser removeAssignedUser={this.props.removeAssignedUser} key={Math.random()} fieldAssigned={true} currentSelectedFieldId={this.props.currentSelectedFieldId} user={this.props.currentSelectedField.assigned_to} handleAddedUserPress={e => this.props.handleAddedUserPress(e)} deleteUser={this.props.deleteUser} isInSidebar={true} />
+        if(this.props.selectedField.assigned_to !== null) {
+            return <AddedUser key={Math.random()} selectedField={this.props.selectedField} fieldAssigned={true} user={this.props.selectedField.assigned_to} handleAddedUserPress={e => this.props.handleAddedUserPress(e)} deleteUser={this.props.deleteUser} isInSidebar={true} />
         } else {
             return <div className='added-user' style={{cursor: 'default'}}>Select User</div>
         }
@@ -93,7 +92,7 @@ class DocumentPreviewSidebar extends React.Component<Props, any> {
                     <div id='close-sidebar-icon' onClick={this.hideSidebar}>x</div>
                     {this.showSelectedField()}
                     <div className='preview-documents-header'>User List</div>
-                    <AddedUserList removeAssignedUser={this.props.removeAssignedUser} className='added-users-container-preview' currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} handleAddedUserPress={this.props.handleAddedUserPress} deleteUser={this.props.deleteUser} isInSidebar={true} />
+                    <AddedUserList className='added-users-container-preview' selectedField={this.props.selectedField} userList={this.props.userList} handleAddedUserPress={this.props.handleAddedUserPress} deleteUser={this.props.deleteUser} isInSidebar={true} />
                 </div>
         );
     }

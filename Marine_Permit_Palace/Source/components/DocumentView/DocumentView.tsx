@@ -16,8 +16,8 @@ interface Props {
     document_id: string,
     document_name?: string,
     view: 'PendingDocuments' | 'DocumentPreview',
-    previewOnClickHandler?: (e: React.ChangeEvent<HTMLInputElement>) => void,
-    document_meta?: Array<document_meta_field>,
+    previewOnClickHandler?: (e, page: number, field_name: string) => void,
+    pages?: Array<documentPage>,
     signature_base64?: string,
     dod_id?: number,
     handleDocumentListPress?: () => void,
@@ -104,7 +104,7 @@ export default class DocumentView extends React.Component<Props, any> {
 
         documentObjectArray.pages.forEach((documentPage, index) => {
 
-            let newPage = <DocumentPage key={index} documentPage={documentPage} pdfSource={'/dist/documents/NAVMC10694.pdf'} page={index+1} handleFormEdit={this.handleFormEdit} view={this.props.view} signature_base64={this.props.signature_base64} autoSave={this.autoSave} signHandler={this.signHandler} />
+            let newPage = <DocumentPage key={index} documentPage={documentPage} pdfSource={'/dist/documents/NAVMC10694.pdf'} page={index} handleFormEdit={this.handleFormEdit} view={this.props.view} signature_base64={this.props.signature_base64} autoSave={this.autoSave} signHandler={this.signHandler} previewOnClickHandler={this.props.previewOnClickHandler}/>
 
             pages.push(newPage)
 
@@ -170,7 +170,7 @@ export default class DocumentView extends React.Component<Props, any> {
         })
     }
 
-    signHandler = (e) => {
+    signHandler = (e, page) => {
 
         let target = e.target
         while(!!!target.id) {
@@ -179,7 +179,7 @@ export default class DocumentView extends React.Component<Props, any> {
         let id = target.id
 
         let documentObject = this.state.documentObject
-        let document_meta_field = documentObject.document_meta[id]
+        let document_meta_field = documentObject.pages[page].document_meta[id]
 
         document_meta_field.value = this.props.signature_base64
 
@@ -380,7 +380,7 @@ export default class DocumentView extends React.Component<Props, any> {
 
     //React Lifecycle Methods
     async componentDidMount() {
-        if(!!!this.props.document_meta && this.props.view === 'PendingDocuments') {
+        if(!!!this.props.pages && this.props.view === 'PendingDocuments') {
             getDocumentPromise(this.props.document_id)
             await this.getDocumentObject()
             this.setState({
@@ -389,7 +389,7 @@ export default class DocumentView extends React.Component<Props, any> {
             // this.handleNotification('Hello')
         } else {
             this.setState({
-                document_meta: this.props.document_meta
+                pages: this.props.pages
             }, () => {
                 this.getDocumentObject()
             })
@@ -410,6 +410,7 @@ export default class DocumentView extends React.Component<Props, any> {
     }
 
     render() {
+
         let toolbar = <div></div>
 
         if(this.props.view === 'PendingDocuments') {

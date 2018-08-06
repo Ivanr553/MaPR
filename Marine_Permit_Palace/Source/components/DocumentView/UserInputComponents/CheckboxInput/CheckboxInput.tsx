@@ -13,8 +13,10 @@ interface Props {
     onChange: any,
     view: 'PendingDocuments' | 'DocumentPreview',
     userList?: Array<any>,
-    previewOnClickHandler?: any,
-    is_disabled: boolean
+    previewOnClickHandler?: (e, page: number, field_name: string) => void,
+    is_disabled: boolean,
+    page: number,
+    field_name: string
 }
 
 export default class CheckboxInput extends React.Component<Props, any> {
@@ -67,7 +69,7 @@ export default class CheckboxInput extends React.Component<Props, any> {
         if(this.props.view === 'DocumentPreview') {
             
             return(
-                <div id={this.props.id} className='CheckboxInput' style={this.getStyle()} onClick={(e) => this.props.previewOnClickHandler(e)}>
+                <div id={this.props.id} className='CheckboxInput' style={this.getStyle()} onClick={(e) => this.props.previewOnClickHandler(e, this.props.page, this.props.field_name)}>
                 </div>
             )
         }

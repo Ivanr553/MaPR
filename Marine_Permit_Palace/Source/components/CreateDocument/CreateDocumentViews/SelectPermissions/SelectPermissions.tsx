@@ -1,7 +1,7 @@
 import * as React from 'react';
 import AddedUserList from './AddedUserList'
 
-import {user} from '../../CreateDocumentValidation'
+import {user, selectedField} from '../../CreateDocumentValidation'
 import {databaseUser} from '../../../../AppValidation'
 import AddedUserPermissions from './AddedUserPermissions';
 
@@ -12,12 +12,11 @@ interface Props {
     addUser: (user: databaseUser) => void,
     userList: Array<user>,
     selectPermissionsBoolean: boolean,
-    handleAddedUserPress: (e: React.MouseEvent) => void,
     deleteUser: (e: React.MouseEvent) => void,
-    currentSelectedFieldId: number,
-    removeAssignedUser: (user: user, removeOptions: null | number) => void,
+    removeAssignedUser: (user: user, page: number, removeOptions: null | number) => void,
     assigned_user: user,
-    handleToggleAssignedUser: (user: user) => void
+    handleToggleAssignedUser: (user: user) => void,
+    selectedField: selectedField
 }
 
 class SelectPermissions extends React.Component<Props, any> {
@@ -166,7 +165,7 @@ class SelectPermissions extends React.Component<Props, any> {
                         </div>
                         <div className='added-users-components-grid'>
                             <div id='added-users-title'>Selected Users</div>
-                            <AddedUserList selectedUser={this.state.selectedUser} handleAddedUserPress={this.handleAddedUserPress} removeAssignedUser={this.props.removeAssignedUser} className='added-users-container' currentSelectedFieldId={this.props.currentSelectedFieldId} userList={this.props.userList} deleteUser={this.props.deleteUser} isInSidebar={false} />
+                            <AddedUserList selectedField={this.props.selectedField} selectedUser={this.state.selectedUser} handleAddedUserPress={this.handleAddedUserPress} className='added-users-container' userList={this.props.userList} deleteUser={this.props.deleteUser} isInSidebar={false} />
                             <AddedUserPermissions assigned_user={this.props.assigned_user} selectedUser={this.state.selectedUser} handleSwitchToggle={this.handleSwitchToggle} handleAssignedUserToggle={this.props.handleToggleAssignedUser} />
                         </div>
                     </div>

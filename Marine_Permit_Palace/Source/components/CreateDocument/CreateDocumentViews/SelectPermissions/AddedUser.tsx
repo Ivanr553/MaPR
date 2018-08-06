@@ -1,16 +1,16 @@
 import * as React from 'react';
 
-import {user} from '../../CreateDocumentValidation'
+import {user, selectedField} from '../../CreateDocumentValidation'
 
 interface Props {
     user: user,
-    currentSelectedFieldId: number,
+    selectedField: selectedField,
     handleAddedUserPress: (e: React.MouseEvent) => void,
-    removeAssignedUser: (user: user, removeOptions: null | number) => void,
     deleteUser: (e: React.MouseEvent) => void,
     isInSidebar: boolean,
     fieldAssigned: boolean,
-    selectedUser?: user
+    selectedUser?: user,
+    page?: number
 }
 
 
@@ -23,7 +23,7 @@ class AddedUser extends React.Component<Props, any> {
             let style = {
                 cursor: 'pointer',
                 backgroundColor: 
-                    (!!this.props.user.assigned_to && this.props.user.assigned_to.indexOf(this.props.currentSelectedFieldId) >= 0) 
+                    (!!this.props.user.assigned_to && this.props.user.assigned_to.indexOf(this.props.selectedField) >= 0) 
                         ? 'lightgrey' : ''
             }
 

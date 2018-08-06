@@ -12,9 +12,11 @@ interface user {
     is_allowed_submit: boolean
 }
 
-interface currentSelectedField {
-    assigned_to: user,
-    field_name: string
+interface selectedField {
+    id: number,
+    page: number,
+    field_name: string,
+    assigned_to: any
 }
 
 interface makeCancelablePromise {
@@ -32,4 +34,4 @@ interface createDocumentState {
     selectPermissionsBoolean: boolean
 }
 
-export {user, currentSelectedField, makeCancelablePromise, createDocumentState}
+export {user, selectedField, makeCancelablePromise, createDocumentState}

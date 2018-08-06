@@ -1,16 +1,15 @@
 import * as React from 'react';
 import AddedUser from './AddedUser';
 
-import {user} from '../../CreateDocumentValidation'
+import {user, selectedField} from '../../CreateDocumentValidation'
 
 interface AddedUserListProps {
     userList: Array<user>,
     handleAddedUserPress: (e: React.MouseEvent) => void,
     deleteUser: (e: React.MouseEvent) => void,
     isInSidebar: boolean,
-    currentSelectedFieldId: number,
+    selectedField: selectedField,
     className: string,
-    removeAssignedUser: (user: user, removeOptions: null | number) => void,
     selectedUser?: user
 }
 
@@ -25,14 +24,13 @@ class AddedUserList extends React.Component<AddedUserListProps, any> {
 
     checkForAssignedField = () => {
 
-        let userList = this.props.userList
-        let currentSelectedFieldId = this.props.currentSelectedFieldId
+        let userList = this.props.userList.slice()
 
         let result: boolean = false
 
         userList.forEach(user => {
-            if(!!user.assigned_to) {
-                if(user.assigned_to.indexOf(currentSelectedFieldId) >= 0) {
+            if(!!!user.assigned_to) {
+                if(user.assigned_to.indexOf(this.props.selectedField.id) >= 0) {
                     result = true
                 }
             }
@@ -47,14 +45,14 @@ class AddedUserList extends React.Component<AddedUserListProps, any> {
         let userList = this.props.userList
         let userElementList = []
 
-        if(this.props.isInSidebar) {
+        if(this.props.isInSidebar && !!this.props.selectedField) {
             userList = userList.filter(user => {
-                return user.assigned_to.indexOf(this.props.currentSelectedFieldId) < 0}
+                return user.assigned_to.indexOf(this.props.selectedField.id) < 0}
             )
         }
         
         userList.forEach( user => {
-            userElementList.push(<AddedUser removeAssignedUser={this.props.removeAssignedUser} key={Math.random()} fieldAssigned={this.checkForAssignedField()} currentSelectedFieldId={this.props.currentSelectedFieldId} selectedUser={this.props.selectedUser} user={user} handleAddedUserPress={e => this.props.handleAddedUserPress(e)} deleteUser={this.props.deleteUser} isInSidebar={this.props.isInSidebar} />)
+            userElementList.push(<AddedUser selectedField={this.props.selectedField} key={Math.random()} fieldAssigned={this.checkForAssignedField()} selectedUser={this.props.selectedUser} user={user} handleAddedUserPress={e => this.props.handleAddedUserPress(e)} deleteUser={this.props.deleteUser} isInSidebar={this.props.isInSidebar} />)
         })
 
         return userElementList

@@ -3,7 +3,7 @@ import PDF from 'react-pdf-js'
 
 import './DocumentPageStyle.sass'
 
-import {documentResponse, document_meta_field, documentDimensions} from '../../../AppValidation'
+import {document_meta_field, documentDimensions} from '../../../AppValidation'
 import CheckboxInput from '../UserInputComponents/CheckboxInput/CheckboxInput';
 import TextInput from '../UserInputComponents/TextInput/TextInput';
 import SignatureForm from '../UserInputComponents/SignatureForm/SignatureForm';
@@ -16,11 +16,11 @@ interface Props {
     pdfSource: string,
     page: number,
     handleFormEdit: (e, page, form) => void,
-    previewOnClickHandler?: () => void,
+    previewOnClickHandler?: (e, page: number, field_name: string) => void,
     view: any,
     signature_base64: string,
     autoSave: () => void,
-    signHandler: (e) => void
+    signHandler: (e, page) => void
 }
 
 class DocumentPage extends React.Component<Props, any> {
@@ -104,20 +104,20 @@ class DocumentPage extends React.Component<Props, any> {
                     document_meta_field.value = 'Off'
                 }
 
-                let newForm = <CheckboxInput is_disabled={document_meta_field.is_disabled} key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} checked={document_meta_field.value} onChange={(e) => {this.props.handleFormEdit(e, (this.props.page - 1), form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
+                let newForm = <CheckboxInput field_name={document_meta_field.field_name} page={this.props.page} is_disabled={document_meta_field.is_disabled} key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} checked={document_meta_field.value} onChange={(e) => {this.props.handleFormEdit(e, (this.props.page - 1), form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
 
                 documentFields.push(newForm)
             }
             else if(document_meta_field.field_type === 'Text') {
                 let newForm = 
                     <div key={form} className='form-wrapper'>
-                        <TextInput is_disabled={document_meta_field.is_disabled} key={form} id={form} position={'absolute'} border={'none'} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} value={document_meta_field.value} onChange={(e) => {this.props.handleFormEdit(e, (this.props.page - 1), form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
+                        <TextInput field_name={document_meta_field.field_name} is_disabled={document_meta_field.is_disabled} key={form} id={form} position={'absolute'} border={'none'} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} value={document_meta_field.value} page={this.props.page} onChange={(e) => {this.props.handleFormEdit(e, (this.props.page - 1), form)}} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} />
                     </div>
 
                 documentFields.push(newForm)
             }
             else if(document_meta_field.field_type === 'Signature') {
-                let newForm = <SignatureForm is_disabled={document_meta_field.is_disabled} key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} assigned_to={document_meta_field.assigned_to} signature_base64={document_meta_field.value} signHandler={this.props.signHandler}/>
+                let newForm = <SignatureForm field_name={document_meta_field.field_name} page={this.props.page} is_disabled={document_meta_field.is_disabled} key={form} id={form} width={dimensions.width} height={dimensions.height} top={dimensions.top} left={dimensions.left} view={this.props.view} previewOnClickHandler={this.props.previewOnClickHandler} assigned_to={document_meta_field.assigned_to} signature_base64={document_meta_field.value} signHandler={this.props.signHandler}/>
 
                 documentFields.push(newForm)
             }
@@ -131,7 +131,7 @@ class DocumentPage extends React.Component<Props, any> {
     render() {
         return (
             <div className='DocumentPage' style={this.getStyle()}>
-                <PDF className='pdf-image' file={this.props.pdfSource} page={this.props.page} />
+                <PDF className='pdf-image' file={this.props.pdfSource} page={(this.props.page+1)} />
                 <div className='document-fields-container'>
                     {this.createDocumentFields(this.props.documentPage)}
                 </div>

@@ -27,7 +27,7 @@ class NotificationCard extends React.Component<Props, any> {
             () => {
                 this.exit()
             },
-            5000
+            3000
         )
         this.setState({
             timer: timer
